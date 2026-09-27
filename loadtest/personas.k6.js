@@ -200,6 +200,15 @@ const ALL_PERSONAS = [
       { path: '/formation-snapshots', label: 'def_list_formations' },
     ],
   },
+  {
+    // Auth 도메인 stress — 인증된 read (login rate-limiter 회피). PLAYER 세션 사용.
+    // /auth/login-history 는 admin-only (403) → 제외
+    name: 'AUTH',
+    email: 'player@club.com',
+    endpoints: [
+      { path: '/auth/me', label: 'auth_me' },
+    ],
+  },
 ]
 
 const PERSONAS = PERSONA_FILTER

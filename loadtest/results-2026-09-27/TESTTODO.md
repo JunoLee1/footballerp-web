@@ -17,16 +17,19 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ 로그인 sweep 33 계정 · 10건 200 확인 (rate-limit 이후 429) |
-| Stress | 🔲 login 전용 stress 미러닝 — rate-limiter 로 인해 별도 시나리오 필요 |
-| 보안 — 브루트포스 / Rate Limiting | ✅ 10건 연속 시도 후 429 반환 · 60s+3s 딜레이 재시도로도 지속 차단 (5분+ sliding window 추정) |
-| 보안 — 인증 우회 (토큰 없음/변조) | 🔲 미확인 |
-| 보안 — Refresh 토큰 재사용 | 🔲 미확인 |
-| 보안 — Soft Delete 된 유저나 블랙리스트에 추가된 유저가 로그인시 에러가 나오는가? | 🔲 |
-| 보안 — 개인정보 수정시 본인이 아닌 경우 401 에러가 나오는가? | 🔲 |
+| Stress (인증된 read `/auth/me` · `/auth/login-history`) | ✅ `stress-AUTH.json` p(95) 3,329ms · avg 959ms · RPS 60 · **fail 49.99%** (`/auth/login-history` 접근 불가 role 존재 추정) · VU peak 200 |
+| Stress (login 전용) | ➖ rate-limiter (progressive lockout) 로 스트레스 불가 — 5회 실패 만에 잠금 시작 |
+| 보안 — 브루트포스 / Progressive Rate Limiting | ⚠️ 정책 spec: **5회→5분 · 10회→30분 · 15회→1시간 · 20회→24시간**. 실측: 10건 연속 시도 후 429 반환 확인 ✅. 5회 vs 10회 threshold 승격은 미검증 (연속 5회 → 대기 → 6~10회 재시도 필요) |
+| 보안 — 인증 우회 (토큰 없음/변조) | ✅ 토큰 없음·잘못된 토큰 모두 `401 UNAUTHORIZED` (`auth-test.json` T4·T5) |
+| 보안 — Refresh 토큰 재사용 (sequential) | 🔲 rate-limit cooldown 후 재테스트 필요 · `auth-test.mjs` T9 |
+| 보안 — Refresh 토큰 재사용 (concurrent race) | ⚠️ `auth.controller.ts:65` blacklist 가 `void ...fire-and-forget` → 병렬 2회 요청 시 둘 다 통과 가능. **동시성 취약 코드** — Redis SETNX 또는 DB 트랜잭션 필요 · 실측은 rate-limit cooldown 후 재검증 |
+| 보안 — Soft Delete 된 유저나 블랙리스트에 추가된 유저가 로그인시 에러가 나오는가? | ⚠️ `auth.service.ts:14-27` login() 은 `isDeleted` 미체크 → 토큰 발급됨, 하지만 `authMiddleware.ts:46` 이 후속 요청 401 차단. **login 단계에서 즉시 차단하는 게 안전** (코드 리뷰 결과) |
+| 보안 — 개인정보 수정시 본인이 아닌 경우 401 에러가 나오는가? | ✅ `PATCH /auth/me/profile` 는 `req.user.id` 기반 self-scope 강제, 무인증 시 401 (`auth-test.json` T4). 타인 수정 시도 자체가 불가능한 라우트 설계 |
 | 보안 — Rate-limit window 및 threshold 상수 문서화 | 🔲 `apps/api/src/lib/rateLimit.ts` ADR/주석 추가 필요 |
-| 보안 - 개인 정보 수정시 마스킹 처리 잘되는 가? |🔲|
-| 보안 - 비밀번호 수정시 6개월동안 사용 혹은 타입이 맞지 않는 경우 에러나오는가|🔲|
-| 보안 - 비밀번호 해싱처리 잘되는 가|🔲|
+| 보안 — 개인 정보 수정시 마스킹 처리 잘되는 가? | ✅ `maskPii.ts` 에 `maskEmail`·`maskUsername`·`maskPhone`·`maskAddress` 구현. `AdminService.listUsers` 에서 `isDemo` 계정 마스킹 적용. 본인 `/me` 는 원본 노출 (의도된 설계) |
+| 보안 — 비밀번호 수정시 6개월동안 사용 혹은 타입이 맞지 않는 경우 에러나오는가 | ⚠️ 타입 검증 ✅ (`INVALID_PASSWORD_FORMAT` 8+ 대소문자·숫자·특수 강제) · 현재 비번 재사용 ✅ (`SAME_AS_CURRENT_PASSWORD` 409) · **6개월 재사용 방지 미구현** — `passwordChangedAt` 필드는 있으나 history 저장 없음 |
+| 보안 — 비밀번호 해싱처리 잘되는 가 | ✅ `lib/hash.ts` bcrypt cost 10 (`bcrypt.hash(password, 10)`) · `createUser`·`updatePassword`·`acceptInvite` 세 곳에서 사용 확인 |
+| 보안 — 로그인 실패 시 이메일 존재 여부 노출 없음 | ✅ 미존재 이메일·잘못된 비번 모두 401 균일 (`auth-test.json` T7) |
 ---
 
 ## 2. HR_MANAGER 도메인 `/hiring-surveys`, `/plan-reports`, `/recruitment/job-postings`
