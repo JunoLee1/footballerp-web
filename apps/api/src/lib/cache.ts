@@ -6,6 +6,10 @@ import Redis from 'ioredis'
 let client: Redis | null = null
 let connectFailed = false
 
+export function getRedisClient(): Redis | null {
+  return getClient()
+}
+
 function getClient(): Redis | null {
   if (connectFailed) return null
   if (client) return client
