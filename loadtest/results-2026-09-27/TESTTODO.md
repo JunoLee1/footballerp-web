@@ -39,7 +39,7 @@
 | Smoke | ✅ `smoke-HR_MANAGER.json` 49/49 PASS, p(95) 278ms  · VU 2|
 | Stress (baseline · no cache) | ✅ `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 초과 · RPS 78 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-HR_MANAGER-redis.json` p(95) **544ms** · RPS **155** · threshold 통과 — **3.78× p95 · 2× 처리량** · VU peak 200 |
-| 보안 — Cross-role 접근 차단 | ✅ **LEAK** — `/hiring-surveys`·`/plan-reports` 를 PLAYER · ASSET_MANAGER 세션이 200 반환. `/recruitment/job-postings` 만 403 정상 (`cross-role-test.json`) |
+| 보안 — Cross-role 접근 차단 | ✅ **FIXED** — `fix/hr-cross-role` (lib/hrGuards.ts) 로 `/hiring-surveys`·`/plan-reports`·`/approved-hr` 전부 requireReadHR 적용 → PLAYER·ASSET_MANAGER 403 확인 (`cross-role-test.json` 재프로브) |
 
 ---
 
@@ -915,18 +915,19 @@
 
 ## 🚨 Cross-Role RBAC 프로브 결과 요약 (`cross-role-test.json`)
 
-45 프로브 (3 attacker × 15 endpoint) → **23 LEAK / 22 BLOCKED (51% 취약).**
+45 프로브 (3 attacker × 15 endpoint) → **17 LEAK / 28 BLOCKED (38% 취약).**  
+(HR RBAC fix 이전 baseline: 23 LEAK / 22 BLOCKED · `fix/hr-cross-role` 로 6건 해소)
 
-### 📊 Owner 도메인별 취약도
+### 📊 Owner 도메인별 취약도 (HR fix 후)
 
-| Owner 도메인 | 총 프로브 | LEAK | BLOCKED | 취약도 |
-|---|---|---|---|---|
-| **GM** | 9 | **9** | 0 | **100%** ❌ |
-| MEDICAL_DIRECTOR | 9 | 6 | 3 | 67% ❌ |
-| HR_MANAGER | 6 | 4 | 2 | 67% ❌ |
-| ASSET_MANAGER | 6 | 4 | 2 | 67% ❌ |
-| FINANCE_MANAGER | 9 | 0 | 9 | **0%** ✅ |
-| ADMIN | 6 | 0 | 6 | **0%** ✅ |
+| Owner 도메인 | 총 프로브 | LEAK | BLOCKED | 취약도 | 비고 |
+|---|---|---|---|---|---|
+| MEDICAL_DIRECTOR | 9 | 6 | 3 | 67% ❌ | 미해결 |
+| GM | 9 | 6 | 3 | 67% ❌ | `/plan-reports?filter=pending-final` 은 HR fix 로 함께 해소 (2건), `/reports?·/hiring-dispatches?` 잔존 (6건) |
+| ASSET_MANAGER | 6 | 4 | 2 | 67% ❌ | 미해결 |
+| **HR_MANAGER** | 6 | **0** | 6 | **0%** ✅ | `fix/hr-cross-role` 로 완료 |
+| FINANCE_MANAGER | 9 | 0 | 9 | **0%** ✅ | 원래부터 정상 |
+| ADMIN | 6 | 0 | 6 | **0%** ✅ | 원래부터 정상 |
 
 ### 📋 Endpoint 별 상세 — 어느 role 이 뚫었는지
 
