@@ -34,7 +34,7 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ `smoke-HR_MANAGER.json` 49/49 PASS, p(95) 278ms  · VU 2|
-| Stress | 🔲 `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 1,000ms 대비 2배 · RPS 78 · VU peak 200 |
+| Stress | ✅ `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 1,000ms 대비 2배 · RPS 78 · VU peak 200 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---
@@ -54,8 +54,8 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ `smoke-FINANCE_MANAGER.json` 65/65 PASS, p(95) 243ms  · VU 2|
-| Stress (baseline · no cache) | 🔲 `stress-FINANCE_MANAGER.json` p(95) 3,563ms · threshold 1.8배 초과 · RPS 65 · VU peak 200 |
-| Stress (Redis cache 적용) | 🔲 `stress-FINANCE_MANAGER-redis.json` p(95) **2,517ms** · RPS 69.9 — **1.4× p95 개선** (여전히 threshold 초과) · VU peak 200 |
+| Stress (baseline · no cache) | ✅ `stress-FINANCE_MANAGER.json` p(95) 3,563ms · threshold 1.8배 초과 · RPS 65 · VU peak 200 |
+| Stress (Redis cache 적용) | ✅ `stress-FINANCE_MANAGER-redis.json` p(95) **2,517ms** · RPS 69.9 — **1.4× p95 개선** (여전히 threshold 초과) · VU peak 200 |
 | 단발 요청 캐시 개선 | ✅ /operating-expenses 149→12ms · /budget-control 76→10ms · /plan-requests 65→19ms |
 | 성능 — 잔여 p95 병목 조사 | 🔲 Prisma pool · JSON 직렬화 · ramp-up 초기 miss 등 후속 분석 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
@@ -67,8 +67,8 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ `smoke-ASSET_MANAGER.json` 55/55 PASS, p(95) 207ms  · VU 2|
-| Stress (baseline · no cache) | 🔲 `stress-ASSET_MANAGER.json` p(95) 3,142ms · threshold 1.6배 초과 · RPS 63 · VU peak 200 |
-| Stress (Redis cache 적용) | 🔲 `stress-ASSET_MANAGER-redis.json` p(95) **2,281ms** · RPS **86.6** — **1.4× p95 · 1.4× 처리량** (여전히 threshold 근접 초과) |
+| Stress (baseline · no cache) | ✅ `stress-ASSET_MANAGER.json` p(95) 3,142ms · threshold 1.6배 초과 · RPS 63 · VU peak 200 |
+| Stress (Redis cache 적용) | ✅ `stress-ASSET_MANAGER-redis.json` p(95) **2,281ms** · RPS **86.6** — **1.4× p95 · 1.4× 처리량** (여전히 threshold 근접 초과) |
 | 단발 요청 캐시 개선 | ✅ /asset-requests 105→13ms · /equipment/loans · /equipment 캐시 hit 확인 |
 | 성능 — 잔여 p95 병목 조사 | 🔲 GM 만큼 극적 개선 없음, DB pool/JSON 처리 후속 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
@@ -80,7 +80,7 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ `smoke-GM.json` 49/49 PASS, p(95) 296ms  · VU 2|
-| Stress (baseline · no cache) | 🔲 `stress-GM.json` p(95) 6,395ms · threshold 3배 초과 · RPS 40 · VU peak 200 |
+| Stress (baseline · no cache) | ✅ `stress-GM.json` p(95) 6,395ms · threshold 3배 초과 · RPS 40 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-GM-redis.json` p(95) **690ms** · threshold 통과 · RPS **139.7**  · VU peak 200· reqs 14,878 — **9.3× p95 개선 · 3.4× 처리량** |
 | 성능 — 3개 endpoint 개별 분해 러닝 | ➖ Redis 캐시로 병목 해소, 개별 분해 불필요 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
@@ -92,7 +92,7 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ `smoke-PLAYER.json` 55/55 PASS, p(95) 144ms (최저 지연)  · VU 2|
-| Stress | 🔲 `stress-PLAYER.json` p(95) 2,035ms · threshold 근접 초과 · RPS 83 · VU peak 200 |
+| Stress | ✅ `stress-PLAYER.json` p(95) 2,035ms · threshold 근접 초과 · RPS 83 · VU peak 200 |
 | 보안 — Cross-player IDOR | 🔲 개별 선수 계정 상호 세션 테스트 미러닝 (rate-limit blocker) |
 
 ---
@@ -102,7 +102,7 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ `smoke-MEDICAL_DIRECTOR.json` 49/49 PASS, p(95) 195ms  · VU 2|
-| Stress | 🔲 `stress-MEDICAL_DIRECTOR.json` p(95) 1,827ms · threshold 근접 · RPS 98 · VU peak 200 |
+| Stress | ✅ `stress-MEDICAL_DIRECTOR.json` p(95) 1,827ms · threshold 근접 · RPS 98 · VU peak 200 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 | 보안 — GDPR 개인정보 스코프 검증 | 🔲 guardian 계정 접근 범위 미검증 |
 
@@ -116,8 +116,8 @@
 |---|---|---|
 | Smoke | ➖ (persona endpoint set 에 미포함) |
 | Stress | ➖ |
-| 보안 — IDOR (Player → 타 선수 계약 조회) | 🔲 **LEAK** — PLAYER 세션 임의 ID 1~20 전부 200 응답 (`pentest.json` verdict LEAK) |
-| 보안 — IDOR (HR → 타 계약 조회) | 🔲 **LEAK** — HR_MANAGER 세션도 20/20 건 200 |
+| 보안 — IDOR (Player → 타 선수 계약 조회) | ✅ **LEAK** — PLAYER 세션 임의 ID 1~20 전부 200 응답 (`pentest.json` verdict LEAK) |
+| 보안 — IDOR (HR → 타 계약 조회) | ✅ **LEAK** — HR_MANAGER 세션도 20/20 건 200 |
 | 보안 — owner-scope guard 추가 | 🔲 `contract.routes.ts` `GET /:id` 미들웨어 삽입 필요 (`playerId === req.user.id` OR role∈[GM,FINANCE_MANAGER,HR_MANAGER]) |
 | Regression — `apps/api/__test__/contract/contract.access.test.ts` | 🔲 |
 | Sub-actions `/contracts/:id/clauses`·`/extensions`·`/bonuses` 프로브 | 🔲 미커버 |
@@ -133,7 +133,7 @@
 | Smoke | ✅ `PLAYER` 페르소나 `/notifications/my` 포함 |
 | Stress | ➖ (`writeWorkflow` 시나리오는 별도) |
 | 보안 — GET IDOR (타 유저 알림 조회) | ✅ 404 반환 (PLAYER · HR 두 세션 전부 20/20 건 404) |
-| 보안 — PATCH `/read` IDOR | 🔲 **LEAK** — HR_MANAGER 세션이 임의 ID 2건 read 마킹 성공 |
+| 보안 — PATCH `/read` IDOR | ✅ **LEAK** — HR_MANAGER 세션이 임의 ID 2건 read 마킹 성공 |
 | 보안 — recipient guard 추가 | 🔲 PATCH `/:id/read` 앞단 `recipientUserId === req.user.id` 검증 필요 |
 
 ---
@@ -207,10 +207,10 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| ADMIN `admin@club.com` (baseline) | 🔲 `stress-ADMIN.json` p(95) **5,586ms** · RPS 50 · threshold 2.8× 초과 · VU peak 200 |
+| ADMIN `admin@club.com` (baseline) | ✅ `stress-ADMIN.json` p(95) **5,586ms** · RPS 50 · threshold 2.8× 초과 · VU peak 200 |
 | ADMIN `admin@club.com` (Redis cache 적용) | ✅ `stress-ADMIN-redis.json` p(95) **686ms** · RPS **148** · threshold 통과 — **8.1× p95 개선 · 2.9× 처리량** · VU peak 200 |
-| SUPERADMIN `superadmin@platform.com` | 🔲 `stress-SUPERADMIN.json` p(95) 2,515ms · RPS 77 · threshold 살짝 초과 · VU peak 200 |
-| HR_STAFF `hr.staff@club.com` | 🔲 `stress-HR_STAFF.json` p(95) 1,554ms · RPS 123 · **fail 66.66%** (2/3 endpoint 4xx — `/onboarding-tasks`·`/recruitment/job-postings` 미접근 or 없음) · VU peak 200 |
+| SUPERADMIN `superadmin@platform.com` | ✅ `stress-SUPERADMIN.json` p(95) 2,515ms · RPS 77 · threshold 살짝 초과 · VU peak 200 |
+| HR_STAFF `hr.staff@club.com` | ✅ `stress-HR_STAFF.json` p(95) 1,554ms · RPS 123 · **fail 66.66%** (2/3 endpoint 4xx — `/onboarding-tasks`·`/recruitment/job-postings` 미접근 or 없음) · VU peak 200 |
 | FINANCE_STAFF `finance.staff@club.com` | ✅ `stress-FINANCE_STAFF.json` p(95) 1,449ms · RPS 116 · threshold 통과 · Redis 캐시 재사용 효과 · VU peak 200 |
 | ASSET_STAFF `asset.staff@club.com` | ✅ `stress-ASSET_STAFF.json` p(95) 1,120ms · RPS 129 · threshold 통과 · VU peak 200 |
 | FACILITY_MANAGER `facility.manager@club.com` | ✅ `stress-FACILITY_MANAGER.json` p(95) 1,043ms · RPS 152 · **fail 33.33%** (1/3 endpoint) · VU peak 200 |
