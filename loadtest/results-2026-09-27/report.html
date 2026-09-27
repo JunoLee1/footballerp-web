@@ -530,6 +530,67 @@
   </section>
 
   <section>
+    <h2>🚀 authMiddleware isDeleted 캐시 (userStatusCache) 도입 결과</h2>
+    <table><tr><th>Persona</th><th>Baseline p95</th><th>+Redis (endpoint) p95</th><th>+userStatusCache p95</th><th>Baseline→최종 개선</th><th>Baseline RPS</th><th>최종 RPS</th></tr><tr>
+    <td>MEDICAL_DIRECTOR</td>
+    <td class="num">1827ms</td>
+    <td class="num warn">946ms</td>
+    <td class="num ok">41ms</td>
+    <td class="num ok"><strong>44.6×</strong></td>
+    <td class="num">97.7</td>
+    <td class="num ok">233.6</td>
+  </tr>
+<tr>
+    <td>GM</td>
+    <td class="num">6395ms</td>
+    <td class="num warn">690ms</td>
+    <td class="num ok">40ms</td>
+    <td class="num ok"><strong>161.1×</strong></td>
+    <td class="num">40.8</td>
+    <td class="num ok">221.2</td>
+  </tr>
+<tr>
+    <td>ADMIN</td>
+    <td class="num">5586ms</td>
+    <td class="num warn">686ms</td>
+    <td class="num ok">70ms</td>
+    <td class="num ok"><strong>79.7×</strong></td>
+    <td class="num">49.8</td>
+    <td class="num ok">149.6</td>
+  </tr>
+<tr>
+    <td>HR_MANAGER</td>
+    <td class="num">2060ms</td>
+    <td class="num warn">544ms</td>
+    <td class="num ok">35ms</td>
+    <td class="num ok"><strong>58.9×</strong></td>
+    <td class="num">78.0</td>
+    <td class="num ok">228.4</td>
+  </tr>
+<tr>
+    <td>FINANCE_MANAGER</td>
+    <td class="num">3563ms</td>
+    <td class="num warn">2517ms</td>
+    <td class="num ok">439ms</td>
+    <td class="num ok"><strong>8.1×</strong></td>
+    <td class="num">65.1</td>
+    <td class="num ok">222.9</td>
+  </tr>
+<tr>
+    <td>ASSET_MANAGER</td>
+    <td class="num">3142ms</td>
+    <td class="num warn">2281ms</td>
+    <td class="num ok">48ms</td>
+    <td class="num ok"><strong>65.0×</strong></td>
+    <td class="num">62.8</td>
+    <td class="num ok">238.8</td>
+  </tr></table>
+  <div style="margin-top:12px;padding:12px;background:#dcfce7;border-left:3px solid #16a34a;font-size:13px">
+    <strong>핵심 발견:</strong> 진짜 병목은 각 도메인 endpoint 가 아니라 <code>authMiddleware</code> 매-요청 <code>SELECT isDeleted FROM User</code>. Endpoint response 를 Redis 캐시해도 auth 단계에서 Prisma pool 큐가 쌓이며 tail latency 를 지배. <code>lib/userStatusCache.ts</code> (5분 TTL · invalidate hook) 로 이 조회를 캐시하니 모든 도메인에서 p95 대폭 감소.
+  </div>
+  </section>
+
+  <section>
     <h2>📈 p95 latency by persona (stress vs smoke)</h2>
     <table>
     <tr><th>Persona</th><th style="width:60px">smoke p95</th><th style="width:200px"></th><th style="width:60px">stress p95</th><th style="width:200px"></th></tr>
@@ -892,16 +953,14 @@
   <section>
     <h2>🚨 Cross-Role RBAC Probe</h2>
     <div style="margin-bottom:16px;font-size:14px">
-    <span class="ok">35 BLOCKED</span> ·
-    <span class="bad">10 LEAK</span> · 총 45 프로브
+    <span class="ok">41 BLOCKED</span> ·
+    <span class="bad">4 LEAK</span> · 총 45 프로브
   </div><h3 style="margin-top:8px;font-size:15px">📊 Owner 도메인별 취약도</h3><table><tr><th>Owner 도메인</th><th>총 프로브</th><th>LEAK</th><th>BLOCKED</th><th>취약도</th></tr><tr><td>ASSET_MANAGER</td><td class="num">6</td><td class="num warn">4</td><td class="num">2</td><td class="num warn">67%</td></tr>
-<tr><td>MEDICAL_DIRECTOR</td><td class="num">9</td><td class="num warn">6</td><td class="num">3</td><td class="num warn">67%</td></tr>
 <tr><td>HR_MANAGER</td><td class="num">6</td><td class="num ok">0</td><td class="num">6</td><td class="num ok">0%</td></tr>
 <tr><td>FINANCE_MANAGER</td><td class="num">9</td><td class="num ok">0</td><td class="num">9</td><td class="num ok">0%</td></tr>
 <tr><td>GM</td><td class="num">9</td><td class="num ok">0</td><td class="num">9</td><td class="num ok">0%</td></tr>
-<tr><td>ADMIN</td><td class="num">6</td><td class="num ok">0</td><td class="num">6</td><td class="num ok">0%</td></tr></table><h3 style="margin-top:20px;font-size:15px">📋 Endpoint 별 상세</h3><table><tr><th>Owner</th><th>Endpoint</th><th>뚫은 role</th><th>판정</th></tr><tr><td>MEDICAL_DIRECTOR</td><td><code>/medical-equipment-loan</code></td><td>PLAYER · HR_MANAGER · ASSET_MANAGER</td><td class="bad">🚨 LEAK (3 role)</td></tr>
-<tr><td>MEDICAL_DIRECTOR</td><td><code>/medical-expenses</code></td><td>PLAYER · HR_MANAGER · ASSET_MANAGER</td><td class="bad">🚨 LEAK (3 role)</td></tr>
-<tr><td>ASSET_MANAGER</td><td><code>/asset-requests</code></td><td>PLAYER · HR_MANAGER</td><td class="bad">🚨 LEAK (2 role)</td></tr>
+<tr><td>MEDICAL_DIRECTOR</td><td class="num">9</td><td class="num ok">0</td><td class="num">9</td><td class="num ok">0%</td></tr>
+<tr><td>ADMIN</td><td class="num">6</td><td class="num ok">0</td><td class="num">6</td><td class="num ok">0%</td></tr></table><h3 style="margin-top:20px;font-size:15px">📋 Endpoint 별 상세</h3><table><tr><th>Owner</th><th>Endpoint</th><th>뚫은 role</th><th>판정</th></tr><tr><td>ASSET_MANAGER</td><td><code>/asset-requests</code></td><td>PLAYER · HR_MANAGER</td><td class="bad">🚨 LEAK (2 role)</td></tr>
 <tr><td>ASSET_MANAGER</td><td><code>/equipment</code></td><td>HR_MANAGER</td><td class="bad">🚨 LEAK (1 role)</td></tr>
 <tr><td>ASSET_MANAGER</td><td><code>/equipment/loans</code></td><td>HR_MANAGER</td><td class="bad">🚨 LEAK (1 role)</td></tr>
 <tr><td>ADMIN</td><td><code>/admin/audit-logs</code></td><td>—</td><td class="ok">✓ BLOCKED</td></tr>
@@ -915,7 +974,9 @@
 <tr><td>HR_MANAGER</td><td><code>/hiring-surveys</code></td><td>—</td><td class="ok">✓ BLOCKED</td></tr>
 <tr><td>HR_MANAGER</td><td><code>/plan-reports</code></td><td>—</td><td class="ok">✓ BLOCKED</td></tr>
 <tr><td>HR_MANAGER</td><td><code>/recruitment/job-postings</code></td><td>—</td><td class="ok">✓ BLOCKED</td></tr>
-<tr><td>MEDICAL_DIRECTOR</td><td><code>/injuries/active</code></td><td>—</td><td class="ok">✓ BLOCKED</td></tr></table>
+<tr><td>MEDICAL_DIRECTOR</td><td><code>/injuries/active</code></td><td>—</td><td class="ok">✓ BLOCKED</td></tr>
+<tr><td>MEDICAL_DIRECTOR</td><td><code>/medical-equipment-loan</code></td><td>—</td><td class="ok">✓ BLOCKED</td></tr>
+<tr><td>MEDICAL_DIRECTOR</td><td><code>/medical-expenses</code></td><td>—</td><td class="ok">✓ BLOCKED</td></tr></table>
   </section>
 
   <section>
@@ -972,6 +1033,6 @@
   <div style="margin-top:12px;color:#666;font-size:13px">200 VU ramp · Redis 캐시 활성. 세 endpoint 개별 스트레스 시 전부 threshold 여유. 합쳐서 690ms 나왔던 건 순차 호출·큐잉 효과.</div>
   </section>
 
-  <div class="footer">Generated 2026-09-27T12:58:21.573Z · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
+  <div class="footer">Generated 2026-09-27T13:53:45.243Z · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
 </body>
 </html>

@@ -28,6 +28,7 @@ const PERSONAS = [
   'DEFENSIVE_COACH',
 ]
 const REDIS_PERSONAS = ['GM', 'FINANCE_MANAGER', 'ASSET_MANAGER', 'ADMIN']
+const USERSTATUS_PERSONAS = ['MEDICAL_DIRECTOR', 'GM', 'ADMIN', 'HR_MANAGER', 'FINANCE_MANAGER', 'ASSET_MANAGER']
 const SCENARIOS = ['smoke', 'stress']
 
 function readSummary(scenario, persona) {
@@ -120,6 +121,11 @@ const html = `<!doctype html>
   <section>
     <h2>⚡ Redis 캐시 적용 전/후 비교</h2>
     ${renderRedisCompare()}
+  </section>
+
+  <section>
+    <h2>🚀 authMiddleware isDeleted 캐시 (userStatusCache) 도입 결과</h2>
+    ${renderUserStatusCompare()}
   </section>
 
   <section>
@@ -311,6 +317,46 @@ function renderCrossRole() {
     + `<table>${ownerHead}${ownerRows}</table>`
     + '<h3 style="margin-top:20px;font-size:15px">📋 Endpoint 별 상세</h3>'
     + `<table>${epHead}${epBody}</table>`
+}
+
+function renderUserStatusCompare() {
+  const rows = USERSTATUS_PERSONAS.map((p) => {
+    const baseFile = path.join(DIR, `stress-${p}.json`)
+    const redisFile = p === 'MEDICAL_DIRECTOR'
+      ? path.join(DIR, `stress-MEDICAL_DIRECTOR-redis-v4.json`)
+      : path.join(DIR, `stress-${p}-redis.json`)
+    const userstatusFile = p === 'MEDICAL_DIRECTOR'
+      ? path.join(DIR, `stress-MEDICAL_DIRECTOR-redis-userstatus.json`)
+      : path.join(DIR, `stress-${p}-userstatus.json`)
+    if (!fs.existsSync(baseFile) || !fs.existsSync(userstatusFile)) return null
+    const b = JSON.parse(fs.readFileSync(baseFile, 'utf8')).metrics
+    const r = fs.existsSync(redisFile) ? JSON.parse(fs.readFileSync(redisFile, 'utf8')).metrics : null
+    const u = JSON.parse(fs.readFileSync(userstatusFile, 'utf8')).metrics
+    return {
+      persona: p,
+      p95base: b.http_req_duration['p(95)'].toFixed(0),
+      p95redis: r ? r.http_req_duration['p(95)'].toFixed(0) : '—',
+      p95user: u.http_req_duration['p(95)'].toFixed(0),
+      rpsbase: b.http_reqs.rate.toFixed(1),
+      rpsuser: u.http_reqs.rate.toFixed(1),
+      totalMultiplier: (b.http_req_duration['p(95)'] / u.http_req_duration['p(95)']).toFixed(1),
+    }
+  }).filter(Boolean)
+  if (rows.length === 0) return '<div class="missing">userStatusCache 결과 없음.</div>'
+  const head = `<tr><th>Persona</th><th>Baseline p95</th><th>+Redis (endpoint) p95</th><th>+userStatusCache p95</th><th>Baseline→최종 개선</th><th>Baseline RPS</th><th>최종 RPS</th></tr>`
+  const body = rows.map((r) => `<tr>
+    <td>${r.persona}</td>
+    <td class="num">${r.p95base}ms</td>
+    <td class="num warn">${r.p95redis}${r.p95redis !== '—' ? 'ms' : ''}</td>
+    <td class="num ok">${r.p95user}ms</td>
+    <td class="num ok"><strong>${r.totalMultiplier}×</strong></td>
+    <td class="num">${r.rpsbase}</td>
+    <td class="num ok">${r.rpsuser}</td>
+  </tr>`).join('\n')
+  return `<table>${head}${body}</table>
+  <div style="margin-top:12px;padding:12px;background:#dcfce7;border-left:3px solid #16a34a;font-size:13px">
+    <strong>핵심 발견:</strong> 진짜 병목은 각 도메인 endpoint 가 아니라 <code>authMiddleware</code> 매-요청 <code>SELECT isDeleted FROM User</code>. Endpoint response 를 Redis 캐시해도 auth 단계에서 Prisma pool 큐가 쌓이며 tail latency 를 지배. <code>lib/userStatusCache.ts</code> (5분 TTL · invalidate hook) 로 이 조회를 캐시하니 모든 도메인에서 p95 대폭 감소.
+  </div>`
 }
 
 function renderGmSmoke() {

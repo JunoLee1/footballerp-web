@@ -39,6 +39,7 @@
 | Smoke | ✅ `smoke-HR_MANAGER.json` 49/49 PASS, p(95) 278ms  · VU 2|
 | Stress (baseline · no cache) | ✅ `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 초과 · RPS 78 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-HR_MANAGER-redis.json` p(95) **544ms** · RPS **155** · threshold 통과 — **3.78× p95 · 2× 처리량** · VU peak 200 |
+| Stress (Redis endpoint + userStatusCache) | ✅ `stress-HR_MANAGER-userstatus.json` p(95) **35ms** · RPS **228** — baseline 대비 **59×** (auth 미들웨어 isDeleted 캐시 도입 효과) · VU peak 200 |
 | 보안 — Cross-role 접근 차단 | ✅ **FIXED** — `fix/hr-cross-role` (lib/hrGuards.ts) 로 `/hiring-surveys`·`/plan-reports`·`/approved-hr` 전부 requireReadHR 적용 → PLAYER·ASSET_MANAGER 403 확인 (`cross-role-test.json` 재프로브) |
 
 ---
@@ -60,6 +61,7 @@
 | Smoke | ✅ `smoke-FINANCE_MANAGER.json` 65/65 PASS, p(95) 243ms  · VU 2|
 | Stress (baseline · no cache) | ✅ `stress-FINANCE_MANAGER.json` p(95) 3,563ms · threshold 1.8배 초과 · RPS 65 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-FINANCE_MANAGER-redis.json` p(95) **2,517ms** · RPS 69.9 — **1.4× p95 개선** (여전히 threshold 초과) · VU peak 200 |
+| Stress (Redis endpoint + userStatusCache) | ✅ `stress-FINANCE_MANAGER-userstatus.json` p(95) **439ms** · RPS **223** — baseline 대비 **8.1×** (auth 미들웨어 isDeleted 캐시 도입 효과) · VU peak 200 |
 | 단발 요청 캐시 개선 | ✅ /operating-expenses 149→12ms · /budget-control 76→10ms · /plan-requests 65→19ms |
 | 성능 — 잔여 p95 병목 조사 | 🔲 Prisma pool · JSON 직렬화 · ramp-up 초기 miss 등 후속 분석 |
 | 보안 — Cross-role 접근 차단 | ✅ **BLOCKED** — 3 endpoint 전부 PLAYER · HR · ASSET 세션에 403 반환 (guard 정상) |
@@ -73,6 +75,7 @@
 | Smoke | ✅ `smoke-ASSET_MANAGER.json` 55/55 PASS, p(95) 207ms  · VU 2|
 | Stress (baseline · no cache) | ✅ `stress-ASSET_MANAGER.json` p(95) 3,142ms · threshold 1.6배 초과 · RPS 63 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-ASSET_MANAGER-redis.json` p(95) **2,281ms** · RPS **86.6** — **1.4× p95 · 1.4× 처리량** (여전히 threshold 근접 초과) |
+| Stress (Redis endpoint + userStatusCache) | ✅ `stress-ASSET_MANAGER-userstatus.json` p(95) **48ms** · RPS **239** — baseline 대비 **65×** (auth 미들웨어 isDeleted 캐시 도입 효과) · VU peak 200 |
 | 단발 요청 캐시 개선 | ✅ /asset-requests 105→13ms · /equipment/loans · /equipment 캐시 hit 확인 |
 | 성능 — 잔여 p95 병목 조사 | 🔲 GM 만큼 극적 개선 없음, DB pool/JSON 처리 후속 |
 | 보안 — Cross-role 접근 차단 | ✅ **LEAK** — `/equipment`·`/asset-requests`·`/equipment/loans` 를 HR_MANAGER 세션이 200 반환. PLAYER 는 `/asset-requests` 만 200 (나머지 403) |
@@ -86,6 +89,7 @@
 | Smoke | ✅ `smoke-GM.json` 49/49 PASS, p(95) 296ms  · VU 2|
 | Stress (baseline · no cache) | ✅ `stress-GM.json` p(95) 6,395ms · threshold 3배 초과 · RPS 40 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-GM-redis.json` p(95) **690ms** · threshold 통과 · RPS **139.7**  · VU peak 200· reqs 14,878 — **9.3× p95 개선 · 3.4× 처리량** |
+| Stress (Redis endpoint + userStatusCache) | ✅ `stress-GM-userstatus.json` p(95) **40ms** · RPS **221** — baseline 대비 **161×** (auth 미들웨어 isDeleted 캐시 도입 효과) · VU peak 200 |
 | 성능 — 3개 endpoint 개별 분해 러닝 | ✅ `gm-breakdown/stress-GM_{PLAN,REPORTS,DISPATCHES}.json` — Redis 활성 상태에서 각 335·217·266ms · 전부 threshold 통과 · 단일 병목 없음 |
 | 보안 — Cross-role 접근 차단 | ✅ **FIXED** — `fix/gm-perf-rbac` 로 3 controller (plan-report·report·hiring-dispatch) 에 `filter === 'pending-*' && !isAdminLike(role) → 403` 삽입 · PLAYER·HR·ASSET 재프로브 9/9 BLOCKED |
 | 보안 — GM authorized-access smoke | ✅ `gm-access-smoke.json` 17/17 AUTHORIZED (isAdminLike → 전 도메인 정상 접근 확인) |

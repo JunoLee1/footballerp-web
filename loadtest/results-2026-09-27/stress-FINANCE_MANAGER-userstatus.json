@@ -1,0 +1,191 @@
+{
+    "metrics": {
+        "http_req_waiting": {
+            "avg": 147.41048237578633,
+            "min": 0.796,
+            "med": 50.167,
+            "max": 4672.898,
+            "p(90)": 328.668,
+            "p(95)": 438.33719999999994
+        },
+        "http_reqs": {
+            "count": 23689,
+            "rate": 222.92616579802564
+        },
+        "vus": {
+            "value": 2,
+            "min": 2,
+            "max": 200
+        },
+        "iterations": {
+            "count": 5922,
+            "rate": 55.72918881573337
+        },
+        "http_req_duration{expected_response:true}": {
+            "med": 50.311,
+            "max": 4673.005,
+            "p(90)": 328.8318000000001,
+            "p(95)": 438.5155999999999,
+            "avg": 147.55871569082746,
+            "min": 0.812
+        },
+        "data_sent": {
+            "count": 10985499,
+            "rate": 103379.42384431782
+        },
+        "checks": {
+            "passes": 23688,
+            "fails": 0,
+            "value": 1
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "persona_latency": {
+            "avg": 147.55651160925413,
+            "min": 0.812,
+            "med": 50.307500000000005,
+            "max": 4673.005,
+            "p(90)": 328.8482000000001,
+            "p(95)": 438.52089999999987
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 23689,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "iteration_duration": {
+            "min": 1007.647042,
+            "med": 1451.705771,
+            "max": 7350.351375,
+            "p(90)": 1713.0779256,
+            "p(95)": 1861.5113131499998,
+            "avg": 1594.2973247590348
+        },
+        "group_duration": {
+            "avg": 590.9390602465379,
+            "min": 6.968125,
+            "med": 451.5993125,
+            "max": 6350.244,
+            "p(90)": 711.1512334,
+            "p(95)": 825.9523121999998
+        },
+        "http_req_duration": {
+            "avg": 147.55871569082746,
+            "min": 0.812,
+            "med": 50.311,
+            "max": 4673.005,
+            "p(90)": 328.8318000000001,
+            "p(95)": 438.5155999999999,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_blocked": {
+            "p(90)": 0.005,
+            "p(95)": 0.009,
+            "avg": 0.018497108362529217,
+            "min": 0,
+            "med": 0.002,
+            "max": 28.711
+        },
+        "http_req_sending": {
+            "avg": 0.04870201359280831,
+            "min": 0.002,
+            "med": 0.007,
+            "max": 67.536,
+            "p(90)": 0.019,
+            "p(95)": 0.046
+        },
+        "http_req_tls_handshaking": {
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0
+        },
+        "vus_max": {
+            "value": 200,
+            "min": 200,
+            "max": 200
+        },
+        "http_req_connecting": {
+            "avg": 0.008099624298197479,
+            "min": 0,
+            "med": 0,
+            "max": 12.037,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_receiving": {
+            "avg": 0.09953130144792931,
+            "min": 0.005,
+            "med": 0.025,
+            "max": 24.107,
+            "p(90)": 0.12120000000000053,
+            "p(95)": 0.181
+        },
+        "data_received": {
+            "count": 544659414,
+            "rate": 5125536.528718793
+        }
+    },
+    "setup_data": {
+        "tokens": {
+            "FINANCE_MANAGER": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkZJTkFOQ0VfTUFOQUdFUiIsImRlcGFydG1lbnRDYXRlZ29yaWVzIjpbIkZJTkFOQ0UiXSwidGVhbUlkIjpudWxsLCJjbHViSWQiOjEsImlzRGVtbyI6ZmFsc2UsImlhdCI6MTc5MDUxNjk2NywiZXhwIjoxNzkwNTIwNTY3fQ.TjGzRHQExz3hV1ziEzLPYjP-WyO4JrsKXE4CVoNG0H8"
+        },
+        "notificationIds": {}
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "FINANCE_MANAGER": {
+                "checks": {
+                    "FINANCE_MANAGER list_operating_expenses status<500": {
+                        "id": "de29d264d6c3a75aa1e4fda5923e2e71",
+                        "passes": 5922,
+                        "fails": 0,
+                        "name": "FINANCE_MANAGER list_operating_expenses status<500",
+                        "path": "::FINANCE_MANAGER::FINANCE_MANAGER list_operating_expenses status<500"
+                    },
+                    "FINANCE_MANAGER list_budget_control status<500": {
+                        "name": "FINANCE_MANAGER list_budget_control status<500",
+                        "path": "::FINANCE_MANAGER::FINANCE_MANAGER list_budget_control status<500",
+                        "id": "c83b30df0d82852c79fba3668026754d",
+                        "passes": 5922,
+                        "fails": 0
+                    },
+                    "FINANCE_MANAGER get_financial_report_season1 status<500": {
+                        "path": "::FINANCE_MANAGER::FINANCE_MANAGER get_financial_report_season1 status<500",
+                        "id": "7b8b5d7ae7fe90372d31d793aa3da7ad",
+                        "passes": 5922,
+                        "fails": 0,
+                        "name": "FINANCE_MANAGER get_financial_report_season1 status<500"
+                    },
+                    "FINANCE_MANAGER list_budget_plan_requests status<500": {
+                        "passes": 5922,
+                        "fails": 0,
+                        "name": "FINANCE_MANAGER list_budget_plan_requests status<500",
+                        "path": "::FINANCE_MANAGER::FINANCE_MANAGER list_budget_plan_requests status<500",
+                        "id": "e12d71f8c219a45a34fb054110d8e854"
+                    }
+                },
+                "name": "FINANCE_MANAGER",
+                "path": "::FINANCE_MANAGER",
+                "id": "20de22058bcfd544410af92cd0ae0e9c",
+                "groups": {}
+            }
+        },
+        "checks": {}
+    }
+}
