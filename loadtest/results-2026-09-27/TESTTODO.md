@@ -27,7 +27,7 @@
 | 보안 — 개인정보 수정시 본인이 아닌 경우 401 에러가 나오는가? | ✅ `PATCH /auth/me/profile` 는 `req.user.id` 기반 self-scope 강제, 무인증 시 401 (`auth-test.json` T4). 타인 수정 시도 자체가 불가능한 라우트 설계 |
 | 보안 — Rate-limit window 및 threshold 상수 문서화 | 🔲 `apps/api/src/lib/rateLimit.ts` ADR/주석 추가 필요 |
 | 보안 — 개인 정보 수정시 마스킹 처리 잘되는 가? | ✅ `maskPii.ts` 에 `maskEmail`·`maskUsername`·`maskPhone`·`maskAddress` 구현. `AdminService.listUsers` 에서 `isDemo` 계정 마스킹 적용. 본인 `/me` 는 원본 노출 (의도된 설계) |
-| 보안 — 비밀번호 수정시 6개월동안 사용 혹은 타입이 맞지 않는 경우 에러나오는가 | ⚠️ 타입 검증 ✅ (`INVALID_PASSWORD_FORMAT` 8+ 대소문자·숫자·특수 강제) · 현재 비번 재사용 ✅ (`SAME_AS_CURRENT_PASSWORD` 409) · **6개월 재사용 방지 미구현** — `passwordChangedAt` 필드는 있으나 history 저장 없음 |
+| 보안 — 비밀번호 수정시 6개월동안 사용 혹은 타입이 맞지 않는 경우 에러나오는가 | ✅ 타입 검증 `INVALID_PASSWORD_FORMAT` (8+ 대소문자·숫자·특수) · 현재 비번 재사용 `SAME_AS_CURRENT_PASSWORD` 409 · **6개월 재사용 방지 `PASSWORD_RECENTLY_USED` 409 도입 완료** (`PasswordHistory` 모델 · 변경 시 이전 hash 저장 · 6개월 이내 이력과 bcrypt.compare) · E2E 실측은 shared dev DB player 뮤테이션 이슈로 격리 DB 재검증 필요 |
 | 보안 — 비밀번호 해싱처리 잘되는 가 | ✅ `lib/hash.ts` bcrypt cost 10 (`bcrypt.hash(password, 10)`) · `createUser`·`updatePassword`·`acceptInvite` 세 곳에서 사용 확인 |
 | 보안 — 로그인 실패 시 이메일 존재 여부 노출 없음 | ✅ 미존재 이메일·잘못된 비번 모두 401 균일 (`auth-test.json` T7) |
 ---
