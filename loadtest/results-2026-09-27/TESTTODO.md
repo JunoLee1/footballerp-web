@@ -1,127 +1,250 @@
-# Test Coverage TODO — 2026-09-27
+# 도메인별 테스트 TODO
 
-k6 도메인별 부하 + Burp-style IDOR 프로브 러닝 후 도출된 후속 작업 리스트. `report.html` 과 함께 봐.
+## 범례
+- ✅ 완료
+- 🔲 미완료
+- ➖ 해당 없음
 
-## 📊 오늘 실측 결과 요약
+---
 
-| 축 | 커버리지 | 결과 |
+## 1. Auth `/auth`
+
+| 항목 | 상태 | 비고 |
 |---|---|---|
-| k6 smoke | 7/7 persona | 전부 PASS (p95 144~296ms, err 0%) |
-| k6 stress | 7/7 persona | 4/7 threshold 초과 (p95 2s 넘김) |
-| IDOR 프로브 | 10 /:id endpoint × 2 attacker | **3건 LEAK** (`/contracts/:id` 등) |
-| Route coverage | **10 / 370** (2.7%) | 미커버 360건 |
+| Smoke | ✅ 로그인 sweep 33 계정 · 10건 200 확인 (rate-limit 이후 429) |
+| Stress | 🔲 login 전용 stress 미러닝 — rate-limiter 로 인해 별도 시나리오 필요 |
+| 보안 — 브루트포스 / Rate Limiting | ✅ 10건 연속 시도 후 429 반환 · 60s+3s 딜레이 재시도로도 지속 차단 (5분+ sliding window 추정) |
+| 보안 — 인증 우회 (토큰 없음/변조) | 🔲 미확인 |
+| 보안 — Refresh 토큰 재사용 | 🔲 미확인 |
+| 보안 — Rate-limit window 및 threshold 상수 문서화 | 🔲 `apps/api/src/lib/rateLimit.ts` ADR/주석 추가 필요 |
 
 ---
 
-## 🔴 즉시 조치 (Critical)
+## 2. HR_MANAGER 도메인 `/hiring-surveys`, `/plan-reports`, `/recruitment/job-postings`
 
-### 1. `/contracts/:id` IDOR — 두 페르소나 전부 유출
-- 재현: `node loadtest/results-2026-09-27/pentest.mjs`
-- Ground truth: `pentest.json` `verdict=LEAK`, ok200=20/20
-- 유출 필드: `salary`, `signingBonus`, `buyoutClause.amount`, `agencyCommission`, `managedById`
-- 원인 추정: `contract.routes.ts` 의 `GET /:id` 에 owner-scope guard 미장착
-- 조치:
-  - [ ] `apps/api/src/contract/contract.routes.ts` `GET /:id` 앞단에 접근권한 미들웨어 추가
-  - [ ] 소유자(playerId ⇢ 요청자) 또는 role∈[GM, FINANCE_MANAGER, HR_MANAGER] 만 허용
-  - [ ] regression test: `apps/api/__test__/contract/contract.access.test.ts`
-
-### 2. `/notifications/:id/read` PATCH — HR 로 남의 알림 read 마킹 가능 (2건)
-- 조치: `notification.routes.ts` PATCH `/:id/read` 에 `recipientUserId === req.user.id` 체크 강제
-- 참고: GET `/notifications/:id` 는 정상 (404 반환)
-
-### 3. photophoio.md line 66 문구 수정
-- 현재 문구: "UUID v4 도입 · 임의 주소 변조 시 403 Forbidden 완벽 작동"
-- 실제: 숫자형 PK 사용 중, `/contracts/:id` 는 owner guard 자체가 없음
-- 조치: 문구 수정 or 실제 UUID 마이그레이션 & guard 추가 후 pentest.json 재취득
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `smoke-HR_MANAGER.json` 49/49 PASS, p(95) 278ms |
+| Stress | 🔲 `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 1,000ms 대비 2배 · RPS 78 |
+| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---
 
-## 🟠 성능 회귀 (Stress threshold 초과)
+## 3. HEAD_COACH 도메인 `/training`, `/players`, `/tactical`
 
-`p(95)<2000ms` threshold 초과 페르소나 (single-instance):
-
-| Persona | p95 | RPS | 원인 후보 |
-|---|---|---|---|
-| GM | **6395ms** | 40 | `/plan-reports?filter=pending-final`, `/reports?filter=pending-final`, `/hiring-dispatches?filter=pending-dispatch` — 세 개 다 pending-filter join 부담 |
-| FINANCE_MANAGER | 3563ms | 65 | `/financial-reports/1/plan-requests` (workflow 조회) or `/operating-expenses?seasonId=1` full scan |
-| ASSET_MANAGER | 3142ms | 63 | `/equipment/loans`, `/asset-requests` |
-| HR_MANAGER | 2060ms | 78 | 임계값 근접 — 관찰만 |
-| PLAYER | 2035ms | 83 | 임계값 근접 |
-
-- [ ] GM 페르소나 3개 endpoint 를 개별 k6 로 분리, 어느게 병목인지 지목
-- [ ] FINANCE `/financial-reports/1/plan-requests` EXPLAIN 확인 (Prisma include 트리 폭발 여부)
-- [ ] `/operating-expenses` `seasonId` index 여부 확인
-- [ ] `/plan-reports` `filter=pending-final` 쿼리 index 여부 확인
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `smoke-HEAD_COACH.json` 55/55 PASS, p(95) 199ms |
+| Stress | ✅ `stress-HEAD_COACH.json` p(95) 1,059ms · threshold 통과 · RPS 128 (최고 처리량) |
+| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---
 
-## 🟡 미커버 도메인 IDOR 우선순위 (Definite Sensitive · 153건 / 31 prefix)
+## 4. FINANCE_MANAGER 도메인 `/operating-expenses`, `/budget-control`, `/financial-reports`
 
-돈·계약·개인정보 관련. 다음 순서로 pentest.mjs `TARGETS` 에 추가:
-
-**Round 2 (financial / salary — 가장 급함):**
-- [ ] `/payroll/:id` 의 sub-actions 11개 (approve/cancel/salaries/allowances 포함)
-- [ ] `/sponsorships/:id/*` 12개 (계약금 정보)
-- [ ] `/budget-control/:id/*` 11개
-- [ ] `/monthly-settlement/:id/*` 7개
-- [ ] `/operating-expenses/:id/*` sub 6개 (root GET 은 이미 tested)
-- [ ] `/sales/:id/*` 5개
-- [ ] `/ledger/:id/*` 2개
-
-**Round 3 (HR / hiring — 개인정보):**
-- [ ] `/hiring-surveys/:id/*` 11개
-- [ ] `/hiring-dispatches/:id/*` 8개
-- [ ] `/academy-fees/:id/*` 9개
-- [ ] `/acquisition-surveys/:id/*` 4개
-- [ ] `/staff-records/:id/*` 2개
-- [ ] `/employee-contracts/:id/*` sub 3개 (root GET 이미 tested)
-- [ ] `/player-callups/:id/*` 6개
-- [ ] `/youth-registrations/:id/*` 4개
-- [ ] `/pii-access/:id/*` 2개
-
-**Round 4 (medical / safeguard):**
-- [ ] `/injuries/:id/*` sub 9개 (root GET 이미 tested)
-- [ ] `/medical-expenses/:id/*` sub 6개 (root GET 이미 tested)
-- [ ] `/medical-equipment-loan/:id/*` 3개
-- [ ] `/safeguard-reports/:id/*` 2개
-
-**Round 5 (contracts / player-body — 유출 확인된 도메인):**
-- [ ] `/contracts/:id/*` sub 5개 (clauses, extensions, bonuses)
-- [ ] `/prospects/:id/*` 2개
-- [ ] `/partners/:id/*` 2개
-- [ ] `/plan-reports/:id/*` 5개
-
-## 🟢 미커버 possible sensitive (51건 / 17 prefix)
-
-리뷰/승인/보고 계열 — owner-scope 확인 필요:
-
-- `/asset-requests`, `/attendance-appeals`, `/certification`, `/development-plans`, `/formation-snapshots`, `/growth-reports`, `/incident-reports`, `/plan-reports`, `/prospects`, `/recruitment`, `/reports`, `/facility`, `/coaches`, `/training`, `/transfer-requests`, `/department-review-configs`
-
-## ⚪ 미커버 publicish (112건 / 23 prefix)
-
-`/countries`, `/leagues`, `/matches`, `/tactical`, `/teams`, `/training-references` 등. 401 만 나오면 OK. 낮은 우선순위.
-
-## 🔵 Unclassified (49건)
-
-`/agencies`, `/players` sub-actions (15!), `/recruitment` (17!), `/software-licenses`, `/staff-records`, `/asset-requests` — 케이스별로 sensitivity 재분류 필요.
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `smoke-FINANCE_MANAGER.json` 65/65 PASS, p(95) 243ms |
+| Stress | 🔲 `stress-FINANCE_MANAGER.json` p(95) 3,563ms · threshold 1.8배 초과 · RPS 65 |
+| 성능 — `OperatingExpense.seasonId` 인덱스 확인 | 🔲 schema.prisma index 유무 EXPLAIN 미검증 |
+| 성능 — `/financial-reports/:id/plan-requests` include depth | 🔲 relation 트리 폭발 여부 미확인 |
+| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---
 
-## 🛠️ 인프라 개선
+## 5. ASSET_MANAGER 도메인 `/equipment`, `/asset-requests`, `/equipment/loans`
 
-- [ ] `pentest.mjs` 를 이 카탈로그(`id-routes-classified.json`)로 데이터 드라이브 — TARGETS 배열 하드코딩 제거
-- [ ] Burp Suite Community 실행 flow 자동화 힘드니 **Intruder 프로젝트 파일** 을 미리 export 해서 리포트에 첨부
-- [ ] k6 stress LB 모드(`docker-compose.loadtest.yml` 2 replica + nginx) 재구동 후 threshold 재측정
-- [ ] CI/CD nightly (`.github/workflows/loadtest.yml`) 에 per-persona 매트릭스 추가
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `smoke-ASSET_MANAGER.json` 55/55 PASS, p(95) 207ms |
+| Stress | 🔲 `stress-ASSET_MANAGER.json` p(95) 3,142ms · threshold 1.6배 초과 · RPS 63 |
+| 성능 — `EquipmentLoan.returnedAt IS NULL` 인덱스 | 🔲 EXPLAIN 미검증 |
+| 성능 — `AssetRequest` 상태별 필터 쿼리 최적화 | 🔲 미검증 |
+| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---
 
-## 📎 근거 파일
+## 6. GM 도메인 `/plan-reports?filter=pending-final`, `/reports?filter=pending-final`, `/hiring-dispatches?filter=pending-dispatch`
 
-- `report.html` — 전체 대시보드
-- `pentest.json` — 자동화된 IDOR 결과 (verdict per row)
-- `smoke-*.json` / `stress-*.json` — k6 도메인별 raw summary
-- `id-routes-classified.json` — 370개 :id 라우트 sensitivity 분류
-- `BURP-README.md` — Burp Suite 재현 절차
-- `personas.k6.js` — PERSONA 필터 추가된 부하 스크립트
-- `photophoio.md` line 64-66 — 원본 QA 주장 (line 66 은 falsified)
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `smoke-GM.json` 49/49 PASS, p(95) 296ms |
+| Stress | 🔲 `stress-GM.json` p(95) **6,395ms** · threshold 3배 초과 · RPS 40 (최악 병목) |
+| 성능 — 3개 endpoint 개별 분해 러닝 | 🔲 어느 endpoint 가 병목인지 지목 필요 |
+| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+
+---
+
+## 7. PLAYER 도메인 `/players`, `/training`, `/notifications/my`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `smoke-PLAYER.json` 55/55 PASS, p(95) 144ms (최저 지연) |
+| Stress | 🔲 `stress-PLAYER.json` p(95) 2,035ms · threshold 근접 초과 · RPS 83 |
+| 보안 — Cross-player IDOR | 🔲 개별 선수 계정 상호 세션 테스트 미러닝 (rate-limit blocker) |
+
+---
+
+## 8. MEDICAL_DIRECTOR 도메인 `/injuries/active`, `/medical-equipment-loan`, `/medical-expenses`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `smoke-MEDICAL_DIRECTOR.json` 49/49 PASS, p(95) 195ms |
+| Stress | 🔲 `stress-MEDICAL_DIRECTOR.json` p(95) 1,827ms · threshold 근접 · RPS 98 |
+| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — GDPR 개인정보 스코프 검증 | 🔲 guardian 계정 접근 범위 미검증 |
+
+---
+
+## 9. Contracts `/contracts/:id`, `/contracts/:id/*` (5 sub-actions)
+
+> 계약금 · 서명 보너스 · 에이전시 커미션 · 바이아웃 조항 포함 · sensitive
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ➖ (persona endpoint set 에 미포함) |
+| Stress | ➖ |
+| 보안 — IDOR (Player → 타 선수 계약 조회) | 🔲 **LEAK** — PLAYER 세션 임의 ID 1~20 전부 200 응답 (`pentest.json` verdict LEAK) |
+| 보안 — IDOR (HR → 타 계약 조회) | 🔲 **LEAK** — HR_MANAGER 세션도 20/20 건 200 |
+| 보안 — owner-scope guard 추가 | 🔲 `contract.routes.ts` `GET /:id` 미들웨어 삽입 필요 (`playerId === req.user.id` OR role∈[GM,FINANCE_MANAGER,HR_MANAGER]) |
+| Regression — `apps/api/__test__/contract/contract.access.test.ts` | 🔲 |
+| Sub-actions `/contracts/:id/clauses`·`/extensions`·`/bonuses` 프로브 | 🔲 미커버 |
+
+---
+
+## 10. Notifications `/notifications/:id`, `/notifications/:id/read`
+
+> 인증만 필요 · recipient 본인만 접근·마킹 가능해야 함
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `PLAYER` 페르소나 `/notifications/my` 포함 |
+| Stress | ➖ (`writeWorkflow` 시나리오는 별도) |
+| 보안 — GET IDOR (타 유저 알림 조회) | ✅ 404 반환 (PLAYER · HR 두 세션 전부 20/20 건 404) |
+| 보안 — PATCH `/read` IDOR | 🔲 **LEAK** — HR_MANAGER 세션이 임의 ID 2건 read 마킹 성공 |
+| 보안 — recipient guard 추가 | 🔲 PATCH `/:id/read` 앞단 `recipientUserId === req.user.id` 검증 필요 |
+
+---
+
+## 11. Financial Reports `/financial-reports/:id`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ FINANCE_MANAGER `/financial-reports/1` 포함 |
+| Stress | 🔲 FINANCE 페르소나 stress 병목에 포함 (섹션 4 참조) |
+| 보안 — IDOR (PLAYER · HR → 타 시즌 조회) | ✅ 두 세션 모두 20/20 건 401/403 반환 (`pentest.json` verdict PASS) |
+
+---
+
+## 12. Injuries `/injuries/:id`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ MEDICAL_DIRECTOR `/injuries/active` 포함 |
+| Stress | 🔲 MEDICAL 페르소나 stress 근접 초과 |
+| 보안 — IDOR (PLAYER · HR → 부상 상세 조회) | ✅ 두 세션 모두 20/20 건 401/403 반환 (verdict PASS) |
+| 보안 — Player 본인 부상 조회 허용 여부 | 🔲 미검증 |
+
+---
+
+## 13. Payroll `/payroll/:id`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ➖ (persona endpoint set 에 미포함) |
+| Stress | ➖ |
+| 보안 — IDOR (PLAYER · HR → 급여 명세 조회) | ✅ 두 세션 모두 20/20 건 404 (verdict PASS) |
+| 보안 — Sub-actions `/payroll/:id/approve`·`/cancel`·`/salaries` 등 11건 프로브 | 🔲 미커버 |
+
+---
+
+## 14. Operating Expenses `/operating-expenses/:id`, Medical Expenses `/medical-expenses/:id`, Employee Contracts `/employee-contracts/:id`, Players `/players/:id`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| 보안 — IDOR (양 세션 임의 ID 프로브) | ✅ 전부 404 반환 (verdict PASS) — record 미존재 · guard 여부는 별도 확인 필요 |
+| 보안 — 실제 존재하는 ID (record hydration 후) 재프로브 | 🔲 미커버 · 404 는 guard 미장착 여부 판정 불가 |
+| Sub-actions 프로브 (총 30+ 건) | 🔲 미커버 (`id-routes-classified.json` 참조) |
+
+---
+
+## 15. Definite-Sensitive 미커버 도메인 (`id-routes-classified.json` definite bucket · 153건 · 31 prefix)
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| `/sponsorships/:id/*` (12) IDOR 프로브 | 🔲 |
+| `/budget-control/:id/*` (11) IDOR 프로브 | 🔲 |
+| `/hiring-surveys/:id/*` (11) IDOR 프로브 | 🔲 |
+| `/monthly-settlement/:id/*` (7) IDOR 프로브 | 🔲 |
+| `/hiring-dispatches/:id/*` (8) IDOR 프로브 | 🔲 |
+| `/academy-fees/:id/*` (9) IDOR 프로브 | 🔲 |
+| `/sales/:id/*` (5) IDOR 프로브 | 🔲 |
+| `/ledger/:id/*` (2) IDOR 프로브 | 🔲 |
+| `/acquisition-surveys/:id/*` (4) IDOR 프로브 | 🔲 |
+| `/staff-records/:id/*` (2) IDOR 프로브 | 🔲 |
+| `/pii-access/:id/*` (2) IDOR 프로브 | 🔲 |
+| `/medical-equipment-loan/:id/*` (3) IDOR 프로브 | 🔲 |
+| `/safeguard-reports/:id/*` (2) IDOR 프로브 | 🔲 |
+| `/player-callups/:id/*` (6) IDOR 프로브 | 🔲 |
+| `/youth-registrations/:id/*` (4) IDOR 프로브 | 🔲 |
+| `pentest.mjs` `TARGETS` 데이터 드라이브화 | 🔲 `id-routes-classified.json` 에서 로드 |
+
+---
+
+## 16. 다중 역할 확장 커버리지 (Multi-Role Extended Personas · 확장 완료 · stress 미러닝)
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| ADMIN `admin@club.com` smoke/stress | 🔲 personas.k6.js 편입 완료, 미러닝 |
+| SUPERADMIN `superadmin@platform.com` smoke/stress | 🔲 편입 완료, 미러닝 |
+| HR_STAFF `hr.staff@club.com` | 🔲 편입 완료 · staff delegation IDOR 확인 필요 |
+| FINANCE_STAFF `finance.staff@club.com` | 🔲 편입 완료 |
+| ASSET_STAFF `asset.staff@club.com` | 🔲 편입 완료 |
+| FACILITY_MANAGER `facility.manager@club.com` | 🔲 편입 완료 |
+| FACILITY_STAFF `facility.staff@club.com` | 🔲 편입 완료 |
+| ASSISTANT_COACH `assistant@club.com` | 🔲 편입 완료 |
+| ATTACKING_COACH `attacking@club.com` | 🔲 편입 완료 |
+| DEFENSIVE_COACH `defensive@club.com` | 🔲 편입 완료 |
+| GK/PHYSICAL/SETPIECE/YOUTH/MEDICAL/FO/TD 등 나머지 role login-sweep | 🔲 rate-limit 5분+ 쿨다운 후 재시도 |
+| Guardian 세션 8건 login-sweep + GDPR 스코프 검증 | 🔲 rate-limit blocker |
+| 개별 선수 계정 7건 cross-IDOR | 🔲 rate-limit blocker |
+
+---
+
+## 17. Load Balancer 모드 재측정 (`docker-compose.loadtest.yml` · 2 replica + nginx)
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Compose 스택 부트 | 🔲 Burp Suite 가 3002 포트 점유 중 (proxy listener) → free 후 재시도 |
+| 도메인별 stress 재러닝 (BASE_URL=3002) | 🔲 single-instance 대비 처리량 증가율 정량화 |
+| `X-Upstream` 헤더 기반 round-robin 분배 균등성 확인 | 🔲 `lb_upstream_hits` metric |
+
+---
+
+## 18. Documentation 정정
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| `photophoio.md` line 66 UUID v4·403 주장 개정 | 🔲 pentest.json 이 falsify — 실측 반영 or UUID 마이그레이션 후 재테스트 |
+| `personas.k6.js` PERSONA 필터 사용법 README 추가 | 🔲 |
+| CI matrix (`.github/workflows/loadtest.yml`) 에 PERSONA 축 추가 | 🔲 nightly 도메인별 회귀 자동 감지 |
+
+---
+
+## 공통 보안 테스트 (전 도메인)
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Rate Limiting (`/auth/login` 브루트포스) | ✅ 10건 이후 429 · 5분+ sliding window 로 재시도 지속 차단 |
+| IDOR (숫자 ID 열거 접근) | 🔲 10 endpoint 프로브 결과 3건 LEAK (`/contracts/:id`, `/notifications/:id/read`) — 나머지 360 endpoint 미커버 |
+| 인증 없는 접근 차단 (401) | 🔲 미러닝 |
+| 인증 우회 (토큰 없음/변조/alg:none) | 🔲 미러닝 |
+| 오버사이즈 문자열 / SQL injection 퍼징 | 🔲 미러닝 |
+| 에러 메시지 스택트레이스 노출 여부 | 🔲 미러닝 |
+| XSS 저장 후 프론트 sanitize | 🔲 미러닝 |
+| 탈취 계정 남용 (mass-write rate limit) | 🔲 미러닝 · admin/create endpoint 별 rate-limit 유무 확인 필요 |
+
+---
+
+*근거 파일: `report.html` · `pentest.json` · `smoke-*.json` · `stress-*.json` · `login-sweep.json` · `id-routes-classified.json` · `BURP-README.md`*
+*원본 포맷: `/Users/juno/asset-erp-backend/docs/TODO_TEST.md` (2026-09-24)*
