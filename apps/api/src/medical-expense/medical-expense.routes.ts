@@ -1,4 +1,5 @@
 import { auth } from "../lib/authMiddleware";
+import { requireReadMedical } from "../lib/medicalGuards";
 import { Router } from "express";
 import multer from "multer";
 import { gcsUpload } from "../lib/gcs";
@@ -20,9 +21,9 @@ const storage = multer.memoryStorage();
 
 const upload = multer({ storage, limits: { fileSize: 20 * 1024 * 1024 } });
 
-router.get("/", auth, controller.list);
-router.post("/", auth, upload.single("file"), gcsUpload('medical-expenses'), controller.create);
-router.get("/:id", auth, controller.get);
+router.get("/", auth, requireReadMedical, controller.list);
+router.post("/", auth, requireReadMedical, upload.single("file"), gcsUpload('medical-expenses'), controller.create);
+router.get("/:id", auth, requireReadMedical, controller.get);
 router.patch("/:id", auth, upload.single("file"), gcsUpload('medical-expenses'), controller.update);
 router.post("/:id/submit", auth, controller.submit);
 router.post("/:id/leader-approve", auth, controller.leaderApprove);

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-27T12:44:03.648Z",
+  "generatedAt": "2026-09-27T13:04:47.601Z",
   "baseUrl": "http://localhost:3001/api",
-  "proxy": "http://127.0.0.1:3002",
+  "proxy": null,
   "results": [
     {
       "domain": "HR",

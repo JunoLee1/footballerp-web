@@ -7,6 +7,7 @@ import { NotificationRepository } from "../notification/notification.repo";
 import { getIO } from "../lib/io";
 import { writeAuditLog } from "../lib/auditLog";
 import { getPrisma } from "../lib/prisma";
+import { cached } from "../lib/cache";
 
 const VALID_INJURY_TRANSITIONS: Record<string, string[]> = {
   OCCURRED: ["DIAGNOSED"],
@@ -241,7 +242,7 @@ export class InjuryService {
   }
 
   getActive() {
-    return this.repo.findActive();
+    return cached("injuries:active", 30, () => this.repo.findActive());
   }
 
   getAssessment(injuryId: number) {

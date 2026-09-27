@@ -287,7 +287,16 @@ export function setup() {
       }
     }
 
-    console.log(`Setup: ${persona.name} logged in${notificationIds[persona.name] ? ` (${notificationIds[persona.name].length} notif ids)` : ''}`)
+    // PREWARM=1 env 로 활성화 — setup 단계에서 각 endpoint 1회 GET 하여 서버측 Redis 캐시 채움.
+    // 램프-업 초반 cold miss 를 미리 해소하여 stress p95 tail 을 낮춤.
+    if (__ENV.PREWARM === '1') {
+      const cookie = `access-token=${match[1]}`
+      for (const ep of persona.endpoints) {
+        http.get(`${BASE_URL}${ep.path}`, { headers: { Cookie: cookie }, tags: { name: 'prewarm' } })
+      }
+    }
+
+    console.log(`Setup: ${persona.name} logged in${notificationIds[persona.name] ? ` (${notificationIds[persona.name].length} notif ids)` : ''}${__ENV.PREWARM === '1' ? ' [prewarmed]' : ''}`)
     sleep(0.2)
   }
   return { tokens, notificationIds }

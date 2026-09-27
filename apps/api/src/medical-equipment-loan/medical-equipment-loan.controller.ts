@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { requireUser } from "../lib/authMiddleware";
 import { AppError } from "../lib/appError";
+import { cached } from "../lib/cache";
 import { medicalEquipmentLoanRepo } from "./medical-equipment-loan.repo";
 import * as service from "./medical-equipment-loan.service";
 
@@ -18,10 +19,13 @@ export async function getById(req: Request, res: Response, next: NextFunction) {
 export async function listLoans(req: Request, res: Response, next: NextFunction) {
   try {
     const { status, requestedById } = req.query as Record<string, string>;
-    const result = await medicalEquipmentLoanRepo.findAll({
-      ...(status && { status }),
-      ...(requestedById && { requestedById: parseInt(requestedById) }),
-    });
+    const key = `medical-equipment-loan:list:${status ?? "all"}:${requestedById ?? "any"}`;
+    const result = await cached(key, 30, () =>
+      medicalEquipmentLoanRepo.findAll({
+        ...(status && { status }),
+        ...(requestedById && { requestedById: parseInt(requestedById) }),
+      }),
+    );
     res.json(result);
   } catch (e) {
     next(e);
