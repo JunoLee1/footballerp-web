@@ -2,6 +2,7 @@ import { DepartmentRepository } from "./department.repo";
 import { AppError } from "../lib/appError";
 import { writeAuditLog } from "../lib/auditLog";
 import { isAdminLike, canWriteHR } from "../lib/permissions";
+import { cached } from "../lib/cache";
 import type { DepartmentCategory, DeptRole } from "../generated/enums";
 
 type Actor = { id: number; role: string; frontOfficeRole?: string | null; deptCategories?: string[] };
@@ -10,7 +11,7 @@ export class DepartmentService {
   constructor(private repo: DepartmentRepository) {}
 
   list(clubId?: number | null) {
-    return this.repo.findAll(clubId);
+    return cached(`departments:list:${clubId ?? "null"}`, 60, () => this.repo.findAll(clubId));
   }
 
   async get(id: number) {

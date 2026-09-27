@@ -1,6 +1,7 @@
 import { AdminRepository } from "./admin.repo";
 import { AppError } from "../lib/appError";
 import { maskEmail, maskUsername } from "../lib/maskPii";
+import { cached } from "../lib/cache";
 import { ListUsersQuery, UpdateUserRoleDto, PlayerWithoutAccountDto, SetDemoDto } from "./dto/admin.dto";
 
 type AuditLogRecord = Awaited<ReturnType<AdminRepository["listAuditLogs"]>>[number];
@@ -13,7 +14,8 @@ export class AdminService {
   constructor(private repo: AdminRepository) {}
 
   async listUsers(filters: ListUsersQuery, isDemo: boolean = false, clubId?: number | null) {
-    const users = await this.repo.listUsers(filters, clubId);
+    const key = `admin:users:${JSON.stringify(filters)}:${clubId ?? "null"}`;
+    const users = await cached(key, 30, () => this.repo.listUsers(filters, clubId));
     if (!isDemo) return users;
     return users.map(applyUserMask);
   }
@@ -101,10 +103,14 @@ export class AdminService {
     filters: { actorId?: number; action?: string; targetId?: string; from?: string; to?: string; page?: number; limit?: number },
     isDemo: boolean = false,
   ) {
-    const [logs, total] = await Promise.all([
-      this.repo.listAuditLogs(filters),
-      this.repo.countAuditLogs(filters),
-    ]);
+    const key = `admin:audit-logs:${JSON.stringify(filters)}`;
+    const { logs, total } = await cached(key, 15, async () => {
+      const [l, t] = await Promise.all([
+        this.repo.listAuditLogs(filters),
+        this.repo.countAuditLogs(filters),
+      ]);
+      return { logs: l, total: t };
+    });
     if (!isDemo) return { logs, total };
     return {
       logs: logs.map((log: AuditLogRecord) => ({

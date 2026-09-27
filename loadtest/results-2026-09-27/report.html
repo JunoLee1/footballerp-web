@@ -514,6 +514,15 @@
     <td class="num ok">86.6</td>
     <td class="num warn">1.38×</td>
   </tr>
+<tr>
+    <td>ADMIN</td>
+    <td class="num">5586ms</td>
+    <td class="num ok">686ms</td>
+    <td class="num ok">8.14×</td>
+    <td class="num">49.8</td>
+    <td class="num ok">147.6</td>
+    <td class="num ok">2.96×</td>
+  </tr>
   </table>
   <div style="margin-top:12px;padding:12px;background:#eff6ff;border-left:3px solid #2563eb;font-size:13px">
     <strong>메커니즘:</strong> 30초 TTL Redis 캐시(ioredis)를 <code>plan-report</code>·<code>report</code>·<code>hiring-dispatch</code>·<code>operating-expense</code>·<code>budget-control</code>·<code>equipment</code>·<code>asset-request</code>·<code>financial-report</code>·<code>budget-plan-request</code> 서비스 list/get 에 적용. 매 요청 DB 재조회 → 첫 요청만 DB, 이후 30s 동안 캐시 hit.
@@ -880,6 +889,6 @@
   </div>
   </section>
 
-  <div class="footer">Generated 2026-09-27T10:06:28.127Z · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
+  <div class="footer">Generated 2026-09-27T10:12:28.449Z · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
 </body>
 </html>

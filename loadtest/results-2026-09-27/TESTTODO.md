@@ -207,7 +207,8 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| ADMIN `admin@club.com` | 🔲 `stress-ADMIN.json` p(95) **5,586ms** · RPS 50 · threshold 2.8× 초과 (`/admin/audit-logs` 병목 추정) · VU peak 200 |
+| ADMIN `admin@club.com` (baseline) | 🔲 `stress-ADMIN.json` p(95) **5,586ms** · RPS 50 · threshold 2.8× 초과 · VU peak 200 |
+| ADMIN `admin@club.com` (Redis cache 적용) | ✅ `stress-ADMIN-redis.json` p(95) **686ms** · RPS **148** · threshold 통과 — **8.1× p95 개선 · 2.9× 처리량** · VU peak 200 |
 | SUPERADMIN `superadmin@platform.com` | 🔲 `stress-SUPERADMIN.json` p(95) 2,515ms · RPS 77 · threshold 살짝 초과 · VU peak 200 |
 | HR_STAFF `hr.staff@club.com` | 🔲 `stress-HR_STAFF.json` p(95) 1,554ms · RPS 123 · **fail 66.66%** (2/3 endpoint 4xx — `/onboarding-tasks`·`/recruitment/job-postings` 미접근 or 없음) · VU peak 200 |
 | FINANCE_STAFF `finance.staff@club.com` | ✅ `stress-FINANCE_STAFF.json` p(95) 1,449ms · RPS 116 · threshold 통과 · Redis 캐시 재사용 효과 · VU peak 200 |

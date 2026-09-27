@@ -27,7 +27,7 @@ const PERSONAS = [
   'ATTACKING_COACH',
   'DEFENSIVE_COACH',
 ]
-const REDIS_PERSONAS = ['GM', 'FINANCE_MANAGER', 'ASSET_MANAGER']
+const REDIS_PERSONAS = ['GM', 'FINANCE_MANAGER', 'ASSET_MANAGER', 'ADMIN']
 const SCENARIOS = ['smoke', 'stress']
 
 function readSummary(scenario, persona) {
