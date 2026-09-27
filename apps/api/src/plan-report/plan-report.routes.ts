@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express'
+import { Router } from 'express'
 import multer from 'multer'
 import { gcsUpload } from '../lib/gcs'
 import { PlanReportController } from './plan-report.controller'
@@ -8,8 +8,7 @@ import { NotificationRepository } from '../notification/notification.repo'
 import { RecruitmentRepository } from '../recruitment/recruitment.repo'
 import { RecruitmentService } from '../recruitment/recruitment.service'
 import { auth } from '../lib/authMiddleware'
-import { AppError } from '../lib/appError'
-import { canReadHR, canWriteHR } from '../lib/permissions'
+import { requireReadHR, requireWriteHR } from '../lib/hrGuards'
 import { getPrisma } from '../lib/prisma'
 
 const router = Router()
@@ -26,32 +25,21 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
 })
 
-const checkReadHR = (req: Request, _res: Response, next: NextFunction) => {
-  const { role, frontOfficeRole } = req.user!
-  if (!canReadHR(role, frontOfficeRole)) return next(new AppError(403, 'FORBIDDEN'))
-  next()
-}
-const checkWriteHR = (req: Request, _res: Response, next: NextFunction) => {
-  const { role, frontOfficeRole } = req.user!
-  if (!canWriteHR(role, frontOfficeRole)) return next(new AppError(403, 'FORBIDDEN'))
-  next()
-}
-
-router.get('/', auth, controller.list)
-router.get('/approved-hr', auth, controller.listApprovedHr)
-router.get('/:id', auth, controller.getById)
-router.post('/', auth, controller.create)
-router.put('/:id', auth, controller.update)
-router.post('/:id/submit', auth, controller.submit)
-router.post('/:id/approve', auth, controller.approve)
-router.post('/:id/reject', auth, controller.reject)
-router.post('/:id/result', auth, controller.submitResult)
+router.get('/', auth, requireReadHR, controller.list)
+router.get('/approved-hr', auth, requireReadHR, controller.listApprovedHr)
+router.get('/:id', auth, requireReadHR, controller.getById)
+router.post('/', auth, requireWriteHR, controller.create)
+router.put('/:id', auth, requireWriteHR, controller.update)
+router.post('/:id/submit', auth, requireWriteHR, controller.submit)
+router.post('/:id/approve', auth, requireWriteHR, controller.approve)
+router.post('/:id/reject', auth, requireWriteHR, controller.reject)
+router.post('/:id/result', auth, requireWriteHR, controller.submitResult)
 router.post('/upload', auth, upload.single('file'), gcsUpload('plan-reports'), controller.uploadAttachment)
-router.get('/:id/hiring-items', auth, checkReadHR, controller.listHiringItems)
-router.post('/:id/hiring-items', auth, checkWriteHR, controller.createHiringItem)
-router.patch('/:id/hiring-items/:itemId', auth, checkWriteHR, controller.updateHiringItem)
-router.patch('/:id/hiring-items/:itemId/cancel', auth, checkWriteHR, controller.cancelHiringItem)
-router.delete('/:id/hiring-items/:itemId', auth, checkWriteHR, controller.deleteHiringItem)
-router.post('/:id/publish-postings', auth, checkWriteHR, controller.publishPostings)
+router.get('/:id/hiring-items', auth, requireReadHR, controller.listHiringItems)
+router.post('/:id/hiring-items', auth, requireWriteHR, controller.createHiringItem)
+router.patch('/:id/hiring-items/:itemId', auth, requireWriteHR, controller.updateHiringItem)
+router.patch('/:id/hiring-items/:itemId/cancel', auth, requireWriteHR, controller.cancelHiringItem)
+router.delete('/:id/hiring-items/:itemId', auth, requireWriteHR, controller.deleteHiringItem)
+router.post('/:id/publish-postings', auth, requireWriteHR, controller.publishPostings)
 
 export default router

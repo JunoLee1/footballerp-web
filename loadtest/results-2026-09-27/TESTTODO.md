@@ -39,7 +39,7 @@
 | Smoke | ✅ `smoke-HR_MANAGER.json` 49/49 PASS, p(95) 278ms  · VU 2|
 | Stress (baseline · no cache) | ✅ `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 초과 · RPS 78 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-HR_MANAGER-redis.json` p(95) **544ms** · RPS **155** · threshold 통과 — **3.78× p95 · 2× 처리량** · VU peak 200 |
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | ✅ **FIXED** — `fix/hr-cross-role` (lib/hrGuards.ts) 로 `/hiring-surveys`·`/plan-reports`·`/approved-hr` 전부 requireReadHR 적용 → PLAYER·ASSET_MANAGER 403 확인 (`cross-role-test.json` 재프로브) |
 
 ---
 
@@ -49,7 +49,7 @@
 |---|---|---|
 | Smoke | ✅ `smoke-HEAD_COACH.json` 55/55 PASS, p(95) 199ms  · VU 2|
 | Stress | ✅ `stress-HEAD_COACH.json` p(95) 1,059ms · threshold 통과 · RPS 128 (최고 처리량)  · VU peak 200|
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 (`/training`·`/players`·`/tactical` 별도 프로브 필요) |
 
 ---
 
@@ -62,7 +62,7 @@
 | Stress (Redis cache 적용) | ✅ `stress-FINANCE_MANAGER-redis.json` p(95) **2,517ms** · RPS 69.9 — **1.4× p95 개선** (여전히 threshold 초과) · VU peak 200 |
 | 단발 요청 캐시 개선 | ✅ /operating-expenses 149→12ms · /budget-control 76→10ms · /plan-requests 65→19ms |
 | 성능 — 잔여 p95 병목 조사 | 🔲 Prisma pool · JSON 직렬화 · ramp-up 초기 miss 등 후속 분석 |
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | ✅ **BLOCKED** — 3 endpoint 전부 PLAYER · HR · ASSET 세션에 403 반환 (guard 정상) |
 
 ---
 
@@ -75,7 +75,7 @@
 | Stress (Redis cache 적용) | ✅ `stress-ASSET_MANAGER-redis.json` p(95) **2,281ms** · RPS **86.6** — **1.4× p95 · 1.4× 처리량** (여전히 threshold 근접 초과) |
 | 단발 요청 캐시 개선 | ✅ /asset-requests 105→13ms · /equipment/loans · /equipment 캐시 hit 확인 |
 | 성능 — 잔여 p95 병목 조사 | 🔲 GM 만큼 극적 개선 없음, DB pool/JSON 처리 후속 |
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | ✅ **LEAK** — `/equipment`·`/asset-requests`·`/equipment/loans` 를 HR_MANAGER 세션이 200 반환. PLAYER 는 `/asset-requests` 만 200 (나머지 403) |
 
 ---
 
@@ -87,7 +87,7 @@
 | Stress (baseline · no cache) | ✅ `stress-GM.json` p(95) 6,395ms · threshold 3배 초과 · RPS 40 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-GM-redis.json` p(95) **690ms** · threshold 통과 · RPS **139.7**  · VU peak 200· reqs 14,878 — **9.3× p95 개선 · 3.4× 처리량** |
 | 성능 — 3개 endpoint 개별 분해 러닝 | ➖ Redis 캐시로 병목 해소, 개별 분해 불필요 |
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | ✅ **LEAK** — `/plan-reports?filter=pending-final`·`/reports?filter=pending-final`·`/hiring-dispatches?filter=pending-dispatch` 3 endpoint 모두 PLAYER · HR · ASSET 세션에서 200 반환. **filter query 만 있고 role guard 없음** — GM 전용이어야 하는 pending-* 리스트가 모든 role 에 노출됨 |
 
 ---
 
@@ -107,7 +107,7 @@
 |---|---|---|
 | Smoke | ✅ `smoke-MEDICAL_DIRECTOR.json` 49/49 PASS, p(95) 195ms  · VU 2|
 | Stress | ✅ `stress-MEDICAL_DIRECTOR.json` p(95) 1,827ms · threshold 근접 · RPS 98 · VU peak 200 |
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | ✅ **부분 LEAK** — `/injuries/active` 는 403 정상, `/medical-equipment-loan`·`/medical-expenses` 는 PLAYER · HR · ASSET 모두 200. **의료 개인정보 노출** (GDPR 관점 심각) |
 | 보안 — GDPR 개인정보 스코프 검증 | 🔲 guardian 계정 접근 범위 미검증 |
 
 ---
@@ -248,6 +248,720 @@
 | `photophoio.md` line 66 UUID v4·403 주장 개정 | 🔲 pentest.json 이 falsify — 실측 반영 or UUID 마이그레이션 후 재테스트 |
 | `personas.k6.js` PERSONA 필터 사용법 README 추가 | 🔲 |
 | CI matrix (`.github/workflows/loadtest.yml`) 에 PERSONA 축 추가 | 🔲 nightly 도메인별 회귀 자동 감지 |
+
+---
+
+---
+
+# 🆕 미커버 도메인 스켈레톤 (2026-09-27 추가)
+
+## 🏟️ 시설·자산
+
+### 19. `facility` `/facility`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 20. `department-asset-kit` `/department-asset-kits`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 21. `inventory` `/inventory`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 22. `video` `/videos`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 23. `medical-equipment-loan` `/medical-equipment-loan`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 💼 트랜스퍼·에이전시
+
+### 24. `transfer` `/transfers`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 25. `transfer-request` `/transfer-requests`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 26. `agency` `/agencies`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## ⚽ 팀·시즌·경기
+
+### 27. `team` `/teams`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 28. `season` `/seasons`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 29. `league` `/leagues`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 30. `match` `/matches`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 31. `club` `/clubs`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 32. `club-settings` `/club-settings`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 🏃 코치·훈련 세부
+
+### 33. `coach` `/coaches`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 34. `coach-availability` `/coach-availabilities`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 35. `coaching-staff` `/coaching-staff`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 36. `training-load` `/training-loads`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 37. `training-reference` `/training-references`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 💰 재무·예산 세부
+
+### 38. `budget` `/budget`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 39. `budget-automation` `/budget-automation`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 40. `budget-plan` `/ (plan-request)`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 41. `expense-category` `/expense-categories`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 42. `revenue-adjustment` `/revenue-adjustment`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 43. `account-code` `/account-codes`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 👥 HR 세부
+
+### 44. `hiring-automation` `/hiring-automation`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 45. `hr` `/hr`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 46. `hr-report` `/hr-report`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 47. `staff-record` `/staff-records`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 48. `onboarding-task` `/onboarding-tasks`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 49. `onboarding-template` `/onboarding-templates`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 50. `mandatory-minimum` `/mandatory-minimum`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 51. `jobs` `/jobs`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 52. `probation-review` `/probation-reviews`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 📊 리포트·리뷰·분석
+
+### 53. `ops-report` `/ops-reports`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 54. `plan-review` `/plan-reviews`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 55. `incident-report` `/incident-reports`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 56. `growth-report` `/growth-reports`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 57. `development-plan` `/development-plans`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 58. `dashboard` `/dashboard`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 59. `analysis` `/analysis`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 🛡️ 보호자·유스·안전
+
+### 60. `guardian` `/guardians`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## ⚙️ 워크플로우·설정
+
+### 61. `attendance-appeal` `/attendance-appeals`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 62. `department-review-config` `/department-review-configs`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 63. `formation-snapshot` `/formation-snapshots`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 64. `squad-plan` `/squad-plan`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 65. `tactical` `/tactical`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 66. `certification` `/certification`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 🌐 인프라·유틸
+
+### 67. `country` `/countries`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 68. `i18n` `(no router)`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 69. `middleWare` `(shared middleware)`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 70. `webhook` `/webhook`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 📦 기타
+
+### 71. `software-license` `/software-licenses`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 🚨 Cross-Role RBAC 프로브 결과 요약 (`cross-role-test.json`)
+
+45 프로브 (3 attacker × 15 endpoint) → **17 LEAK / 28 BLOCKED (38% 취약).**  
+(HR RBAC fix 이전 baseline: 23 LEAK / 22 BLOCKED · `fix/hr-cross-role` 로 6건 해소)
+
+### 📊 Owner 도메인별 취약도 (HR fix 후)
+
+| Owner 도메인 | 총 프로브 | LEAK | BLOCKED | 취약도 | 비고 |
+|---|---|---|---|---|---|
+| MEDICAL_DIRECTOR | 9 | 6 | 3 | 67% ❌ | 미해결 |
+| GM | 9 | 6 | 3 | 67% ❌ | `/plan-reports?filter=pending-final` 은 HR fix 로 함께 해소 (2건), `/reports?·/hiring-dispatches?` 잔존 (6건) |
+| ASSET_MANAGER | 6 | 4 | 2 | 67% ❌ | 미해결 |
+| **HR_MANAGER** | 6 | **0** | 6 | **0%** ✅ | `fix/hr-cross-role` 로 완료 |
+| FINANCE_MANAGER | 9 | 0 | 9 | **0%** ✅ | 원래부터 정상 |
+| ADMIN | 6 | 0 | 6 | **0%** ✅ | 원래부터 정상 |
+
+### 📋 Endpoint 별 상세 — 어느 role 이 뚫었는지
+
+| Owner | Endpoint | 뚫은 role | 판정 |
+|---|---|---|---|
+| **GM** | `/plan-reports?filter=pending-final` | PLAYER · HR · ASSET | 🚨 전 role LEAK |
+| **GM** | `/reports?filter=pending-final` | PLAYER · HR · ASSET | 🚨 전 role LEAK |
+| **GM** | `/hiring-dispatches?filter=pending-dispatch` | PLAYER · HR · ASSET | 🚨 전 role LEAK |
+| **MEDICAL** | `/medical-equipment-loan` | PLAYER · HR · ASSET | 🚨 전 role LEAK · GDPR |
+| **MEDICAL** | `/medical-expenses` | PLAYER · HR · ASSET | 🚨 전 role LEAK · GDPR |
+| MEDICAL | `/injuries/active` | — | ✓ BLOCKED |
+| HR | `/hiring-surveys` | PLAYER · ASSET | 🚨 LEAK (2 role) |
+| HR | `/plan-reports` | PLAYER · ASSET | 🚨 LEAK (2 role) |
+| HR | `/recruitment/job-postings` | — | ✓ BLOCKED |
+| ASSET | `/asset-requests` | PLAYER · HR | 🚨 LEAK (2 role) |
+| ASSET | `/equipment` | HR | 🚨 LEAK (HR only) |
+| ASSET | `/equipment/loans` | HR | 🚨 LEAK (HR only) |
+| FINANCE | `/operating-expenses?seasonId=1` | — | ✓ BLOCKED |
+| FINANCE | `/budget-control` | — | ✓ BLOCKED |
+| FINANCE | `/financial-reports/1` | — | ✓ BLOCKED |
+| ADMIN | `/admin/audit-logs` | — | ✓ BLOCKED |
+| ADMIN | `/admin/users` | — | ✓ BLOCKED |
+
+**패턴 관찰:**
+- ✅ **FINANCE · ADMIN 도메인** — role guard 완벽 (전 endpoint 403)
+- ❌ **GM 도메인** — filter query 만 있고 role 검증 미들웨어 부재 (pending-* 리스트 전 role 노출)
+- ❌ **MEDICAL 도메인** — `/injuries/active` 는 정상, `/medical-equipment-loan`·`/medical-expenses` 는 open. 의료 개인정보 GDPR 위반 소지
+- ⚠️ **HR / ASSET 도메인** — endpoint 별 편차 (일부만 guard). 미들웨어 일괄 적용 안 됨
+
+**후속 조치 필요:**
+- `apps/api/src/hiring-survey/hiring-survey.routes.ts` · `apps/api/src/plan-report/plan-report.routes.ts` — `authorize(['HR_MANAGER', 'ADMIN'])` 유형 role guard 추가
+- `equipment.routes.ts`·`asset-request.routes.ts`·`equipment/loans` — ASSET_MANAGER · ADMIN 만 허용
+- `plan-report.routes.ts`·`report.routes.ts`·`hiring-dispatch.routes.ts` — filter=pending-* 는 GM · ADMIN 만
+- `medical-equipment-loan.routes.ts`·`medical-expense.routes.ts` — MEDICAL_DIRECTOR · ADMIN 만
 
 ---
 

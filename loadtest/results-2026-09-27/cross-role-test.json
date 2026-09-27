@@ -1,0 +1,322 @@
+{
+  "generatedAt": "2026-09-27T12:26:45.792Z",
+  "baseUrl": "http://localhost:3001/api",
+  "proxy": "http://127.0.0.1:3002",
+  "results": [
+    {
+      "attacker": "PLAYER",
+      "owner": "HR_MANAGER",
+      "endpoint": "/hiring-surveys",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "HR_MANAGER",
+      "endpoint": "/plan-reports",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "HR_MANAGER",
+      "endpoint": "/recruitment/job-postings",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "HR_MANAGER",
+      "endpoint": "/hiring-surveys",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "HR_MANAGER",
+      "endpoint": "/plan-reports",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "HR_MANAGER",
+      "endpoint": "/recruitment/job-postings",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "FINANCE_MANAGER",
+      "endpoint": "/operating-expenses?seasonId=1",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "FINANCE_MANAGER",
+      "endpoint": "/budget-control",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "FINANCE_MANAGER",
+      "endpoint": "/financial-reports/1",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "FINANCE_MANAGER",
+      "endpoint": "/operating-expenses?seasonId=1",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "FINANCE_MANAGER",
+      "endpoint": "/budget-control",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "FINANCE_MANAGER",
+      "endpoint": "/financial-reports/1",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "FINANCE_MANAGER",
+      "endpoint": "/operating-expenses?seasonId=1",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "FINANCE_MANAGER",
+      "endpoint": "/budget-control",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "FINANCE_MANAGER",
+      "endpoint": "/financial-reports/1",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "ASSET_MANAGER",
+      "endpoint": "/equipment",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "ASSET_MANAGER",
+      "endpoint": "/asset-requests",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "ASSET_MANAGER",
+      "endpoint": "/equipment/loans",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "ASSET_MANAGER",
+      "endpoint": "/equipment",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "ASSET_MANAGER",
+      "endpoint": "/asset-requests",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "ASSET_MANAGER",
+      "endpoint": "/equipment/loans",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "GM",
+      "endpoint": "/plan-reports?filter=pending-final",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "GM",
+      "endpoint": "/reports?filter=pending-final",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "GM",
+      "endpoint": "/hiring-dispatches?filter=pending-dispatch",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "GM",
+      "endpoint": "/plan-reports?filter=pending-final",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "GM",
+      "endpoint": "/reports?filter=pending-final",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "GM",
+      "endpoint": "/hiring-dispatches?filter=pending-dispatch",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "GM",
+      "endpoint": "/plan-reports?filter=pending-final",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "GM",
+      "endpoint": "/reports?filter=pending-final",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "GM",
+      "endpoint": "/hiring-dispatches?filter=pending-dispatch",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "MEDICAL_DIRECTOR",
+      "endpoint": "/injuries/active",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "MEDICAL_DIRECTOR",
+      "endpoint": "/medical-equipment-loan",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "MEDICAL_DIRECTOR",
+      "endpoint": "/medical-expenses",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "MEDICAL_DIRECTOR",
+      "endpoint": "/injuries/active",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "MEDICAL_DIRECTOR",
+      "endpoint": "/medical-equipment-loan",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "MEDICAL_DIRECTOR",
+      "endpoint": "/medical-expenses",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "MEDICAL_DIRECTOR",
+      "endpoint": "/injuries/active",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "MEDICAL_DIRECTOR",
+      "endpoint": "/medical-equipment-loan",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "MEDICAL_DIRECTOR",
+      "endpoint": "/medical-expenses",
+      "status": 200,
+      "verdict": "LEAK"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "ADMIN",
+      "endpoint": "/admin/audit-logs",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "PLAYER",
+      "owner": "ADMIN",
+      "endpoint": "/admin/users",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "ADMIN",
+      "endpoint": "/admin/audit-logs",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "HR_MANAGER",
+      "owner": "ADMIN",
+      "endpoint": "/admin/users",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "ADMIN",
+      "endpoint": "/admin/audit-logs",
+      "status": 403,
+      "verdict": "BLOCKED"
+    },
+    {
+      "attacker": "ASSET_MANAGER",
+      "owner": "ADMIN",
+      "endpoint": "/admin/users",
+      "status": 403,
+      "verdict": "BLOCKED"
+    }
+  ]
+}

@@ -132,6 +132,11 @@ const html = `<!doctype html>
     ${renderPentest()}
   </section>
 
+  <section>
+    <h2>🚨 Cross-Role RBAC Probe</h2>
+    ${renderCrossRole()}
+  </section>
+
   <div class="footer">Generated ${new Date().toISOString()} · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
 </body>
 </html>`
@@ -242,6 +247,60 @@ function renderPentest() {
       : `<span class="ok">HOLDS</span>`}
   </div>`
   return summary + `<table>${head}${body}</table>` + claim
+}
+
+function renderCrossRole() {
+  const p = path.join(DIR, 'cross-role-test.json')
+  if (!fs.existsSync(p)) return '<div class="missing">cross-role-test.json 없음.</div>'
+  const s = JSON.parse(fs.readFileSync(p, 'utf8'))
+  const rows = s.results
+  const leaks = rows.filter((r) => r.verdict === 'LEAK')
+  const blocked = rows.filter((r) => r.verdict === 'BLOCKED')
+  const summary = `<div style="margin-bottom:16px;font-size:14px">
+    <span class="ok">${blocked.length} BLOCKED</span> ·
+    <span class="bad">${leaks.length} LEAK</span> · 총 ${rows.length} 프로브
+  </div>`
+  // per-owner aggregate
+  const byOwner = {}
+  for (const r of rows) {
+    byOwner[r.owner] = byOwner[r.owner] || { total: 0, leak: 0, blocked: 0, endpoints: {} }
+    byOwner[r.owner].total++
+    if (r.verdict === 'LEAK') byOwner[r.owner].leak++
+    else if (r.verdict === 'BLOCKED') byOwner[r.owner].blocked++
+    const ek = r.endpoint
+    byOwner[r.owner].endpoints[ek] = byOwner[r.owner].endpoints[ek] || { leakers: [], blockers: [] }
+    if (r.verdict === 'LEAK') byOwner[r.owner].endpoints[ek].leakers.push(r.attacker)
+    else if (r.verdict === 'BLOCKED') byOwner[r.owner].endpoints[ek].blockers.push(r.attacker)
+  }
+  const ownerRows = Object.entries(byOwner)
+    .sort((a, b) => (b[1].leak / b[1].total) - (a[1].leak / a[1].total))
+    .map(([owner, v]) => {
+      const pct = (v.leak / v.total * 100).toFixed(0)
+      const cls = v.leak === 0 ? 'ok' : v.leak === v.total ? 'bad' : 'warn'
+      return `<tr><td>${owner}</td><td class="num">${v.total}</td><td class="num ${cls}">${v.leak}</td><td class="num">${v.blocked}</td><td class="num ${cls}">${pct}%</td></tr>`
+    }).join('\n')
+  const ownerHead = `<tr><th>Owner 도메인</th><th>총 프로브</th><th>LEAK</th><th>BLOCKED</th><th>취약도</th></tr>`
+
+  // per-endpoint detail (sorted by owner then LEAK count desc)
+  const flat = []
+  for (const [owner, v] of Object.entries(byOwner)) {
+    for (const [ep, e] of Object.entries(v.endpoints)) {
+      flat.push({ owner, endpoint: ep, leakers: e.leakers, blockers: e.blockers })
+    }
+  }
+  flat.sort((a, b) => (b.leakers.length - a.leakers.length) || a.owner.localeCompare(b.owner))
+  const epHead = `<tr><th>Owner</th><th>Endpoint</th><th>뚫은 role</th><th>판정</th></tr>`
+  const epBody = flat.map((f) => {
+    const cls = f.leakers.length === 0 ? 'ok' : 'bad'
+    const flag = f.leakers.length === 0 ? '✓ BLOCKED' : `🚨 LEAK (${f.leakers.length} role)`
+    return `<tr><td>${f.owner}</td><td><code>${f.endpoint}</code></td><td>${f.leakers.join(' · ') || '—'}</td><td class="${cls}">${flag}</td></tr>`
+  }).join('\n')
+
+  return summary
+    + '<h3 style="margin-top:8px;font-size:15px">📊 Owner 도메인별 취약도</h3>'
+    + `<table>${ownerHead}${ownerRows}</table>`
+    + '<h3 style="margin-top:20px;font-size:15px">📋 Endpoint 별 상세</h3>'
+    + `<table>${epHead}${epBody}</table>`
 }
 
 function renderChart(all) {
