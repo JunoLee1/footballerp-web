@@ -69,8 +69,9 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ `smoke-GM.json` 49/49 PASS, p(95) 296ms |
-| Stress | 🔲 `stress-GM.json` p(95) **6,395ms** · threshold 3배 초과 · RPS 40 (최악 병목) |
-| 성능 — 3개 endpoint 개별 분해 러닝 | 🔲 어느 endpoint 가 병목인지 지목 필요 |
+| Stress (baseline · no cache) | 🔲 `stress-GM.json` p(95) 6,395ms · threshold 3배 초과 · RPS 40 |
+| Stress (Redis cache 적용) | ✅ `stress-GM-redis.json` p(95) **690ms** · threshold 통과 · RPS **139.7** · reqs 14,878 — **9.3× p95 개선 · 3.4× 처리량** |
+| 성능 — 3개 endpoint 개별 분해 러닝 | ➖ Redis 캐시로 병목 해소, 개별 분해 불필요 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---
@@ -243,6 +244,9 @@
 | 에러 메시지 스택트레이스 노출 여부 | 🔲 미러닝 |
 | XSS 저장 후 프론트 sanitize | 🔲 미러닝 |
 | 탈취 계정 남용 (mass-write rate limit) | 🔲 미러닝 · admin/create endpoint 별 rate-limit 유무 확인 필요 |
+| 비밀번호 해싱 |🔲|
+| 개인정보 마스킹처리 |🔲 |
+| 보안 문제 발생시 보안 관리자에게 알림이나 메시지가 가는 가? |🔲 |
 
 ---
 

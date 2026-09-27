@@ -115,7 +115,7 @@ const ALL_PERSONAS = [
     email: 'admin@club.com',
     endpoints: [
       { path: '/admin/audit-logs', label: 'admin_audit_logs' },
-      { path: '/dashboard', label: 'admin_dashboard' },
+      { path: '/admin/users', label: 'admin_users' },
       { path: '/departments', label: 'admin_departments' },
     ],
   },
@@ -124,8 +124,8 @@ const ALL_PERSONAS = [
     email: 'superadmin@platform.com',
     endpoints: [
       { path: '/admin/audit-logs', label: 'superadmin_audit_logs' },
-      { path: '/dashboard', label: 'superadmin_dashboard' },
       { path: '/admin/users', label: 'superadmin_users' },
+      { path: '/departments', label: 'superadmin_departments' },
     ],
   },
   {

@@ -1,0 +1,184 @@
+{
+    "metrics": {
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_duration": {
+            "med": 51.617,
+            "max": 338.673,
+            "p(90)": 210.5806,
+            "p(95)": 305.00499999999994,
+            "avg": 97.04497959183675,
+            "min": 2.858,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "persona_latency": {
+            "max": 338.673,
+            "p(90)": 196.75770000000003,
+            "p(95)": 306.8457499999999,
+            "avg": 94.50127083333336,
+            "min": 2.858,
+            "med": 49.667500000000004
+        },
+        "vus_max": {
+            "max": 2,
+            "value": 2,
+            "min": 2
+        },
+        "http_req_tls_handshaking": {
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0
+        },
+        "http_req_receiving": {
+            "avg": 0.3465714285714287,
+            "min": 0.029,
+            "med": 0.084,
+            "max": 5.203,
+            "p(90)": 0.5634000000000002,
+            "p(95)": 1.262999999999999
+        },
+        "http_req_waiting": {
+            "avg": 96.64683673469388,
+            "min": 2.798,
+            "med": 51.572,
+            "max": 338.366,
+            "p(90)": 210.08980000000003,
+            "p(95)": 303.9831999999999
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 49,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "http_reqs": {
+            "rate": 4.563065948222798,
+            "count": 49
+        },
+        "group_duration": {
+            "min": 151.064583,
+            "med": 250.16252050000003,
+            "max": 532.370042,
+            "p(90)": 460.613687,
+            "p(95)": 532.14316625,
+            "avg": 285.3800831875
+        },
+        "iterations": {
+            "count": 16,
+            "rate": 1.489980717787036
+        },
+        "data_sent": {
+            "count": 22211,
+            "rate": 2068.372607672991
+        },
+        "iteration_duration": {
+            "min": 1153.088708,
+            "med": 1250.475375,
+            "max": 1534.364041,
+            "p(90)": 1463.840167,
+            "p(95)": 1534.31116675,
+            "avg": 1287.3411405
+        },
+        "vus": {
+            "value": 2,
+            "min": 2,
+            "max": 2
+        },
+        "http_req_connecting": {
+            "p(90)": 0,
+            "p(95)": 0.13379999999999953,
+            "avg": 0.014448979591836733,
+            "min": 0,
+            "med": 0,
+            "max": 0.261
+        },
+        "http_req_sending": {
+            "min": 0.005,
+            "med": 0.017,
+            "max": 0.371,
+            "p(90)": 0.1226,
+            "p(95)": 0.28539999999999954,
+            "avg": 0.05157142857142857
+        },
+        "data_received": {
+            "count": 1443015,
+            "rate": 134379.03284234123
+        },
+        "checks": {
+            "passes": 48,
+            "fails": 0,
+            "value": 1
+        },
+        "http_req_duration{expected_response:true}": {
+            "min": 2.858,
+            "med": 51.617,
+            "max": 338.673,
+            "p(90)": 210.5806,
+            "p(95)": 305.00499999999994,
+            "avg": 97.04497959183675
+        },
+        "http_req_blocked": {
+            "med": 0.005,
+            "max": 5.782,
+            "p(90)": 0.03140000000000005,
+            "p(95)": 0.2707999999999993,
+            "avg": 0.14336734693877543,
+            "min": 0.002
+        }
+    },
+    "setup_data": {
+        "tokens": {
+            "FINANCE_STAFF": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkZJTkFOQ0VfU1RBRkYiLCJkZXBhcnRtZW50Q2F0ZWdvcmllcyI6WyJGSU5BTkNFIl0sInRlYW1JZCI6bnVsbCwiY2x1YklkIjoxLCJpc0RlbW8iOmZhbHNlLCJpYXQiOjE3OTA1MDA5MjEsImV4cCI6MTc5MDUwNDUyMX0.CpfYUl1E7GkBKDN6nsmqO74_5_rMR7baFy1tfXfXIpc"
+        },
+        "notificationIds": {}
+    },
+    "root_group": {
+        "groups": {
+            "FINANCE_STAFF": {
+                "path": "::FINANCE_STAFF",
+                "id": "3dedf1beccce9f627c3bff1b484014f2",
+                "groups": {},
+                "checks": {
+                        "FINANCE_STAFF fs_list_operating_expenses status<500": {
+                            "passes": 16,
+                            "fails": 0,
+                            "name": "FINANCE_STAFF fs_list_operating_expenses status<500",
+                            "path": "::FINANCE_STAFF::FINANCE_STAFF fs_list_operating_expenses status<500",
+                            "id": "533e4268881c8548b2787e33c6513a60"
+                        },
+                        "FINANCE_STAFF fs_list_monthly_settlement status<500": {
+                            "name": "FINANCE_STAFF fs_list_monthly_settlement status<500",
+                            "path": "::FINANCE_STAFF::FINANCE_STAFF fs_list_monthly_settlement status<500",
+                            "id": "533d16795b28a1e7eb406a99a9e830e6",
+                            "passes": 16,
+                            "fails": 0
+                        },
+                        "FINANCE_STAFF fs_list_expense_categories status<500": {
+                            "name": "FINANCE_STAFF fs_list_expense_categories status<500",
+                            "path": "::FINANCE_STAFF::FINANCE_STAFF fs_list_expense_categories status<500",
+                            "id": "4185cffd2d5681f1772d25520d676642",
+                            "passes": 16,
+                            "fails": 0
+                        }
+                    },
+                "name": "FINANCE_STAFF"
+            }
+        },
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e"
+    }
+}

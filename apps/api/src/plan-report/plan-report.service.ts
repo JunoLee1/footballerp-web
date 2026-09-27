@@ -1,6 +1,7 @@
 import { AppError } from '../lib/appError'
 import { canApprovePlan, isAdminLike } from '../lib/permissions'
 import { writeAuditLog } from '../lib/auditLog'
+import { cached, invalidate } from '../lib/cache'
 import { PlanReportRepository, ReviewerDeptMap } from './plan-report.repo'
 import { CreatePlanReportDto, ListPlanReportQuery, UpdatePlanReportDto } from './dto/plan-report.dto'
 import { writeApprovalVaultNote, appendResultToVaultNote, VaultPlanData } from './vault'
@@ -13,7 +14,8 @@ export class PlanReportService {
   ) {}
 
   list(filters: ListPlanReportQuery) {
-    return this.repo.findAll(filters)
+    const key = `plan-reports:list:${JSON.stringify(filters)}`
+    return cached(key, 30, () => this.repo.findAll(filters))
   }
 
   async getById(id: number) {
