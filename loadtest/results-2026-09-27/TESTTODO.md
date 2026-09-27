@@ -37,7 +37,8 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ `smoke-HR_MANAGER.json` 49/49 PASS, p(95) 278ms  · VU 2|
-| Stress | 🔲 `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 1,000ms 대비 2배 · RPS 78 · VU peak 200 |
+| Stress (baseline · no cache) | ✅ `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 초과 · RPS 78 · VU peak 200 |
+| Stress (Redis cache 적용) | ✅ `stress-HR_MANAGER-redis.json` p(95) **544ms** · RPS **155** · threshold 통과 — **3.78× p95 · 2× 처리량** · VU peak 200 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---

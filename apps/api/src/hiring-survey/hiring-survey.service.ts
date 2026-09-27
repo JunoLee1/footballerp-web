@@ -2,6 +2,7 @@ import { AppError } from '../lib/appError'
 import { NotificationRepository } from '../notification/notification.repo'
 import { PlanReportRepository } from '../plan-report/plan-report.repo'
 import { HiringSurveyRepository } from './hiring-survey.repo'
+import { cached } from '../lib/cache'
 import type {
   CreateHiringSurveyDto,
   CreateSurveyResponseDto,
@@ -17,7 +18,7 @@ export class HiringSurveyService {
   ) {}
 
   list() {
-    return this.repo.findAll()
+    return cached('hiring-surveys:list', 30, () => this.repo.findAll())
   }
 
   async getById(id: number) {

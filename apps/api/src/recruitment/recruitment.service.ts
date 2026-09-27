@@ -8,6 +8,7 @@ import { maskEmail, maskPhone } from "../lib/maskPii";
 import { getPrisma } from "../lib/prisma";
 import { NotificationRepository } from "../notification/notification.repo";
 import { sendApplicationStatusEmail } from "../lib/email";
+import { cached } from "../lib/cache";
 import type {
   CreateJobPostingDto,
   UpdateJobPostingDto,
@@ -54,7 +55,8 @@ export class RecruitmentService {
   // --- JobPosting ---
 
   listPostings(query: JobPostingListQuery) {
-    return this.repo.findAllPostings(query);
+    const key = `recruitment:job-postings:${JSON.stringify(query)}`;
+    return cached(key, 30, () => this.repo.findAllPostings(query));
   }
 
   async getPosting(id: number) {
