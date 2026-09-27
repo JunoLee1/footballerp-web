@@ -39,7 +39,7 @@
 | Smoke | ✅ `smoke-HR_MANAGER.json` 49/49 PASS, p(95) 278ms  · VU 2|
 | Stress (baseline · no cache) | ✅ `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 초과 · RPS 78 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-HR_MANAGER-redis.json` p(95) **544ms** · RPS **155** · threshold 통과 — **3.78× p95 · 2× 처리량** · VU peak 200 |
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | ✅ **LEAK** — `/hiring-surveys`·`/plan-reports` 를 PLAYER · ASSET_MANAGER 세션이 200 반환. `/recruitment/job-postings` 만 403 정상 (`cross-role-test.json`) |
 
 ---
 
@@ -49,7 +49,7 @@
 |---|---|---|
 | Smoke | ✅ `smoke-HEAD_COACH.json` 55/55 PASS, p(95) 199ms  · VU 2|
 | Stress | ✅ `stress-HEAD_COACH.json` p(95) 1,059ms · threshold 통과 · RPS 128 (최고 처리량)  · VU peak 200|
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 (`/training`·`/players`·`/tactical` 별도 프로브 필요) |
 
 ---
 
@@ -62,7 +62,7 @@
 | Stress (Redis cache 적용) | ✅ `stress-FINANCE_MANAGER-redis.json` p(95) **2,517ms** · RPS 69.9 — **1.4× p95 개선** (여전히 threshold 초과) · VU peak 200 |
 | 단발 요청 캐시 개선 | ✅ /operating-expenses 149→12ms · /budget-control 76→10ms · /plan-requests 65→19ms |
 | 성능 — 잔여 p95 병목 조사 | 🔲 Prisma pool · JSON 직렬화 · ramp-up 초기 miss 등 후속 분석 |
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | ✅ **BLOCKED** — 3 endpoint 전부 PLAYER · HR · ASSET 세션에 403 반환 (guard 정상) |
 
 ---
 
@@ -75,7 +75,7 @@
 | Stress (Redis cache 적용) | ✅ `stress-ASSET_MANAGER-redis.json` p(95) **2,281ms** · RPS **86.6** — **1.4× p95 · 1.4× 처리량** (여전히 threshold 근접 초과) |
 | 단발 요청 캐시 개선 | ✅ /asset-requests 105→13ms · /equipment/loans · /equipment 캐시 hit 확인 |
 | 성능 — 잔여 p95 병목 조사 | 🔲 GM 만큼 극적 개선 없음, DB pool/JSON 처리 후속 |
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | ✅ **LEAK** — `/equipment`·`/asset-requests`·`/equipment/loans` 를 HR_MANAGER 세션이 200 반환. PLAYER 는 `/asset-requests` 만 200 (나머지 403) |
 
 ---
 
@@ -87,7 +87,7 @@
 | Stress (baseline · no cache) | ✅ `stress-GM.json` p(95) 6,395ms · threshold 3배 초과 · RPS 40 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-GM-redis.json` p(95) **690ms** · threshold 통과 · RPS **139.7**  · VU peak 200· reqs 14,878 — **9.3× p95 개선 · 3.4× 처리량** |
 | 성능 — 3개 endpoint 개별 분해 러닝 | ➖ Redis 캐시로 병목 해소, 개별 분해 불필요 |
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | ✅ **LEAK** — `/plan-reports?filter=pending-final`·`/reports?filter=pending-final`·`/hiring-dispatches?filter=pending-dispatch` 3 endpoint 모두 PLAYER · HR · ASSET 세션에서 200 반환. **filter query 만 있고 role guard 없음** — GM 전용이어야 하는 pending-* 리스트가 모든 role 에 노출됨 |
 
 ---
 
@@ -107,7 +107,7 @@
 |---|---|---|
 | Smoke | ✅ `smoke-MEDICAL_DIRECTOR.json` 49/49 PASS, p(95) 195ms  · VU 2|
 | Stress | ✅ `stress-MEDICAL_DIRECTOR.json` p(95) 1,827ms · threshold 근접 · RPS 98 · VU peak 200 |
-| 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
+| 보안 — Cross-role 접근 차단 | ✅ **부분 LEAK** — `/injuries/active` 는 403 정상, `/medical-equipment-loan`·`/medical-expenses` 는 PLAYER · HR · ASSET 모두 200. **의료 개인정보 노출** (GDPR 관점 심각) |
 | 보안 — GDPR 개인정보 스코프 검증 | 🔲 guardian 계정 접근 범위 미검증 |
 
 ---
@@ -910,6 +910,44 @@
 | 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 🚨 Cross-Role RBAC 프로브 결과 요약 (`cross-role-test.json`)
+
+45 프로브 (3 attacker × 15 endpoint) → **23 LEAK / 22 BLOCKED (51% 취약).**
+
+| Owner 도메인 | Endpoint | PLAYER | HR_MANAGER | ASSET_MANAGER | 판정 |
+|---|---|---|---|---|---|
+| HR_MANAGER | `/hiring-surveys` | 🚨 200 | — | 🚨 200 | **LEAK** |
+| HR_MANAGER | `/plan-reports` | 🚨 200 | — | 🚨 200 | **LEAK** |
+| HR_MANAGER | `/recruitment/job-postings` | ✓ 403 | — | ✓ 403 | BLOCKED |
+| FINANCE_MANAGER | `/operating-expenses?seasonId=1` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
+| FINANCE_MANAGER | `/budget-control` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
+| FINANCE_MANAGER | `/financial-reports/1` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
+| ASSET_MANAGER | `/equipment` | ✓ 403 | 🚨 200 | — | **LEAK** |
+| ASSET_MANAGER | `/asset-requests` | 🚨 200 | 🚨 200 | — | **LEAK** |
+| ASSET_MANAGER | `/equipment/loans` | ✓ 403 | 🚨 200 | — | **LEAK** |
+| GM | `/plan-reports?filter=pending-final` | 🚨 200 | 🚨 200 | 🚨 200 | **LEAK (전 role)** |
+| GM | `/reports?filter=pending-final` | 🚨 200 | 🚨 200 | 🚨 200 | **LEAK (전 role)** |
+| GM | `/hiring-dispatches?filter=pending-dispatch` | 🚨 200 | 🚨 200 | 🚨 200 | **LEAK (전 role)** |
+| MEDICAL | `/injuries/active` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
+| MEDICAL | `/medical-equipment-loan` | 🚨 200 | 🚨 200 | 🚨 200 | **LEAK (전 role · GDPR)** |
+| MEDICAL | `/medical-expenses` | 🚨 200 | 🚨 200 | 🚨 200 | **LEAK (전 role · GDPR)** |
+| ADMIN | `/admin/audit-logs` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
+| ADMIN | `/admin/users` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
+
+**패턴 관찰:**
+- ✅ **FINANCE · ADMIN 도메인** — role guard 완벽 (전 endpoint 403)
+- ❌ **GM 도메인** — filter query 만 있고 role 검증 미들웨어 부재 (pending-* 리스트 전 role 노출)
+- ❌ **MEDICAL 도메인** — `/injuries/active` 는 정상, `/medical-equipment-loan`·`/medical-expenses` 는 open. 의료 개인정보 GDPR 위반 소지
+- ⚠️ **HR / ASSET 도메인** — endpoint 별 편차 (일부만 guard). 미들웨어 일괄 적용 안 됨
+
+**후속 조치 필요:**
+- `apps/api/src/hiring-survey/hiring-survey.routes.ts` · `apps/api/src/plan-report/plan-report.routes.ts` — `authorize(['HR_MANAGER', 'ADMIN'])` 유형 role guard 추가
+- `equipment.routes.ts`·`asset-request.routes.ts`·`equipment/loans` — ASSET_MANAGER · ADMIN 만 허용
+- `plan-report.routes.ts`·`report.routes.ts`·`hiring-dispatch.routes.ts` — filter=pending-* 는 GM · ADMIN 만
+- `medical-equipment-loan.routes.ts`·`medical-expense.routes.ts` — MEDICAL_DIRECTOR · ADMIN 만
 
 ---
 

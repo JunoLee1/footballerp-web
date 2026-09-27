@@ -132,6 +132,11 @@ const html = `<!doctype html>
     ${renderPentest()}
   </section>
 
+  <section>
+    <h2>🚨 Cross-Role RBAC Probe</h2>
+    ${renderCrossRole()}
+  </section>
+
   <div class="footer">Generated ${new Date().toISOString()} · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
 </body>
 </html>`
@@ -242,6 +247,32 @@ function renderPentest() {
       : `<span class="ok">HOLDS</span>`}
   </div>`
   return summary + `<table>${head}${body}</table>` + claim
+}
+
+function renderCrossRole() {
+  const p = path.join(DIR, 'cross-role-test.json')
+  if (!fs.existsSync(p)) return '<div class="missing">cross-role-test.json 없음.</div>'
+  const s = JSON.parse(fs.readFileSync(p, 'utf8'))
+  const rows = s.results
+  const leaks = rows.filter((r) => r.verdict === 'LEAK')
+  const blocked = rows.filter((r) => r.verdict === 'BLOCKED')
+  const summary = `<div style="margin-bottom:12px;font-size:14px">
+    <span class="ok">${blocked.length} BLOCKED</span> ·
+    <span class="bad">${leaks.length} LEAK</span> · 총 ${rows.length} 프로브
+  </div>`
+  const head = `<tr><th>Attacker</th><th>Owner</th><th>Endpoint</th><th>Status</th><th>Verdict</th></tr>`
+  const body = rows.map((r) => {
+    const cls = r.verdict === 'LEAK' ? 'bad' : r.verdict === 'BLOCKED' ? 'ok' : ''
+    const flag = r.verdict === 'LEAK' ? '🚨' : r.verdict === 'BLOCKED' ? '✓' : '·'
+    return `<tr>
+      <td>${r.attacker}</td>
+      <td>${r.owner}</td>
+      <td><code>${r.endpoint}</code></td>
+      <td class="num">${r.status}</td>
+      <td class="${cls}">${flag} ${r.verdict}</td>
+    </tr>`
+  }).join('\n')
+  return summary + `<table>${head}${body}</table>`
 }
 
 function renderChart(all) {

@@ -889,6 +889,328 @@
   </div>
   </section>
 
-  <div class="footer">Generated 2026-09-27T10:12:28.449Z · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
+  <section>
+    <h2>🚨 Cross-Role RBAC Probe</h2>
+    <div style="margin-bottom:12px;font-size:14px">
+    <span class="ok">22 BLOCKED</span> ·
+    <span class="bad">23 LEAK</span> · 총 45 프로브
+  </div><table><tr><th>Attacker</th><th>Owner</th><th>Endpoint</th><th>Status</th><th>Verdict</th></tr><tr>
+      <td>PLAYER</td>
+      <td>HR_MANAGER</td>
+      <td><code>/hiring-surveys</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>HR_MANAGER</td>
+      <td><code>/plan-reports</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>HR_MANAGER</td>
+      <td><code>/recruitment/job-postings</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>HR_MANAGER</td>
+      <td><code>/hiring-surveys</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>HR_MANAGER</td>
+      <td><code>/plan-reports</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>HR_MANAGER</td>
+      <td><code>/recruitment/job-postings</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>FINANCE_MANAGER</td>
+      <td><code>/operating-expenses?seasonId=1</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>FINANCE_MANAGER</td>
+      <td><code>/budget-control</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>FINANCE_MANAGER</td>
+      <td><code>/financial-reports/1</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>FINANCE_MANAGER</td>
+      <td><code>/operating-expenses?seasonId=1</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>FINANCE_MANAGER</td>
+      <td><code>/budget-control</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>FINANCE_MANAGER</td>
+      <td><code>/financial-reports/1</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>FINANCE_MANAGER</td>
+      <td><code>/operating-expenses?seasonId=1</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>FINANCE_MANAGER</td>
+      <td><code>/budget-control</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>FINANCE_MANAGER</td>
+      <td><code>/financial-reports/1</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>ASSET_MANAGER</td>
+      <td><code>/equipment</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>ASSET_MANAGER</td>
+      <td><code>/asset-requests</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>ASSET_MANAGER</td>
+      <td><code>/equipment/loans</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>ASSET_MANAGER</td>
+      <td><code>/equipment</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>ASSET_MANAGER</td>
+      <td><code>/asset-requests</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>ASSET_MANAGER</td>
+      <td><code>/equipment/loans</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>GM</td>
+      <td><code>/plan-reports?filter=pending-final</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>GM</td>
+      <td><code>/reports?filter=pending-final</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>GM</td>
+      <td><code>/hiring-dispatches?filter=pending-dispatch</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>GM</td>
+      <td><code>/plan-reports?filter=pending-final</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>GM</td>
+      <td><code>/reports?filter=pending-final</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>GM</td>
+      <td><code>/hiring-dispatches?filter=pending-dispatch</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>GM</td>
+      <td><code>/plan-reports?filter=pending-final</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>GM</td>
+      <td><code>/reports?filter=pending-final</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>GM</td>
+      <td><code>/hiring-dispatches?filter=pending-dispatch</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>MEDICAL_DIRECTOR</td>
+      <td><code>/injuries/active</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>MEDICAL_DIRECTOR</td>
+      <td><code>/medical-equipment-loan</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>MEDICAL_DIRECTOR</td>
+      <td><code>/medical-expenses</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>MEDICAL_DIRECTOR</td>
+      <td><code>/injuries/active</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>MEDICAL_DIRECTOR</td>
+      <td><code>/medical-equipment-loan</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>MEDICAL_DIRECTOR</td>
+      <td><code>/medical-expenses</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>MEDICAL_DIRECTOR</td>
+      <td><code>/injuries/active</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>MEDICAL_DIRECTOR</td>
+      <td><code>/medical-equipment-loan</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>MEDICAL_DIRECTOR</td>
+      <td><code>/medical-expenses</code></td>
+      <td class="num">200</td>
+      <td class="bad">🚨 LEAK</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>ADMIN</td>
+      <td><code>/admin/audit-logs</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>PLAYER</td>
+      <td>ADMIN</td>
+      <td><code>/admin/users</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>ADMIN</td>
+      <td><code>/admin/audit-logs</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>HR_MANAGER</td>
+      <td>ADMIN</td>
+      <td><code>/admin/users</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>ADMIN</td>
+      <td><code>/admin/audit-logs</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr>
+<tr>
+      <td>ASSET_MANAGER</td>
+      <td>ADMIN</td>
+      <td><code>/admin/users</code></td>
+      <td class="num">403</td>
+      <td class="ok">✓ BLOCKED</td>
+    </tr></table>
+  </section>
+
+  <div class="footer">Generated 2026-09-27T12:08:39.253Z · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
 </body>
 </html>
