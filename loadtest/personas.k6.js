@@ -209,6 +209,28 @@ const ALL_PERSONAS = [
       { path: '/auth/me', label: 'auth_me' },
     ],
   },
+  // GM 3 endpoint 개별 stress — 어느 게 병목인지 지목용 (baseline 6395ms 재현 시 어느 endpoint 가 주범인가)
+  {
+    name: 'GM_PLAN',
+    email: 'gm@club.com',
+    endpoints: [
+      { path: '/plan-reports?filter=pending-final', label: 'gm_plan_reports' },
+    ],
+  },
+  {
+    name: 'GM_REPORTS',
+    email: 'gm@club.com',
+    endpoints: [
+      { path: '/reports?filter=pending-final', label: 'gm_reports' },
+    ],
+  },
+  {
+    name: 'GM_DISPATCHES',
+    email: 'gm@club.com',
+    endpoints: [
+      { path: '/hiring-dispatches?filter=pending-dispatch', label: 'gm_hiring_dispatches' },
+    ],
+  },
 ]
 
 const PERSONAS = PERSONA_FILTER

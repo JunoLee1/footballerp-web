@@ -14,6 +14,8 @@ const PROXY = process.env.HTTP_PROXY || process.env.HTTPS_PROXY
 const proxyArg = PROXY ? ['-x', PROXY] : []
 if (PROXY) console.log(`[proxy] routing via ${PROXY}`)
 
+// GM 은 isAdminLike (`permissions.ts:isAdminLike`) 로 전 도메인 접근 정당함 →
+// attacker 프로브에서 제외. 대신 `gm-access-smoke.mjs` 로 GM 이 정상 접근하는지만 확인.
 const PERSONAS = [
   { label: 'PLAYER', email: 'player@club.com' },
   { label: 'HR_MANAGER', email: 'hr@club.com' },

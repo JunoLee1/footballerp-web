@@ -43,11 +43,15 @@ export class ReportController {
 
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { type, status } = req.query as { type?: string; status?: string };
+      const { type, status, filter } = req.query as { type?: string; status?: string; filter?: string };
       const filters: { type?: string; status?: string } = {};
       if (type !== undefined) filters.type = type;
       if (status !== undefined) filters.status = status;
-      const { id: userId, departmentCategories = [] } = requireUser(req);
+      const { id: userId, role, departmentCategories = [] } = requireUser(req);
+      // pending-* 큐 조회는 GM/ADMIN 계층 전용 (예: /reports?filter=pending-final)
+      if (filter && filter.startsWith("pending-") && !isAdminLike(role)) {
+        throw new AppError(403, "FORBIDDEN");
+      }
       res.json(
         await this.service.list(
           userId,

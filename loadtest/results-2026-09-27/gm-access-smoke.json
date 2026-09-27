@@ -1,0 +1,126 @@
+{
+  "generatedAt": "2026-09-27T12:44:03.648Z",
+  "baseUrl": "http://localhost:3001/api",
+  "proxy": "http://127.0.0.1:3002",
+  "results": [
+    {
+      "domain": "HR",
+      "path": "/hiring-surveys",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "HR",
+      "path": "/plan-reports",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "HR",
+      "path": "/recruitment/job-postings",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "FINANCE",
+      "path": "/operating-expenses?seasonId=1",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "FINANCE",
+      "path": "/budget-control",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "FINANCE",
+      "path": "/financial-reports/1",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "ASSET",
+      "path": "/equipment",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "ASSET",
+      "path": "/asset-requests",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "ASSET",
+      "path": "/equipment/loans",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "GM (owner)",
+      "path": "/plan-reports?filter=pending-final",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "GM (owner)",
+      "path": "/reports?filter=pending-final",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "GM (owner)",
+      "path": "/hiring-dispatches?filter=pending-dispatch",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "MEDICAL",
+      "path": "/injuries/active",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "MEDICAL",
+      "path": "/medical-equipment-loan",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "MEDICAL",
+      "path": "/medical-expenses",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "ADMIN",
+      "path": "/admin/audit-logs",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    },
+    {
+      "domain": "ADMIN",
+      "path": "/admin/users",
+      "status": 200,
+      "verdict": "AUTHORIZED",
+      "ok": true
+    }
+  ]
+}
