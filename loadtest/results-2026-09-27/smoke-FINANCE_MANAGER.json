@@ -1,0 +1,191 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "FINANCE_MANAGER": {
+                "path": "::FINANCE_MANAGER",
+                "id": "20de22058bcfd544410af92cd0ae0e9c",
+                "groups": {},
+                "checks": {
+                        "FINANCE_MANAGER list_operating_expenses status<500": {
+                            "name": "FINANCE_MANAGER list_operating_expenses status<500",
+                            "path": "::FINANCE_MANAGER::FINANCE_MANAGER list_operating_expenses status<500",
+                            "id": "de29d264d6c3a75aa1e4fda5923e2e71",
+                            "passes": 16,
+                            "fails": 0
+                        },
+                        "FINANCE_MANAGER list_budget_control status<500": {
+                            "passes": 16,
+                            "fails": 0,
+                            "name": "FINANCE_MANAGER list_budget_control status<500",
+                            "path": "::FINANCE_MANAGER::FINANCE_MANAGER list_budget_control status<500",
+                            "id": "c83b30df0d82852c79fba3668026754d"
+                        },
+                        "FINANCE_MANAGER get_financial_report_season1 status<500": {
+                            "name": "FINANCE_MANAGER get_financial_report_season1 status<500",
+                            "path": "::FINANCE_MANAGER::FINANCE_MANAGER get_financial_report_season1 status<500",
+                            "id": "7b8b5d7ae7fe90372d31d793aa3da7ad",
+                            "passes": 16,
+                            "fails": 0
+                        },
+                        "FINANCE_MANAGER list_budget_plan_requests status<500": {
+                            "path": "::FINANCE_MANAGER::FINANCE_MANAGER list_budget_plan_requests status<500",
+                            "id": "e12d71f8c219a45a34fb054110d8e854",
+                            "passes": 16,
+                            "fails": 0,
+                            "name": "FINANCE_MANAGER list_budget_plan_requests status<500"
+                        }
+                    },
+                "name": "FINANCE_MANAGER"
+            }
+        },
+        "checks": {}
+    },
+    "metrics": {
+        "http_req_sending": {
+            "med": 0.014,
+            "max": 0.501,
+            "p(90)": 0.038000000000000006,
+            "p(95)": 0.05619999999999998,
+            "avg": 0.025646153846153822,
+            "min": 0.003
+        },
+        "http_req_waiting": {
+            "p(90)": 200.1488,
+            "p(95)": 241.89859999999996,
+            "avg": 91.55092307692307,
+            "min": 3.798,
+            "med": 72.425,
+            "max": 275.49
+        },
+        "http_req_duration": {
+            "med": 72.57,
+            "max": 275.532,
+            "p(90)": 200.245,
+            "p(95)": 242.47339999999994,
+            "avg": 91.6987692307692,
+            "min": 3.954,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 275.532,
+            "p(90)": 200.245,
+            "p(95)": 242.47339999999994,
+            "avg": 91.6987692307692,
+            "min": 3.954,
+            "med": 72.57
+        },
+        "persona_latency": {
+            "max": 275.532,
+            "p(90)": 201.018,
+            "p(95)": 243.36379999999994,
+            "avg": 90.83006249999998,
+            "min": 3.954,
+            "med": 71.6335
+        },
+        "iterations": {
+            "count": 16,
+            "rate": 1.4170484209873728
+        },
+        "http_reqs": {
+            "count": 65,
+            "rate": 5.756759210261202
+        },
+        "vus": {
+            "min": 2,
+            "max": 2,
+            "value": 2
+        },
+        "iteration_duration": {
+            "avg": 1367.4576640000002,
+            "min": 1172.238834,
+            "med": 1324.5478750000002,
+            "max": 1751.486,
+            "p(90)": 1629.03025,
+            "p(95)": 1749.682844
+        },
+        "data_sent": {
+            "count": 29869,
+            "rate": 2645.36370540449
+        },
+        "data_received": {
+            "count": 1472877,
+            "rate": 130446.12669741367
+        },
+        "checks": {
+            "fails": 0,
+            "passes": 64,
+            "value": 1
+        },
+        "group_duration": {
+            "med": 317.40937499999995,
+            "max": 750.998792,
+            "p(90)": 627.9409585000001,
+            "p(95)": 748.54954175,
+            "avg": 364.4572734375001,
+            "min": 171.5865
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 65,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "http_req_tls_handshaking": {
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0
+        },
+        "http_req_receiving": {
+            "med": 0.072,
+            "max": 1.176,
+            "p(90)": 0.1922,
+            "p(95)": 0.3267999999999996,
+            "avg": 0.12219999999999999,
+            "min": 0.009
+        },
+        "vus_max": {
+            "value": 2,
+            "min": 2,
+            "max": 2
+        },
+        "http_req_blocked": {
+            "avg": 0.05133846153846149,
+            "min": 0.001,
+            "med": 0.004,
+            "max": 2.16,
+            "p(90)": 0.010800000000000004,
+            "p(95)": 0.01639999999999999
+        },
+        "http_req_connecting": {
+            "avg": 0.015153846153846155,
+            "min": 0,
+            "med": 0,
+            "max": 0.683,
+            "p(90)": 0,
+            "p(95)": 0
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "FINANCE_MANAGER": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkZJTkFOQ0VfTUFOQUdFUiIsImRlcGFydG1lbnRDYXRlZ29yaWVzIjpbIkZJTkFOQ0UiXSwidGVhbUlkIjpudWxsLCJjbHViSWQiOjEsImlzRGVtbyI6ZmFsc2UsImlhdCI6MTc5MDQ5NzMyNywiZXhwIjoxNzkwNTAwOTI3fQ.xJtFrqVZwK1DrQehMcN9UPkhx01ejDvBhVU8V4YOP_M"
+            }
+    }
+}

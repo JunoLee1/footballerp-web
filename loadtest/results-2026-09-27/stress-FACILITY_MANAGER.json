@@ -1,0 +1,184 @@
+{
+    "root_group": {
+        "groups": {
+            "FACILITY_MANAGER": {
+                "groups": {},
+                "checks": {
+                        "FACILITY_MANAGER fm_list_facility status<500": {
+                            "fails": 0,
+                            "name": "FACILITY_MANAGER fm_list_facility status<500",
+                            "path": "::FACILITY_MANAGER::FACILITY_MANAGER fm_list_facility status<500",
+                            "id": "9c20bbea54cdc78e2f25cb16e6714675",
+                            "passes": 5388
+                        },
+                        "FACILITY_MANAGER fm_list_reservations status<500": {
+                            "name": "FACILITY_MANAGER fm_list_reservations status<500",
+                            "path": "::FACILITY_MANAGER::FACILITY_MANAGER fm_list_reservations status<500",
+                            "id": "a3f60e1a3c3704d580422fad1946ac5e",
+                            "passes": 5388,
+                            "fails": 0
+                        },
+                        "FACILITY_MANAGER fm_list_equipment status<500": {
+                            "name": "FACILITY_MANAGER fm_list_equipment status<500",
+                            "path": "::FACILITY_MANAGER::FACILITY_MANAGER fm_list_equipment status<500",
+                            "id": "f8b1cc871836b98eece9de3fedf54316",
+                            "passes": 5388,
+                            "fails": 0
+                        }
+                    },
+                "name": "FACILITY_MANAGER",
+                "path": "::FACILITY_MANAGER",
+                "id": "ed3cb80f2e98ae8a6c25399634452957"
+            }
+        },
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "metrics": {
+        "http_reqs": {
+            "count": 16165,
+            "rate": 152.3575212829037
+        },
+        "http_req_tls_handshaking": {
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0
+        },
+        "checks": {
+            "fails": 0,
+            "passes": 16164,
+            "value": 1
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "iterations": {
+            "count": 5388,
+            "rate": 50.78269871155491
+        },
+        "http_req_sending": {
+            "min": 0.002,
+            "med": 0.008,
+            "max": 39.712,
+            "p(90)": 0.018,
+            "p(95)": 0.026,
+            "avg": 0.0251961645530453
+        },
+        "data_sent": {
+            "count": 7397922,
+            "rate": 69726.5115103162
+        },
+        "http_req_blocked": {
+            "avg": 0.019204639653572334,
+            "min": 0,
+            "med": 0.003,
+            "max": 28.27,
+            "p(90)": 0.006,
+            "p(95)": 0.011
+        },
+        "http_req_connecting": {
+            "med": 0,
+            "max": 11.724,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.008942406433652952,
+            "min": 0
+        },
+        "http_req_receiving": {
+            "med": 0.027,
+            "max": 20.569,
+            "p(90)": 0.061,
+            "p(95)": 0.086,
+            "avg": 0.053758057531703714,
+            "min": 0.006
+        },
+        "group_duration": {
+            "p(95)": 2206.8198852,
+            "avg": 716.4479888195985,
+            "min": 5.656959,
+            "med": 482.35118750000004,
+            "max": 3625.920333,
+            "p(90)": 1664.8958419
+        },
+        "vus_max": {
+            "value": 200,
+            "min": 200,
+            "max": 200
+        },
+        "data_received": {
+            "count": 5303126,
+            "rate": 49982.748679920805
+        },
+        "http_req_failed": {
+            "passes": 5388,
+            "fails": 10777,
+            "thresholds": {
+                "rate<0.10": true
+            },
+            "value": 0.33331271265078877
+        },
+        "http_req_duration": {
+            "avg": 238.59266371791026,
+            "min": 0.214,
+            "med": 79.172,
+            "max": 2872.642,
+            "p(90)": 663.5404000000001,
+            "p(95)": 1043.4354,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_waiting": {
+            "p(90)": 663.2808000000001,
+            "p(95)": 1043.3739999999998,
+            "avg": 238.51370949582457,
+            "min": 0.183,
+            "med": 79.142,
+            "max": 2872.566
+        },
+        "persona_latency": {
+            "avg": 238.5883473768881,
+            "min": 0.214,
+            "med": 79.1605,
+            "max": 2872.642,
+            "p(90)": 663.5608000000001,
+            "p(95)": 1043.4365500000001
+        },
+        "vus": {
+            "value": 3,
+            "min": 3,
+            "max": 200
+        },
+        "iteration_duration": {
+            "max": 4629.898417,
+            "p(90)": 2666.6418295000003,
+            "p(95)": 3211.8031602999986,
+            "avg": 1718.8465061507084,
+            "min": 1006.853708,
+            "med": 1484.7085
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 351.5319061891071,
+            "min": 1.781,
+            "med": 210.177,
+            "max": 2872.642,
+            "p(90)": 840.4144,
+            "p(95)": 1277.7075999999993
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "FACILITY_MANAGER": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzEsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkZBQ0lMSVRZX01BTkFHRVIiLCJkZXBhcnRtZW50Q2F0ZWdvcmllcyI6WyJPUEVSQVRJT05TIl0sInRlYW1JZCI6bnVsbCwiY2x1YklkIjoxLCJpc0RlbW8iOmZhbHNlLCJpYXQiOjE3OTA1MDMwMTYsImV4cCI6MTc5MDUwNjYxNn0.vmP_IyAueFWieO6dMmeWeXFu7v0a6t-AmsScw_BHGz4"
+            }
+    }
+}

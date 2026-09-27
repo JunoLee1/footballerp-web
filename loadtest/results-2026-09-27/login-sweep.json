@@ -1,0 +1,171 @@
+{
+  "generatedAt": "2026-09-27T09:06:15.011Z",
+  "results": [
+    {
+      "label": "ADMIN",
+      "email": "admin@club.com",
+      "status": 200
+    },
+    {
+      "label": "SUPERADMIN",
+      "email": "superadmin@platform.com",
+      "status": 200
+    },
+    {
+      "label": "HR_STAFF",
+      "email": "hr.staff@club.com",
+      "status": 200
+    },
+    {
+      "label": "FINANCE_STAFF",
+      "email": "finance.staff@club.com",
+      "status": 200
+    },
+    {
+      "label": "ASSET_STAFF",
+      "email": "asset.staff@club.com",
+      "status": 200
+    },
+    {
+      "label": "FACILITY_STAFF",
+      "email": "facility.staff@club.com",
+      "status": 200
+    },
+    {
+      "label": "FACILITY_MANAGER",
+      "email": "facility.manager@club.com",
+      "status": 200
+    },
+    {
+      "label": "ASSISTANT_COACH",
+      "email": "assistant@club.com",
+      "status": 200
+    },
+    {
+      "label": "ATTACKING_COACH",
+      "email": "attacking@club.com",
+      "status": 200
+    },
+    {
+      "label": "DEFENSIVE_COACH",
+      "email": "defensive@club.com",
+      "status": 200
+    },
+    {
+      "label": "GK_COACH",
+      "email": "gk@club.com",
+      "status": 429
+    },
+    {
+      "label": "PHYSICAL_COACH",
+      "email": "physical@club.com",
+      "status": 429
+    },
+    {
+      "label": "SETPIECE_COACH",
+      "email": "setpiece@club.com",
+      "status": 429
+    },
+    {
+      "label": "MEDICAL_STAFF",
+      "email": "medical@club.com",
+      "status": 429
+    },
+    {
+      "label": "YOUTH_COACH_1",
+      "email": "youth.coach1@club.com",
+      "status": 429
+    },
+    {
+      "label": "YOUTH_COACH_2",
+      "email": "youth.coach2@club.com",
+      "status": 429
+    },
+    {
+      "label": "FRONT_OFFICE",
+      "email": "fo@club.com",
+      "status": 429
+    },
+    {
+      "label": "TECHNICAL_DIRECTOR",
+      "email": "td@club.com",
+      "status": 429
+    },
+    {
+      "label": "GUARDIAN_1",
+      "email": "guardian1@club.com",
+      "status": 429
+    },
+    {
+      "label": "GUARDIAN_2",
+      "email": "guardian2@club.com",
+      "status": 429
+    },
+    {
+      "label": "GUARDIAN_3",
+      "email": "guardian3@club.com",
+      "status": 429
+    },
+    {
+      "label": "GUARDIAN_4",
+      "email": "guardian4@club.com",
+      "status": 429
+    },
+    {
+      "label": "GUARDIAN_5",
+      "email": "guardian5@club.com",
+      "status": 429
+    },
+    {
+      "label": "GUARDIAN_6",
+      "email": "guardian6@club.com",
+      "status": 429
+    },
+    {
+      "label": "GUARDIAN_7",
+      "email": "guardian7@club.com",
+      "status": 429
+    },
+    {
+      "label": "GUARDIAN_8",
+      "email": "guardian8@club.com",
+      "status": 429
+    },
+    {
+      "label": "PLAYER_JIWON",
+      "email": "jiwon.kim@email.com",
+      "status": 429
+    },
+    {
+      "label": "PLAYER_SEONGMIN",
+      "email": "seongmin.lee@email.com",
+      "status": 429
+    },
+    {
+      "label": "PLAYER_JUNHYUK",
+      "email": "junhyuk.park@email.com",
+      "status": 429
+    },
+    {
+      "label": "PLAYER_YUNA",
+      "email": "yuna.choi@email.com",
+      "status": 429
+    },
+    {
+      "label": "PLAYER_MINSU",
+      "email": "minsu.jung@email.com",
+      "status": 429
+    },
+    {
+      "label": "PLAYER_SOHEE",
+      "email": "sohee.han@email.com",
+      "status": 429
+    },
+    {
+      "label": "PLAYER_TAEJUN",
+      "email": "taejun.oh@email.com",
+      "status": 429
+    }
+  ],
+  "retriedAt": "2026-09-27T09:08:58.795Z"
+}

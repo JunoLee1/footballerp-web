@@ -1,0 +1,184 @@
+{
+    "root_group": {
+        "groups": {
+            "ASSET_MANAGER": {
+                "name": "ASSET_MANAGER",
+                "path": "::ASSET_MANAGER",
+                "id": "18e9fd104e329ead3db7fe4acf6371bc",
+                "groups": {},
+                "checks": {
+                        "ASSET_MANAGER list_equipment_items status<500": {
+                            "name": "ASSET_MANAGER list_equipment_items status<500",
+                            "path": "::ASSET_MANAGER::ASSET_MANAGER list_equipment_items status<500",
+                            "id": "0930050ee3c988c427c015afdd35d9ee",
+                            "passes": 18,
+                            "fails": 0
+                        },
+                        "ASSET_MANAGER list_asset_requests status<500": {
+                            "passes": 18,
+                            "fails": 0,
+                            "name": "ASSET_MANAGER list_asset_requests status<500",
+                            "path": "::ASSET_MANAGER::ASSET_MANAGER list_asset_requests status<500",
+                            "id": "10f7acbf00857e9d3a4efa73c2ae3ff3"
+                        },
+                        "ASSET_MANAGER list_equipment_loans status<500": {
+                            "name": "ASSET_MANAGER list_equipment_loans status<500",
+                            "path": "::ASSET_MANAGER::ASSET_MANAGER list_equipment_loans status<500",
+                            "id": "ed6c35c0c65c3b10d4c2d1c3e8edea3a",
+                            "passes": 18,
+                            "fails": 0
+                        }
+                    }
+            }
+        },
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "metrics": {
+        "http_reqs": {
+            "rate": 5.028065289153521,
+            "count": 55
+        },
+        "checks": {
+            "passes": 54,
+            "fails": 0,
+            "value": 1
+        },
+        "http_req_duration": {
+            "max": 236.428,
+            "p(90)": 163.97100000000003,
+            "p(95)": 206.53929999999994,
+            "avg": 58.206727272727285,
+            "min": 3.638,
+            "med": 19.107,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_sending": {
+            "avg": 0.025090909090909087,
+            "min": 0.004,
+            "med": 0.013,
+            "max": 0.205,
+            "p(90)": 0.048400000000000006,
+            "p(95)": 0.0852
+        },
+        "data_received": {
+            "rate": 37096.791445268,
+            "count": 405787
+        },
+        "data_sent": {
+            "count": 24685,
+            "rate": 2256.6871211409943
+        },
+        "group_duration": {
+            "max": 445.463958,
+            "p(90)": 397.4338956,
+            "p(95)": 423.2156687,
+            "avg": 167.69709261111112,
+            "min": 16.153834,
+            "med": 74.82287550000001
+        },
+        "iterations": {
+            "count": 18,
+            "rate": 1.645548640086607
+        },
+        "vus_max": {
+            "value": 2,
+            "min": 2,
+            "max": 2
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(90)": 163.97100000000003,
+            "p(95)": 206.53929999999994,
+            "avg": 58.206727272727285,
+            "min": 3.638,
+            "med": 19.107,
+            "max": 236.428
+        },
+        "http_req_waiting": {
+            "avg": 58.05874545454545,
+            "min": 3.607,
+            "med": 19.031,
+            "max": 236.355,
+            "p(90)": 163.80900000000003,
+            "p(95)": 206.31399999999996
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 55,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "http_req_blocked": {
+            "med": 0.004,
+            "max": 2.527,
+            "p(90)": 0.0176,
+            "p(95)": 0.163799999999999,
+            "avg": 0.0713272727272727,
+            "min": 0.002
+        },
+        "http_req_connecting": {
+            "min": 0,
+            "med": 0,
+            "max": 0.544,
+            "p(90)": 0,
+            "p(95)": 0.06659999999999947,
+            "avg": 0.018709090909090908
+        },
+        "persona_latency": {
+            "min": 3.638,
+            "med": 18.692999999999998,
+            "max": 236.428,
+            "p(90)": 151.2519,
+            "p(95)": 199.25734999999992,
+            "avg": 55.57155555555556
+        },
+        "iteration_duration": {
+            "max": 1446.345625,
+            "p(90)": 1398.408058,
+            "p(95)": 1423.8031643,
+            "avg": 1169.7683633333336,
+            "min": 1017.771625,
+            "med": 1079.8276664999999
+        },
+        "http_req_tls_handshaking": {
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0
+        },
+        "http_req_receiving": {
+            "p(90)": 0.17960000000000004,
+            "p(95)": 0.21769999999999998,
+            "avg": 0.12289090909090909,
+            "min": 0.018,
+            "med": 0.065,
+            "max": 1.984
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "vus": {
+            "value": 2,
+            "min": 2,
+            "max": 2
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "ASSET_MANAGER": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTUsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkFTU0VUX01BTkFHRVIiLCJkZXBhcnRtZW50Q2F0ZWdvcmllcyI6WyJPUEVSQVRJT05TIl0sInRlYW1JZCI6bnVsbCwiY2x1YklkIjoxLCJpc0RlbW8iOmZhbHNlLCJpYXQiOjE3OTA0OTczMzksImV4cCI6MTc5MDUwMDkzOX0.SJb3mDgftDHsTODRHT08IEfarn8LeDw7iZC6dkOLg3I"
+            }
+    }
+}

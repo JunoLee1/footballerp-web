@@ -6,6 +6,7 @@ import { writeAuditLog } from "../lib/auditLog";
 import { encrypt } from "../lib/crypto";
 import { hashPassword } from "../lib/hash";
 import { isAdminLike } from "../lib/permissions";
+import { cached } from "../lib/cache";
 import type { HiringDocumentService } from "../hiring-document/hiring-document.service";
 import { NotificationRepository } from "../notification/notification.repo";
 import { HiringDispatchRepository } from "./hiring-dispatch.repo";
@@ -64,15 +65,16 @@ export class HiringDispatchService {
     status?: string,
   ) {
     const asStatus = status as any;
+    const cacheKey = `hiring-dispatches:list:${userId}:${role}:${filter ?? ""}:${status ?? ""}`;
     switch (filter) {
       case "me":
         return this.repo.findByCreator(userId, asStatus);
       case "pending-budget":
-        return this.repo.findPendingForBudget();
+        return cached(cacheKey, 30, () => this.repo.findPendingForBudget());
       case "pending-dispatch":
-        return this.repo.findPendingForDispatch();
+        return cached(cacheKey, 30, () => this.repo.findPendingForDispatch());
       case "pending-execution":
-        return this.repo.findPendingForExecution();
+        return cached(cacheKey, 30, () => this.repo.findPendingForExecution());
       case "all":
         if (!isAdminLike(role)) throw new AppError(403, "FORBIDDEN");
         return this.repo.findAll(asStatus);

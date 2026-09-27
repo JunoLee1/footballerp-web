@@ -5,6 +5,7 @@ import { promoteTiers, type PromotedTier } from "./promotion";
 import type { KnapsackService, KnapsackGroup } from "../budget/knapsack.service";
 import type { BudgetPlanNotifyHook } from "./draft";
 import { autoGenBudgetHeaderFromPlan } from "./auto-header";
+import { cached } from "../lib/cache";
 
 interface Reviewer {
   userId: number;
@@ -121,6 +122,10 @@ export class BudgetPlanRequestService {
   }
 
   async list(seasonId: number) {
+    return cached(`budget-plan-requests:season:${seasonId}`, 30, () => this.listUncached(seasonId));
+  }
+
+  private async listUncached(seasonId: number) {
     // 신청 목록을 조회하면서 requestedBy 를 include. Prisma 는 ownerType(String)
     // 에 조건부 relation include 를 지원하지 않으므로 (Team/Department 는 서로
     // 다른 모델이고 ownerId 는 discriminator 없이 저장됨), team/department 이름은

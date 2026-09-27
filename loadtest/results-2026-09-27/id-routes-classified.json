@@ -1,0 +1,2214 @@
+{
+  "tested": [
+    "GET /players/:id",
+    "GET /notifications/:id",
+    "PATCH /notifications/:id/read",
+    "GET /contracts/:id",
+    "GET /employee-contracts/:id",
+    "GET /financial-reports/:id",
+    "GET /medical-expenses/:id",
+    "GET /operating-expenses/:id",
+    "GET /injuries/:id",
+    "GET /payroll/:id"
+  ],
+  "buckets": {
+    "definite": [
+      {
+        "method": "GET",
+        "path": "/academy-fees/:id",
+        "prefix": "/academy-fees",
+        "file": "academy-fee/academy-fee.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/academy-fees/:id/admin-submit",
+        "prefix": "/academy-fees",
+        "file": "academy-fee/academy-fee.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/academy-fees/:id/approve",
+        "prefix": "/academy-fees",
+        "file": "academy-fee/academy-fee.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/academy-fees/:id/first-approve",
+        "prefix": "/academy-fees",
+        "file": "academy-fee/academy-fee.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/academy-fees/:id/receipt",
+        "prefix": "/academy-fees",
+        "file": "academy-fee/academy-fee.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/academy-fees/:id/staff-upload-proof",
+        "prefix": "/academy-fees",
+        "file": "academy-fee/academy-fee.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/academy-fees/:id/submit-proof",
+        "prefix": "/academy-fees",
+        "file": "academy-fee/academy-fee.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/academy-fees/:id/toss-confirm",
+        "prefix": "/academy-fees",
+        "file": "academy-fee/academy-fee.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/academy-fees/:id/upload-proof",
+        "prefix": "/academy-fees",
+        "file": "academy-fee/academy-fee.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/acquisition-surveys/:id",
+        "prefix": "/acquisition-surveys",
+        "file": "acquisition-survey/acquisition-survey.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/acquisition-surveys/:id/close",
+        "prefix": "/acquisition-surveys",
+        "file": "acquisition-survey/acquisition-survey.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/acquisition-surveys/:id/responses",
+        "prefix": "/acquisition-surveys",
+        "file": "acquisition-survey/acquisition-survey.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/acquisition-surveys/:id/responses",
+        "prefix": "/acquisition-surveys",
+        "file": "acquisition-survey/acquisition-survey.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/auth/users/:id/gdpr-erasure",
+        "prefix": "/auth",
+        "file": "auth/auth.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/auth/users/:id/gdpr-export",
+        "prefix": "/auth",
+        "file": "auth/auth.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/budget-category-plans/:id/mandatory-minimum",
+        "prefix": "/",
+        "file": "mandatory-minimum/mandatory-minimum.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/budget-category-plans/:id/mandatory-minimum/history",
+        "prefix": "/",
+        "file": "mandatory-minimum/mandatory-minimum.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/budget-control/:id",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/budget-control/:id",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/budget-control/:id/adjustments",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/budget-control/:id/adjustments/:adjId/approve",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/budget-control/:id/adjustments/:adjId/reject",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/budget-control/:id/approve",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/budget-control/:id/available",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/budget-control/:id/lines",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/budget-control/:id/lines/:lineId",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/budget-control/:id/lines/:lineId",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/budget-control/:id/submit",
+        "prefix": "/budget-control",
+        "file": "budget-control/budget-control.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/budget-override-logs/:id/review",
+        "prefix": "/",
+        "file": "budget-plan/plan-request.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/contracts/:id/bonuses",
+        "prefix": "/contracts",
+        "file": "contract/contract.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/contracts/:id/buyout",
+        "prefix": "/contracts",
+        "file": "contract/contract.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/contracts/:id/extensions",
+        "prefix": "/contracts",
+        "file": "contract/contract.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/contracts/:id/signing-bonus-paid",
+        "prefix": "/contracts",
+        "file": "contract/contract.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/contracts/:id/status",
+        "prefix": "/contracts",
+        "file": "contract/contract.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/employee-contracts/:id/cancel",
+        "prefix": "/employee-contracts",
+        "file": "employee-contract/employee-contract.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/employee-contracts/:id/issue",
+        "prefix": "/employee-contracts",
+        "file": "employee-contract/employee-contract.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/employee-contracts/:id/sign",
+        "prefix": "/employee-contracts",
+        "file": "employee-contract/employee-contract.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/hiring-automation/compliance-deadlines/:id",
+        "prefix": "/hiring-automation",
+        "file": "hiring-automation/hiring-automation.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-automation/compliance-deadlines/:id",
+        "prefix": "/hiring-automation",
+        "file": "hiring-automation/hiring-automation.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/hiring-automation/ibi-configs/:id",
+        "prefix": "/hiring-automation",
+        "file": "hiring-automation/hiring-automation.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-automation/ibi-configs/:id",
+        "prefix": "/hiring-automation",
+        "file": "hiring-automation/hiring-automation.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/hiring-dispatches/:id",
+        "prefix": "/hiring-dispatches",
+        "file": "hiring-dispatch/hiring-dispatch.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-dispatches/:id/budget-reject",
+        "prefix": "/hiring-dispatches",
+        "file": "hiring-dispatch/hiring-dispatch.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-dispatches/:id/budget-reverify",
+        "prefix": "/hiring-dispatches",
+        "file": "hiring-dispatch/hiring-dispatch.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-dispatches/:id/cancel",
+        "prefix": "/hiring-dispatches",
+        "file": "hiring-dispatch/hiring-dispatch.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-dispatches/:id/complete",
+        "prefix": "/hiring-dispatches",
+        "file": "hiring-dispatch/hiring-dispatch.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-dispatches/:id/dispatch",
+        "prefix": "/hiring-dispatches",
+        "file": "hiring-dispatch/hiring-dispatch.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-dispatches/:id/dispatch-approve",
+        "prefix": "/hiring-dispatches",
+        "file": "hiring-dispatch/hiring-dispatch.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-dispatches/:id/dispatch-reject",
+        "prefix": "/hiring-dispatches",
+        "file": "hiring-dispatch/hiring-dispatch.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-documents/:id/review",
+        "prefix": "/hiring-documents",
+        "file": "hiring-document/hiring-document.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/hiring-surveys/:id",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/hiring-surveys/:id",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-surveys/:id",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/hiring-surveys/:id/close",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/hiring-surveys/:id/open",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/hiring-surveys/:id/participation-rate",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/hiring-surveys/:id/respond",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/hiring-surveys/:id/responses/:responseId",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/hiring-surveys/:id/responses/:responseId/approve",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/hiring-surveys/:id/responses/:responseId/reject",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/hiring-surveys/:id/responses/:responseId/submit",
+        "prefix": "/hiring-surveys",
+        "file": "hiring-survey/hiring-survey.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/injuries/:id/assessment",
+        "prefix": "/injuries",
+        "file": "injury/injury.routes"
+      },
+      {
+        "method": "PUT",
+        "path": "/injuries/:id/assessment",
+        "prefix": "/injuries",
+        "file": "injury/injury.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/injuries/:id/external-reports",
+        "prefix": "/injuries",
+        "file": "injury/injury.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/injuries/:id/external-reports/:reportId/status",
+        "prefix": "/injuries",
+        "file": "injury/injury.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/injuries/:id/report",
+        "prefix": "/injuries",
+        "file": "injury/injury.routes"
+      },
+      {
+        "method": "PUT",
+        "path": "/injuries/:id/report",
+        "prefix": "/injuries",
+        "file": "injury/injury.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/injuries/:id/report/sign",
+        "prefix": "/injuries",
+        "file": "injury/injury.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/injuries/:id/report/sign",
+        "prefix": "/injuries",
+        "file": "injury/injury.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/injuries/:id/status",
+        "prefix": "/injuries",
+        "file": "injury/injury.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/inventory/:id/quantity",
+        "prefix": "/inventory",
+        "file": "inventory/inventory.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/ledger/:id",
+        "prefix": "/ledger",
+        "file": "ledger/ledger.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/ledger/:id/refund",
+        "prefix": "/ledger",
+        "file": "ledger/ledger.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/medical-equipment-loan/:id",
+        "prefix": "/medical-equipment-loan",
+        "file": "medical-equipment-loan/medical-equipment-loan.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/medical-equipment-loan/:id/approve",
+        "prefix": "/medical-equipment-loan",
+        "file": "medical-equipment-loan/medical-equipment-loan.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/medical-equipment-loan/:id/reject",
+        "prefix": "/medical-equipment-loan",
+        "file": "medical-equipment-loan/medical-equipment-loan.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/medical-expenses/:id",
+        "prefix": "/medical-expenses",
+        "file": "medical-expense/medical-expense.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/medical-expenses/:id/approve",
+        "prefix": "/medical-expenses",
+        "file": "medical-expense/medical-expense.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/medical-expenses/:id/leader-approve",
+        "prefix": "/medical-expenses",
+        "file": "medical-expense/medical-expense.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/medical-expenses/:id/leader-reject",
+        "prefix": "/medical-expenses",
+        "file": "medical-expense/medical-expense.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/medical-expenses/:id/reject",
+        "prefix": "/medical-expenses",
+        "file": "medical-expense/medical-expense.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/medical-expenses/:id/submit",
+        "prefix": "/medical-expenses",
+        "file": "medical-expense/medical-expense.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/monthly-settlement/:id",
+        "prefix": "/monthly-settlement",
+        "file": "monthly-settlement/monthly-settlement.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/monthly-settlement/:id/approve",
+        "prefix": "/monthly-settlement",
+        "file": "monthly-settlement/monthly-settlement.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/monthly-settlement/:id/approve-first",
+        "prefix": "/monthly-settlement",
+        "file": "monthly-settlement/monthly-settlement.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/monthly-settlement/:id/export",
+        "prefix": "/monthly-settlement",
+        "file": "monthly-settlement/monthly-settlement.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/monthly-settlement/:id/note",
+        "prefix": "/monthly-settlement",
+        "file": "monthly-settlement/monthly-settlement.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/monthly-settlement/:id/reject",
+        "prefix": "/monthly-settlement",
+        "file": "monthly-settlement/monthly-settlement.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/monthly-settlement/:id/submit-first",
+        "prefix": "/monthly-settlement",
+        "file": "monthly-settlement/monthly-settlement.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/operating-expenses/:id",
+        "prefix": "/operating-expenses",
+        "file": "operating-expense/operating-expense.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/operating-expenses/:id",
+        "prefix": "/operating-expenses",
+        "file": "operating-expense/operating-expense.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/operating-expenses/:id/approve",
+        "prefix": "/operating-expenses",
+        "file": "operating-expense/operating-expense.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/operating-expenses/:id/cancel",
+        "prefix": "/operating-expenses",
+        "file": "operating-expense/operating-expense.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/operating-expenses/:id/first-approve",
+        "prefix": "/operating-expenses",
+        "file": "operating-expense/operating-expense.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/operating-expenses/:id/pay",
+        "prefix": "/operating-expenses",
+        "file": "operating-expense/operating-expense.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/operating-expenses/:id/reject",
+        "prefix": "/operating-expenses",
+        "file": "operating-expense/operating-expense.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/partners/:id/contracts",
+        "prefix": "/partners",
+        "file": "partner/partner.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/partners/:id/contracts/:contractId",
+        "prefix": "/partners",
+        "file": "partner/partner.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/payroll/configs/:id",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/payroll/salaries/:id",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/payroll/salaries/:id",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/payroll/salaries/:id/allowances",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/payroll/salaries/:id/allowances",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/payroll/salaries/:id/allowances/:aid",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/payroll/salaries/:id/allowances/:aid",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/payroll/salaries/:id/runs",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/payroll/salaries/:id/runs",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/payroll/salaries/:id/runs/:runId",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/payroll/salaries/:id/runs/:runId/second-approve",
+        "prefix": "/payroll",
+        "file": "payroll/payroll.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/pii-access/requests/:id/approve",
+        "prefix": "/pii-access",
+        "file": "pii-access/pii-access.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/pii-access/requests/:id/deny",
+        "prefix": "/pii-access",
+        "file": "pii-access/pii-access.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/plan-reports/:id/hiring-items",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/plan-reports/:id/hiring-items",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/plan-reports/:id/hiring-items/:itemId",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/plan-reports/:id/hiring-items/:itemId",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/plan-reports/:id/hiring-items/:itemId/cancel",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/player-callups/:id",
+        "prefix": "/player-callups",
+        "file": "player-callup/player-callup.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/player-callups/:id/approve",
+        "prefix": "/player-callups",
+        "file": "player-callup/player-callup.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/player-callups/:id/complete",
+        "prefix": "/player-callups",
+        "file": "player-callup/player-callup.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/player-callups/:id/confirm-medical",
+        "prefix": "/player-callups",
+        "file": "player-callup/player-callup.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/player-callups/:id/confirm-youth",
+        "prefix": "/player-callups",
+        "file": "player-callup/player-callup.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/player-callups/:id/reject",
+        "prefix": "/player-callups",
+        "file": "player-callup/player-callup.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/prospects/:id/acquisition-gate-check",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/prospects/:id/medical",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/onboarding",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/onboarding/complete-mfa",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/onboarding/verify-email",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/safeguard-reports/:id",
+        "prefix": "/safeguard-reports",
+        "file": "safeguard/safeguard.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/safeguard-reports/:id/status",
+        "prefix": "/safeguard-reports",
+        "file": "safeguard/safeguard.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/sales/:id",
+        "prefix": "/sales",
+        "file": "sales/sales.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/sales/:id",
+        "prefix": "/sales",
+        "file": "sales/sales.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/sales/:id/cancel",
+        "prefix": "/sales",
+        "file": "sales/sales.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/sales/fans/:id",
+        "prefix": "/sales",
+        "file": "sales/sales.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/sales/fans/:id/memberships",
+        "prefix": "/sales",
+        "file": "sales/sales.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/sponsorships/:id",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/sponsorships/:id",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/sponsorships/:id",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/sponsorships/:id/clauses",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/sponsorships/:id/clauses",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/sponsorships/:id/clauses/:clauseId/apply",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/sponsorships/:id/clauses/:clauseId/waive",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/sponsorships/:id/clauses/copy-from/:sourceId",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/sponsorships/:id/exposure-events",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/sponsorships/:id/exposure-events",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/sponsorships/:id/payments",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/sponsorships/:id/payments/:paymentId",
+        "prefix": "/sponsorships",
+        "file": "sponsorship/sponsorship.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/staff-records/:id/probation-review",
+        "prefix": "/staff-records",
+        "file": "probation-review/probation-review.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/staff-records/:id/probation-reviews",
+        "prefix": "/staff-records",
+        "file": "probation-review/probation-review.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/transfer-requests/:id/medical",
+        "prefix": "/transfer-requests",
+        "file": "transfer-request/transfer-request.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/youth-registrations/:id",
+        "prefix": "/youth-registrations",
+        "file": "youth-registration/youth-registration.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/youth-registrations/:id/contract",
+        "prefix": "/youth-registrations",
+        "file": "youth-registration/youth-registration.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/youth-registrations/:id/guardian-approve",
+        "prefix": "/youth-registrations",
+        "file": "youth-registration/youth-registration.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/youth-registrations/:id/reject",
+        "prefix": "/youth-registrations",
+        "file": "youth-registration/youth-registration.routes"
+      }
+    ],
+    "possible": [
+      {
+        "method": "PATCH",
+        "path": "/asset-requests/:id/approve",
+        "prefix": "/asset-requests",
+        "file": "asset-request/asset-request.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/asset-requests/:id/leader-approve",
+        "prefix": "/asset-requests",
+        "file": "asset-request/asset-request.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/attendance-appeals/:id/accept",
+        "prefix": "/attendance-appeals",
+        "file": "attendance-appeal/attendance-appeal.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/attendance-appeals/:id/reject",
+        "prefix": "/attendance-appeals",
+        "file": "attendance-appeal/attendance-appeal.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/certification/:id/approve",
+        "prefix": "/certification",
+        "file": "certification/certification.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/certification/:id/gm-approve",
+        "prefix": "/certification",
+        "file": "certification/certification.routes"
+      },
+      {
+        "method": "PUT",
+        "path": "/coaches/:id/evaluation",
+        "prefix": "/coaches",
+        "file": "coach/coach.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/department-review-configs/:id",
+        "prefix": "/department-review-configs",
+        "file": "department-review-config/department-review-config.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/development-plans/:id",
+        "prefix": "/development-plans",
+        "file": "development-plan/development-plan.routes"
+      },
+      {
+        "method": "PUT",
+        "path": "/development-plans/:id",
+        "prefix": "/development-plans",
+        "file": "development-plan/development-plan.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/development-plans/:id/activate",
+        "prefix": "/development-plans",
+        "file": "development-plan/development-plan.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/development-plans/:id/review",
+        "prefix": "/development-plans",
+        "file": "development-plan/development-plan.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/facility/maintenance/:id/approve",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/facility/maintenance/:id/gm-approve",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/facility/reservations/:id",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/formation-snapshots/:id",
+        "prefix": "/formation-snapshots",
+        "file": "formation-snapshot/formation-snapshot.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/growth-reports/:id",
+        "prefix": "/growth-reports",
+        "file": "growth-report/growth-report.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/growth-reports/:id",
+        "prefix": "/growth-reports",
+        "file": "growth-report/growth-report.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/growth-reports/:id/publish",
+        "prefix": "/growth-reports",
+        "file": "growth-report/growth-report.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/incident-reports/:id",
+        "prefix": "/incident-reports",
+        "file": "incident-report/incident-report.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/incident-reports/:id/sign",
+        "prefix": "/incident-reports",
+        "file": "incident-report/incident-report.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/incident-reports/:id/submit",
+        "prefix": "/incident-reports",
+        "file": "incident-report/incident-report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/mandatory-minimum-changes/:id/review",
+        "prefix": "/",
+        "file": "mandatory-minimum/mandatory-minimum.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/plan-reports/:id",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "PUT",
+        "path": "/plan-reports/:id",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/plan-reports/:id/approve",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/plan-reports/:id/publish-postings",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/plan-reports/:id/reject",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/plan-reports/:id/result",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/plan-reports/:id/submit",
+        "prefix": "/plan-reports",
+        "file": "plan-report/plan-report.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/prospects/:id/evaluation-logs",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/prospects/:id/evaluation-logs",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/prospects/:id/video-evaluations",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/prospects/:id/video-evaluations",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/prospects/:id/video-evaluations/:evalId",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/offer-approval/dept-head-approve",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/offer-approval/dept-head-reject",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/offer-approval/hr-approve",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/offer-approval/hr-reject",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/offer-approval/leader-approve",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/offer-approval/leader-reject",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/job-postings/:id/approve",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/reports/:id",
+        "prefix": "/reports",
+        "file": "report/report.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/reports/:id",
+        "prefix": "/reports",
+        "file": "report/report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/reports/:id/approve",
+        "prefix": "/reports",
+        "file": "report/report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/reports/:id/reject",
+        "prefix": "/reports",
+        "file": "report/report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/reports/:id/reviews/:deptId/confirm",
+        "prefix": "/reports",
+        "file": "report/report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/reports/:id/reviews/:deptId/reject",
+        "prefix": "/reports",
+        "file": "report/report.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/reports/:id/submit",
+        "prefix": "/reports",
+        "file": "report/report.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/training/:id/approve",
+        "prefix": "/training",
+        "file": "training/training.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/transfer-requests/:id/review",
+        "prefix": "/transfer-requests",
+        "file": "transfer-request/transfer-request.routes"
+      }
+    ],
+    "publicish": [
+      {
+        "method": "DELETE",
+        "path": "/account-codes/:id",
+        "prefix": "/account-codes",
+        "file": "account-code/account-code.routes"
+      },
+      {
+        "method": "PUT",
+        "path": "/account-codes/:id",
+        "prefix": "/account-codes",
+        "file": "account-code/account-code.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/admin/users/:id",
+        "prefix": "/admin",
+        "file": "admin/admin.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/users/:id",
+        "prefix": "/admin",
+        "file": "admin/admin.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/admin/users/:id/deactivate",
+        "prefix": "/admin",
+        "file": "admin/admin.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/admin/users/:id/demo",
+        "prefix": "/admin",
+        "file": "admin/admin.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/admin/users/:id/profile",
+        "prefix": "/admin",
+        "file": "admin/admin.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/admin/users/:id/reactivate",
+        "prefix": "/admin",
+        "file": "admin/admin.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/admin/users/:id/role",
+        "prefix": "/admin",
+        "file": "admin/admin.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/certification/:id",
+        "prefix": "/certification",
+        "file": "certification/certification.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/certification/:id",
+        "prefix": "/certification",
+        "file": "certification/certification.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/certification/:id/cancel",
+        "prefix": "/certification",
+        "file": "certification/certification.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/certification/:id/reject",
+        "prefix": "/certification",
+        "file": "certification/certification.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/certification/:id/submit",
+        "prefix": "/certification",
+        "file": "certification/certification.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/certification/:id/suspend",
+        "prefix": "/certification",
+        "file": "certification/certification.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/certification/:id/upload",
+        "prefix": "/certification",
+        "file": "certification/certification.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/clubs/:id",
+        "prefix": "/clubs",
+        "file": "club/club.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/clubs/:id",
+        "prefix": "/clubs",
+        "file": "club/club.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/coach-availabilities/:id",
+        "prefix": "/coach-availabilities",
+        "file": "coach-availability/coach-availability.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/coaches/:id",
+        "prefix": "/coaches",
+        "file": "coach/coach.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/coaches/:id",
+        "prefix": "/coaches",
+        "file": "coach/coach.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/coaches/:id/status",
+        "prefix": "/coaches",
+        "file": "coach/coach.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/coaches/:id/tutors",
+        "prefix": "/coaches",
+        "file": "coach/coach.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/coaches/:id/tutors",
+        "prefix": "/coaches",
+        "file": "coach/coach.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/coaches/:id/tutors/:tutorId",
+        "prefix": "/coaches",
+        "file": "coach/coach.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/coaches/rounds/:id/status",
+        "prefix": "/coaches",
+        "file": "coach/coach.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/departments/:id",
+        "prefix": "/departments",
+        "file": "department/department.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/departments/:id",
+        "prefix": "/departments",
+        "file": "department/department.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/departments/:id",
+        "prefix": "/departments",
+        "file": "department/department.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/departments/:id/headcount",
+        "prefix": "/departments",
+        "file": "department/department.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/equipment/:id",
+        "prefix": "/equipment",
+        "file": "equipment/equipment.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/equipment/:id/quantity",
+        "prefix": "/equipment",
+        "file": "equipment/equipment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/equipment/:id/units",
+        "prefix": "/equipment",
+        "file": "equipment/equipment.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/facility/inspections/:id",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/facility/inspections/:id",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/facility/maintenance/:id",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/facility/maintenance/:id",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/facility/maintenance/:id/lock",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/facility/maintenance/:id/reject",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/facility/maintenance/:id/status",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/facility/maintenance/:id/submit-finance",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/facility/preventive-schedules/:id",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/facility/preventive-schedules/:id",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/facility/preventive-schedules/:id/deactivate",
+        "prefix": "/facility",
+        "file": "facility/facility.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/leagues/:id",
+        "prefix": "/leagues",
+        "file": "league/league.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/leagues/:id",
+        "prefix": "/leagues",
+        "file": "league/league.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/leagues/:id/clubs",
+        "prefix": "/leagues",
+        "file": "league/league.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/leagues/:id/clubs/:clubId",
+        "prefix": "/leagues",
+        "file": "league/league.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/matches/:id",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/matches/:id",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/matches/:id/lineup",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "PUT",
+        "path": "/matches/:id/lineup",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/matches/:id/lineup/confirm",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "PUT",
+        "path": "/matches/:id/player-stats",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/matches/:id/remaining-capacity",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/matches/:id/shots",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/matches/:id/shots",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/matches/:id/shots/:eventId",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/matches/:id/squad",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/matches/:id/squad",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/matches/:id/squad",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/matches/:id/squad/confirm",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/matches/:id/stat-sheet",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/matches/:id/substitutions",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/matches/:id/substitutions",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/matches/:id/substitutions/:subId",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "PUT",
+        "path": "/matches/:id/team-stats",
+        "prefix": "/matches",
+        "file": "match/match.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/partners/:id",
+        "prefix": "/partners",
+        "file": "partner/partner.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/partners/:id",
+        "prefix": "/partners",
+        "file": "partner/partner.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/players/:id/match-stats",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/players/:id/training-results",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/prospects/:id",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/prospects/:id",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/prospects/:id/negotiation-logs",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/prospects/:id/negotiation-logs",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/prospects/:id/sign",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/prospects/:id/status",
+        "prefix": "/prospects",
+        "file": "prospect/prospect.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/recruitment/applications/:id/reference-check",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/reference-check",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/seasons/:id",
+        "prefix": "/seasons",
+        "file": "season/season.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/seasons/:id/activate",
+        "prefix": "/seasons",
+        "file": "season/season.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/seasons/:id/close",
+        "prefix": "/seasons",
+        "file": "season/season.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/seasons/:id/wage-cap",
+        "prefix": "/seasons",
+        "file": "season/season.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/tactical/:id",
+        "prefix": "/tactical",
+        "file": "tactical/tactical.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/tactical/:id",
+        "prefix": "/tactical",
+        "file": "tactical/tactical.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/tactical/:id/confirm",
+        "prefix": "/tactical",
+        "file": "tactical/tactical.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/tactical/:id/lineup",
+        "prefix": "/tactical",
+        "file": "tactical/tactical.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/tactical/:id/media",
+        "prefix": "/tactical",
+        "file": "tactical/tactical.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/teams/:id",
+        "prefix": "/teams",
+        "file": "team/team.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/teams/:id",
+        "prefix": "/teams",
+        "file": "team/team.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/teams/:id/deactivate",
+        "prefix": "/teams",
+        "file": "team/team.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/training-references/:id",
+        "prefix": "/training-references",
+        "file": "training-reference/training-reference.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/training/:id",
+        "prefix": "/training",
+        "file": "training/training.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/training/:id/contents",
+        "prefix": "/training",
+        "file": "training/training.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/training/:id/participants",
+        "prefix": "/training",
+        "file": "training/training.routes"
+      },
+      {
+        "method": "PUT",
+        "path": "/training/:id/results",
+        "prefix": "/training",
+        "file": "training/training.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/transfer-requests/:id",
+        "prefix": "/transfer-requests",
+        "file": "transfer-request/transfer-request.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/transfer-requests/:id",
+        "prefix": "/transfer-requests",
+        "file": "transfer-request/transfer-request.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/transfer-requests/:id",
+        "prefix": "/transfer-requests",
+        "file": "transfer-request/transfer-request.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/transfer-requests/:id/confirm",
+        "prefix": "/transfer-requests",
+        "file": "transfer-request/transfer-request.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/transfer-requests/:id/negotiation-logs",
+        "prefix": "/transfer-requests",
+        "file": "transfer-request/transfer-request.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/transfer-requests/:id/negotiation-logs",
+        "prefix": "/transfer-requests",
+        "file": "transfer-request/transfer-request.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/transfer-requests/:id/register",
+        "prefix": "/transfer-requests",
+        "file": "transfer-request/transfer-request.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/transfer-requests/:id/submit",
+        "prefix": "/transfer-requests",
+        "file": "transfer-request/transfer-request.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/transfers/:id",
+        "prefix": "/transfers",
+        "file": "transfer/transfer.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/transfers/:id/export",
+        "prefix": "/transfers",
+        "file": "transfer/transfer.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/transfers/recalls/:id/status",
+        "prefix": "/transfers",
+        "file": "transfer/transfer.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/videos/:id",
+        "prefix": "/videos",
+        "file": "video/video.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/videos/:id",
+        "prefix": "/videos",
+        "file": "video/video.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/videos/:id/ai-summary",
+        "prefix": "/videos",
+        "file": "video/video.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/videos/:id/assignments",
+        "prefix": "/videos",
+        "file": "video/video.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/videos/:id/assignments/:playerId/progress",
+        "prefix": "/videos",
+        "file": "video/video.routes"
+      }
+    ],
+    "unclassified": [
+      {
+        "method": "DELETE",
+        "path": "/agencies/:id",
+        "prefix": "/agencies",
+        "file": "agency/agency.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/agencies/:id",
+        "prefix": "/agencies",
+        "file": "agency/agency.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/agencies/:id",
+        "prefix": "/agencies",
+        "file": "agency/agency.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/asset-requests/:id",
+        "prefix": "/asset-requests",
+        "file": "asset-request/asset-request.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/asset-requests/:id/cancel",
+        "prefix": "/asset-requests",
+        "file": "asset-request/asset-request.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/asset-requests/:id/fulfill",
+        "prefix": "/asset-requests",
+        "file": "asset-request/asset-request.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/asset-requests/:id/leader-reject",
+        "prefix": "/asset-requests",
+        "file": "asset-request/asset-request.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/asset-requests/:id/reject",
+        "prefix": "/asset-requests",
+        "file": "asset-request/asset-request.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/asset-requests/:id/submit",
+        "prefix": "/asset-requests",
+        "file": "asset-request/asset-request.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/players/:id",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/players/:id",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/players/:id/jersey-numbers",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/players/:id/jersey-numbers/assign",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/players/:id/jersey-numbers/reactivate",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/players/:id/jersey-numbers/release",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/players/:id/jersey-numbers/retire",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/players/:id/market-value",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/players/:id/market-value/history",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/players/:id/my-info",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/players/:id/position-diversity",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/players/:id/promote",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/players/:id/radar",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/players/:id/status",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/players/:id/work-permit",
+        "prefix": "/players",
+        "file": "player/player.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/recruitment/applications/:id",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/recruitment/applications/:id",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/interviews",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/recruitment/applications/:id/interviews/:round",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/recruitment/applications/:id/interviews/:round/aggregate",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/interviews/:round/finalize-score",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/offer",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/promote-from-waitlist",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/reinstate",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/applications/:id/reject",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/recruitment/applications/:id/screen",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/recruitment/interviews/:id/scores",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/interviews/:id/scores",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/recruitment/job-postings/:id",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/recruitment/job-postings/:id",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/recruitment/job-postings/:id/close",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/recruitment/postings/:id/waitlist",
+        "prefix": "/recruitment",
+        "file": "recruitment/recruitment.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/software-licenses/:id",
+        "prefix": "/software-licenses",
+        "file": "software-license/software-license.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/software-licenses/:id",
+        "prefix": "/software-licenses",
+        "file": "software-license/software-license.routes"
+      },
+      {
+        "method": "POST",
+        "path": "/software-licenses/:id/assign",
+        "prefix": "/software-licenses",
+        "file": "software-license/software-license.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/software-licenses/:id/assign/:userId",
+        "prefix": "/software-licenses",
+        "file": "software-license/software-license.routes"
+      },
+      {
+        "method": "DELETE",
+        "path": "/staff-records/:id",
+        "prefix": "/staff-records",
+        "file": "staff-record/staff-record.routes"
+      },
+      {
+        "method": "GET",
+        "path": "/staff-records/:id",
+        "prefix": "/staff-records",
+        "file": "staff-record/staff-record.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/staff-records/:id",
+        "prefix": "/staff-records",
+        "file": "staff-record/staff-record.routes"
+      },
+      {
+        "method": "PATCH",
+        "path": "/staff-records/:id/terminate",
+        "prefix": "/staff-records",
+        "file": "staff-record/staff-record.routes"
+      }
+    ]
+  }
+}

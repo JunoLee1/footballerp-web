@@ -5,6 +5,7 @@ import { SeasonStatus } from "../generated/client";
 import { getPrisma } from "../lib/prisma";
 import { getSeasonRevenueActuals } from "../lib/season-actuals";
 import { ExpenseCategoryService } from "../expense-category/expense-category.service";
+import { cached } from "../lib/cache";
 
 // Wire-format DTO (from controller) — category is a code string.
 // `sortOrder` on both categories and tiers preserves the user-controlled
@@ -55,9 +56,11 @@ export class FinancialReportService {
   }
 
   async get(seasonId: number) {
-    const report = await this.repo.findBySeasonId(seasonId);
-    if (!report) throw new AppError(404, "FINANCIAL_REPORT_NOT_FOUND");
-    return report;
+    return cached(`financial-report:season:${seasonId}`, 30, async () => {
+      const report = await this.repo.findBySeasonId(seasonId);
+      if (!report) throw new AppError(404, "FINANCIAL_REPORT_NOT_FOUND");
+      return report;
+    });
   }
 
   async upsertBudgetPlan(seasonId: number, dto: UpsertBudgetPlanRequest) {

@@ -3,6 +3,7 @@ import { NotificationRepository } from "../notification/notification.repo";
 import { AppError } from "../lib/appError";
 import { writeAuditLog } from "../lib/auditLog";
 import { getIO } from "../lib/io";
+import { cached } from "../lib/cache";
 
 export class ReportService {
   constructor(
@@ -20,7 +21,10 @@ export class ReportService {
     isAssetStaff: boolean = false,
     isFinanceStaff: boolean = false,
   ) {
-    return this.repo.findAll(userId, isGM, isHeadCoach, filters, deptCategories, isHrStaff, isAssetStaff, isFinanceStaff);
+    const key = `reports:list:${userId}:${isGM}:${isHeadCoach}:${JSON.stringify(filters)}:${deptCategories.join(",")}:${isHrStaff}:${isAssetStaff}:${isFinanceStaff}`;
+    return cached(key, 30, () =>
+      this.repo.findAll(userId, isGM, isHeadCoach, filters, deptCategories, isHrStaff, isAssetStaff, isFinanceStaff),
+    );
   }
 
   async get(id: number) {

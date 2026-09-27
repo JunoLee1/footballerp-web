@@ -1,5 +1,6 @@
 import { AppError } from "../lib/appError";
 import { writeAuditLog } from "../lib/auditLog";
+import { cached } from "../lib/cache";
 import type { BudgetControlRepository } from "./budget-control.repo";
 import type { CreateBudgetHeaderDto, UpdateBudgetHeaderDto, CreateBudgetLineDto, UpdateBudgetLineDto, CreateAdjustmentDto } from "./dto/budget-control.dto";
 import type { ExpenseCategoryService } from "../expense-category/expense-category.service";
@@ -18,7 +19,8 @@ export class BudgetControlService {
   }
 
   getAll(seasonId?: number) {
-    return this.repo.findAll(seasonId);
+    const key = `budget-control:list:${seasonId ?? "null"}`;
+    return cached(key, 30, () => this.repo.findAll(seasonId));
   }
 
   async getById(id: number) {

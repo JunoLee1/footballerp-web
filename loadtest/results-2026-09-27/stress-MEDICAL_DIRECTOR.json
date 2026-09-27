@@ -1,0 +1,184 @@
+{
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "MEDICAL_DIRECTOR": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsInJvbGUiOiJDT0FDSElOR19TVEFGRiIsImNvYWNoaW5nUm9sZSI6Ik1FRElDQUxfRElSRUNUT1IiLCJmcm9udE9mZmljZVJvbGUiOm51bGwsImRlcGFydG1lbnRDYXRlZ29yaWVzIjpbXSwidGVhbUlkIjpudWxsLCJjbHViSWQiOjEsImlzRGVtbyI6ZmFsc2UsImlhdCI6MTc5MDQ5ODA2MiwiZXhwIjoxNzkwNTAxNjYyfQ.zV9DRUMhMhSLPCkH4xwPBlQovEQHOv70XxM7UBZ2uas"
+            }
+    },
+    "root_group": {
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+                "MEDICAL_DIRECTOR": {
+                    "id": "c08f3bdf9c7399a53b586de2f81b0a6f",
+                    "groups": {},
+                    "checks": {
+                            "MEDICAL_DIRECTOR list_active_injuries status<500": {
+                                "id": "270227c27923b4a758d587a4f98d4f49",
+                                "passes": 3466,
+                                "fails": 0,
+                                "name": "MEDICAL_DIRECTOR list_active_injuries status<500",
+                                "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_active_injuries status<500"
+                            },
+                            "MEDICAL_DIRECTOR list_medical_equipment_loans status<500": {
+                                "passes": 3466,
+                                "fails": 0,
+                                "name": "MEDICAL_DIRECTOR list_medical_equipment_loans status<500",
+                                "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_medical_equipment_loans status<500",
+                                "id": "7e4de5030c4bd20f6f6fc21a0e3eec15"
+                            },
+                            "MEDICAL_DIRECTOR list_medical_expenses status<500": {
+                                "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_medical_expenses status<500",
+                                "id": "598e54005f81bafc6103a4aa7a8bb603",
+                                "passes": 3466,
+                                "fails": 0,
+                                "name": "MEDICAL_DIRECTOR list_medical_expenses status<500"
+                            }
+                        },
+                    "name": "MEDICAL_DIRECTOR",
+                    "path": "::MEDICAL_DIRECTOR"
+                }
+            }
+    },
+    "metrics": {
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0
+        },
+        "http_reqs": {
+            "count": 10399,
+            "rate": 97.73382891405188
+        },
+        "http_req_waiting": {
+            "max": 4064.426,
+            "p(90)": 1173.8446,
+            "p(95)": 1827.2299999999998,
+            "avg": 555.4581650158664,
+            "min": 1.152,
+            "med": 361.042
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 10399,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "checks": {
+            "passes": 10398,
+            "fails": 0,
+            "value": 1
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "group_duration": {
+            "avg": 1666.1638688300634,
+            "min": 7.792208,
+            "med": 1355.22225,
+            "max": 6158.923208,
+            "p(90)": 3611.4103125000006,
+            "p(95)": 5764.58172925
+        },
+        "http_req_blocked": {
+            "avg": 0.021177805558224877,
+            "min": 0,
+            "med": 0.003,
+            "max": 11.135,
+            "p(90)": 0.006,
+            "p(95)": 0.011
+        },
+        "iterations": {
+            "count": 3466,
+            "rate": 32.57481017560379
+        },
+        "vus_max": {
+            "value": 200,
+            "min": 200,
+            "max": 200
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(90)": 1173.9086000000002,
+            "p(95)": 1827.3014999999998,
+            "avg": 555.5493112799301,
+            "min": 1.167,
+            "med": 361.134,
+            "max": 4064.526
+        },
+        "data_received": {
+            "count": 2812235,
+            "rate": 26430.473541312498
+        },
+        "persona_latency": {
+            "p(90)": 1173.9269000000002,
+            "p(95)": 1827.31925,
+            "avg": 555.5877186959024,
+            "min": 1.167,
+            "med": 361.145,
+            "max": 4064.526
+        },
+        "vus": {
+            "min": 3,
+            "max": 200,
+            "value": 3
+        },
+        "http_req_sending": {
+            "min": 0.001,
+            "med": 0.011,
+            "max": 16.672,
+            "p(90)": 0.019,
+            "p(95)": 0.028,
+            "avg": 0.02354909125877383
+        },
+        "data_sent": {
+            "count": 4675822,
+            "rate": 43945.18582369073
+        },
+        "iteration_duration": {
+            "avg": 2667.8264421223375,
+            "min": 1008.389625,
+            "med": 2355.454479,
+            "max": 7159.310208,
+            "p(90)": 4615.578875000001,
+            "p(95)": 6764.72245825
+        },
+        "http_req_receiving": {
+            "avg": 0.06759717280507663,
+            "min": 0.005,
+            "med": 0.039,
+            "max": 51.449,
+            "p(90)": 0.077,
+            "p(95)": 0.105
+        },
+        "http_req_connecting": {
+            "avg": 0.013073276276565047,
+            "min": 0,
+            "med": 0,
+            "max": 9.941,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_duration": {
+            "avg": 555.5493112799301,
+            "min": 1.167,
+            "med": 361.134,
+            "max": 4064.526,
+            "p(90)": 1173.9086000000002,
+            "p(95)": 1827.3014999999998,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        }
+    }
+}

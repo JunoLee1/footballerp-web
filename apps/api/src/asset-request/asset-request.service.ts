@@ -2,6 +2,7 @@ import { PrismaClient } from "../generated/client";
 import { AppError } from "../lib/appError";
 import { writeAuditLog } from "../lib/auditLog";
 import { isAdminLike } from "../lib/permissions";
+import { cached } from "../lib/cache";
 import { NotificationRepository } from "../notification/notification.repo";
 import { OperatingExpenseRepository } from "../operating-expense/operating-expense.repo";
 import { AssetRequestRepository } from "./asset-request.repo";
@@ -46,19 +47,19 @@ export class AssetRequestService {
     status?: string,
   ) {
     const asStatus = status as any;
+    const cacheKey = `asset-requests:list:${userId}:${role}:${filter ?? ""}:${status ?? ""}`;
     switch (filter) {
       case "me":
-        return this.repo.findByRequester(userId, asStatus);
+        return cached(cacheKey, 30, () => this.repo.findByRequester(userId, asStatus));
       case "pending-leader":
-        return this.repo.findPendingForLeader(userId);
+        return cached(cacheKey, 30, () => this.repo.findPendingForLeader(userId));
       case "pending-dept-head":
-        return this.repo.findPendingForDeptHead(userId);
+        return cached(cacheKey, 30, () => this.repo.findPendingForDeptHead(userId));
       case "all":
         if (!isAdminLike(role)) throw new AppError(403, "FORBIDDEN");
-        return this.repo.findAll(asStatus);
+        return cached(cacheKey, 30, () => this.repo.findAll(asStatus));
       default:
-        // default = requester's own list
-        return this.repo.findByRequester(userId, asStatus);
+        return cached(cacheKey, 30, () => this.repo.findByRequester(userId, asStatus));
     }
   }
 

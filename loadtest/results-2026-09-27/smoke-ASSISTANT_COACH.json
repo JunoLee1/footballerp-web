@@ -1,0 +1,184 @@
+{
+    "metrics": {
+        "http_reqs": {
+            "count": 49,
+            "rate": 4.475735621402457
+        },
+        "http_req_sending": {
+            "p(95)": 0.09759999999999991,
+            "avg": 0.03114285714285713,
+            "min": 0.005,
+            "med": 0.016,
+            "max": 0.285,
+            "p(90)": 0.04220000000000002
+        },
+        "http_req_connecting": {
+            "max": 1.033,
+            "p(90)": 0,
+            "p(95)": 0.11639999999999959,
+            "avg": 0.029183673469387755,
+            "min": 0,
+            "med": 0
+        },
+        "data_sent": {
+            "count": 21151,
+            "rate": 1931.9649822098645
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 49,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_duration{expected_response:true}": {
+            "min": 4.355,
+            "med": 66.425,
+            "max": 839.927,
+            "p(90)": 219.90600000000012,
+            "p(95)": 312.3026,
+            "avg": 101.89444897959181
+        },
+        "group_duration": {
+            "max": 1248.875167,
+            "p(90)": 618.8223335000001,
+            "p(95)": 950.1323229999997,
+            "avg": 293.26613799999996,
+            "min": 80.930042,
+            "med": 213.447229
+        },
+        "iteration_duration": {
+            "avg": 1296.6072942499998,
+            "min": 1082.196666,
+            "med": 1220.620229,
+            "max": 2249.391834,
+            "p(90)": 1621.538563,
+            "p(95)": 1953.8695837499997
+        },
+        "http_req_waiting": {
+            "min": 4.27,
+            "med": 66.318,
+            "max": 839.72,
+            "p(90)": 219.67760000000013,
+            "p(95)": 311.99,
+            "avg": 101.76273469387756
+        },
+        "data_received": {
+            "count": 97959,
+            "rate": 8947.726239529862
+        },
+        "http_req_duration": {
+            "avg": 101.89444897959181,
+            "min": 4.355,
+            "med": 66.425,
+            "max": 839.927,
+            "p(90)": 219.90600000000012,
+            "p(95)": 312.3026,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "iterations": {
+            "count": 16,
+            "rate": 1.461464692702843
+        },
+        "http_req_blocked": {
+            "max": 17.307,
+            "p(90)": 0.0222,
+            "p(95)": 0.2698,
+            "avg": 0.40026530612244904,
+            "min": 0.001,
+            "med": 0.005
+        },
+        "checks": {
+            "passes": 48,
+            "fails": 0,
+            "value": 1
+        },
+        "http_req_tls_handshaking": {
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0
+        },
+        "http_req_receiving": {
+            "med": 0.077,
+            "max": 0.786,
+            "p(90)": 0.1302,
+            "p(95)": 0.16839999999999988,
+            "avg": 0.10057142857142863,
+            "min": 0.015
+        },
+        "vus_max": {
+            "value": 2,
+            "min": 2,
+            "max": 2
+        },
+        "persona_latency": {
+            "avg": 97.50097916666664,
+            "min": 4.355,
+            "med": 64.3605,
+            "max": 839.927,
+            "p(90)": 191.1724,
+            "p(95)": 311.57275
+        },
+        "vus": {
+            "value": 2,
+            "min": 2,
+            "max": 2
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "ASSISTANT_COACH": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwicm9sZSI6IkNPQUNISU5HX1NUQUZGIiwiY29hY2hpbmdSb2xlIjoiQVNTSVNUQU5UX0NPQUNIIiwiZnJvbnRPZmZpY2VSb2xlIjpudWxsLCJkZXBhcnRtZW50Q2F0ZWdvcmllcyI6W10sInRlYW1JZCI6bnVsbCwiY2x1YklkIjoxLCJpc0RlbW8iOmZhbHNlLCJpYXQiOjE3OTA1MDA5NjgsImV4cCI6MTc5MDUwNDU2OH0.sRlh-52TPsdsHLqAGTa7ObvIT4rgoy-8cADbvo5keuA"
+            }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "ASSISTANT_COACH": {
+                "path": "::ASSISTANT_COACH",
+                "id": "24f01acf1d38bb58d6c843e259153162",
+                "groups": {},
+                "checks": {
+                        "ASSISTANT_COACH ac_list_training status<500": {
+                            "name": "ASSISTANT_COACH ac_list_training status<500",
+                            "path": "::ASSISTANT_COACH::ASSISTANT_COACH ac_list_training status<500",
+                            "id": "6398bcea6f0e9087753ce8f3c720b747",
+                            "passes": 16,
+                            "fails": 0
+                        },
+                        "ASSISTANT_COACH ac_list_players status<500": {
+                            "passes": 16,
+                            "fails": 0,
+                            "name": "ASSISTANT_COACH ac_list_players status<500",
+                            "path": "::ASSISTANT_COACH::ASSISTANT_COACH ac_list_players status<500",
+                            "id": "5593937ddec0c7d1a6c84e0eaf1af9aa"
+                        },
+                        "ASSISTANT_COACH ac_list_tactical status<500": {
+                            "fails": 0,
+                            "name": "ASSISTANT_COACH ac_list_tactical status<500",
+                            "path": "::ASSISTANT_COACH::ASSISTANT_COACH ac_list_tactical status<500",
+                            "id": "359e5ee919ebdbcef8d7eee834e79efd",
+                            "passes": 16
+                        }
+                    },
+                "name": "ASSISTANT_COACH"
+            }
+        },
+        "checks": {}
+    }
+}
