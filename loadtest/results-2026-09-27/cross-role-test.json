@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-27T12:57:10.186Z",
+  "generatedAt": "2026-09-27T13:05:53.966Z",
   "baseUrl": "http://localhost:3001/api",
-  "proxy": "http://127.0.0.1:3002",
+  "proxy": null,
   "results": [
     {
       "attacker": "PLAYER",
@@ -224,15 +224,15 @@
       "attacker": "PLAYER",
       "owner": "MEDICAL_DIRECTOR",
       "endpoint": "/medical-equipment-loan",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "PLAYER",
       "owner": "MEDICAL_DIRECTOR",
       "endpoint": "/medical-expenses",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "HR_MANAGER",
@@ -245,15 +245,15 @@
       "attacker": "HR_MANAGER",
       "owner": "MEDICAL_DIRECTOR",
       "endpoint": "/medical-equipment-loan",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "HR_MANAGER",
       "owner": "MEDICAL_DIRECTOR",
       "endpoint": "/medical-expenses",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "ASSET_MANAGER",
@@ -266,15 +266,15 @@
       "attacker": "ASSET_MANAGER",
       "owner": "MEDICAL_DIRECTOR",
       "endpoint": "/medical-equipment-loan",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "ASSET_MANAGER",
       "owner": "MEDICAL_DIRECTOR",
       "endpoint": "/medical-expenses",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "PLAYER",
