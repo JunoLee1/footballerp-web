@@ -45,9 +45,10 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ `smoke-FINANCE_MANAGER.json` 65/65 PASS, p(95) 243ms |
-| Stress | 🔲 `stress-FINANCE_MANAGER.json` p(95) 3,563ms · threshold 1.8배 초과 · RPS 65 |
-| 성능 — `OperatingExpense.seasonId` 인덱스 확인 | 🔲 schema.prisma index 유무 EXPLAIN 미검증 |
-| 성능 — `/financial-reports/:id/plan-requests` include depth | 🔲 relation 트리 폭발 여부 미확인 |
+| Stress (baseline · no cache) | 🔲 `stress-FINANCE_MANAGER.json` p(95) 3,563ms · threshold 1.8배 초과 · RPS 65 |
+| Stress (Redis cache 적용) | 🔲 `stress-FINANCE_MANAGER-redis.json` p(95) **2,517ms** · RPS 69.9 — **1.4× p95 개선** (여전히 threshold 초과) |
+| 단발 요청 캐시 개선 | ✅ /operating-expenses 149→12ms · /budget-control 76→10ms · /plan-requests 65→19ms |
+| 성능 — 잔여 p95 병목 조사 | 🔲 Prisma pool · JSON 직렬화 · ramp-up 초기 miss 등 후속 분석 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---
@@ -57,9 +58,10 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | ✅ `smoke-ASSET_MANAGER.json` 55/55 PASS, p(95) 207ms |
-| Stress | 🔲 `stress-ASSET_MANAGER.json` p(95) 3,142ms · threshold 1.6배 초과 · RPS 63 |
-| 성능 — `EquipmentLoan.returnedAt IS NULL` 인덱스 | 🔲 EXPLAIN 미검증 |
-| 성능 — `AssetRequest` 상태별 필터 쿼리 최적화 | 🔲 미검증 |
+| Stress (baseline · no cache) | 🔲 `stress-ASSET_MANAGER.json` p(95) 3,142ms · threshold 1.6배 초과 · RPS 63 |
+| Stress (Redis cache 적용) | 🔲 `stress-ASSET_MANAGER-redis.json` p(95) **2,281ms** · RPS **86.6** — **1.4× p95 · 1.4× 처리량** (여전히 threshold 근접 초과) |
+| 단발 요청 캐시 개선 | ✅ /asset-requests 105→13ms · /equipment/loans · /equipment 캐시 hit 확인 |
+| 성능 — 잔여 p95 병목 조사 | 🔲 GM 만큼 극적 개선 없음, DB pool/JSON 처리 후속 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---

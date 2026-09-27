@@ -3,6 +3,7 @@ import { OperatingExpenseRepository } from "./operating-expense.repo";
 import { NotificationRepository } from "../notification/notification.repo";
 import { ExpenseCategoryService } from "../expense-category/expense-category.service";
 import { canReadFinance, canWriteFinance } from "../lib/permissions";
+import { cached } from "../lib/cache";
 import type { CreateOperatingExpenseDto, UpdateOperatingExpenseDto } from "./dto/operating-expense.dto";
 
 export const APPROVAL_THRESHOLD = 1_000_000;
@@ -15,18 +16,21 @@ export class OperatingExpenseService {
   ) {}
 
   async list(seasonId: number, actorClubId?: number | null) {
-    const rows = await this.repo.findBySeasonId(seasonId, actorClubId);
-    // categoryId is NOT NULL post-cutover, so expenseCategory relation is always present.
-    return rows.map((r) => ({
-      ...r,
-      category: r.expenseCategory.code,
-      budgetLine: r.budgetLine
-        ? {
-            ...r.budgetLine,
-            category: r.budgetLine.expenseCategory.code,
-          }
-        : r.budgetLine,
-    }));
+    const key = `operating-expenses:list:${seasonId}:${actorClubId ?? "null"}`;
+    return cached(key, 30, async () => {
+      const rows = await this.repo.findBySeasonId(seasonId, actorClubId);
+      // categoryId is NOT NULL post-cutover, so expenseCategory relation is always present.
+      return rows.map((r) => ({
+        ...r,
+        category: r.expenseCategory.code,
+        budgetLine: r.budgetLine
+          ? {
+              ...r.budgetLine,
+              category: r.budgetLine.expenseCategory.code,
+            }
+          : r.budgetLine,
+      }));
+    });
   }
 
   async create(data: CreateOperatingExpenseDto) {

@@ -3,6 +3,7 @@ import { NotificationRepository } from "../notification/notification.repo";
 import { AppError } from "../lib/appError";
 import { writeAuditLog } from "../lib/auditLog";
 import { formatLedgerDescription } from "../lib/ledger-formatter";
+import { cached } from "../lib/cache";
 import { CreateEquipmentItemDto, UpdateQuantityDto, UpdateUnitStatusDto, UpdateUnitSanitationDto, CreateAssignmentDto, CreateEquipmentLoanDto, CreateEquipmentUnitDto } from "./dto/equipment.dto";
 import { EquipmentUnitStatus, EquipmentLoanStatus } from "../generated/enums";
 import type { LedgerService } from "../ledger/ledger.service";
@@ -22,7 +23,7 @@ export class EquipmentService {
   ) {}
 
   async getAllItems() {
-    return this.repo.findAllItems();
+    return cached("equipment:list-items", 30, () => this.repo.findAllItems());
   }
 
   async getItemById(id: number) {
@@ -242,7 +243,8 @@ export class EquipmentService {
   }
 
   listLoans(status?: EquipmentLoanStatus) {
-    return this.repo.findAllLoans(status);
+    const key = `equipment:list-loans:${status ?? "all"}`;
+    return cached(key, 30, () => this.repo.findAllLoans(status));
   }
 
   listMyLoans(userId: number) {
