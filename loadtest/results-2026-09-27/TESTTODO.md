@@ -5,6 +5,11 @@
 - 🔲 미완료
 - ➖ 해당 없음
 
+## 시나리오 정의
+- **Smoke** — VUS=2 constant · DURATION=10s · endpoint 골든 패스 확인
+- **Stress** — ramping VUs 5→50→100→200 (peak) → 0 · 약 1분 45초 · threshold `p(95) < 2000ms`
+- **Pentest** — 페르소나 세션으로 임의 ID 1~20 순차 프로브
+
 ---
 
 ## 1. Auth `/auth`
@@ -16,16 +21,20 @@
 | 보안 — 브루트포스 / Rate Limiting | ✅ 10건 연속 시도 후 429 반환 · 60s+3s 딜레이 재시도로도 지속 차단 (5분+ sliding window 추정) |
 | 보안 — 인증 우회 (토큰 없음/변조) | 🔲 미확인 |
 | 보안 — Refresh 토큰 재사용 | 🔲 미확인 |
+| 보안 — Soft Delete 된 유저나 블랙리스트에 추가된 유저가 로그인시 에러가 나오는가? | 🔲 |
+| 보안 — 개인정보 수정시 본인이 아닌 경우 401 에러가 나오는가? | 🔲 |
 | 보안 — Rate-limit window 및 threshold 상수 문서화 | 🔲 `apps/api/src/lib/rateLimit.ts` ADR/주석 추가 필요 |
-
+| 보안 - 개인 정보 수정시 마스킹 처리 잘되는 가? |🔲|
+| 보안 - 비밀번호 수정시 6개월동안 사용 혹은 타입이 맞지 않는 경우 에러나오는가|🔲|
+| 보안 - 비밀번호 해싱처리 잘되는 가|🔲|
 ---
 
 ## 2. HR_MANAGER 도메인 `/hiring-surveys`, `/plan-reports`, `/recruitment/job-postings`
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | ✅ `smoke-HR_MANAGER.json` 49/49 PASS, p(95) 278ms |
-| Stress | 🔲 `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 1,000ms 대비 2배 · RPS 78 |
+| Smoke | ✅ `smoke-HR_MANAGER.json` 49/49 PASS, p(95) 278ms  · VU 2|
+| Stress | 🔲 `stress-HR_MANAGER.json` p(95) 2,060ms · threshold 1,000ms 대비 2배 · RPS 78 · VU peak 200 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---
@@ -34,8 +43,8 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | ✅ `smoke-HEAD_COACH.json` 55/55 PASS, p(95) 199ms |
-| Stress | ✅ `stress-HEAD_COACH.json` p(95) 1,059ms · threshold 통과 · RPS 128 (최고 처리량) |
+| Smoke | ✅ `smoke-HEAD_COACH.json` 55/55 PASS, p(95) 199ms  · VU 2|
+| Stress | ✅ `stress-HEAD_COACH.json` p(95) 1,059ms · threshold 통과 · RPS 128 (최고 처리량)  · VU peak 200|
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
 ---
@@ -44,9 +53,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | ✅ `smoke-FINANCE_MANAGER.json` 65/65 PASS, p(95) 243ms |
-| Stress (baseline · no cache) | 🔲 `stress-FINANCE_MANAGER.json` p(95) 3,563ms · threshold 1.8배 초과 · RPS 65 |
-| Stress (Redis cache 적용) | 🔲 `stress-FINANCE_MANAGER-redis.json` p(95) **2,517ms** · RPS 69.9 — **1.4× p95 개선** (여전히 threshold 초과) |
+| Smoke | ✅ `smoke-FINANCE_MANAGER.json` 65/65 PASS, p(95) 243ms  · VU 2|
+| Stress (baseline · no cache) | 🔲 `stress-FINANCE_MANAGER.json` p(95) 3,563ms · threshold 1.8배 초과 · RPS 65 · VU peak 200 |
+| Stress (Redis cache 적용) | 🔲 `stress-FINANCE_MANAGER-redis.json` p(95) **2,517ms** · RPS 69.9 — **1.4× p95 개선** (여전히 threshold 초과) · VU peak 200 |
 | 단발 요청 캐시 개선 | ✅ /operating-expenses 149→12ms · /budget-control 76→10ms · /plan-requests 65→19ms |
 | 성능 — 잔여 p95 병목 조사 | 🔲 Prisma pool · JSON 직렬화 · ramp-up 초기 miss 등 후속 분석 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
@@ -57,8 +66,8 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | ✅ `smoke-ASSET_MANAGER.json` 55/55 PASS, p(95) 207ms |
-| Stress (baseline · no cache) | 🔲 `stress-ASSET_MANAGER.json` p(95) 3,142ms · threshold 1.6배 초과 · RPS 63 |
+| Smoke | ✅ `smoke-ASSET_MANAGER.json` 55/55 PASS, p(95) 207ms  · VU 2|
+| Stress (baseline · no cache) | 🔲 `stress-ASSET_MANAGER.json` p(95) 3,142ms · threshold 1.6배 초과 · RPS 63 · VU peak 200 |
 | Stress (Redis cache 적용) | 🔲 `stress-ASSET_MANAGER-redis.json` p(95) **2,281ms** · RPS **86.6** — **1.4× p95 · 1.4× 처리량** (여전히 threshold 근접 초과) |
 | 단발 요청 캐시 개선 | ✅ /asset-requests 105→13ms · /equipment/loans · /equipment 캐시 hit 확인 |
 | 성능 — 잔여 p95 병목 조사 | 🔲 GM 만큼 극적 개선 없음, DB pool/JSON 처리 후속 |
@@ -70,9 +79,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | ✅ `smoke-GM.json` 49/49 PASS, p(95) 296ms |
-| Stress (baseline · no cache) | 🔲 `stress-GM.json` p(95) 6,395ms · threshold 3배 초과 · RPS 40 |
-| Stress (Redis cache 적용) | ✅ `stress-GM-redis.json` p(95) **690ms** · threshold 통과 · RPS **139.7** · reqs 14,878 — **9.3× p95 개선 · 3.4× 처리량** |
+| Smoke | ✅ `smoke-GM.json` 49/49 PASS, p(95) 296ms  · VU 2|
+| Stress (baseline · no cache) | 🔲 `stress-GM.json` p(95) 6,395ms · threshold 3배 초과 · RPS 40 · VU peak 200 |
+| Stress (Redis cache 적용) | ✅ `stress-GM-redis.json` p(95) **690ms** · threshold 통과 · RPS **139.7**  · VU peak 200· reqs 14,878 — **9.3× p95 개선 · 3.4× 처리량** |
 | 성능 — 3개 endpoint 개별 분해 러닝 | ➖ Redis 캐시로 병목 해소, 개별 분해 불필요 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 
@@ -82,8 +91,8 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | ✅ `smoke-PLAYER.json` 55/55 PASS, p(95) 144ms (최저 지연) |
-| Stress | 🔲 `stress-PLAYER.json` p(95) 2,035ms · threshold 근접 초과 · RPS 83 |
+| Smoke | ✅ `smoke-PLAYER.json` 55/55 PASS, p(95) 144ms (최저 지연)  · VU 2|
+| Stress | 🔲 `stress-PLAYER.json` p(95) 2,035ms · threshold 근접 초과 · RPS 83 · VU peak 200 |
 | 보안 — Cross-player IDOR | 🔲 개별 선수 계정 상호 세션 테스트 미러닝 (rate-limit blocker) |
 
 ---
@@ -92,8 +101,8 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | ✅ `smoke-MEDICAL_DIRECTOR.json` 49/49 PASS, p(95) 195ms |
-| Stress | 🔲 `stress-MEDICAL_DIRECTOR.json` p(95) 1,827ms · threshold 근접 · RPS 98 |
+| Smoke | ✅ `smoke-MEDICAL_DIRECTOR.json` 49/49 PASS, p(95) 195ms  · VU 2|
+| Stress | 🔲 `stress-MEDICAL_DIRECTOR.json` p(95) 1,827ms · threshold 근접 · RPS 98 · VU peak 200 |
 | 보안 — Cross-role 접근 차단 | 🔲 pentest 미커버 |
 | 보안 — GDPR 개인정보 스코프 검증 | 🔲 guardian 계정 접근 범위 미검증 |
 
@@ -194,20 +203,23 @@
 
 ---
 
-## 16. 다중 역할 확장 커버리지 (Multi-Role Extended Personas · 확장 완료 · stress 미러닝)
+## 16. 다중 역할 확장 커버리지 (Multi-Role Extended Personas · stress 러닝 완료)
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| ADMIN `admin@club.com` smoke/stress | 🔲 personas.k6.js 편입 완료, 미러닝 |
-| SUPERADMIN `superadmin@platform.com` smoke/stress | 🔲 편입 완료, 미러닝 |
-| HR_STAFF `hr.staff@club.com` | 🔲 편입 완료 · staff delegation IDOR 확인 필요 |
-| FINANCE_STAFF `finance.staff@club.com` | 🔲 편입 완료 |
-| ASSET_STAFF `asset.staff@club.com` | 🔲 편입 완료 |
-| FACILITY_MANAGER `facility.manager@club.com` | 🔲 편입 완료 |
-| FACILITY_STAFF `facility.staff@club.com` | 🔲 편입 완료 |
-| ASSISTANT_COACH `assistant@club.com` | 🔲 편입 완료 |
-| ATTACKING_COACH `attacking@club.com` | 🔲 편입 완료 |
-| DEFENSIVE_COACH `defensive@club.com` | 🔲 편입 완료 |
+| ADMIN `admin@club.com` | 🔲 `stress-ADMIN.json` p(95) **5,586ms** · RPS 50 · threshold 2.8× 초과 (`/admin/audit-logs` 병목 추정) · VU peak 200 |
+| SUPERADMIN `superadmin@platform.com` | 🔲 `stress-SUPERADMIN.json` p(95) 2,515ms · RPS 77 · threshold 살짝 초과 · VU peak 200 |
+| HR_STAFF `hr.staff@club.com` | 🔲 `stress-HR_STAFF.json` p(95) 1,554ms · RPS 123 · **fail 66.66%** (2/3 endpoint 4xx — `/onboarding-tasks`·`/recruitment/job-postings` 미접근 or 없음) · VU peak 200 |
+| FINANCE_STAFF `finance.staff@club.com` | ✅ `stress-FINANCE_STAFF.json` p(95) 1,449ms · RPS 116 · threshold 통과 · Redis 캐시 재사용 효과 · VU peak 200 |
+| ASSET_STAFF `asset.staff@club.com` | ✅ `stress-ASSET_STAFF.json` p(95) 1,120ms · RPS 129 · threshold 통과 · VU peak 200 |
+| FACILITY_MANAGER `facility.manager@club.com` | ✅ `stress-FACILITY_MANAGER.json` p(95) 1,043ms · RPS 152 · **fail 33.33%** (1/3 endpoint) · VU peak 200 |
+| FACILITY_STAFF `facility.staff@club.com` | ✅ `stress-FACILITY_STAFF.json` p(95) 1,211ms · RPS 145 · **fail 33.33%** · VU peak 200 |
+| ASSISTANT_COACH `assistant@club.com` | ✅ `stress-ASSISTANT_COACH.json` p(95) 1,111ms · RPS 114 · threshold 통과 · VU peak 200 |
+| ATTACKING_COACH `attacking@club.com` | ✅ `stress-ATTACKING_COACH.json` p(95) 941ms · RPS 147 · **fail 33.33%** (`/formation-snapshots` 추정) · VU peak 200 |
+| DEFENSIVE_COACH `defensive@club.com` | ✅ `stress-DEFENSIVE_COACH.json` p(95) 1,050ms · RPS 135 · **fail 33.33%** · VU peak 200 |
+| 성능 — ADMIN `/admin/audit-logs` 단독 도메인별 stress | 🔲 5.6s 병목 정확히 지목 필요 (Redis 미적용) |
+| 성능 — HR_STAFF 4xx endpoint 지목 | 🔲 3개 endpoint 개별 status 확인 (persona 정의 재검토) |
+| 성능 — coaching variant 4xx endpoint 지목 | 🔲 `/formation-snapshots` 존재 여부 확인 |
 | GK/PHYSICAL/SETPIECE/YOUTH/MEDICAL/FO/TD 등 나머지 role login-sweep | 🔲 rate-limit 5분+ 쿨다운 후 재시도 |
 | Guardian 세션 8건 login-sweep + GDPR 스코프 검증 | 🔲 rate-limit blocker |
 | 개별 선수 계정 7건 cross-IDOR | 🔲 rate-limit blocker |

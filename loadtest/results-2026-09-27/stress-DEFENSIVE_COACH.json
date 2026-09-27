@@ -1,0 +1,184 @@
+{
+    "root_group": {
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+                "DEFENSIVE_COACH": {
+                    "name": "DEFENSIVE_COACH",
+                    "path": "::DEFENSIVE_COACH",
+                    "id": "3e79d199d81d38ce29a765d9a03ee5fb",
+                    "groups": {},
+                    "checks": {
+                            "DEFENSIVE_COACH def_list_training status<500": {
+                                "name": "DEFENSIVE_COACH def_list_training status<500",
+                                "path": "::DEFENSIVE_COACH::DEFENSIVE_COACH def_list_training status<500",
+                                "id": "3608c4ce00505bd6cb7ec5bc28fb6a18",
+                                "passes": 4782,
+                                "fails": 0
+                            },
+                            "DEFENSIVE_COACH def_list_tactical status<500": {
+                                "fails": 0,
+                                "name": "DEFENSIVE_COACH def_list_tactical status<500",
+                                "path": "::DEFENSIVE_COACH::DEFENSIVE_COACH def_list_tactical status<500",
+                                "id": "acaaa15adb11a06d8ddce7dd2b6005ab",
+                                "passes": 4782
+                            },
+                            "DEFENSIVE_COACH def_list_formations status<500": {
+                                "id": "c6c3e72cd41cc6f76f0cd0774f091bc9",
+                                "passes": 4782,
+                                "fails": 0,
+                                "name": "DEFENSIVE_COACH def_list_formations status<500",
+                                "path": "::DEFENSIVE_COACH::DEFENSIVE_COACH def_list_formations status<500"
+                            }
+                        }
+                }
+            }
+    },
+    "metrics": {
+        "data_sent": {
+            "count": 6321995,
+            "rate": 59668.81534976864
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(95)": 1154.4047999999996,
+            "avg": 462.8163137480407,
+            "min": 1.934,
+            "med": 368.611,
+            "max": 1896.624,
+            "p(90)": 970.0477999999999
+        },
+        "http_req_failed": {
+            "passes": 4782,
+            "fails": 9565,
+            "thresholds": {
+                "rate<0.10": true
+            },
+            "value": 0.3333100996724054
+        },
+        "http_req_sending": {
+            "p(95)": 0.026,
+            "avg": 0.018703213215305138,
+            "min": 0.002,
+            "med": 0.01,
+            "max": 10.34,
+            "p(90)": 0.018
+        },
+        "http_req_duration": {
+            "max": 1896.624,
+            "p(90)": 869.0674000000001,
+            "p(95)": 1049.6607999999999,
+            "avg": 309.74388624799616,
+            "min": 0.122,
+            "med": 174.658,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_reqs": {
+            "count": 14347,
+            "rate": 135.4111311102161
+        },
+        "group_duration": {
+            "min": 6.018292,
+            "med": 819.9837705,
+            "max": 2750.602125,
+            "p(90)": 1913.6940327000002,
+            "p(95)": 2136.5857708499993,
+            "avg": 929.8415723722296
+        },
+        "http_req_receiving": {
+            "p(95)": 0.088,
+            "avg": 0.051057085104899466,
+            "min": 0.006,
+            "med": 0.028,
+            "max": 15.681,
+            "p(90)": 0.064
+        },
+        "http_req_tls_handshaking": {
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_req_waiting": {
+            "med": 174.611,
+            "max": 1896.563,
+            "p(90)": 869.0334000000001,
+            "p(95)": 1049.6202999999998,
+            "avg": 309.67412594967396,
+            "min": 0.102
+        },
+        "http_req_blocked": {
+            "max": 25.403,
+            "p(90)": 0.006,
+            "p(95)": 0.011,
+            "avg": 0.01907074649752469,
+            "min": 0,
+            "med": 0.003
+        },
+        "http_req_connecting": {
+            "min": 0,
+            "med": 0,
+            "max": 10.83,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.009330522060361056
+        },
+        "checks": {
+            "passes": 14346,
+            "fails": 0,
+            "value": 1
+        },
+        "iteration_duration": {
+            "max": 3750.894667,
+            "p(90)": 2914.5424497000004,
+            "p(95)": 3136.7771148999996,
+            "avg": 1931.580337797993,
+            "min": 1006.73475,
+            "med": 1821.9288955
+        },
+        "data_received": {
+            "count": 14218189,
+            "rate": 134195.37567636665
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "persona_latency": {
+            "max": 1896.624,
+            "p(90)": 869.1055000000001,
+            "p(95)": 1049.6695,
+            "avg": 309.74400362470385,
+            "min": 0.122,
+            "med": 174.65249999999997
+        },
+        "vus": {
+            "value": 12,
+            "min": 5,
+            "max": 200
+        },
+        "vus_max": {
+            "value": 200,
+            "min": 200,
+            "max": 200
+        },
+        "iterations": {
+            "count": 4782,
+            "rate": 45.133897607099286
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "DEFENSIVE_COACH": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6IkNPQUNISU5HX1NUQUZGIiwiY29hY2hpbmdSb2xlIjoiREVGRU5TSVZFX0NPQUNIIiwiZnJvbnRPZmZpY2VSb2xlIjpudWxsLCJkZXBhcnRtZW50Q2F0ZWdvcmllcyI6W10sInRlYW1JZCI6bnVsbCwiY2x1YklkIjoxLCJpc0RlbW8iOmZhbHNlLCJpYXQiOjE3OTA1MDM0NDIsImV4cCI6MTc5MDUwNzA0Mn0.bC5uDjIzjVf3QWM_Q9bd9WvBUPLlv9VQdqtIKNFJPMM"
+            }
+    }
+}

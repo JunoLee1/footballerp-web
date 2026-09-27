@@ -1,0 +1,184 @@
+{
+    "metrics": {
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 12289,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_blocked": {
+            "med": 0.003,
+            "max": 60.704,
+            "p(90)": 0.006,
+            "p(95)": 0.011,
+            "avg": 0.027293351778011406,
+            "min": 0
+        },
+        "http_req_connecting": {
+            "avg": 0.01422499796566034,
+            "min": 0,
+            "med": 0,
+            "max": 17.166,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_reqs": {
+            "count": 12289,
+            "rate": 115.51810580161275
+        },
+        "data_sent": {
+            "count": 5636291,
+            "rate": 52981.82602869865
+        },
+        "group_duration": {
+            "min": 10.839375,
+            "med": 960.7445005,
+            "max": 4308.056917,
+            "p(90)": 2680.574396,
+            "p(95)": 3610.139291749993,
+            "avg": 1261.453746431884
+        },
+        "data_received": {
+            "count": 369075495,
+            "rate": 3469354.8767346893
+        },
+        "http_req_duration": {
+            "avg": 420.21935234762736,
+            "min": 1.507,
+            "med": 230.295,
+            "max": 2633.928,
+            "p(90)": 1068.9850000000001,
+            "p(95)": 1449.3853999999997,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_sending": {
+            "p(95)": 0.033,
+            "avg": 0.02352160468711752,
+            "min": 0.002,
+            "med": 0.01,
+            "max": 17.031,
+            "p(90)": 0.02
+        },
+        "persona_latency": {
+            "avg": 420.2416495768223,
+            "min": 1.507,
+            "med": 230.31099999999998,
+            "max": 2633.928,
+            "p(90)": 1069.0300000000002,
+            "p(95)": 1449.4130999999998
+        },
+        "http_req_receiving": {
+            "avg": 0.14409276588819167,
+            "min": 0.007,
+            "med": 0.049,
+            "max": 59.651,
+            "p(90)": 0.152,
+            "p(95)": 0.24159999999999945
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(90)": 1068.9850000000001,
+            "p(95)": 1449.3853999999997,
+            "avg": 420.21935234762736,
+            "min": 1.507,
+            "med": 230.295,
+            "max": 2633.928
+        },
+        "http_req_waiting": {
+            "p(90)": 1068.9408,
+            "p(95)": 1449.3385999999998,
+            "avg": 420.05173797705396,
+            "min": 1.415,
+            "med": 229.931,
+            "max": 2633.905
+        },
+        "vus": {
+            "value": 4,
+            "min": 4,
+            "max": 200
+        },
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0
+        },
+        "vus_max": {
+            "value": 200,
+            "min": 200,
+            "max": 200
+        },
+        "iteration_duration": {
+            "avg": 2263.2766031069355,
+            "min": 1011.220916,
+            "med": 1961.632854,
+            "max": 5308.14575,
+            "p(90)": 3681.8675000000003,
+            "p(95)": 4610.286843499993
+        },
+        "iterations": {
+            "count": 4096,
+            "rate": 38.50290189302676
+        },
+        "checks": {
+            "passes": 12288,
+            "fails": 0,
+            "value": 1
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "FINANCE_STAFF": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkZJTkFOQ0VfU1RBRkYiLCJkZXBhcnRtZW50Q2F0ZWdvcmllcyI6WyJGSU5BTkNFIl0sInRlYW1JZCI6bnVsbCwiY2x1YklkIjoxLCJpc0RlbW8iOmZhbHNlLCJpYXQiOjE3OTA1MDI4MDMsImV4cCI6MTc5MDUwNjQwM30.5B24DDEjhEY5IM_bROWZCB8afmJKHKxjuX4hGsAdvl0"
+            }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "FINANCE_STAFF": {
+                "name": "FINANCE_STAFF",
+                "path": "::FINANCE_STAFF",
+                "id": "3dedf1beccce9f627c3bff1b484014f2",
+                "groups": {},
+                "checks": {
+                        "FINANCE_STAFF fs_list_operating_expenses status<500": {
+                            "name": "FINANCE_STAFF fs_list_operating_expenses status<500",
+                            "path": "::FINANCE_STAFF::FINANCE_STAFF fs_list_operating_expenses status<500",
+                            "id": "533e4268881c8548b2787e33c6513a60",
+                            "passes": 4096,
+                            "fails": 0
+                        },
+                        "FINANCE_STAFF fs_list_monthly_settlement status<500": {
+                            "name": "FINANCE_STAFF fs_list_monthly_settlement status<500",
+                            "path": "::FINANCE_STAFF::FINANCE_STAFF fs_list_monthly_settlement status<500",
+                            "id": "533d16795b28a1e7eb406a99a9e830e6",
+                            "passes": 4096,
+                            "fails": 0
+                        },
+                        "FINANCE_STAFF fs_list_expense_categories status<500": {
+                            "name": "FINANCE_STAFF fs_list_expense_categories status<500",
+                            "path": "::FINANCE_STAFF::FINANCE_STAFF fs_list_expense_categories status<500",
+                            "id": "4185cffd2d5681f1772d25520d676642",
+                            "passes": 4096,
+                            "fails": 0
+                        }
+                    }
+            }
+        },
+        "checks": {}
+    }
+}

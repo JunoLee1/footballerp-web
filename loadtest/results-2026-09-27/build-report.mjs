@@ -7,6 +7,7 @@ import path from 'node:path'
 
 const DIR = path.dirname(new URL(import.meta.url).pathname)
 const PERSONAS = [
+  // Original 7 canonical role heads
   'HR_MANAGER',
   'HEAD_COACH',
   'FINANCE_MANAGER',
@@ -14,7 +15,19 @@ const PERSONAS = [
   'GM',
   'PLAYER',
   'MEDICAL_DIRECTOR',
+  // Extended 10 (admin + staff delegates + coaching variants)
+  'ADMIN',
+  'SUPERADMIN',
+  'HR_STAFF',
+  'FINANCE_STAFF',
+  'ASSET_STAFF',
+  'FACILITY_MANAGER',
+  'FACILITY_STAFF',
+  'ASSISTANT_COACH',
+  'ATTACKING_COACH',
+  'DEFENSIVE_COACH',
 ]
+const REDIS_PERSONAS = ['GM', 'FINANCE_MANAGER', 'ASSET_MANAGER']
 const SCENARIOS = ['smoke', 'stress']
 
 function readSummary(scenario, persona) {
@@ -105,6 +118,11 @@ const html = `<!doctype html>
   </section>
 
   <section>
+    <h2>⚡ Redis 캐시 적용 전/후 비교</h2>
+    ${renderRedisCompare()}
+  </section>
+
+  <section>
     <h2>📈 p95 latency by persona (stress vs smoke)</h2>
     ${renderChart(rows)}
   </section>
@@ -144,6 +162,46 @@ function renderTable(list) {
     </tr>`
   }).join('\n')
   return `<table>${head}${body}</table>`
+}
+
+function renderRedisCompare() {
+  const rows = REDIS_PERSONAS.map((p) => {
+    const baseFile = path.join(DIR, `stress-${p}.json`)
+    const redisFile = path.join(DIR, `stress-${p}-redis.json`)
+    if (!fs.existsSync(baseFile) || !fs.existsSync(redisFile)) return null
+    const b = JSON.parse(fs.readFileSync(baseFile, 'utf8')).metrics
+    const r = JSON.parse(fs.readFileSync(redisFile, 'utf8')).metrics
+    const p95a = b.http_req_duration['p(95)']
+    const p95b = r.http_req_duration['p(95)']
+    const rpsA = b.http_reqs.rate
+    const rpsB = r.http_reqs.rate
+    return {
+      persona: p,
+      p95a: p95a.toFixed(0),
+      p95b: p95b.toFixed(0),
+      p95Improve: (p95a / p95b).toFixed(2),
+      rpsA: rpsA.toFixed(1),
+      rpsB: rpsB.toFixed(1),
+      rpsImprove: (rpsB / rpsA).toFixed(2),
+    }
+  }).filter(Boolean)
+  if (rows.length === 0) return '<div class="missing">Redis 비교 데이터 없음.</div>'
+  const body = rows.map((r) => `<tr>
+    <td>${r.persona}</td>
+    <td class="num">${r.p95a}ms</td>
+    <td class="num ok">${r.p95b}ms</td>
+    <td class="num ${+r.p95Improve >= 3 ? 'ok' : 'warn'}">${r.p95Improve}×</td>
+    <td class="num">${r.rpsA}</td>
+    <td class="num ok">${r.rpsB}</td>
+    <td class="num ${+r.rpsImprove >= 2 ? 'ok' : 'warn'}">${r.rpsImprove}×</td>
+  </tr>`).join('\n')
+  return `<table>
+    <tr><th>Persona</th><th>Baseline p95</th><th>Redis p95</th><th>p95 개선</th><th>Baseline RPS</th><th>Redis RPS</th><th>RPS 개선</th></tr>
+    ${body}
+  </table>
+  <div style="margin-top:12px;padding:12px;background:#eff6ff;border-left:3px solid #2563eb;font-size:13px">
+    <strong>메커니즘:</strong> 30초 TTL Redis 캐시(ioredis)를 <code>plan-report</code>·<code>report</code>·<code>hiring-dispatch</code>·<code>operating-expense</code>·<code>budget-control</code>·<code>equipment</code>·<code>asset-request</code>·<code>financial-report</code>·<code>budget-plan-request</code> 서비스 list/get 에 적용. 매 요청 DB 재조회 → 첫 요청만 DB, 이후 30s 동안 캐시 hit.
+  </div>`
 }
 
 function renderPentest() {
