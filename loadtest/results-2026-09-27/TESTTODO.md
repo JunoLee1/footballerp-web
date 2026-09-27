@@ -251,6 +251,668 @@
 
 ---
 
+---
+
+# 🆕 미커버 도메인 스켈레톤 (2026-09-27 추가)
+
+## 🏟️ 시설·자산
+
+### 19. `facility` `/facility`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 20. `department-asset-kit` `/department-asset-kits`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 21. `inventory` `/inventory`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 22. `video` `/videos`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 23. `medical-equipment-loan` `/medical-equipment-loan`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 💼 트랜스퍼·에이전시
+
+### 24. `transfer` `/transfers`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 25. `transfer-request` `/transfer-requests`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 26. `agency` `/agencies`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## ⚽ 팀·시즌·경기
+
+### 27. `team` `/teams`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 28. `season` `/seasons`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 29. `league` `/leagues`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 30. `match` `/matches`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 31. `club` `/clubs`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 32. `club-settings` `/club-settings`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 🏃 코치·훈련 세부
+
+### 33. `coach` `/coaches`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 34. `coach-availability` `/coach-availabilities`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 35. `coaching-staff` `/coaching-staff`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 36. `training-load` `/training-loads`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 37. `training-reference` `/training-references`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 💰 재무·예산 세부
+
+### 38. `budget` `/budget`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 39. `budget-automation` `/budget-automation`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 40. `budget-plan` `/ (plan-request)`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 41. `expense-category` `/expense-categories`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 42. `revenue-adjustment` `/revenue-adjustment`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 43. `account-code` `/account-codes`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 👥 HR 세부
+
+### 44. `hiring-automation` `/hiring-automation`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 45. `hr` `/hr`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 46. `hr-report` `/hr-report`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 47. `staff-record` `/staff-records`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 48. `onboarding-task` `/onboarding-tasks`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 49. `onboarding-template` `/onboarding-templates`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 50. `mandatory-minimum` `/mandatory-minimum`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 51. `jobs` `/jobs`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 52. `probation-review` `/probation-reviews`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 📊 리포트·리뷰·분석
+
+### 53. `ops-report` `/ops-reports`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 54. `plan-review` `/plan-reviews`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 55. `incident-report` `/incident-reports`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 56. `growth-report` `/growth-reports`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 57. `development-plan` `/development-plans`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 58. `dashboard` `/dashboard`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 59. `analysis` `/analysis`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 🛡️ 보호자·유스·안전
+
+### 60. `guardian` `/guardians`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## ⚙️ 워크플로우·설정
+
+### 61. `attendance-appeal` `/attendance-appeals`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 62. `department-review-config` `/department-review-configs`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 63. `formation-snapshot` `/formation-snapshots`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 64. `squad-plan` `/squad-plan`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 65. `tactical` `/tactical`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 66. `certification` `/certification`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 🌐 인프라·유틸
+
+### 67. `country` `/countries`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 68. `i18n` `(no router)`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 69. `middleWare` `(shared middleware)`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 70. `webhook` `/webhook`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+## 📦 기타
+
+### 71. `software-license` `/software-licenses`
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | 🔲 미러닝 |
+| Stress | 🔲 미러닝 |
+| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
 ## 공통 보안 테스트 (전 도메인)
 
 | 항목 | 상태 | 비고 |
