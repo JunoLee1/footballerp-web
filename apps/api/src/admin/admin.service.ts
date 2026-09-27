@@ -2,6 +2,7 @@ import { AdminRepository } from "./admin.repo";
 import { AppError } from "../lib/appError";
 import { maskEmail, maskUsername } from "../lib/maskPii";
 import { cached } from "../lib/cache";
+import { invalidateUserActive } from "../lib/userStatusCache";
 import { ListUsersQuery, UpdateUserRoleDto, PlayerWithoutAccountDto, SetDemoDto } from "./dto/admin.dto";
 
 type AuditLogRecord = Awaited<ReturnType<AdminRepository["listAuditLogs"]>>[number];
@@ -55,14 +56,18 @@ export class AdminService {
     const user = await this.repo.findById(id);
     if (!user) throw new AppError(404, "USER_NOT_FOUND");
 
-    return this.repo.setDeleted(id, true);
+    const result = await this.repo.setDeleted(id, true);
+    void invalidateUserActive(id).catch(console.error);
+    return result;
   }
 
   async reactivateUser(id: number) {
     const user = await this.repo.findById(id);
     if (!user) throw new AppError(404, "USER_NOT_FOUND");
 
-    return this.repo.setDeleted(id, false);
+    const result = await this.repo.setDeleted(id, false);
+    void invalidateUserActive(id).catch(console.error);
+    return result;
   }
 
   async deleteUser(id: number, requesterId: number) {
@@ -88,6 +93,7 @@ export class AdminService {
     if (hasLinkedData) throw new AppError(409, "USER_HAS_LINKED_DATA");
 
     await this.repo.hardDelete(id);
+    void invalidateUserActive(id).catch(console.error);
   }
 
   async setDemoStatus(id: number, dto: SetDemoDto, requesterId: number) {
