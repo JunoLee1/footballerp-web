@@ -917,25 +917,38 @@
 
 45 프로브 (3 attacker × 15 endpoint) → **23 LEAK / 22 BLOCKED (51% 취약).**
 
-| Owner 도메인 | Endpoint | PLAYER | HR_MANAGER | ASSET_MANAGER | 판정 |
-|---|---|---|---|---|---|
-| HR_MANAGER | `/hiring-surveys` | 🚨 200 | — | 🚨 200 | **LEAK** |
-| HR_MANAGER | `/plan-reports` | 🚨 200 | — | 🚨 200 | **LEAK** |
-| HR_MANAGER | `/recruitment/job-postings` | ✓ 403 | — | ✓ 403 | BLOCKED |
-| FINANCE_MANAGER | `/operating-expenses?seasonId=1` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
-| FINANCE_MANAGER | `/budget-control` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
-| FINANCE_MANAGER | `/financial-reports/1` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
-| ASSET_MANAGER | `/equipment` | ✓ 403 | 🚨 200 | — | **LEAK** |
-| ASSET_MANAGER | `/asset-requests` | 🚨 200 | 🚨 200 | — | **LEAK** |
-| ASSET_MANAGER | `/equipment/loans` | ✓ 403 | 🚨 200 | — | **LEAK** |
-| GM | `/plan-reports?filter=pending-final` | 🚨 200 | 🚨 200 | 🚨 200 | **LEAK (전 role)** |
-| GM | `/reports?filter=pending-final` | 🚨 200 | 🚨 200 | 🚨 200 | **LEAK (전 role)** |
-| GM | `/hiring-dispatches?filter=pending-dispatch` | 🚨 200 | 🚨 200 | 🚨 200 | **LEAK (전 role)** |
-| MEDICAL | `/injuries/active` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
-| MEDICAL | `/medical-equipment-loan` | 🚨 200 | 🚨 200 | 🚨 200 | **LEAK (전 role · GDPR)** |
-| MEDICAL | `/medical-expenses` | 🚨 200 | 🚨 200 | 🚨 200 | **LEAK (전 role · GDPR)** |
-| ADMIN | `/admin/audit-logs` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
-| ADMIN | `/admin/users` | ✓ 403 | ✓ 403 | ✓ 403 | BLOCKED |
+### 📊 Owner 도메인별 취약도
+
+| Owner 도메인 | 총 프로브 | LEAK | BLOCKED | 취약도 |
+|---|---|---|---|---|
+| **GM** | 9 | **9** | 0 | **100%** ❌ |
+| MEDICAL_DIRECTOR | 9 | 6 | 3 | 67% ❌ |
+| HR_MANAGER | 6 | 4 | 2 | 67% ❌ |
+| ASSET_MANAGER | 6 | 4 | 2 | 67% ❌ |
+| FINANCE_MANAGER | 9 | 0 | 9 | **0%** ✅ |
+| ADMIN | 6 | 0 | 6 | **0%** ✅ |
+
+### 📋 Endpoint 별 상세 — 어느 role 이 뚫었는지
+
+| Owner | Endpoint | 뚫은 role | 판정 |
+|---|---|---|---|
+| **GM** | `/plan-reports?filter=pending-final` | PLAYER · HR · ASSET | 🚨 전 role LEAK |
+| **GM** | `/reports?filter=pending-final` | PLAYER · HR · ASSET | 🚨 전 role LEAK |
+| **GM** | `/hiring-dispatches?filter=pending-dispatch` | PLAYER · HR · ASSET | 🚨 전 role LEAK |
+| **MEDICAL** | `/medical-equipment-loan` | PLAYER · HR · ASSET | 🚨 전 role LEAK · GDPR |
+| **MEDICAL** | `/medical-expenses` | PLAYER · HR · ASSET | 🚨 전 role LEAK · GDPR |
+| MEDICAL | `/injuries/active` | — | ✓ BLOCKED |
+| HR | `/hiring-surveys` | PLAYER · ASSET | 🚨 LEAK (2 role) |
+| HR | `/plan-reports` | PLAYER · ASSET | 🚨 LEAK (2 role) |
+| HR | `/recruitment/job-postings` | — | ✓ BLOCKED |
+| ASSET | `/asset-requests` | PLAYER · HR | 🚨 LEAK (2 role) |
+| ASSET | `/equipment` | HR | 🚨 LEAK (HR only) |
+| ASSET | `/equipment/loans` | HR | 🚨 LEAK (HR only) |
+| FINANCE | `/operating-expenses?seasonId=1` | — | ✓ BLOCKED |
+| FINANCE | `/budget-control` | — | ✓ BLOCKED |
+| FINANCE | `/financial-reports/1` | — | ✓ BLOCKED |
+| ADMIN | `/admin/audit-logs` | — | ✓ BLOCKED |
+| ADMIN | `/admin/users` | — | ✓ BLOCKED |
 
 **패턴 관찰:**
 - ✅ **FINANCE · ADMIN 도메인** — role guard 완벽 (전 endpoint 403)
