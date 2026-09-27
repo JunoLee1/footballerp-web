@@ -1,0 +1,184 @@
+{
+    "metrics": {
+        "http_req_duration{expected_response:true}": {
+            "max": 1826.605,
+            "p(90)": 762.5502,
+            "p(95)": 946.3876499999999,
+            "avg": 314.515486039006,
+            "min": 1.982,
+            "med": 199.367
+        },
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0
+        },
+        "http_req_receiving": {
+            "p(90)": 0.073,
+            "p(95)": 0.11434999999999937,
+            "avg": 0.06353051774940294,
+            "min": 0.005,
+            "med": 0.027,
+            "max": 25.628
+        },
+        "http_req_duration": {
+            "p(90)": 762.5502,
+            "p(95)": 946.3876499999999,
+            "avg": 314.515486039006,
+            "min": 1.982,
+            "med": 199.367,
+            "max": 1826.605,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_connecting": {
+            "avg": 0.010179879332117297,
+            "min": 0,
+            "med": 0,
+            "max": 9.006,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "iterations": {
+            "count": 4751,
+            "rate": 44.58788523226623
+        },
+        "http_reqs": {
+            "count": 14254,
+            "rate": 133.77304064422708
+        },
+        "iteration_duration": {
+            "p(90)": 3066.520667,
+            "p(95)": 3361.8042284999997,
+            "avg": 1947.2653988076195,
+            "min": 1008.927458,
+            "med": 1766.997667,
+            "max": 3951.218041
+        },
+        "http_req_waiting": {
+            "med": 198.93,
+            "max": 1826.437,
+            "p(90)": 762.5146,
+            "p(95)": 946.2931999999998,
+            "avg": 314.42329311070597,
+            "min": 1.944
+        },
+        "vus": {
+            "value": 4,
+            "min": 4,
+            "max": 200
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "data_sent": {
+            "count": 6409287,
+            "rate": 60150.82154844369
+        },
+        "group_duration": {
+            "avg": 944.2807448010951,
+            "min": 8.603375,
+            "med": 765.365125,
+            "max": 2910.254375,
+            "p(90)": 2064.330042,
+            "p(95)": 2361.6262295
+        },
+        "http_req_blocked": {
+            "med": 0.003,
+            "max": 13.88,
+            "p(90)": 0.009,
+            "p(95)": 0.016,
+            "avg": 0.021271993826293543,
+            "min": 0
+        },
+        "checks": {
+            "passes": 14253,
+            "fails": 0,
+            "value": 1
+        },
+        "vus_max": {
+            "value": 200,
+            "min": 200,
+            "max": 200
+        },
+        "http_req_sending": {
+            "avg": 0.028662410551422508,
+            "min": 0.002,
+            "med": 0.009,
+            "max": 20.794,
+            "p(90)": 0.023,
+            "p(95)": 0.04
+        },
+        "persona_latency": {
+            "p(95)": 946.3915999999999,
+            "avg": 314.50965922963525,
+            "min": 1.982,
+            "med": 199.361,
+            "max": 1826.605,
+            "p(90)": 762.5548
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 14254,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "data_received": {
+            "rate": 36172.168249545975,
+            "count": 3854275
+        }
+    },
+    "setup_data": {
+        "tokens": {
+            "MEDICAL_DIRECTOR": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsInJvbGUiOiJDT0FDSElOR19TVEFGRiIsImNvYWNoaW5nUm9sZSI6Ik1FRElDQUxfRElSRUNUT1IiLCJmcm9udE9mZmljZVJvbGUiOm51bGwsImRlcGFydG1lbnRDYXRlZ29yaWVzIjpbXSwidGVhbUlkIjpudWxsLCJjbHViSWQiOjEsImlzRGVtbyI6ZmFsc2UsImlhdCI6MTc5MDUxNTE3NywiZXhwIjoxNzkwNTE4Nzc3fQ.OdIVbtVouc-xNnQjdr4lOz2GcehlaikqQVT38LmVexw"
+        },
+        "notificationIds": {}
+    },
+    "root_group": {
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+                "MEDICAL_DIRECTOR": {
+                    "name": "MEDICAL_DIRECTOR",
+                    "path": "::MEDICAL_DIRECTOR",
+                    "id": "c08f3bdf9c7399a53b586de2f81b0a6f",
+                    "groups": {},
+                    "checks": {
+                            "MEDICAL_DIRECTOR list_active_injuries status<500": {
+                                "name": "MEDICAL_DIRECTOR list_active_injuries status<500",
+                                "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_active_injuries status<500",
+                                "id": "270227c27923b4a758d587a4f98d4f49",
+                                "passes": 4751,
+                                "fails": 0
+                            },
+                            "MEDICAL_DIRECTOR list_medical_equipment_loans status<500": {
+                                "name": "MEDICAL_DIRECTOR list_medical_equipment_loans status<500",
+                                "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_medical_equipment_loans status<500",
+                                "id": "7e4de5030c4bd20f6f6fc21a0e3eec15",
+                                "passes": 4751,
+                                "fails": 0
+                            },
+                            "MEDICAL_DIRECTOR list_medical_expenses status<500": {
+                                "passes": 4751,
+                                "fails": 0,
+                                "name": "MEDICAL_DIRECTOR list_medical_expenses status<500",
+                                "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_medical_expenses status<500",
+                                "id": "598e54005f81bafc6103a4aa7a8bb603"
+                            }
+                        }
+                }
+            }
+    }
+}
