@@ -32,9 +32,11 @@ function pickRow(scenario, persona, s) {
   const iters = m.iterations || {}
   const totalReqs = reqs.count ?? 0
   const totalFailed = failed.passes ?? 0
+  const vus = m.vus || {}
   return {
     scenario,
     persona,
+    vuPeak: vus.max ?? null,
     reqs: totalReqs,
     rps: reqs.rate != null ? +reqs.rate.toFixed(2) : null,
     p95: dur['p(95)'] != null ? +dur['p(95)'].toFixed(1) : null,
@@ -118,10 +120,10 @@ const html = `<!doctype html>
 
 function renderTable(list) {
   const head = `<tr>
-    <th>Persona</th><th>Reqs</th><th>RPS</th><th>avg</th><th>p95</th><th>p99</th><th>max</th><th>Fail %</th><th>Errors</th><th>Verdict</th>
+    <th>Persona</th><th>VU peak</th><th>Reqs</th><th>RPS</th><th>avg</th><th>p95</th><th>p99</th><th>max</th><th>Fail %</th><th>Errors</th><th>Verdict</th>
   </tr>`
   const body = list.map((r) => {
-    if (r.missing) return `<tr><td>${r.persona}</td><td colspan="9" class="missing">summary file missing</td></tr>`
+    if (r.missing) return `<tr><td>${r.persona}</td><td colspan="10" class="missing">summary file missing</td></tr>`
     const p95Cls = r.p95 == null ? '' : r.p95 < 500 ? 'ok' : r.p95 < 2000 ? 'warn' : 'bad'
     const failCls = r.failedPct === 0 ? 'ok' : r.failedPct < 10 ? 'warn' : 'bad'
     const verdict = r.thresholds.p95Ok && r.thresholds.failOk
@@ -129,6 +131,7 @@ function renderTable(list) {
       : '<span class="bad">FAIL</span>'
     return `<tr>
       <td>${r.persona}</td>
+      <td class="num">${r.vuPeak ?? '—'}</td>
       <td class="num">${r.reqs}</td>
       <td class="num">${r.rps ?? '—'}</td>
       <td class="num">${r.avg ?? '—'}</td>
