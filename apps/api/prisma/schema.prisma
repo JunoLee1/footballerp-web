@@ -973,6 +973,7 @@ model User {
   requestedCallups          PlayerCallup[]                  @relation("CallupRequestedBy")
   approvedCallups           PlayerCallup[]                  @relation("CallupApprovedBy")
   loginHistory              LoginHistory[]
+  passwordHistory           PasswordHistory[]
   piiTargetRequests         PiiAccessRequest[] @relation("PiiTargets")
   piiSentRequests           PiiAccessRequest[] @relation("PiiRequesters")
   piiReviewedRequests       PiiAccessRequest[] @relation("PiiReviewers")
@@ -2621,6 +2622,20 @@ model LoginHistory {
   createdAt DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id])
+}
+
+// 비밀번호 재사용 방지용 이력 — 변경 성공 시 "이전 hash" 를 삽입.
+// updatePassword() 가 6개월 이내 항목과 bcrypt.compare 하여 재사용 차단.
+// TTL 은 애플리케이션 레벨에서 관리 (조회 시 6개월 필터, 배치로 오래된 row 삭제).
+model PasswordHistory {
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
 }
 
 model JerseyNumber {

@@ -1,0 +1,84 @@
+{
+  "generatedAt": "2026-09-27T10:38:36.654Z",
+  "baseUrl": "http://localhost:3001/api",
+  "proxy": "http://127.0.0.1:3002",
+  "results": [
+    {
+      "label": "short (3-char) → 400",
+      "expected": 400,
+      "actual": 400,
+      "detail": "{\"code\":\"INVALID_PASSWORD_FORMAT\"}",
+      "pass": true
+    },
+    {
+      "label": "no special char → 400",
+      "expected": 400,
+      "actual": 400,
+      "detail": "{\"code\":\"INVALID_PASSWORD_FORMAT\"}",
+      "pass": true
+    },
+    {
+      "label": "no uppercase → 400",
+      "expected": 400,
+      "actual": 400,
+      "detail": "{\"code\":\"INVALID_PASSWORD_FORMAT\"}",
+      "pass": true
+    },
+    {
+      "label": "same as current → 409",
+      "expected": 409,
+      "actual": 409,
+      "detail": "{\"code\":\"SAME_AS_CURRENT_PASSWORD\"}",
+      "pass": true
+    },
+    {
+      "label": "wrong current password → 401",
+      "expected": 401,
+      "actual": 401,
+      "detail": "{\"code\":\"INVALID_CURRENT_PASSWORD\"}",
+      "pass": true
+    },
+    {
+      "label": "no token → 401",
+      "expected": 401,
+      "actual": 401,
+      "detail": "{\"code\":\"UNAUTHORIZED\"}",
+      "pass": true
+    },
+    {
+      "label": "invalid token → 401",
+      "expected": 401,
+      "actual": 401,
+      "detail": "{\"code\":\"UNAUTHORIZED\"}",
+      "pass": true
+    },
+    {
+      "label": "email 미존재 vs 비번 오류 모두 401 균일",
+      "expected": true,
+      "actual": false,
+      "detail": "nonexistent=429, wrongPw=429",
+      "pass": false
+    },
+    {
+      "label": "soft-deleted login flow (코드 리뷰)",
+      "expected": "authMiddleware 차단",
+      "actual": "authMiddleware 차단",
+      "pass": true,
+      "detail": "authMiddleware.ts:46"
+    },
+    {
+      "label": "concurrent 2회: 하나만 200 이어야 안전",
+      "expected": false,
+      "actual": false,
+      "detail": "codes=[401,401] · both200=false oneEach=false",
+      "pass": true
+    },
+    {
+      "label": "concurrent refresh 상세",
+      "expected": "one 200 · one 401",
+      "actual": "[401,401]",
+      "pass": false,
+      "detail": "OK"
+    }
+  ]
+}

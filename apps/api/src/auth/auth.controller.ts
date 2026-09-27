@@ -7,8 +7,12 @@ import { ACCESS_TOKEN_COOKIE_NAME, REFRESH_TOKEN_COOKIE_NAME, ACCESS_TOKEN_COOKI
 import { AuthService } from "./auth.service";
 import { AuthRepository } from "./auth.repo";
 import { Role, CoachingRole, FrontOfficeRole } from "../generated/enums";
+import { recordFailedAttempt, resetAttempts } from "../lib/loginRateLimit";
+import { NotificationRepository } from "../notification/notification.repo";
+import { getPrisma } from "../lib/prisma";
 
 export class AuthController {
+  private notifRepo = new NotificationRepository(getPrisma());
   constructor(
     private service: AuthService,
     private repo: AuthRepository,
@@ -36,12 +40,30 @@ export class AuthController {
     try {
       const { accessToken, refreshToken, userId, teamId } = await this.service.login(req.body);
       void this.repo.createLoginHistory({ userId, email, ip, userAgent, success: true }).catch(console.error);
+      // 로그인 성공: progressive lockout 카운터 리셋
+      if (email) void resetAttempts(ip, email).catch(console.error);
       console.log("[AUTH] login success", { userId, teamId, ip });
       res.cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, ACCESS_TOKEN_COOKIE_OPTIONS);
       res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, REFRESH_TOKEN_COOKIE_OPTIONS);
       res.status(200).json({ message: "OK" });
     } catch (err) {
       void this.repo.createLoginHistory({ email, ip, userAgent, success: false }).catch(console.error);
+      // 로그인 실패: progressive lockout 카운터 증분 → tier 도달 시 후속 요청 429.
+      // 24h tier (20회) 도달 시 ADMIN 에게 보안 알림 발송.
+      if (email) {
+        void recordFailedAttempt(ip, email)
+          .then((r) => {
+            if (r.lockedTier === "24h") {
+              void this.notifRepo
+                .createForAdmin("LOGIN_LOCKOUT_24H", () => ({
+                  title: "로그인 브루트포스 의심",
+                  body: `${email} (IP ${ip}) · 20회 이상 로그인 실패로 24시간 잠금 발동`,
+                }))
+                .catch(console.error);
+            }
+          })
+          .catch(console.error);
+      }
       next(err);
     }
   };

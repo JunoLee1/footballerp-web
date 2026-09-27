@@ -148,6 +148,17 @@ export class AuthService {
       throw new AppError(409, "SAME_AS_CURRENT_PASSWORD");
     }
 
+    // 6개월 이내 사용된 비번 재사용 방지
+    const sixMonthsAgo = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000);
+    const recent = await this.repo.findRecentPasswordHashes(userId, sixMonthsAgo);
+    for (const entry of recent) {
+      if (await comparePassword(dto.newPassword, entry.passwordHash)) {
+        throw new AppError(409, "PASSWORD_RECENTLY_USED");
+      }
+    }
+
+    // 변경 성공 — 이전 hash 를 history 에 저장 (미래 재사용 방지용)
+    await this.repo.savePasswordHistory(userId, user.password);
     return this.repo.updatePassword(userId, await hashPassword(dto.newPassword));
   }
 

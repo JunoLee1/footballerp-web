@@ -1,11 +1,11 @@
 import { auth } from "../lib/authMiddleware";
 import { Router } from "express";
-import { rateLimit } from "express-rate-limit";
 import passport from "passport";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
 import { AuthRepository } from "./auth.repo";
 import { getPrisma } from "../lib/prisma";
+import { loginLockoutMiddleware } from "../lib/loginRateLimit";
 
 const router = Router();
 const repo = new AuthRepository(getPrisma());
@@ -14,16 +14,9 @@ const controller = new AuthController(service, repo);
 
 const refreshAuth = passport.authenticate("refreshToken", { session: false });
 
-const loginLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5분
-  limit: 10,                // 최대 10회
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { code: "TOO_MANY_REQUESTS" },
-});
-
-// 공개
-router.post("/login", loginLimiter, controller.login);
+// Progressive lockout: 5회→5분 · 10회→30분 · 15회→1시간 · 20회→24시간.
+// 카운터 갱신은 controller.login 이 로그인 성공·실패 후 호출.
+router.post("/login", loginLockoutMiddleware, controller.login);
 
 // refresh token으로 재발급
 router.post("/refresh", refreshAuth, controller.refresh);

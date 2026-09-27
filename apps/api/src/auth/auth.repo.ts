@@ -84,6 +84,22 @@ export class AuthRepository {
     });
   }
 
+  // 이전 비번 hash 를 이력에 기록 (변경 성공 후 호출).
+  savePasswordHistory(userId: number, passwordHash: string) {
+    return this.prisma.passwordHistory.create({
+      data: { userId, passwordHash },
+    });
+  }
+
+  // 지정 시점 이후 (기본 6개월) 사용된 이력 조회. bcrypt.compare 로 재사용 판정.
+  findRecentPasswordHashes(userId: number, since: Date) {
+    return this.prisma.passwordHistory.findMany({
+      where: { userId, createdAt: { gte: since } },
+      select: { passwordHash: true, createdAt: true },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   findById(id: number) {
     return this.prisma.user.findUnique({
       where: { id },
