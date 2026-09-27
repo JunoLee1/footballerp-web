@@ -86,8 +86,9 @@
 | Smoke | ✅ `smoke-GM.json` 49/49 PASS, p(95) 296ms  · VU 2|
 | Stress (baseline · no cache) | ✅ `stress-GM.json` p(95) 6,395ms · threshold 3배 초과 · RPS 40 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-GM-redis.json` p(95) **690ms** · threshold 통과 · RPS **139.7**  · VU peak 200· reqs 14,878 — **9.3× p95 개선 · 3.4× 처리량** |
-| 성능 — 3개 endpoint 개별 분해 러닝 | ➖ Redis 캐시로 병목 해소, 개별 분해 불필요 |
-| 보안 — Cross-role 접근 차단 | ✅ **LEAK** — `/plan-reports?filter=pending-final`·`/reports?filter=pending-final`·`/hiring-dispatches?filter=pending-dispatch` 3 endpoint 모두 PLAYER · HR · ASSET 세션에서 200 반환. **filter query 만 있고 role guard 없음** — GM 전용이어야 하는 pending-* 리스트가 모든 role 에 노출됨 |
+| 성능 — 3개 endpoint 개별 분해 러닝 | ✅ `gm-breakdown/stress-GM_{PLAN,REPORTS,DISPATCHES}.json` — Redis 활성 상태에서 각 335·217·266ms · 전부 threshold 통과 · 단일 병목 없음 |
+| 보안 — Cross-role 접근 차단 | ✅ **FIXED** — `fix/gm-perf-rbac` 로 3 controller (plan-report·report·hiring-dispatch) 에 `filter === 'pending-*' && !isAdminLike(role) → 403` 삽입 · PLAYER·HR·ASSET 재프로브 9/9 BLOCKED |
+| 보안 — GM authorized-access smoke | ✅ `gm-access-smoke.json` 17/17 AUTHORIZED (isAdminLike → 전 도메인 정상 접근 확인) |
 
 ---
 
@@ -98,6 +99,7 @@
 | Smoke | ✅ `smoke-PLAYER.json` 55/55 PASS, p(95) 144ms (최저 지연)  · VU 2|
 | Stress | ✅ `stress-PLAYER.json` p(95) 2,035ms · threshold 근접 초과 · RPS 83 · VU peak 200 |
 | 보안 — Cross-player IDOR | 🔲 개별 선수 계정 상호 세션 테스트 미러닝 (rate-limit blocker) |
+| 보안 - 타선수의 계약을 볼순없다|🔲|
 
 ---
 
@@ -915,16 +917,16 @@
 
 ## 🚨 Cross-Role RBAC 프로브 결과 요약 (`cross-role-test.json`)
 
-45 프로브 (3 attacker × 15 endpoint) → **17 LEAK / 28 BLOCKED (38% 취약).**  
-(HR RBAC fix 이전 baseline: 23 LEAK / 22 BLOCKED · `fix/hr-cross-role` 로 6건 해소)
+45 프로브 (3 attacker × 15 endpoint) → **10 LEAK / 35 BLOCKED (22% 취약).**  
+(baseline: 23 LEAK / 22 BLOCKED · `fix/hr-cross-role` 로 6건 · `fix/gm-perf-rbac` 로 7건 추가 해소)
 
-### 📊 Owner 도메인별 취약도 (HR fix 후)
+### 📊 Owner 도메인별 취약도 (HR + GM fix 후)
 
 | Owner 도메인 | 총 프로브 | LEAK | BLOCKED | 취약도 | 비고 |
 |---|---|---|---|---|---|
-| MEDICAL_DIRECTOR | 9 | 6 | 3 | 67% ❌ | 미해결 |
-| GM | 9 | 6 | 3 | 67% ❌ | `/plan-reports?filter=pending-final` 은 HR fix 로 함께 해소 (2건), `/reports?·/hiring-dispatches?` 잔존 (6건) |
+| MEDICAL_DIRECTOR | 9 | 6 | 3 | 67% ❌ | 미해결 · GDPR 개인정보 |
 | ASSET_MANAGER | 6 | 4 | 2 | 67% ❌ | 미해결 |
+| **GM** | 9 | **0** | 9 | **0%** ✅ | `fix/gm-perf-rbac` 로 완료 (controller 내부 filter check) |
 | **HR_MANAGER** | 6 | **0** | 6 | **0%** ✅ | `fix/hr-cross-role` 로 완료 |
 | FINANCE_MANAGER | 9 | 0 | 9 | **0%** ✅ | 원래부터 정상 |
 | ADMIN | 6 | 0 | 6 | **0%** ✅ | 원래부터 정상 |

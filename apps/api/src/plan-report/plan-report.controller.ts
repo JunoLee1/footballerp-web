@@ -3,6 +3,8 @@ import type { PlanReportService } from './plan-report.service'
 import { PlanReportRepository } from './plan-report.repo'
 import type { RecruitmentService } from '../recruitment/recruitment.service'
 import { HiringPlanItemStatus } from '../generated/enums'
+import { AppError } from '../lib/appError'
+import { isAdminLike } from '../lib/permissions'
 
 const HIRING_PLAN_ITEM_STATUSES = Object.values(HiringPlanItemStatus) as string[]
 
@@ -15,6 +17,12 @@ export class PlanReportController {
 
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const filter = (req.query as any)?.filter as string | undefined
+      const role = req.user?.role ?? ''
+      // pending-* 큐 는 GM/ADMIN 계층 전용
+      if (filter && String(filter).startsWith('pending-') && !isAdminLike(role)) {
+        throw new AppError(403, 'FORBIDDEN')
+      }
       res.json(await this.service.list(req.query as any))
     } catch (e) { next(e) }
   }

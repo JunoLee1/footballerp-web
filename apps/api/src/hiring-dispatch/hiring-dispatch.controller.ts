@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
+import { isAdminLike } from "../lib/permissions";
 import { HiringDispatchService } from "./hiring-dispatch.service";
 import {
   BudgetReverifyDto,
@@ -36,6 +37,10 @@ export class HiringDispatchController {
     try {
       const { id: userId, role } = requireUser(req);
       const { filter, status } = req.query as ListHiringDispatchQuery;
+      // GM-approval queue (pending-*) 는 GM/ADMIN 계층만 조회.
+      if (filter && filter.startsWith("pending-") && !isAdminLike(role)) {
+        throw new AppError(403, "FORBIDDEN");
+      }
       const rows = await this.service.list(userId, role, filter, status);
       res.json(serialize(rows));
     } catch (err) {

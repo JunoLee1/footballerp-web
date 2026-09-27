@@ -137,6 +137,16 @@ const html = `<!doctype html>
     ${renderCrossRole()}
   </section>
 
+  <section>
+    <h2>✅ GM Authorized-Access Smoke</h2>
+    ${renderGmSmoke()}
+  </section>
+
+  <section>
+    <h2>⚡ GM Endpoint 개별 분해 Stress</h2>
+    ${renderGmBreakdown()}
+  </section>
+
   <div class="footer">Generated ${new Date().toISOString()} · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
 </body>
 </html>`
@@ -301,6 +311,55 @@ function renderCrossRole() {
     + `<table>${ownerHead}${ownerRows}</table>`
     + '<h3 style="margin-top:20px;font-size:15px">📋 Endpoint 별 상세</h3>'
     + `<table>${epHead}${epBody}</table>`
+}
+
+function renderGmSmoke() {
+  const p = path.join(DIR, 'gm-access-smoke.json')
+  if (!fs.existsSync(p)) return '<div class="missing">gm-access-smoke.json 없음.</div>'
+  const s = JSON.parse(fs.readFileSync(p, 'utf8'))
+  const rows = s.results
+  const pass = rows.filter((r) => r.ok).length
+  const fail = rows.length - pass
+  const summary = `<div style="margin-bottom:12px;font-size:14px">
+    <span class="ok">${pass} AUTHORIZED</span> ·
+    <span class="${fail > 0 ? 'bad' : 'ok'}">${fail} unexpected</span> · 총 ${rows.length} endpoint
+    <div style="color:#666;margin-top:4px">GM 은 <code>isAdminLike</code> → 모든 도메인 접근 정당. 이 표는 regression 감지용.</div>
+  </div>`
+  const head = `<tr><th>Domain</th><th>Endpoint</th><th>Status</th><th>Verdict</th></tr>`
+  const body = rows.map((r) => {
+    const cls = r.ok ? 'ok' : 'bad'
+    return `<tr><td>${r.domain}</td><td><code>${r.path}</code></td><td class="num">${r.status}</td><td class="${cls}">${r.verdict}</td></tr>`
+  }).join('\n')
+  return summary + `<table>${head}${body}</table>`
+}
+
+function renderGmBreakdown() {
+  const files = ['GM_PLAN', 'GM_REPORTS', 'GM_DISPATCHES']
+  const rows = files.map((f) => {
+    const p = path.join(DIR, 'gm-breakdown', `stress-${f}.json`)
+    if (!fs.existsSync(p)) return null
+    const m = JSON.parse(fs.readFileSync(p, 'utf8')).metrics
+    return {
+      persona: f,
+      endpoint: { GM_PLAN: '/plan-reports?filter=pending-final', GM_REPORTS: '/reports?filter=pending-final', GM_DISPATCHES: '/hiring-dispatches?filter=pending-dispatch' }[f],
+      p95: m.http_req_duration['p(95)'].toFixed(0),
+      rps: m.http_reqs.rate.toFixed(1),
+      avg: m.http_req_duration.avg.toFixed(0),
+      fail: (m.http_req_failed.value * 100).toFixed(2),
+    }
+  }).filter(Boolean)
+  if (rows.length === 0) return '<div class="missing">gm-breakdown 없음.</div>'
+  const head = `<tr><th>Persona (endpoint 단독)</th><th>Endpoint</th><th>p95</th><th>avg</th><th>RPS</th><th>Fail %</th></tr>`
+  const body = rows.map((r) => `<tr>
+    <td>${r.persona}</td>
+    <td><code>${r.endpoint}</code></td>
+    <td class="num ok">${r.p95}ms</td>
+    <td class="num">${r.avg}ms</td>
+    <td class="num">${r.rps}</td>
+    <td class="num">${r.fail}</td>
+  </tr>`).join('\n')
+  return `<table>${head}${body}</table>
+  <div style="margin-top:12px;color:#666;font-size:13px">200 VU ramp · Redis 캐시 활성. 세 endpoint 개별 스트레스 시 전부 threshold 여유. 합쳐서 690ms 나왔던 건 순차 호출·큐잉 효과.</div>`
 }
 
 function renderChart(all) {

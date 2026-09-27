@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-27T12:26:45.792Z",
+  "generatedAt": "2026-09-27T12:57:10.186Z",
   "baseUrl": "http://localhost:3001/api",
   "proxy": "http://127.0.0.1:3002",
   "results": [
@@ -161,36 +161,36 @@
       "attacker": "PLAYER",
       "owner": "GM",
       "endpoint": "/reports?filter=pending-final",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "PLAYER",
       "owner": "GM",
       "endpoint": "/hiring-dispatches?filter=pending-dispatch",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "HR_MANAGER",
       "owner": "GM",
       "endpoint": "/plan-reports?filter=pending-final",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "HR_MANAGER",
       "owner": "GM",
       "endpoint": "/reports?filter=pending-final",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "HR_MANAGER",
       "owner": "GM",
       "endpoint": "/hiring-dispatches?filter=pending-dispatch",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "ASSET_MANAGER",
@@ -203,15 +203,15 @@
       "attacker": "ASSET_MANAGER",
       "owner": "GM",
       "endpoint": "/reports?filter=pending-final",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "ASSET_MANAGER",
       "owner": "GM",
       "endpoint": "/hiring-dispatches?filter=pending-dispatch",
-      "status": 200,
-      "verdict": "LEAK"
+      "status": 403,
+      "verdict": "BLOCKED"
     },
     {
       "attacker": "PLAYER",
