@@ -268,11 +268,13 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
+| Smoke | ✅ `results-2026-09-29/facility/smoke.json` — 100 req · p95 12ms · 0% fail · 4 endpoint (reservations/inspections/maintenance/preventive-schedules) |
+| Stress | ✅ `results-2026-09-29/facility/stress.json` — 25,130 req · p95 1,240ms (threshold pass) · RPS 237 · VU peak 199 · 0% fail |
+| CRUD (maintenance lifecycle) | ✅ `results-2026-09-29/facility/crud.json` — 27 lifecycle · 189 req · 0% fail · p95 86ms |
+| 발견 — controller/service status 전환 불일치 | ⚠️ `maintenance.controller.VALID_TRANSITIONS.OPEN=[IN_PROGRESS, REJECTED]` vs `service.updateStatus.ALLOWED=[IN_PROGRESS, PENDING_APPROVAL]` → OPEN→REJECTED 는 controller 통과 후 service 에서 400. 이슈 파일 필요 |
 | 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
-| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | ⚠️ list/get 은 guard 없음 (모든 로그인 유저 조회 가능) — 의도된 설계인지 별도 검토 필요 |
 
 ---
 
