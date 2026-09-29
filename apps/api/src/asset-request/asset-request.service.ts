@@ -34,8 +34,8 @@ export class AssetRequestService {
   // Read
   // ────────────────────────────────────────────
 
-  async getById(id: number) {
-    const request = await this.repo.findById(id);
+  async getById(id: number, actorClubId?: number) {
+    const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     return request;
   }
@@ -45,21 +45,22 @@ export class AssetRequestService {
     role: string,
     filter?: "me" | "pending-leader" | "pending-dept-head" | "all",
     status?: string,
+    actorClubId?: number,
   ) {
     const asStatus = status as any;
-    const cacheKey = `asset-requests:list:${userId}:${role}:${filter ?? ""}:${status ?? ""}`;
+    const cacheKey = `asset-requests:list:${userId}:${role}:${filter ?? ""}:${status ?? ""}:${actorClubId ?? "all"}`;
     switch (filter) {
       case "me":
-        return cached(cacheKey, 30, () => this.repo.findByRequester(userId, asStatus));
+        return cached(cacheKey, 30, () => this.repo.findByRequester(userId, asStatus, actorClubId));
       case "pending-leader":
-        return cached(cacheKey, 30, () => this.repo.findPendingForLeader(userId));
+        return cached(cacheKey, 30, () => this.repo.findPendingForLeader(userId, actorClubId));
       case "pending-dept-head":
-        return cached(cacheKey, 30, () => this.repo.findPendingForDeptHead(userId));
+        return cached(cacheKey, 30, () => this.repo.findPendingForDeptHead(userId, actorClubId));
       case "all":
         if (!isAdminLike(role)) throw new AppError(403, "FORBIDDEN");
-        return cached(cacheKey, 30, () => this.repo.findAll(asStatus));
+        return cached(cacheKey, 30, () => this.repo.findAll(asStatus, actorClubId));
       default:
-        return cached(cacheKey, 30, () => this.repo.findByRequester(userId, asStatus));
+        return cached(cacheKey, 30, () => this.repo.findByRequester(userId, asStatus, actorClubId));
     }
   }
 
@@ -67,7 +68,7 @@ export class AssetRequestService {
   // Create
   // ────────────────────────────────────────────
 
-  async create(dto: CreateAssetRequestDto, requesterId: number) {
+  async create(dto: CreateAssetRequestDto, requesterId: number, actorClubId?: number) {
     // Payload alignment first — the hybrid rule (Q2-i c): exactly one of
     // equipmentItemId / softwareLicenseId / customName.
     const payloadKeys = [
@@ -104,15 +105,15 @@ export class AssetRequestService {
     });
     if (!membership) throw new AppError(400, "NO_DEPARTMENT");
 
-    return this.repo.create(dto, requesterId, membership.departmentId);
+    return this.repo.create(dto, requesterId, membership.departmentId, actorClubId);
   }
 
   // ────────────────────────────────────────────
   // Requester actions
   // ────────────────────────────────────────────
 
-  async submit(id: number, userId: number) {
-    const request = await this.repo.findById(id);
+  async submit(id: number, userId: number, actorClubId?: number) {
+    const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.requesterId !== userId) throw new AppError(403, "NOT_YOUR_REQUEST");
     if (request.status !== "DRAFT") throw new AppError(400, "INVALID_STATUS");
@@ -148,8 +149,8 @@ export class AssetRequestService {
     return updated;
   }
 
-  async cancel(id: number, userId: number) {
-    const request = await this.repo.findById(id);
+  async cancel(id: number, userId: number, actorClubId?: number) {
+    const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.requesterId !== userId) throw new AppError(403, "NOT_YOUR_REQUEST");
     // LEADER_APPROVED is considered committed downstream — cancellation would
@@ -174,8 +175,8 @@ export class AssetRequestService {
   // Leader (leaf dept.head) approvals
   // ────────────────────────────────────────────
 
-  async leaderApprove(id: number, reviewerId: number) {
-    const request = await this.repo.findById(id);
+  async leaderApprove(id: number, reviewerId: number, actorClubId?: number) {
+    const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.status !== "SUBMITTED") throw new AppError(400, "INVALID_STATUS");
     if (request.department.headId !== reviewerId) throw new AppError(403, "NOT_LEADER");
@@ -219,11 +220,11 @@ export class AssetRequestService {
     return updated;
   }
 
-  async leaderReject(id: number, reviewerId: number, reason: string) {
+  async leaderReject(id: number, reviewerId: number, reason: string, actorClubId?: number) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
-    const request = await this.repo.findById(id);
+    const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.status !== "SUBMITTED") throw new AppError(400, "INVALID_STATUS");
     if (request.department.headId !== reviewerId) throw new AppError(403, "NOT_LEADER");
@@ -265,8 +266,8 @@ export class AssetRequestService {
   // Dept-head (parent dept.head) approvals
   // ────────────────────────────────────────────
 
-  async approve(id: number, reviewerId: number) {
-    const request = await this.repo.findById(id);
+  async approve(id: number, reviewerId: number, actorClubId?: number) {
+    const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.status !== "LEADER_APPROVED") throw new AppError(400, "INVALID_STATUS");
     if (request.department.parent?.headId !== reviewerId) throw new AppError(403, "NOT_DEPT_HEAD");
@@ -380,11 +381,11 @@ export class AssetRequestService {
     return updated;
   }
 
-  async reject(id: number, reviewerId: number, reason: string) {
+  async reject(id: number, reviewerId: number, reason: string, actorClubId?: number) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
-    const request = await this.repo.findById(id);
+    const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.status !== "LEADER_APPROVED") throw new AppError(400, "INVALID_STATUS");
     if (request.department.parent?.headId !== reviewerId) throw new AppError(403, "NOT_DEPT_HEAD");
@@ -445,8 +446,9 @@ export class AssetRequestService {
     userId: number,
     role: string,
     foRole: string | null | undefined,
+    actorClubId?: number,
   ) {
-    const request = await this.repo.findById(id);
+    const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.status !== "APPROVED") throw new AppError(400, "INVALID_STATUS");
 
@@ -470,6 +472,8 @@ export class AssetRequestService {
             category: "OTHER",
             trackedIndividually: false,
             quantity: 1,
+            // Phase 2.5: 신규 EquipmentItem 은 요청의 clubId 를 승계
+            clubId: request.clubId ?? actorClubId ?? null,
           },
         });
         await this.repo.linkEquipmentItem(id, item.id);
