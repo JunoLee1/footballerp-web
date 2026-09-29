@@ -9,9 +9,9 @@ export class AssetRequestController {
 
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id: userId, role } = requireUser(req);
+      const { id: userId, role, clubId } = requireUser(req);
       const { filter, status } = req.query as ListAssetRequestQuery;
-      const rows = await this.service.list(userId, role, filter, status);
+      const rows = await this.service.list(userId, role, filter, status, clubId ?? undefined);
       res.json(rows);
     } catch (err) {
       next(err);
@@ -20,10 +20,10 @@ export class AssetRequestController {
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      requireUser(req);
+      const { clubId } = requireUser(req);
       const id = Number(req.params["id"]);
       if (!Number.isFinite(id)) throw new AppError(400, "INVALID_ID");
-      const row = await this.service.getById(id);
+      const row = await this.service.getById(id, clubId ?? undefined);
       res.json(row);
     } catch (err) {
       next(err);
@@ -32,9 +32,9 @@ export class AssetRequestController {
 
   create = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id: userId } = requireUser(req);
+      const { id: userId, clubId } = requireUser(req);
       const dto = req.body as CreateAssetRequestDto;
-      const row = await this.service.create(dto, userId);
+      const row = await this.service.create(dto, userId, clubId ?? undefined);
       res.status(201).json(row);
     } catch (err) {
       next(err);
@@ -43,9 +43,9 @@ export class AssetRequestController {
 
   submit = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id: userId } = requireUser(req);
+      const { id: userId, clubId } = requireUser(req);
       const id = Number(req.params["id"]);
-      const row = await this.service.submit(id, userId);
+      const row = await this.service.submit(id, userId, clubId ?? undefined);
       res.json(row);
     } catch (err) {
       next(err);
@@ -54,9 +54,9 @@ export class AssetRequestController {
 
   leaderApprove = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id: userId } = requireUser(req);
+      const { id: userId, clubId } = requireUser(req);
       const id = Number(req.params["id"]);
-      const row = await this.service.leaderApprove(id, userId);
+      const row = await this.service.leaderApprove(id, userId, clubId ?? undefined);
       res.json(row);
     } catch (err) {
       next(err);
@@ -65,10 +65,10 @@ export class AssetRequestController {
 
   leaderReject = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id: userId } = requireUser(req);
+      const { id: userId, clubId } = requireUser(req);
       const id = Number(req.params["id"]);
       const { reason } = (req.body ?? {}) as RejectDto;
-      const row = await this.service.leaderReject(id, userId, reason);
+      const row = await this.service.leaderReject(id, userId, reason, clubId ?? undefined);
       res.json(row);
     } catch (err) {
       next(err);
@@ -77,9 +77,9 @@ export class AssetRequestController {
 
   approve = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id: userId } = requireUser(req);
+      const { id: userId, clubId } = requireUser(req);
       const id = Number(req.params["id"]);
-      const row = await this.service.approve(id, userId);
+      const row = await this.service.approve(id, userId, clubId ?? undefined);
       res.json(row);
     } catch (err) {
       next(err);
@@ -88,10 +88,10 @@ export class AssetRequestController {
 
   reject = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id: userId } = requireUser(req);
+      const { id: userId, clubId } = requireUser(req);
       const id = Number(req.params["id"]);
       const { reason } = (req.body ?? {}) as RejectDto;
-      const row = await this.service.reject(id, userId, reason);
+      const row = await this.service.reject(id, userId, reason, clubId ?? undefined);
       res.json(row);
     } catch (err) {
       next(err);
@@ -100,9 +100,9 @@ export class AssetRequestController {
 
   cancel = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id: userId } = requireUser(req);
+      const { id: userId, clubId } = requireUser(req);
       const id = Number(req.params["id"]);
-      const row = await this.service.cancel(id, userId);
+      const row = await this.service.cancel(id, userId, clubId ?? undefined);
       res.json(row);
     } catch (err) {
       next(err);
@@ -111,9 +111,9 @@ export class AssetRequestController {
 
   fulfill = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id: userId, role, frontOfficeRole } = requireUser(req);
+      const { id: userId, role, frontOfficeRole, clubId } = requireUser(req);
       const id = Number(req.params["id"]);
-      const row = await this.service.fulfill(id, userId, role, frontOfficeRole);
+      const row = await this.service.fulfill(id, userId, role, frontOfficeRole, clubId ?? undefined);
       res.json(row);
     } catch (err) {
       next(err);
