@@ -46,6 +46,7 @@ import { EquipmentLoanStatus } from "../../generated/enums";
 
 export interface CreateEquipmentLoanDto {
   equipmentItemId: number;
+  dueDate: string;
   notes?: string;
 }
 
