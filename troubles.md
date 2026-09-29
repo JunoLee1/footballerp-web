@@ -55,4 +55,15 @@ if (!(await isUserActive(user.id))) return res.status(401).json({ code: "UNAUTHO
 
 ## 4. 자산관리 도메인 멀티 클럽 스코핑 부재
 
-**배경** 
+**배경** cross-role RBAC 스캔 (`loadtest/results-2026-09-27/cross-role-test.mjs`) 에서 자산 도메인 4건 LEAK 검출 (`PLAYER→/asset-requests`, `HR_MANAGER→/equipment`, `HR_MANAGER→/asset-requests`, `HR_MANAGER→/equipment/loans`). 재분석 결과 3건은 "구단원이면 자기 클럽 자산 대여 가능" 이라는 설계 의도와 test 판정 기준(`200 = LEAK`) 미스매치로 인한 오탐(본인 신청 목록 · 공용 카탈로그), 1건(`/equipment/loans` 전체 대여 목록)만 실제 홀. 근본 원인은 `EquipmentItem`·`EquipmentUnit`·`EquipmentLoan`·`AssetRequest` 4개 모델이 모두 club-agnostic 설계라 멀티클럽 도입 시 클럽 간 격리 불가.
+
+**원인** Feature 16 (`de7b59d9` 자산관리부서) 도입 시 단일 클럽 전제로 설계. Phase 1/1.5/2 Club Data Ownership 로드맵 (PR #514/#516/#517 — Player·Prospect·TrainingSession·OperatingExpense) 에도 자산 도메인 미포함. Phase 2 문서 "범위 밖" 절이 Contract·Match·BudgetPlan 은 Phase 3 로 명시했으나 자산은 언급 없음. 추가로 seed 유저 다수가 `clubId: null` 이라 `permissions.ts:97` bypass 정책으로 크로스 클럽 접근 가능한 상태.
+
+**작업 (Phase 2.5 예정 — `docs/superpowers/plans/2026-09-29-club-data-ownership-phase2-5-asset.md`)**
+- 자산 4개 모델에 `clubId Int?` FK 추가 + Phase 2 와 동일한 `actorClubId` 전파 패턴 (controller → service → repo)
+- EquipmentItem backfill 은 첫 loan 요청자 clubId → COALESCE first Club LIMIT 1 (Phase 1 Prospect precedent)
+- `/equipment/loans` 를 `canWrite` 관리자 전용으로 축소 (본인 대여는 `/loans/my` 유지)
+- User.clubId backfill (seed + prod 마이그레이션) 로 legacy 유저 정리
+- `cross-role-test.mjs` 를 2-클럽 seed 기반 multi-club 재작성 → 전 도메인(HR·FINANCE·MEDICAL·GM·ADMIN·ASSET) cross-club RBAC 감사
+
+**결과** (Phase 2.5 PR 후 채워야 함)
