@@ -187,12 +187,26 @@ const html = `<!doctype html>
   </section>
 
   <section>
-    <h2>🌐 Domain Sweep — 4 personas × 7 카테고리 × 30 endpoint (2026-09-29 신규)</h2>
+    <h2>🌐 Domain Sweep v1 — 4 personas × 7 카테고리 × 30 endpoint (2026-09-29 신규)</h2>
     ${renderDomainSuite('sweep', ['smoke', 'stress'])}
     <div style="margin-top:12px;padding:12px;background:#fef2f2;border-left:3px solid #dc2626;font-size:13px">
       <strong>🚨 발견:</strong> <code>GET /transfers/recalls</code> → <strong>500 INTERNAL_SERVER_ERROR</strong> (이슈 <strong>#564</strong>).
-      나머지 26/30 endpoint 정상 200 (5xx 없음, 4xx 는 대부분 경로 오탈자 or 필수 쿼리 누락).
-      TESTTODO Sections 24/26/31/34-38/41-43/46/53-57/58/60/62/65/67 smoke 커버로 간주.
+      나머지 26/30 endpoint 정상 200. 4xx 는 경로 오탈자 or 필수 쿼리 누락.
+    </div>
+  </section>
+
+  <section>
+    <h2>🌐 Domain Sweep v2 — 미테스트 33개 도메인 확장 (2026-09-29)</h2>
+    ${renderDomainSuite('sweep-v2', ['smoke', 'stress'])}
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>✅ 서버 에러 0건</strong> · stress 19,617 req · p95 1,018ms · sweep2_errors=0<br>
+      <strong>결과 분포</strong> (33 endpoint):
+      <ul style="margin: 4px 0 0 0; padding-left: 20px">
+        <li><strong>200 OK: 19개</strong> — Sections 20/21/22/23/25/26/29/32/35/40/41/44/48/52/54/58/63/66/71 smoke 커버</li>
+        <li><strong>400 파라미터 누락: 4개</strong> — Sections 42/56/59/64 (seasonId 등 필요)</li>
+        <li><strong>403 의도된 차단: 2개</strong> — Sections 60/61</li>
+        <li><strong>404 라우팅 이슈: 6개</strong> — Sections 38/45/49/50/51/70 (마운트 경로 재확인 필요)</li>
+      </ul>
     </div>
   </section>
 
