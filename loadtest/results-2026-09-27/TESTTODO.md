@@ -978,15 +978,15 @@
 |---|---|---|
 | Rate Limiting (`/auth/login` 브루트포스) | ✅ 10건 이후 429 · 5분+ sliding window 로 재시도 지속 차단 |
 | IDOR (숫자 ID 열거 접근) | 🔲 10 endpoint 프로브 결과 3건 LEAK (`/contracts/:id`, `/notifications/:id/read`) — 나머지 360 endpoint 미커버 |
-| 인증 없는 접근 차단 (401) | 🔲 미러닝 |
-| 인증 우회 (토큰 없음/변조/alg:none) | 🔲 미러닝 |
-| 오버사이즈 문자열 / SQL injection 퍼징 | 🔲 미러닝 |
-| 에러 메시지 스택트레이스 노출 여부 | 🔲 미러닝 |
-| XSS 저장 후 프론트 sanitize | 🔲 미러닝 |
-| 탈취 계정 남용 (mass-write rate limit) | 🔲 미러닝 · admin/create endpoint 별 rate-limit 유무 확인 필요 |
-| 비밀번호 해싱 |🔲|
-| 개인정보 마스킹처리 |🔲 |
-| 보안 문제 발생시 보안 관리자에게 알림이나 메시지가 가는 가? |🔲 |
+| 인증 없는 접근 차단 (401) | ✅ `common-security-probe.k6.js` no_auth — 29/29 protected endpoints 전부 401/403/404 정상 (0 findings) |
+| 인증 우회 (토큰 없음/변조/alg:none) | ✅ token_tamper — garbage/signature_flip/alg:none 3종 전부 401 정상 (0 findings) |
+| 오버사이즈 문자열 / SQL injection 퍼징 | 🚨 sql_fuzz 15개 500 (이슈 **#571** — `/:id` route input validation 부재, Prisma parameterized 라 실 injection 아님) · oversize 3개 500 (이슈 **#572** — 5MB body 크래시) |
+| 에러 메시지 스택트레이스 노출 여부 | ✅ stack_trace — 4개 5xx 트리거 시나리오 전부 body 에 stack 노출 없음 (0 findings) |
+| XSS 저장 후 프론트 sanitize | 🔲 미러닝 (별도 이슈 예정 — FE Playwright 필요) |
+| 탈취 계정 남용 (mass-write rate limit) | 🚨 mass_write — admin `/departments` 30건 연속 create 전부 201 (rate-limit 미장착, 이슈 **#573**) |
+| 비밀번호 해싱 | ✅ `apps/api/src/lib/hash.ts` `bcrypt.hash(password, 10)` + `bcrypt.compare(plain, hashed)` 실측 확인 |
+| 개인정보 마스킹처리 | ✅ `maskPii.ts` 4 helper (email/username/phone/address) 실측 확인 — `maskEmail("juno@club.com")` → `ju***@club.com`, `maskPhone("010-1234-5678")` → `010-****-5678`, etc |
+| 보안 문제 발생시 보안 관리자에게 알림이나 메시지가 가는 가? | 🚨 **일부 Broken** — `auth.controller.ts:58` 이 `createForAdmin("LOGIN_LOCKOUT_24H", ...)` 호출하나 `NotificationType` enum 에 미정의 → 20회 fail 시 알림 발송 실패 (이슈 **#574**) |
 
 ---
 

@@ -1,0 +1,324 @@
+{
+    "metrics": {
+        "http_req_duration": {
+            "min": 0.107,
+            "med": 0.25,
+            "max": 17.996,
+            "p(90)": 0.8264000000000002,
+            "p(95)": 1.5045999999999995,
+            "avg": 0.9807241379310343
+        },
+        "http_req_sending": {
+            "min": 0.002,
+            "med": 0.003,
+            "max": 0.309,
+            "p(90)": 0.006,
+            "p(95)": 0.006599999999999999,
+            "avg": 0.014172413793103451
+        },
+        "security_findings": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count==0": false
+            }
+        },
+        "security_latency": {
+            "min": 0,
+            "med": 0,
+            "max": 25,
+            "p(90)": 1,
+            "p(95)": 1.5999999999999988,
+            "avg": 1.206896551724138
+        },
+        "http_req_receiving": {
+            "med": 0.01,
+            "max": 0.093,
+            "p(90)": 0.03120000000000001,
+            "p(95)": 0.047599999999999996,
+            "avg": 0.01689655172413794,
+            "min": 0.005
+        },
+        "iterations": {
+            "count": 1,
+            "rate": 26.85284640171858
+        },
+        "iteration_duration": {
+            "avg": 36.568334,
+            "min": 36.568334,
+            "med": 36.568334,
+            "max": 36.568334,
+            "p(90)": 36.568334,
+            "p(95)": 36.568334
+        },
+        "http_req_blocked": {
+            "med": 0.001,
+            "max": 3.755,
+            "p(90)": 0.002,
+            "p(95)": 0.002,
+            "avg": 0.1306206896551723,
+            "min": 0
+        },
+        "http_req_failed": {
+            "passes": 29,
+            "fails": 0,
+            "value": 1
+        },
+        "checks": {
+            "passes": 29,
+            "fails": 0,
+            "value": 1
+        },
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0
+        },
+        "data_sent": {
+            "count": 2526,
+            "rate": 67830.29001074114
+        },
+        "security_checks": {
+            "count": 29,
+            "rate": 778.7325456498388
+        },
+        "http_reqs": {
+            "count": 29,
+            "rate": 778.7325456498388
+        },
+        "http_req_waiting": {
+            "avg": 0.9496551724137936,
+            "min": 0.095,
+            "med": 0.24,
+            "max": 17.643,
+            "p(90)": 0.8124000000000002,
+            "p(95)": 1.4799999999999993
+        },
+        "http_req_connecting": {
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.017551724137931036,
+            "min": 0,
+            "med": 0,
+            "max": 0.509
+        },
+        "data_received": {
+            "count": 7766,
+            "rate": 208539.2051557465
+        }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "/departments 401/403/404": {
+                    "passes": 1,
+                    "fails": 0,
+                    "name": "/departments 401/403/404",
+                    "path": "::/departments 401/403/404",
+                    "id": "19ae3e4ddb5454fc98985937dc7070c1"
+                },
+                "/payroll/configs 401/403/404": {
+                    "name": "/payroll/configs 401/403/404",
+                    "path": "::/payroll/configs 401/403/404",
+                    "id": "875ac198b70267bddb38134abd433e89",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/payroll/salaries 401/403/404": {
+                    "path": "::/payroll/salaries 401/403/404",
+                    "id": "4186de70e1b6aa674600c788705714c7",
+                    "passes": 1,
+                    "fails": 0,
+                    "name": "/payroll/salaries 401/403/404"
+                },
+                "/contracts 401/403/404": {
+                    "name": "/contracts 401/403/404",
+                    "path": "::/contracts 401/403/404",
+                    "id": "15297bf2929c3243c6fd129b2c62189c",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/players 401/403/404": {
+                    "name": "/players 401/403/404",
+                    "path": "::/players 401/403/404",
+                    "id": "a1c86f4c16ea71466d1e67eb297a6dd2",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/matches 401/403/404": {
+                    "name": "/matches 401/403/404",
+                    "path": "::/matches 401/403/404",
+                    "id": "c916f19d97204a2cf137e3221d411006",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/seasons 401/403/404": {
+                    "name": "/seasons 401/403/404",
+                    "path": "::/seasons 401/403/404",
+                    "id": "8a24cfbced168954a1d4cdcf76d12786",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/operating-expenses?seasonId=1 401/403/404": {
+                    "passes": 1,
+                    "fails": 0,
+                    "name": "/operating-expenses?seasonId=1 401/403/404",
+                    "path": "::/operating-expenses?seasonId=1 401/403/404",
+                    "id": "5a1c9f6d6d6712fa4008f9c14f1d7d1c"
+                },
+                "/medical-expenses 401/403/404": {
+                    "name": "/medical-expenses 401/403/404",
+                    "path": "::/medical-expenses 401/403/404",
+                    "id": "4f32c759ffed2435c3c35f461e58d914",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/notifications/my 401/403/404": {
+                    "path": "::/notifications/my 401/403/404",
+                    "id": "5ccc7f63c5a6fca42d964500c9b0ac5a",
+                    "passes": 1,
+                    "fails": 0,
+                    "name": "/notifications/my 401/403/404"
+                },
+                "/staff-records 401/403/404": {
+                    "path": "::/staff-records 401/403/404",
+                    "id": "ad4a9ae7dcb733f40e31ac1a5954b063",
+                    "passes": 1,
+                    "fails": 0,
+                    "name": "/staff-records 401/403/404"
+                },
+                "/audit-logs 401/403/404": {
+                    "fails": 0,
+                    "name": "/audit-logs 401/403/404",
+                    "path": "::/audit-logs 401/403/404",
+                    "id": "d6919a13f3359e49548734b9997ae68e",
+                    "passes": 1
+                },
+                "/hiring-surveys 401/403/404": {
+                    "path": "::/hiring-surveys 401/403/404",
+                    "id": "67b0bc2001a29b35fd4cb9a9cbe069e0",
+                    "passes": 1,
+                    "fails": 0,
+                    "name": "/hiring-surveys 401/403/404"
+                },
+                "/plan-reports 401/403/404": {
+                    "name": "/plan-reports 401/403/404",
+                    "path": "::/plan-reports 401/403/404",
+                    "id": "d776286a56682f6443d49fbf56e64299",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/reports 401/403/404": {
+                    "name": "/reports 401/403/404",
+                    "path": "::/reports 401/403/404",
+                    "id": "e1d46a87a25dcf2761f63d7516084f23",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/facility/reservations 401/403/404": {
+                    "name": "/facility/reservations 401/403/404",
+                    "path": "::/facility/reservations 401/403/404",
+                    "id": "f4e369d38292dd98e767796e72892582",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/facility/maintenance 401/403/404": {
+                    "name": "/facility/maintenance 401/403/404",
+                    "path": "::/facility/maintenance 401/403/404",
+                    "id": "d6ac3e50752a8069317d217b1bdcbc9b",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/equipment 401/403/404": {
+                    "name": "/equipment 401/403/404",
+                    "path": "::/equipment 401/403/404",
+                    "id": "705184747f3d905dce66124b8ef26973",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/equipment/loans 401/403/404": {
+                    "path": "::/equipment/loans 401/403/404",
+                    "id": "7eb63ea07863a3d24c15747271cbcc25",
+                    "passes": 1,
+                    "fails": 0,
+                    "name": "/equipment/loans 401/403/404"
+                },
+                "/asset-requests 401/403/404": {
+                    "name": "/asset-requests 401/403/404",
+                    "path": "::/asset-requests 401/403/404",
+                    "id": "a7cfe87c671b89587f38accffc806451",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/sponsorships 401/403/404": {
+                    "name": "/sponsorships 401/403/404",
+                    "path": "::/sponsorships 401/403/404",
+                    "id": "deb443686f8c84b93f4f80610901d8c6",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/budget-control 401/403/404": {
+                    "fails": 0,
+                    "name": "/budget-control 401/403/404",
+                    "path": "::/budget-control 401/403/404",
+                    "id": "b65a14b11655449ae7ed65b975b58bf3",
+                    "passes": 1
+                },
+                "/sales/summary?seasonId=1 401/403/404": {
+                    "name": "/sales/summary?seasonId=1 401/403/404",
+                    "path": "::/sales/summary?seasonId=1 401/403/404",
+                    "id": "f62068e15b52398b540c0d49a2d98886",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/coaches 401/403/404": {
+                    "id": "29ca4cf2fa1db47408defb49b2b21870",
+                    "passes": 1,
+                    "fails": 0,
+                    "name": "/coaches 401/403/404",
+                    "path": "::/coaches 401/403/404"
+                },
+                "/training 401/403/404": {
+                    "fails": 0,
+                    "name": "/training 401/403/404",
+                    "path": "::/training 401/403/404",
+                    "id": "f74c872f19437fafc6bac639faaaf940",
+                    "passes": 1
+                },
+                "/injuries/active 401/403/404": {
+                    "name": "/injuries/active 401/403/404",
+                    "path": "::/injuries/active 401/403/404",
+                    "id": "9a85ef7e2a2c4c64f50b8c2181557452",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/videos 401/403/404": {
+                    "name": "/videos 401/403/404",
+                    "path": "::/videos 401/403/404",
+                    "id": "c199df2aab43a246abfa66b02569f024",
+                    "passes": 1,
+                    "fails": 0
+                },
+                "/inventory 401/403/404": {
+                    "path": "::/inventory 401/403/404",
+                    "id": "e98d9a4bbb86a50cb1ec6ed7a25f8b1d",
+                    "passes": 1,
+                    "fails": 0,
+                    "name": "/inventory 401/403/404"
+                },
+                "/software-licenses 401/403/404": {
+                    "name": "/software-licenses 401/403/404",
+                    "path": "::/software-licenses 401/403/404",
+                    "id": "115eb15b93579e004c472df73b986f17",
+                    "passes": 1,
+                    "fails": 0
+                }
+            }
+    }
+}
