@@ -67,6 +67,13 @@ export class ContractRepository {
     });
   }
 
+  findPlayerOwnerUserId(playerId: string) {
+    return this.prisma.player.findUnique({
+      where: { id: playerId },
+      select: { userId: true },
+    });
+  }
+
   create(dto: CreateContractDto) {
     return this.prisma.contract.create({
       data: {
