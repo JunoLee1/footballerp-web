@@ -12,10 +12,12 @@ export function startEquipmentOverdueReturnJob(schedule = "0 8 * * *") {
   }));
 }
 
-export async function runEquipmentOverdueReturnJob(now: Date = new Date()) {
-  const prisma = getPrisma();
-  const repo = new EquipmentRepository(prisma);
-  const notifRepo = new NotificationRepository(prisma);
+type OverdueDeps = { repo: EquipmentRepository; notifRepo: NotificationRepository };
+
+export async function runEquipmentOverdueReturnJob(now: Date = new Date(), deps?: OverdueDeps) {
+  const prisma = deps ? undefined : getPrisma();
+  const repo = deps?.repo ?? new EquipmentRepository(prisma!);
+  const notifRepo = deps?.notifRepo ?? new NotificationRepository(prisma!);
 
   const loans = await repo.findLoansToNotifyOverdue(now);
   if (loans.length === 0) return { notified: 0 };
