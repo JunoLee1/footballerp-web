@@ -167,6 +167,16 @@ const html = `<!doctype html>
     </div>
   </section>
 
+  <section>
+    <h2>👥 HR 세부 (hr-domain.k6.js — 2026-09-29 신규)</h2>
+    ${renderDomainSuite('hr-domain', ['smoke', 'stress', 'idor'])}
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>IDOR 검증:</strong> PLAYER 세션 → staff-records/1~10 + hiring-surveys/1~10 순차 프로브 → <strong>20/20 건 403 정상 차단</strong> (<code>hr_idor_leaks=0</code>). checks 100% pass. <br>
+      <strong>Endpoint 커버:</strong> /staff-records · /hiring-surveys · /recruitment/{job-postings, headcount-progress, time-to-hire, cost-per-hire} · /pii-access/requests · /pii-access/requests/mine.
+      Note: idor scenario 의 <code>http_req_failed 62.5%</code> 는 예상된 403 차단 (fail 은 not-2xx 라 counter 증가). 실제 취약점은 없음.
+    </div>
+  </section>
+
   <div class="footer">Generated ${new Date().toISOString()} · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
 </body>
 </html>`

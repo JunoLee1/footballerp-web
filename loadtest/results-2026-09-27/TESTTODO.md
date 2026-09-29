@@ -617,11 +617,11 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
+| Smoke | ✅ `results-2026-09-29/hr-domain/smoke.json` — /staff-records + /:id 커버 (통합 HR 러너) |
+| Stress | ✅ `results-2026-09-29/hr-domain/stress.json` — 32,296 req · p95 1,460ms · RPS 305 · 0% fail |
 | 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
-| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
-| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| 보안 — Cross-role IDOR 프로브 | ✅ PLAYER 세션 20/20 건 403 정상 (`hr-domain/idor.json` `hr_idor_leaks=0`) |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | ✅ canWriteHR 확인 (staff-record.controller `create/update/terminate/delete` 전부 guard) |
 
 ---
 
@@ -677,11 +677,43 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
+| Smoke | 🔲 미러닝 (routes mount 경로 확인 필요 — `/staff-records/:id/probation-review`) |
 | Stress | 🔲 미러닝 |
 | 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+
+---
+
+### 52a. `hiring-survey` `/hiring-surveys` (신규 세부 커버)
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `hr-domain/smoke.json` — list + :id 커버 |
+| Stress | ✅ `hr-domain/stress.json` 포함 |
+| 보안 — Cross-role IDOR 프로브 | ✅ PLAYER 세션 20/20 건 403 (`hr_idor_leaks=0`) |
+| 보안 — Write | ✅ requireWriteHR 확인 |
+
+---
+
+### 52b. `pii-access` `/pii-access` (신규 세부 커버)
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `hr-domain/smoke.json` — /requests (isAdminLike, admin 세션) + /requests/mine (HR 본인) 커버 |
+| Stress | ✅ 통합 러너에 포함 |
+| 보안 — isAdminLike guard | ✅ `pii-access.controller` list/approve/deny 전부 |
+| 보안 — /requests/mine self-scope | ℹ️ 별도 검증 필요 (한 세션 mine 만 반환하는지) |
+
+---
+
+### 52c. `recruitment` `/recruitment/*` (신규 세부 커버)
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ /job-postings + /headcount-progress + /time-to-hire + /cost-per-hire 커버 |
+| Stress | ✅ 통합 러너에 포함 |
+| 보안 — canWriteHR OR canManageTD | ✅ controller 에서 확인 |
 
 ---
 

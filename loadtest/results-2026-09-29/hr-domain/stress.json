@@ -1,0 +1,251 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "staff_records": {
+                "checks": {
+                    "staff list 200": {
+                        "path": "::staff_records::staff list 200",
+                        "id": "b34c11d2c7e747ca8bdbd07a1eed234f",
+                        "passes": 2936,
+                        "fails": 0,
+                        "name": "staff list 200"
+                    },
+                    "staff detail 200": {
+                        "path": "::staff_records::staff detail 200",
+                        "id": "9fc92a0134bdce1c193580f98262bba9",
+                        "passes": 2936,
+                        "fails": 0,
+                        "name": "staff detail 200"
+                    }
+                },
+                "name": "staff_records",
+                "path": "::staff_records",
+                "id": "0d53c1f7c8bfdcb884e74afc74b44bb3",
+                "groups": {}
+            },
+            "hiring_surveys": {
+                "groups": {},
+                "checks": {
+                        "surveys 200": {
+                            "name": "surveys 200",
+                            "path": "::hiring_surveys::surveys 200",
+                            "id": "0cdeb51288d88ff30c36817e718d070f",
+                            "passes": 2936,
+                            "fails": 0
+                        }
+                    },
+                "name": "hiring_surveys",
+                "path": "::hiring_surveys",
+                "id": "34fdb05faaf48d363a485ca94f4fe955"
+            },
+            "recruitment": {
+                "name": "recruitment",
+                "path": "::recruitment",
+                "id": "e69341ca43884826097e889a2ef9e126",
+                "groups": {},
+                "checks": {
+                        "postings 200": {
+                            "fails": 0,
+                            "name": "postings 200",
+                            "path": "::recruitment::postings 200",
+                            "id": "45c8409111a5323fa0b69d248535c220",
+                            "passes": 2936
+                        },
+                        "headcount<500": {
+                            "name": "headcount<500",
+                            "path": "::recruitment::headcount<500",
+                            "id": "041fa4c92933b2e38295ad39aa99f052",
+                            "passes": 2936,
+                            "fails": 0
+                        },
+                        "tth<500": {
+                            "name": "tth<500",
+                            "path": "::recruitment::tth<500",
+                            "id": "55049b047f206cb66427b5c27a1a9191",
+                            "passes": 2936,
+                            "fails": 0
+                        },
+                        "cph<500": {
+                            "path": "::recruitment::cph<500",
+                            "id": "7bb81909dfec579a2b02a730910ff56a",
+                            "passes": 2936,
+                            "fails": 0,
+                            "name": "cph<500"
+                        }
+                    }
+            },
+            "pii_access": {
+                "name": "pii_access",
+                "path": "::pii_access",
+                "id": "8f28a2f6d98e3a8ff139f8a2098e4f13",
+                "groups": {},
+                "checks": {
+                        "pii pending 200": {
+                            "name": "pii pending 200",
+                            "path": "::pii_access::pii pending 200",
+                            "id": "e6123171d6a5cf91b03b121ebdd422e2",
+                            "passes": 2936,
+                            "fails": 0
+                        },
+                        "pii mine <500": {
+                            "name": "pii mine <500",
+                            "path": "::pii_access::pii mine <500",
+                            "id": "f9dfa849bb817127854e89b73fd6e023",
+                            "passes": 2936,
+                            "fails": 0
+                        }
+                    }
+            }
+        },
+        "checks": {}
+    },
+    "metrics": {
+        "iteration_duration": {
+            "med": 2602.740229,
+            "max": 5683.118459,
+            "p(90)": 5271.122271,
+            "p(95)": 5505.27876025,
+            "avg": 2961.4792104914827,
+            "min": 1127.349541
+        },
+        "hr_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_duration": {
+            "p(95)": 1469.9364999999996,
+            "avg": 178.15082963834516,
+            "min": 1.072,
+            "med": 4.2145,
+            "max": 2382.314,
+            "p(90)": 681.0645000000001,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "vus": {
+            "max": 199,
+            "value": 1,
+            "min": 0
+        },
+        "http_req_connecting": {
+            "med": 0,
+            "max": 6.542,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.0014804619767153832,
+            "min": 0
+        },
+        "checks": {
+            "fails": 0,
+            "passes": 26424,
+            "value": 1
+        },
+        "http_req_sending": {
+            "p(95)": 0.016,
+            "avg": 0.010660701015604358,
+            "min": 0.001,
+            "med": 0.01,
+            "max": 0.491,
+            "p(90)": 0.014
+        },
+        "http_req_receiving": {
+            "avg": 0.03211403889026362,
+            "min": 0.006,
+            "med": 0.031,
+            "max": 0.46,
+            "p(90)": 0.045,
+            "p(95)": 0.052
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 178.15082963834516,
+            "min": 1.072,
+            "med": 4.2145,
+            "max": 2382.314,
+            "p(90)": 681.0645000000001,
+            "p(95)": 1469.9364999999996
+        },
+        "data_sent": {
+            "count": 33464528,
+            "rate": 315649.62448436563
+        },
+        "http_reqs": {
+            "count": 32296,
+            "rate": 304.627642509916
+        },
+        "hr_read_latency": {
+            "avg": 4.152702089009991,
+            "min": 1,
+            "med": 4,
+            "max": 67,
+            "p(90)": 7,
+            "p(95)": 8
+        },
+        "hr_idor_leaks": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count==0": false
+            }
+        },
+        "vus_max": {
+            "value": 200,
+            "min": 200,
+            "max": 200
+        },
+        "http_req_blocked": {
+            "avg": 0.004377879613573987,
+            "min": 0,
+            "med": 0.002,
+            "max": 6.585,
+            "p(90)": 0.004,
+            "p(95)": 0.004
+        },
+        "group_duration": {
+            "avg": 9.474686658889649,
+            "min": 1.418167,
+            "med": 8.4449375,
+            "max": 73.692375,
+            "p(90)": 16.653108000000003,
+            "p(95)": 19.206916949999997
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 32296,
+            "thresholds": {
+                "rate<0.20": false
+            },
+            "value": 0
+        },
+        "data_received": {
+            "count": 60487472,
+            "rate": 570539.8809990262
+        },
+        "http_req_tls_handshaking": {
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "iterations": {
+            "count": 2936,
+            "rate": 27.693422046355998
+        },
+        "http_req_waiting": {
+            "min": 1.06,
+            "med": 4.172,
+            "max": 2382.272,
+            "p(90)": 681.015,
+            "p(95)": 1469.8812499999995,
+            "avg": 178.1080548984389
+        }
+    }
+}
