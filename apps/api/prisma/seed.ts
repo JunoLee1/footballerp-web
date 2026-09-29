@@ -143,6 +143,76 @@ async function seedHrLeafDepartmentHeads() {
   console.log('Leaf HR dept heads assigned: HRM/HRD/노무·총무 → hr.staff@club.com');
 }
 
+/**
+ * Backfill UserDepartment for all staff users so `/auth/me` returns
+ * departmentMemberships and dept-based RBAC (canReadFinance/HR 등의
+ * deptCategories 파라미터) can be exercised.
+ *
+ * Called AFTER seedRecruitment so hr@club.com exists too.
+ * Idempotent via upsert.
+ *
+ * Skips: admin, superadmin, gm (전사 관리자), player.
+ */
+async function seedStaffDepartmentMemberships() {
+  type Assignment = { email: string; department: string; role: 'DEPT_HEAD' | 'LEADER' | 'MEMBER' };
+  const assignments: Assignment[] = [
+    // 경영지원 / HR
+    { email: 'hr@club.com',              department: 'HR',           role: 'DEPT_HEAD' },
+    { email: 'hr.staff@club.com',        department: 'HRM (인사관리)', role: 'DEPT_HEAD' },
+    { email: 'hr.staff@club.com',        department: 'HRD (인재개발)', role: 'DEPT_HEAD' },
+    { email: 'hr.staff@club.com',        department: '노무·총무',     role: 'DEPT_HEAD' },
+
+    // 경영지원 / 재무관리
+    { email: 'finance@club.com',         department: '재무관리',      role: 'DEPT_HEAD' },
+    { email: 'finance.staff@club.com',   department: '재무관리',      role: 'MEMBER'    },
+
+    // 운영/인프라 / 선수 장비관리
+    { email: 'asset@club.com',           department: '선수 장비관리', role: 'DEPT_HEAD' },
+    { email: 'asset.staff@club.com',     department: '선수 장비관리', role: 'MEMBER'    },
+
+    // 운영/인프라 / 시설관리
+    { email: 'facility.manager@club.com', department: '시설관리',     role: 'DEPT_HEAD' },
+    { email: 'facility.staff@club.com',   department: '시설관리',     role: 'MEMBER'    },
+
+    // 선수단 및 기술 부문 / 코칭스태프
+    { email: 'coach@club.com',           department: '코칭스태프',   role: 'DEPT_HEAD' },
+    { email: 'td@club.com',              department: '코칭스태프',   role: 'LEADER'    },
+    { email: 'assistant@club.com',       department: '코칭스태프',   role: 'MEMBER'    },
+    { email: 'defensive@club.com',       department: '코칭스태프',   role: 'MEMBER'    },
+    { email: 'attacking@club.com',       department: '코칭스태프',   role: 'MEMBER'    },
+    { email: 'physical@club.com',        department: '코칭스태프',   role: 'MEMBER'    },
+    { email: 'setpiece@club.com',        department: '코칭스태프',   role: 'MEMBER'    },
+    { email: 'gk@club.com',              department: '코칭스태프',   role: 'MEMBER'    },
+
+    // 선수단 및 기술 부문 / 의무팀
+    { email: 'meddir@club.com',          department: '의무팀',        role: 'DEPT_HEAD' },
+    { email: 'medical@club.com',         department: '의무팀',        role: 'MEMBER'    },
+
+    // 선수단 및 기술 부문 / 스카우팅팀
+    { email: 'fo@club.com',              department: '스카우팅팀',   role: 'MEMBER'    },
+  ];
+
+  let attached = 0;
+  let skipped = 0;
+  for (const a of assignments) {
+    const user = await prisma.user.findUnique({ where: { email: a.email } });
+    const dept = await prisma.department.findFirst({ where: { name: a.department, clubId: null } });
+    if (!user || !dept) {
+      console.warn(`⚠️  skipping ${a.email} → ${a.department} (user=${!!user}, dept=${!!dept})`);
+      skipped++;
+      continue;
+    }
+    await prisma.userDepartment.upsert({
+      where: { userId_departmentId: { userId: user.id, departmentId: dept.id } },
+      create: { userId: user.id, departmentId: dept.id, role: a.role },
+      update: { role: a.role },
+    });
+    attached++;
+  }
+
+  console.log(`✅ Staff department memberships: ${attached} attached, ${skipped} skipped`);
+}
+
 async function seedStaffAccounts() {
   const hashed = await bcrypt.hash('Password1!', 10);
   const korea = await prisma.country.findUniqueOrThrow({ where: { id: 1 } });
@@ -2798,6 +2868,9 @@ async function main() {
 
   // ── Recruitment ───────────────────────────────────────
   await seedRecruitment();
+
+  // ── Staff Department Memberships (needs hr@club.com from seedRecruitment) ──
+  await seedStaffDepartmentMemberships();
 
   // ── Reports ───────────────────────────────────────────
   await seedReports();
