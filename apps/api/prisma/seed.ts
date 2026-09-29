@@ -40,6 +40,7 @@ async function seedDepartments() {
   // ── 경영지원 하위 ──────────────────────────────────────────
   await findOrCreate('재무관리',  { parentId: bizSupport.id, category: 'FINANCE' });
   await findOrCreate('HR',        { parentId: bizSupport.id, category: 'HR' });
+  await findOrCreate('마케팅',    { parentId: bizSupport.id, category: 'MARKETING' });
 
   // ── 운영/인프라 하위 ───────────────────────────────────────
   await findOrCreate('시설관리',      { parentId: opsInfra.id, category: 'OPERATIONS' });
@@ -55,7 +56,7 @@ async function seedDepartments() {
   await findOrCreate('유소년',     { parentId: footballOps.id, category: 'PERFORMANCE' });
   await findOrCreate('스카우팅팀', { parentId: footballOps.id, category: 'SCOUTING' });
 
-  console.log('Departments seeded: 경영지원(재무관리·HR), 운영/인프라(시설·장비·의료기기·IT), 선수단 및 기술 부문(코칭·의무·재활·유소년·스카우팅)');
+  console.log('Departments seeded: 경영지원(재무관리·HR·마케팅), 운영/인프라(시설·장비·의료기기·IT), 선수단 및 기술 부문(코칭·의무·재활·유소년·스카우팅)');
 }
 
 async function seedLeagues() {
