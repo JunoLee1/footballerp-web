@@ -849,15 +849,19 @@ model Club {
   vatNumber         String?
   createdAt         DateTime @default(now())
 
-  country     Country?     @relation(fields: [countryId], references: [id])
-  teams       Team[]
-  users       User[]
-  leagues     ClubLeague[]
-  departments Department[]
-  players   Player[]   @relation("PlayerClub")
-  prospects Prospect[] @relation("ProspectClub")
+  country           Country?           @relation(fields: [countryId], references: [id])
+  teams             Team[]
+  users             User[]
+  leagues           ClubLeague[]
+  departments       Department[]
+  players           Player[]           @relation("PlayerClub")
+  prospects         Prospect[]         @relation("ProspectClub")
   trainingSessions  TrainingSession[]  @relation("TrainingSessionClub")
   operatingExpenses OperatingExpense[] @relation("OperatingExpenseClub")
+  equipmentItems    EquipmentItem[]    @relation("EquipmentItemClub")
+  equipmentUnits    EquipmentUnit[]    @relation("EquipmentUnitClub")
+  equipmentLoans    EquipmentLoan[]    @relation("EquipmentLoanClub")
+  assetRequests     AssetRequest[]     @relation("AssetRequestClub")
 }
 
 model Team {
@@ -890,9 +894,9 @@ model Country {
   name String
   code String
 
-  users   User[]
-  players Player[]
-  clubs   Club[]
+  users     User[]
+  players   Player[]
+  clubs     Club[]
   leagues   League[]
   prospects Prospect[]
 }
@@ -907,190 +911,190 @@ model PhoneNumber {
 }
 
 model User {
-  id              Int              @id @default(autoincrement())
-  email           String           @unique
-  password        String
-  username        String
-  nickname        String           @unique
-  role            Role
-  coachingRole    CoachingRole?
-  frontOfficeRole FrontOfficeRole?
-  isDeleted       Boolean          @default(false)
-  isOutOfOffice   Boolean          @default(false)
-  isDemo          Boolean          @default(false)
-  language        String           @default("ko")
-  dateOfBirth     DateTime
-  phoneNumberId   Int              @unique
-  nationalityId   Int
-  teamId              Int?
-  clubId              Int?
-  homeAddress         String?
-  passwordChangedAt   DateTime?
+  id                Int              @id @default(autoincrement())
+  email             String           @unique
+  password          String
+  username          String
+  nickname          String           @unique
+  role              Role
+  coachingRole      CoachingRole?
+  frontOfficeRole   FrontOfficeRole?
+  isDeleted         Boolean          @default(false)
+  isOutOfOffice     Boolean          @default(false)
+  isDemo            Boolean          @default(false)
+  language          String           @default("ko")
+  dateOfBirth       DateTime
+  phoneNumberId     Int              @unique
+  nationalityId     Int
+  teamId            Int?
+  clubId            Int?
+  homeAddress       String?
+  passwordChangedAt DateTime?
 
-  phoneNumber               PhoneNumber                     @relation(fields: [phoneNumberId], references: [id])
-  nationality               Country                         @relation(fields: [nationalityId], references: [id])
-  player                    Player?
-  recallRequests            Recall[]                        @relation("RecallRequestedBy")
-  recallApprovals           Recall[]                        @relation("RecallApprovedBy")
-  managedInjuries           Injury[]
-  createdSessions           TrainingSession[]               @relation("TrainingSessionCreatedBy")
-  approvedSessions          TrainingSession[]               @relation("TrainingSessionApprovedBy")
-  tacticalAnalyses          TacticalAnalysis[]
-  notifications             Notification[]
-  managedContracts          Contract[]
-  agentPlayers              Player[]                        @relation("AgentPlayers")
-  createdProspects          Prospect[]                      @relation("ProspectCreatedBy")
-  requestedLoans            EquipmentLoan[]                 @relation("LoanRequestedBy")
-  approvedLoans             EquipmentLoan[]                 @relation("LoanApprovedBy")
-  auditLogs                 AuditLog[]
-  authoredReports           Report[]                        @relation("ReportAuthor")
-  reviewedReports           Report[]                        @relation("ReportReviewer")
-  firstReviewedReports      Report[]                        @relation("ReportFirstReviewer")
-  secondReviewedReports     Report[]                        @relation("ReportSecondReviewer")
-  submittedMedicalExpenses  MedicalExpense[]                @relation("MedicalExpenseSubmitter")
-  leaderReviewedExpenses    MedicalExpense[]                @relation("MedicalExpenseLeaderReviewer")
-  adminReviewedExpenses     MedicalExpense[]                @relation("MedicalExpenseAdminReviewer")
-  createdInjuryReports      InjuryReport[]                  @relation("InjuryReportCreator")
-  updatedInjuryReports      InjuryReport[]                  @relation("InjuryReportUpdater")
-  coachSignedReports        InjuryReport[]                  @relation("InjuryReportCoachSigner")
-  trainerSignedReports      InjuryReport[]                  @relation("InjuryReportTrainerSigner")
-  medicalSignedReports      InjuryReport[]                  @relation("InjuryReportMedicalSigner")
-  assessedInjuries          InjuryAssessment[]
-  squadConfirmations        MatchSquad[]                    @relation("SquadConfirmations")
-  lineupConfirmations       MatchLineup[]                   @relation("LineupConfirmations")
-  team                      Team?                           @relation(fields: [teamId], references: [id])
-  club                      Club?                           @relation(fields: [clubId], references: [id])
-  createdHiringRounds       CoachHiringRound[]              @relation("HiringRoundCreatedBy")
-  coachProfile              Coach?                          @relation("CoachUser")
-  tutorAssignments          CoachTutorAssignment[]          @relation("TutorAssignments")
-  scoredTrainingResults     TrainingResult[]                @relation("TrainingResultScorer")
-  coachAvailabilities       CoachAvailability[]             @relation("CoachAvailabilityUser")
-  createdAvailabilities     CoachAvailability[]             @relation("CoachAvailabilityCreatedBy")
-  developmentPlans          PlayerDevelopmentPlan[]         @relation("PDPCoach")
-  uploadedVideos            TrainingVideo[]                 @relation("VideoUploader")
-  videoAssignments          VideoAssignment[]               @relation("VideoAssigner")
-  trainingReferences        TrainingReference[]
-  requestedCallups          PlayerCallup[]                  @relation("CallupRequestedBy")
-  approvedCallups           PlayerCallup[]                  @relation("CallupApprovedBy")
-  loginHistory              LoginHistory[]
-  passwordHistory           PasswordHistory[]
-  piiTargetRequests         PiiAccessRequest[] @relation("PiiTargets")
-  piiSentRequests           PiiAccessRequest[] @relation("PiiRequesters")
-  piiReviewedRequests       PiiAccessRequest[] @relation("PiiReviewers")
-  recordedMarketValues      MarketValueHistory[]
-  guardianPlayers           Player[]                        @relation("GuardianPlayers")
-  guardianRegistrations     YouthRegistration[]             @relation("GuardianRegistrations")
-  youthRegistrations        YouthRegistration[]             @relation("YouthRegistrationRequester")
-  reportedIncidents         IncidentReport[]                @relation("IncidentReporter")
-  coachEvaluations          GrowthEvaluation[]              @relation("CoachEvaluations")
-  awardedBadges             PlayerBadge[]                   @relation("CoachBadges")
-  isSuspended               Boolean                         @default(false)
-  suspendedAt               DateTime?
-  safeguardReportsAccused   SafeguardReport[]               @relation("SafeguardAccused")
-  guardianFees              AcademyFee[]                    @relation("GuardianFees")
-  givenEvaluations          CoachingStaffEvaluation[]       @relation("EvaluationGiver")
-  receivedEvaluations       CoachingStaffEvaluation[]       @relation("EvaluationReceiver")
-  staffRecordsCreated       StaffRecord[]                   @relation("StaffRecordCreator")
-  inspectedFacilities       FacilityInspection[]            @relation("FacilityInspector")
-  maintenanceRequests       MaintenanceRequest[]            @relation("MaintenanceRequestCreator")
-  createdSponsorships       Sponsorship[]                   @relation("SponsorshipCreator")
-  fmApprovedMaintenances    MaintenanceRequest[]            @relation("MaintenanceFMApprover")
-  gmApprovedMaintenances    MaintenanceRequest[]            @relation("MaintenanceGMApprover")
-  staffSalary               StaffSalary[]                   @relation("UserSalary")
-  confirmedPayrolls         PayrollRun[]                    @relation("PayrollRunConfirmer")
-  secondApprovedPayrolls    PayrollRun[]                    @relation("PayrollRunSecondApprover")
-  budgetOverrideLogs        BudgetOverrideLog[]             @relation("BudgetOverrideLogCreator")
-  budgetOverrideReviews     BudgetOverrideLog[]             @relation("BudgetOverrideLogReviewer")
-  proposedMinimumChanges    MandatoryMinimumChangeLog[]     @relation("MinimumProposer")
-  reviewedMinimumChanges    MandatoryMinimumChangeLog[]     @relation("MinimumReviewer")
-  revenueLogChanges         FinancialReportRevenueLog[]     @relation("RevenueLogChanger")
-  operatingExpenses         OperatingExpense[]              @relation("OperatingExpenseCreator")
-  paidExpenses              OperatingExpense[]              @relation("OperatingExpensePayer")
-  firstApprovedExpenses     OperatingExpense[]              @relation("OperatingExpenseFirstApprover")
-  approvedExpenses          OperatingExpense[]              @relation("OperatingExpenseApprover")
-  rejectedExpenses          OperatingExpense[]              @relation("OperatingExpenseRejecter")
-  cancelledExpenses         OperatingExpense[]              @relation("OperatingExpenseCanceller")
-  createdPostings           JobPosting[]                    @relation("JobPostingCreator")
-  approvedPostings          JobPosting[]                    @relation("JobPostingApprover")
-  applicationOffers         JobApplication[]                @relation("ApplicationOffer")
-  applicationScreenings     JobApplication[]                @relation("ApplicationScreener")
-  jobApplicationOfferReviews JobApplicationOfferApproval[]  @relation("JobApplicationOfferReviewer")
-  onboarding                Onboarding?                     @relation("OnboardingUser")
-  headedDepartments         Department[]                    @relation("DepartmentHead")
-  departmentMemberships     UserDepartment[]
-  sentInvites               UserInvite[]                    @relation("InviteSender")
-  issuedGuardianCodes       GuardianInviteCode[]            @relation("GuardianCodeIssuer")
-  usedGuardianCodes         GuardianInviteCode[]            @relation("GuardianCodeUser")
-  createdSoftwareLicenses   SoftwareLicense[]               @relation("SoftwareLicenseCreator")
-  ledgerEntries             LedgerEntry[]                   @relation("LedgerEntryCreator")
-  salesRecords              SalesRecord[]                   @relation("SalesRecordCreator")
-  salesRecordsUpdated       SalesRecord[]                   @relation("SalesRecordUpdater")
-  squadPlans                SquadPlan[]
-  facilityReservations      FacilityReservation[]           @relation("FacilityReservations")
-  interviewerScores         InterviewerScore[]              @relation("InterviewerScores")
-  createdAppeals            AttendanceAppeal[]              @relation("AppealCreator")
-  reviewedAppeals           AttendanceAppeal[]              @relation("AppealReviewer")
-  transferRequestsRequested TransferRequest[]               @relation("TRRequestedBy")
-  transferRequestsReviewed  TransferRequest[]               @relation("TRReviewedBy")
-  transferRequestsConfirmed TransferRequest[]               @relation("TRConfirmedBy")
-  transferRequestsRejected  TransferRequest[]               @relation("TRRejectedBy")
-  transferNegotiationLogs   TransferNegotiationLog[]
-  prospectNegotiationLogs   ProspectNegotiationLog[]
-  prospectVideoEvaluations  ProspectVideoEvaluation[]
-  prospectEvaluationLogs    ProspectEvaluationLog[]
-  createdPlanReports        PlanReport[]                    @relation("PlanReportCreatedBy")
-  approvedPlanReports       PlanReport[]                    @relation("PlanReportApprovedBy")
-  confirmedPlanReviews      PlanReview[]                    @relation("PlanReviewConfirmer")
-  confirmedReportReviews    ReportReview[]                  @relation("ReportReviewConfirmer")
-  createdSurveys            HiringNeedsSurvey[]             @relation("SurveyCreatedBy")
-  surveyResponses           SurveyResponse[]                @relation("SurveyResponseSubmitter")
-  approvedSurveyResponses   SurveyResponse[]                @relation("SurveyResponseApprover")
-  disposedEquipmentUnits    EquipmentUnit[]                 @relation("EquipmentDisposer")
-  formationSnapshots        FormationSnapshot[]             @relation("FormationSnapshotCreatedBy")
-  periodLocks               LedgerPeriodLock[]              @relation("PeriodLockCreator")
-  certifications            Certification[]                 @relation("CertOwner")
-  certFirstApprovals        Certification[]                 @relation("CertFirstApprover")
-  certSecondApprovals       Certification[]                 @relation("CertSecondApprover")
-  facilityAccessLogs        FacilityAccessLog[]
-  disposalRequests          EquipmentDisposalVerification[] @relation("DisposalRequestedBy")
-  disposalVerifications     EquipmentDisposalVerification[] @relation("DisposalVerifiedBy")
-  sponsorshipExposureEvents SponsorshipExposureEvent[]      @relation("ExposureEventCreator")
-  partnerContactLogs        PartnerContactLog[]             @relation("ContactLogActor")
-  budgetHeadersCreated      BudgetHeader[]                  @relation("BudgetHeaderCreator")
-  budgetHeadersApproved     BudgetHeader[]                  @relation("BudgetHeaderApprover")
-  adjustmentsCreated        BudgetAdjustment[]              @relation("AdjustmentCreator")
-  adjustmentsApproved       BudgetAdjustment[]              @relation("AdjustmentApprover")
-  settlementsCreated        MonthlySettlementReport[]       @relation("SettlementCreator")
-  settlementsFirstSubmitted MonthlySettlementReport[]       @relation("SettlementFirstSubmitter")
-  settlementsFirstApproved  MonthlySettlementReport[]       @relation("SettlementFirstApprover")
-  settlementsApproved       MonthlySettlementReport[]       @relation("SettlementApprover")
-  revenueAdjustments        RevenueAdjustment[]             @relation("AdjCreator")
-  carryOverOverrides        FinancialReport[]               @relation("CarryOverOverrider")
-  planStatusChanges         FinancialReport[]               @relation("PlanStatusChanger")
-  budgetPlanRequests        BudgetPlanRequest[]             @relation("BudgetPlanRequester")
-  assetRequests             AssetRequest[]                  @relation("AssetRequestRequester")
-  assetRequestApprovals     AssetRequestApproval[]          @relation("AssetRequestReviewer")
-  createdDispatches         HiringDispatch[]                @relation("DispatchCreator")
-  createdDispatchUser       HiringDispatch?                 @relation("DispatchCreatedUser")
-  reportsToDispatches       HiringDispatch[]                @relation("DispatchReportsTo")
-  dispatchApprovals         HiringDispatchApproval[]        @relation("DispatchReviewer")
-  medicalLoansRequested     MedicalEquipmentLoanLedger[]    @relation("MedLoanRequestedBy")
-  medicalLoansApproved      MedicalEquipmentLoanLedger[]    @relation("MedLoanApprovedBy")
-  medicalLoansRejected      MedicalEquipmentLoanLedger[]    @relation("MedLoanRejectedBy")
-  uploadedHiringDocs         HiringDocument[]                @relation("HiringDocUploader")
-  reviewedHiringDocs         HiringDocument[]                @relation("HiringDocReviewer")
-  createdEmployeeContracts   EmployeeContract[]              @relation("EmpContractCreator")
-  issuedEmployeeContracts    EmployeeContract[]              @relation("EmpContractIssuer")
-  signedEmployeeContracts    EmployeeContract[]              @relation("EmpContractSigner")
-  cancelledEmployeeContracts EmployeeContract[]              @relation("EmpContractCanceller")
-  probationReviewsSubmitted  ProbationReview[]               @relation("ProbationReviewer")
-  createdOnbTemplates        OnboardingTemplate[]            @relation("OnbTemplateCreator")
-  updatedOnbTemplates        OnboardingTemplate[]            @relation("OnbTemplateUpdater")
-  verifiedOnbTasks           OnboardingTask[]                @relation("OnbTaskVerifier")
-  createdDeptAssetKits           DepartmentDefaultAssetKit[]         @relation("DeptAssetKitCreator")
-  updatedDeptAssetKits           DepartmentDefaultAssetKit[]         @relation("DeptAssetKitUpdater")
-  createdAcquisitionSurveys      PlayerAcquisitionSurvey[]           @relation("AcqSurveyCreator")
-  acquisitionSurveyResponses     PlayerAcquisitionSurveyResponse[]   @relation("AcqSurveyResponder")
+  phoneNumber                PhoneNumber                       @relation(fields: [phoneNumberId], references: [id])
+  nationality                Country                           @relation(fields: [nationalityId], references: [id])
+  player                     Player?
+  recallRequests             Recall[]                          @relation("RecallRequestedBy")
+  recallApprovals            Recall[]                          @relation("RecallApprovedBy")
+  managedInjuries            Injury[]
+  createdSessions            TrainingSession[]                 @relation("TrainingSessionCreatedBy")
+  approvedSessions           TrainingSession[]                 @relation("TrainingSessionApprovedBy")
+  tacticalAnalyses           TacticalAnalysis[]
+  notifications              Notification[]
+  managedContracts           Contract[]
+  agentPlayers               Player[]                          @relation("AgentPlayers")
+  createdProspects           Prospect[]                        @relation("ProspectCreatedBy")
+  requestedLoans             EquipmentLoan[]                   @relation("LoanRequestedBy")
+  approvedLoans              EquipmentLoan[]                   @relation("LoanApprovedBy")
+  auditLogs                  AuditLog[]
+  authoredReports            Report[]                          @relation("ReportAuthor")
+  reviewedReports            Report[]                          @relation("ReportReviewer")
+  firstReviewedReports       Report[]                          @relation("ReportFirstReviewer")
+  secondReviewedReports      Report[]                          @relation("ReportSecondReviewer")
+  submittedMedicalExpenses   MedicalExpense[]                  @relation("MedicalExpenseSubmitter")
+  leaderReviewedExpenses     MedicalExpense[]                  @relation("MedicalExpenseLeaderReviewer")
+  adminReviewedExpenses      MedicalExpense[]                  @relation("MedicalExpenseAdminReviewer")
+  createdInjuryReports       InjuryReport[]                    @relation("InjuryReportCreator")
+  updatedInjuryReports       InjuryReport[]                    @relation("InjuryReportUpdater")
+  coachSignedReports         InjuryReport[]                    @relation("InjuryReportCoachSigner")
+  trainerSignedReports       InjuryReport[]                    @relation("InjuryReportTrainerSigner")
+  medicalSignedReports       InjuryReport[]                    @relation("InjuryReportMedicalSigner")
+  assessedInjuries           InjuryAssessment[]
+  squadConfirmations         MatchSquad[]                      @relation("SquadConfirmations")
+  lineupConfirmations        MatchLineup[]                     @relation("LineupConfirmations")
+  team                       Team?                             @relation(fields: [teamId], references: [id])
+  club                       Club?                             @relation(fields: [clubId], references: [id])
+  createdHiringRounds        CoachHiringRound[]                @relation("HiringRoundCreatedBy")
+  coachProfile               Coach?                            @relation("CoachUser")
+  tutorAssignments           CoachTutorAssignment[]            @relation("TutorAssignments")
+  scoredTrainingResults      TrainingResult[]                  @relation("TrainingResultScorer")
+  coachAvailabilities        CoachAvailability[]               @relation("CoachAvailabilityUser")
+  createdAvailabilities      CoachAvailability[]               @relation("CoachAvailabilityCreatedBy")
+  developmentPlans           PlayerDevelopmentPlan[]           @relation("PDPCoach")
+  uploadedVideos             TrainingVideo[]                   @relation("VideoUploader")
+  videoAssignments           VideoAssignment[]                 @relation("VideoAssigner")
+  trainingReferences         TrainingReference[]
+  requestedCallups           PlayerCallup[]                    @relation("CallupRequestedBy")
+  approvedCallups            PlayerCallup[]                    @relation("CallupApprovedBy")
+  loginHistory               LoginHistory[]
+  passwordHistory            PasswordHistory[]
+  piiTargetRequests          PiiAccessRequest[]                @relation("PiiTargets")
+  piiSentRequests            PiiAccessRequest[]                @relation("PiiRequesters")
+  piiReviewedRequests        PiiAccessRequest[]                @relation("PiiReviewers")
+  recordedMarketValues       MarketValueHistory[]
+  guardianPlayers            Player[]                          @relation("GuardianPlayers")
+  guardianRegistrations      YouthRegistration[]               @relation("GuardianRegistrations")
+  youthRegistrations         YouthRegistration[]               @relation("YouthRegistrationRequester")
+  reportedIncidents          IncidentReport[]                  @relation("IncidentReporter")
+  coachEvaluations           GrowthEvaluation[]                @relation("CoachEvaluations")
+  awardedBadges              PlayerBadge[]                     @relation("CoachBadges")
+  isSuspended                Boolean                           @default(false)
+  suspendedAt                DateTime?
+  safeguardReportsAccused    SafeguardReport[]                 @relation("SafeguardAccused")
+  guardianFees               AcademyFee[]                      @relation("GuardianFees")
+  givenEvaluations           CoachingStaffEvaluation[]         @relation("EvaluationGiver")
+  receivedEvaluations        CoachingStaffEvaluation[]         @relation("EvaluationReceiver")
+  staffRecordsCreated        StaffRecord[]                     @relation("StaffRecordCreator")
+  inspectedFacilities        FacilityInspection[]              @relation("FacilityInspector")
+  maintenanceRequests        MaintenanceRequest[]              @relation("MaintenanceRequestCreator")
+  createdSponsorships        Sponsorship[]                     @relation("SponsorshipCreator")
+  fmApprovedMaintenances     MaintenanceRequest[]              @relation("MaintenanceFMApprover")
+  gmApprovedMaintenances     MaintenanceRequest[]              @relation("MaintenanceGMApprover")
+  staffSalary                StaffSalary[]                     @relation("UserSalary")
+  confirmedPayrolls          PayrollRun[]                      @relation("PayrollRunConfirmer")
+  secondApprovedPayrolls     PayrollRun[]                      @relation("PayrollRunSecondApprover")
+  budgetOverrideLogs         BudgetOverrideLog[]               @relation("BudgetOverrideLogCreator")
+  budgetOverrideReviews      BudgetOverrideLog[]               @relation("BudgetOverrideLogReviewer")
+  proposedMinimumChanges     MandatoryMinimumChangeLog[]       @relation("MinimumProposer")
+  reviewedMinimumChanges     MandatoryMinimumChangeLog[]       @relation("MinimumReviewer")
+  revenueLogChanges          FinancialReportRevenueLog[]       @relation("RevenueLogChanger")
+  operatingExpenses          OperatingExpense[]                @relation("OperatingExpenseCreator")
+  paidExpenses               OperatingExpense[]                @relation("OperatingExpensePayer")
+  firstApprovedExpenses      OperatingExpense[]                @relation("OperatingExpenseFirstApprover")
+  approvedExpenses           OperatingExpense[]                @relation("OperatingExpenseApprover")
+  rejectedExpenses           OperatingExpense[]                @relation("OperatingExpenseRejecter")
+  cancelledExpenses          OperatingExpense[]                @relation("OperatingExpenseCanceller")
+  createdPostings            JobPosting[]                      @relation("JobPostingCreator")
+  approvedPostings           JobPosting[]                      @relation("JobPostingApprover")
+  applicationOffers          JobApplication[]                  @relation("ApplicationOffer")
+  applicationScreenings      JobApplication[]                  @relation("ApplicationScreener")
+  jobApplicationOfferReviews JobApplicationOfferApproval[]     @relation("JobApplicationOfferReviewer")
+  onboarding                 Onboarding?                       @relation("OnboardingUser")
+  headedDepartments          Department[]                      @relation("DepartmentHead")
+  departmentMemberships      UserDepartment[]
+  sentInvites                UserInvite[]                      @relation("InviteSender")
+  issuedGuardianCodes        GuardianInviteCode[]              @relation("GuardianCodeIssuer")
+  usedGuardianCodes          GuardianInviteCode[]              @relation("GuardianCodeUser")
+  createdSoftwareLicenses    SoftwareLicense[]                 @relation("SoftwareLicenseCreator")
+  ledgerEntries              LedgerEntry[]                     @relation("LedgerEntryCreator")
+  salesRecords               SalesRecord[]                     @relation("SalesRecordCreator")
+  salesRecordsUpdated        SalesRecord[]                     @relation("SalesRecordUpdater")
+  squadPlans                 SquadPlan[]
+  facilityReservations       FacilityReservation[]             @relation("FacilityReservations")
+  interviewerScores          InterviewerScore[]                @relation("InterviewerScores")
+  createdAppeals             AttendanceAppeal[]                @relation("AppealCreator")
+  reviewedAppeals            AttendanceAppeal[]                @relation("AppealReviewer")
+  transferRequestsRequested  TransferRequest[]                 @relation("TRRequestedBy")
+  transferRequestsReviewed   TransferRequest[]                 @relation("TRReviewedBy")
+  transferRequestsConfirmed  TransferRequest[]                 @relation("TRConfirmedBy")
+  transferRequestsRejected   TransferRequest[]                 @relation("TRRejectedBy")
+  transferNegotiationLogs    TransferNegotiationLog[]
+  prospectNegotiationLogs    ProspectNegotiationLog[]
+  prospectVideoEvaluations   ProspectVideoEvaluation[]
+  prospectEvaluationLogs     ProspectEvaluationLog[]
+  createdPlanReports         PlanReport[]                      @relation("PlanReportCreatedBy")
+  approvedPlanReports        PlanReport[]                      @relation("PlanReportApprovedBy")
+  confirmedPlanReviews       PlanReview[]                      @relation("PlanReviewConfirmer")
+  confirmedReportReviews     ReportReview[]                    @relation("ReportReviewConfirmer")
+  createdSurveys             HiringNeedsSurvey[]               @relation("SurveyCreatedBy")
+  surveyResponses            SurveyResponse[]                  @relation("SurveyResponseSubmitter")
+  approvedSurveyResponses    SurveyResponse[]                  @relation("SurveyResponseApprover")
+  disposedEquipmentUnits     EquipmentUnit[]                   @relation("EquipmentDisposer")
+  formationSnapshots         FormationSnapshot[]               @relation("FormationSnapshotCreatedBy")
+  periodLocks                LedgerPeriodLock[]                @relation("PeriodLockCreator")
+  certifications             Certification[]                   @relation("CertOwner")
+  certFirstApprovals         Certification[]                   @relation("CertFirstApprover")
+  certSecondApprovals        Certification[]                   @relation("CertSecondApprover")
+  facilityAccessLogs         FacilityAccessLog[]
+  disposalRequests           EquipmentDisposalVerification[]   @relation("DisposalRequestedBy")
+  disposalVerifications      EquipmentDisposalVerification[]   @relation("DisposalVerifiedBy")
+  sponsorshipExposureEvents  SponsorshipExposureEvent[]        @relation("ExposureEventCreator")
+  partnerContactLogs         PartnerContactLog[]               @relation("ContactLogActor")
+  budgetHeadersCreated       BudgetHeader[]                    @relation("BudgetHeaderCreator")
+  budgetHeadersApproved      BudgetHeader[]                    @relation("BudgetHeaderApprover")
+  adjustmentsCreated         BudgetAdjustment[]                @relation("AdjustmentCreator")
+  adjustmentsApproved        BudgetAdjustment[]                @relation("AdjustmentApprover")
+  settlementsCreated         MonthlySettlementReport[]         @relation("SettlementCreator")
+  settlementsFirstSubmitted  MonthlySettlementReport[]         @relation("SettlementFirstSubmitter")
+  settlementsFirstApproved   MonthlySettlementReport[]         @relation("SettlementFirstApprover")
+  settlementsApproved        MonthlySettlementReport[]         @relation("SettlementApprover")
+  revenueAdjustments         RevenueAdjustment[]               @relation("AdjCreator")
+  carryOverOverrides         FinancialReport[]                 @relation("CarryOverOverrider")
+  planStatusChanges          FinancialReport[]                 @relation("PlanStatusChanger")
+  budgetPlanRequests         BudgetPlanRequest[]               @relation("BudgetPlanRequester")
+  assetRequests              AssetRequest[]                    @relation("AssetRequestRequester")
+  assetRequestApprovals      AssetRequestApproval[]            @relation("AssetRequestReviewer")
+  createdDispatches          HiringDispatch[]                  @relation("DispatchCreator")
+  createdDispatchUser        HiringDispatch?                   @relation("DispatchCreatedUser")
+  reportsToDispatches        HiringDispatch[]                  @relation("DispatchReportsTo")
+  dispatchApprovals          HiringDispatchApproval[]          @relation("DispatchReviewer")
+  medicalLoansRequested      MedicalEquipmentLoanLedger[]      @relation("MedLoanRequestedBy")
+  medicalLoansApproved       MedicalEquipmentLoanLedger[]      @relation("MedLoanApprovedBy")
+  medicalLoansRejected       MedicalEquipmentLoanLedger[]      @relation("MedLoanRejectedBy")
+  uploadedHiringDocs         HiringDocument[]                  @relation("HiringDocUploader")
+  reviewedHiringDocs         HiringDocument[]                  @relation("HiringDocReviewer")
+  createdEmployeeContracts   EmployeeContract[]                @relation("EmpContractCreator")
+  issuedEmployeeContracts    EmployeeContract[]                @relation("EmpContractIssuer")
+  signedEmployeeContracts    EmployeeContract[]                @relation("EmpContractSigner")
+  cancelledEmployeeContracts EmployeeContract[]                @relation("EmpContractCanceller")
+  probationReviewsSubmitted  ProbationReview[]                 @relation("ProbationReviewer")
+  createdOnbTemplates        OnboardingTemplate[]              @relation("OnbTemplateCreator")
+  updatedOnbTemplates        OnboardingTemplate[]              @relation("OnbTemplateUpdater")
+  verifiedOnbTasks           OnboardingTask[]                  @relation("OnbTaskVerifier")
+  createdDeptAssetKits       DepartmentDefaultAssetKit[]       @relation("DeptAssetKitCreator")
+  updatedDeptAssetKits       DepartmentDefaultAssetKit[]       @relation("DeptAssetKitUpdater")
+  createdAcquisitionSurveys  PlayerAcquisitionSurvey[]         @relation("AcqSurveyCreator")
+  acquisitionSurveyResponses PlayerAcquisitionSurveyResponse[] @relation("AcqSurveyResponder")
 }
 
 model Season {
@@ -1227,19 +1231,19 @@ model Player {
 }
 
 model Contract {
-  id               Int            @id @default(autoincrement())
-  startDate        DateTime
-  endDate          DateTime
-  salary             Int
-  signingBonus       BigInt    @default(0)
+  id                      Int            @id @default(autoincrement())
+  startDate               DateTime
+  endDate                 DateTime
+  salary                  Int
+  signingBonus            BigInt         @default(0)
   signingBonusScheduledAt DateTime?
-  signingBonusPaidAt DateTime?
-  status             ContractStatus @default(ACTIVE)
-  contractType     ContractType   @default(PROFESSIONAL)
-  playerId         String
-  managedById      Int?
-  agencyId         Int?
-  agencyCommission Decimal?       @db.Decimal(12, 2)
+  signingBonusPaidAt      DateTime?
+  status                  ContractStatus @default(ACTIVE)
+  contractType            ContractType   @default(PROFESSIONAL)
+  playerId                String
+  managedById             Int?
+  agencyId                Int?
+  agencyCommission        Decimal?       @db.Decimal(12, 2)
 
   player             Player             @relation(fields: [playerId], references: [id])
   managedBy          User?              @relation(fields: [managedById], references: [id])
@@ -1350,13 +1354,13 @@ model TransferRequest {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  player           Player                 @relation(fields: [playerId], references: [id])
-  agency           Agency                 @relation(fields: [agencyId], references: [id])
-  requestedBy      User                   @relation("TRRequestedBy", fields: [requestedById], references: [id])
-  reviewedBy       User?                  @relation("TRReviewedBy", fields: [reviewedById], references: [id])
-  confirmedBy      User?                  @relation("TRConfirmedBy", fields: [confirmedById], references: [id])
-  rejectedBy       User?                  @relation("TRRejectedBy", fields: [rejectedById], references: [id])
-  negotiationLogs  TransferNegotiationLog[]
+  player          Player                   @relation(fields: [playerId], references: [id])
+  agency          Agency                   @relation(fields: [agencyId], references: [id])
+  requestedBy     User                     @relation("TRRequestedBy", fields: [requestedById], references: [id])
+  reviewedBy      User?                    @relation("TRReviewedBy", fields: [reviewedById], references: [id])
+  confirmedBy     User?                    @relation("TRConfirmedBy", fields: [confirmedById], references: [id])
+  rejectedBy      User?                    @relation("TRRejectedBy", fields: [rejectedById], references: [id])
+  negotiationLogs TransferNegotiationLog[]
 }
 
 model TransferNegotiationLog {
@@ -1424,11 +1428,13 @@ model EquipmentLoan {
   notes           String?
   equipmentItemId Int
   equipmentUnitId Int?
+  clubId          Int?
 
   requestedBy   User                        @relation("LoanRequestedBy", fields: [requestedById], references: [id])
   approvedBy    User?                       @relation("LoanApprovedBy", fields: [approvedById], references: [id])
   equipmentItem EquipmentItem               @relation(fields: [equipmentItemId], references: [id])
   equipmentUnit EquipmentUnit?              @relation(fields: [equipmentUnitId], references: [id])
+  club          Club?                       @relation("EquipmentLoanClub", fields: [clubId], references: [id])
   medicalLedger MedicalEquipmentLoanLedger?
 }
 
@@ -1625,11 +1631,11 @@ model SubstitutionEvent {
 
   match      Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
   fromPlayer Player @relation("SubOff", fields: [fromPlayerId], references: [id])
-  toPlayer   Player @relation("SubOn",  fields: [toPlayerId],   references: [id])
+  toPlayer   Player @relation("SubOn", fields: [toPlayerId], references: [id])
 
-  @@index([matchId])
   @@unique([matchId, fromPlayerId])
   @@unique([matchId, toPlayerId])
+  @@index([matchId])
 }
 
 model PlayerMatchStats {
@@ -1890,10 +1896,12 @@ model EquipmentItem {
   quantity            Int?
   lowStockThreshold   Int?
   partnerId           Int?
+  clubId              Int?
 
   units         EquipmentUnit[]
   assignments   EquipmentAssignment[]
   partner       Partner?              @relation(fields: [partnerId], references: [id])
+  club          Club?                 @relation("EquipmentItemClub", fields: [clubId], references: [id])
   loans         EquipmentLoan[]
   assetRequests AssetRequest[]
 }
@@ -1918,11 +1926,13 @@ model EquipmentUnit {
   disposedById           Int?
   disposedAt             DateTime?
   disposalNote           String?             @db.Text
+  clubId                 Int?
 
   item                 EquipmentItem                  @relation(fields: [equipmentItemId], references: [id])
   assignments          EquipmentAssignment[]
   loans                EquipmentLoan[]
   disposedBy           User?                          @relation("EquipmentDisposer", fields: [disposedById], references: [id])
+  club                 Club?                          @relation("EquipmentUnitClub", fields: [clubId], references: [id])
   disposalVerification EquipmentDisposalVerification?
 }
 
@@ -1940,32 +1950,32 @@ model EquipmentAssignment {
 }
 
 model Prospect {
-  id                Int              @id @default(autoincrement())
-  name              String
-  nationalityId     Int?
-  nationality       Country?   @relation(fields: [nationalityId], references: [id])
-  position          Position?
-  currentTeam       String?
-  notes             String?
-  medicalNotes      String?
-  status            ProspectStatus   @default(LONGLIST)
-  convertedPlayerId String?
-  externalId          String?          @unique
-  currentMarketValue  Int?
-  playStyle           PlayStyle?
-  createdAt         DateTime         @default(now())
-  createdById       Int?
-  visaRequired      Boolean          @default(false)
-  visaEligibility   VisaEligibility?
-  clubId            Int?
+  id                 Int              @id @default(autoincrement())
+  name               String
+  nationalityId      Int?
+  nationality        Country?         @relation(fields: [nationalityId], references: [id])
+  position           Position?
+  currentTeam        String?
+  notes              String?
+  medicalNotes       String?
+  status             ProspectStatus   @default(LONGLIST)
+  convertedPlayerId  String?
+  externalId         String?          @unique
+  currentMarketValue Int?
+  playStyle          PlayStyle?
+  createdAt          DateTime         @default(now())
+  createdById        Int?
+  visaRequired       Boolean          @default(false)
+  visaEligibility    VisaEligibility?
+  clubId             Int?
 
-  convertedPlayer  Player?                  @relation("ProspectConvertedPlayer", fields: [convertedPlayerId], references: [id])
-  createdBy        User?                    @relation("ProspectCreatedBy", fields: [createdById], references: [id])
-  club             Club?                    @relation("ProspectClub", fields: [clubId], references: [id])
-  negotiationLogs  ProspectNegotiationLog[]
-  videoEvaluations   ProspectVideoEvaluation[]
-  videoAnalysisJobs  VideoAnalysisJob[]
-  evaluationLogs   ProspectEvaluationLog[]
+  convertedPlayer   Player?                   @relation("ProspectConvertedPlayer", fields: [convertedPlayerId], references: [id])
+  createdBy         User?                     @relation("ProspectCreatedBy", fields: [createdById], references: [id])
+  club              Club?                     @relation("ProspectClub", fields: [clubId], references: [id])
+  negotiationLogs   ProspectNegotiationLog[]
+  videoEvaluations  ProspectVideoEvaluation[]
+  videoAnalysisJobs VideoAnalysisJob[]
+  evaluationLogs    ProspectEvaluationLog[]
 }
 
 model ProspectNegotiationLog {
@@ -2012,7 +2022,7 @@ model VideoAnalysisJob {
   createdAt    DateTime            @default(now())
   completedAt  DateTime?
 
-  prospect     Prospect            @relation(fields: [prospectId], references: [id])
+  prospect Prospect @relation(fields: [prospectId], references: [id])
 
   @@index([prospectId])
 }
@@ -2902,38 +2912,38 @@ enum BudgetPlanStatus {
 }
 
 model Department {
-  id                Int                        @id @default(autoincrement())
-  name              String
-  clubId            Int?
-  isActive          Boolean                    @default(true)
-  createdAt         DateTime                   @default(now())
-  updatedAt         DateTime                   @updatedAt
-  category          DepartmentCategory?
-  parentId          Int?
-  headId            Int?
-  club              Club?                      @relation(fields: [clubId], references: [id])
-  parent            Department?                @relation("DepartmentHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
-  children          Department[]               @relation("DepartmentHierarchy")
-  head              User?                      @relation("DepartmentHead", fields: [headId], references: [id], onDelete: SetNull)
-  staffRecords      StaffRecord[]
-  postings          JobPosting[]
-  members           UserDepartment[]
-  ibiConfigs        DepartmentIbiConfig[]
-  planReports       PlanReport[]
-  subjectConfigs    DepartmentReviewerConfig[] @relation("SubjectDept")
-  reviewerConfigs   DepartmentReviewerConfig[] @relation("ReviewerDept")
-  planReviews       PlanReview[]               @relation("PlanReviewerDept")
-  reportReviews     ReportReview[]             @relation("ReportReviewerDept")
-  reports           Report[]
-  surveyTargets     SurveyTargetDept[]         @relation("SurveyTargetDept")
-  surveyResponses   SurveyResponse[]           @relation("SurveyResponse")
-  budgetLines       BudgetLine[]
-  assetRequests     AssetRequest[]
-  operatingExpenses OperatingExpense[]
-  hiringDispatches  HiringDispatch[]
+  id                 Int                        @id @default(autoincrement())
+  name               String
+  clubId             Int?
+  isActive           Boolean                    @default(true)
+  createdAt          DateTime                   @default(now())
+  updatedAt          DateTime                   @updatedAt
+  category           DepartmentCategory?
+  parentId           Int?
+  headId             Int?
+  club               Club?                      @relation(fields: [clubId], references: [id])
+  parent             Department?                @relation("DepartmentHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children           Department[]               @relation("DepartmentHierarchy")
+  head               User?                      @relation("DepartmentHead", fields: [headId], references: [id], onDelete: SetNull)
+  staffRecords       StaffRecord[]
+  postings           JobPosting[]
+  members            UserDepartment[]
+  ibiConfigs         DepartmentIbiConfig[]
+  planReports        PlanReport[]
+  subjectConfigs     DepartmentReviewerConfig[] @relation("SubjectDept")
+  reviewerConfigs    DepartmentReviewerConfig[] @relation("ReviewerDept")
+  planReviews        PlanReview[]               @relation("PlanReviewerDept")
+  reportReviews      ReportReview[]             @relation("ReportReviewerDept")
+  reports            Report[]
+  surveyTargets      SurveyTargetDept[]         @relation("SurveyTargetDept")
+  surveyResponses    SurveyResponse[]           @relation("SurveyResponse")
+  budgetLines        BudgetLine[]
+  assetRequests      AssetRequest[]
+  operatingExpenses  OperatingExpense[]
+  hiringDispatches   HiringDispatch[]
   onboardingTemplate OnboardingTemplate?
-  defaultAssetKit   DepartmentDefaultAssetKit?
-  jobTitles         DeptJobTitle[]
+  defaultAssetKit    DepartmentDefaultAssetKit?
+  jobTitles          DeptJobTitle[]
 
   @@unique([name, clubId])
 }
@@ -2955,16 +2965,16 @@ model PiiAccessRequest {
   reviewedAt   DateTime?
   reviewedById Int?
 
-  targetUser User  @relation("PiiTargets",    fields: [targetUserId], references: [id])
-  requester  User  @relation("PiiRequesters", fields: [requesterId],  references: [id])
-  reviewedBy User? @relation("PiiReviewers",  fields: [reviewedById], references: [id])
+  targetUser User  @relation("PiiTargets", fields: [targetUserId], references: [id])
+  requester  User  @relation("PiiRequesters", fields: [requesterId], references: [id])
+  reviewedBy User? @relation("PiiReviewers", fields: [reviewedById], references: [id])
 }
 
 enum DeptRole {
   DEPT_HEAD // 부서장
-  LEADER    // 팀장
-  MEMBER    // 팀원
-  INTERN    // 인턴
+  LEADER // 팀장
+  MEMBER // 팀원
+  INTERN // 인턴
 }
 
 model UserDepartment {
@@ -3009,13 +3019,13 @@ model ExpenseCategory {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
-  operatingExpenses       OperatingExpense[]
-  budgetCategoryPlans     BudgetCategoryPlan[]
-  budgetLines             BudgetLine[]
-  budgetOverrideLogs      BudgetOverrideLog[]
-  assetRequests           AssetRequest[]
-  defaultAssetKits        DepartmentDefaultAssetKit[]
-  budgetPlanRequestLines  BudgetPlanRequestLine[]
+  operatingExpenses      OperatingExpense[]
+  budgetCategoryPlans    BudgetCategoryPlan[]
+  budgetLines            BudgetLine[]
+  budgetOverrideLogs     BudgetOverrideLog[]
+  assetRequests          AssetRequest[]
+  defaultAssetKits       DepartmentDefaultAssetKit[]
+  budgetPlanRequestLines BudgetPlanRequestLine[]
 }
 
 enum CategoryScope {
@@ -3025,11 +3035,11 @@ enum CategoryScope {
 
 // 편성 워크플로우 트리거 (ADR 0019)
 enum TriggerType {
-  MULTI_LOCATION      // 다중거점 관리 (가중)
-  DIRECT_BUSINESS     // 사업 직접비 (가중)
-  PUBLIC_UTILITY      // 공공요금 (가중)
-  HOME_MATCH          // 홈경기 현장지원 (가산)
-  WEEKEND_OVERTIME    // 주말 야근 (가산)
+  MULTI_LOCATION // 다중거점 관리 (가중)
+  DIRECT_BUSINESS // 사업 직접비 (가중)
+  PUBLIC_UTILITY // 공공요금 (가중)
+  HOME_MATCH // 홈경기 현장지원 (가산)
+  WEEKEND_OVERTIME // 주말 야근 (가산)
 }
 
 enum BudgetPlanRequestStatus {
@@ -3044,34 +3054,34 @@ model BudgetPlanRequest {
   financialReportId Int
   requestedById     Int
   scope             CategoryScope
-  ownerType         String                  // "TEAM" | "DEPARTMENT" (denormalized for query)
-  ownerId           Int                     // Team.id | Department.id
+  ownerType         String // "TEAM" | "DEPARTMENT" (denormalized for query)
+  ownerId           Int // Team.id | Department.id
   status            BudgetPlanRequestStatus @default(DRAFT)
   submittedAt       DateTime?
   processedAt       DateTime?
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
 
-  financialReport   FinancialReport         @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
-  requestedBy       User                    @relation("BudgetPlanRequester", fields: [requestedById], references: [id])
-  lines             BudgetPlanRequestLine[]
+  financialReport FinancialReport         @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
+  requestedBy     User                    @relation("BudgetPlanRequester", fields: [requestedById], references: [id])
+  lines           BudgetPlanRequestLine[]
 
   @@unique([financialReportId, ownerType, ownerId])
 }
 
 model BudgetPlanRequestLine {
-  id             Int               @id @default(autoincrement())
-  requestId      Int
-  categoryId     Int
-  triggers       TriggerType[]     // 다중 선택
-  standardDelta  Int               @default(0)
-  premiumDelta   Int               @default(0)
-  evidenceUrl    String?
-  comment        String?
-  createdAt      DateTime          @default(now())
+  id            Int           @id @default(autoincrement())
+  requestId     Int
+  categoryId    Int
+  triggers      TriggerType[] // 다중 선택
+  standardDelta Int           @default(0)
+  premiumDelta  Int           @default(0)
+  evidenceUrl   String?
+  comment       String?
+  createdAt     DateTime      @default(now())
 
-  request        BudgetPlanRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
-  category       ExpenseCategory   @relation(fields: [categoryId], references: [id])
+  request  BudgetPlanRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  category ExpenseCategory   @relation(fields: [categoryId], references: [id])
 
   @@unique([requestId, categoryId])
 }
@@ -3097,18 +3107,18 @@ enum AdjustmentStatus {
 }
 
 model BudgetCategoryPlan {
-  id                  Int                         @id @default(autoincrement())
-  financialReportId   Int
-  categoryId          Int
-  mandatoryMinimum    Int                         @default(0)
-  knapsackAllocated   Int?
-  sortOrder           Int                         @default(0)
-  createdAt           DateTime                    @default(now())
-  updatedAt           DateTime                    @updatedAt
-  financialReport     FinancialReport             @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
-  expenseCategory     ExpenseCategory             @relation(fields: [categoryId], references: [id])
-  tiers               BudgetTier[]
-  minimumChangeLogs   MandatoryMinimumChangeLog[]
+  id                Int                         @id @default(autoincrement())
+  financialReportId Int
+  categoryId        Int
+  mandatoryMinimum  Int                         @default(0)
+  knapsackAllocated Int?
+  sortOrder         Int                         @default(0)
+  createdAt         DateTime                    @default(now())
+  updatedAt         DateTime                    @updatedAt
+  financialReport   FinancialReport             @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
+  expenseCategory   ExpenseCategory             @relation(fields: [categoryId], references: [id])
+  tiers             BudgetTier[]
+  minimumChangeLogs MandatoryMinimumChangeLog[]
 
   @@unique([financialReportId, categoryId])
 }
@@ -3146,16 +3156,16 @@ model BudgetOverrideLog {
 
 // mandatoryMinimum 세팅·변경 이력 (ADR 0022)
 enum MinimumEvidenceType {
-  CONTRACT     // 계약서 근거 — evidenceUrl 필수
-  LEGAL        // 법령 근거 — evidenceUrl 필수
-  FIXED_COST   // 계약 없는 고정비 (임대료 등) — evidenceUrl optional
+  CONTRACT // 계약서 근거 — evidenceUrl 필수
+  LEGAL // 법령 근거 — evidenceUrl 필수
+  FIXED_COST // 계약 없는 고정비 (임대료 등) — evidenceUrl optional
 }
 
 enum MinimumChangeStatus {
   PENDING
   APPROVED
   REJECTED
-  CANCELED     // 같은 categoryPlanId 새 PENDING 등장 시 이전 자동 취소 (grill Q5)
+  CANCELED // 같은 categoryPlanId 새 PENDING 등장 시 이전 자동 취소 (grill Q5)
 }
 
 model MandatoryMinimumChangeLog {
@@ -3164,9 +3174,9 @@ model MandatoryMinimumChangeLog {
   previousAmount Int
   newAmount      Int
   evidenceType   MinimumEvidenceType
-  evidenceUrl    String?             // CONTRACT/LEGAL 필수, FIXED_COST optional (서비스 레이어 강제)
+  evidenceUrl    String? // CONTRACT/LEGAL 필수, FIXED_COST optional (서비스 레이어 강제)
   reason         String
-  effectiveDate  DateTime            // 참고용 (계약 개시일 등 감사 기록)
+  effectiveDate  DateTime // 참고용 (계약 개시일 등 감사 기록)
   status         MinimumChangeStatus @default(PENDING)
   proposedById   Int
   proposedAt     DateTime            @default(now())
@@ -3409,9 +3419,9 @@ model JobApplication {
   source              ApplicationSource     @default(DIRECT)
   externalApplicantId String?
 
-  posting                 JobPosting       @relation(fields: [postingId], references: [id])
-  offeredBy               User?            @relation("ApplicationOffer", fields: [offeredById], references: [id])
-  screenedBy              User?            @relation("ApplicationScreener", fields: [screenedById], references: [id])
+  posting                 JobPosting                    @relation(fields: [postingId], references: [id])
+  offeredBy               User?                         @relation("ApplicationOffer", fields: [offeredById], references: [id])
+  screenedBy              User?                         @relation("ApplicationScreener", fields: [screenedById], references: [id])
   interviews              Interview[]
   referenceCheck          ReferenceCheck?
   onboarding              Onboarding?
@@ -3428,13 +3438,13 @@ model JobApplication {
 }
 
 model JobApplicationOfferApproval {
-  id            Int                                @id @default(autoincrement())
+  id            Int                               @id @default(autoincrement())
   applicationId Int
   stage         JobApplicationOfferApprovalStage
   action        JobApplicationOfferApprovalAction
   reviewerId    Int
   reason        String?
-  createdAt     DateTime                           @default(now())
+  createdAt     DateTime                          @default(now())
 
   application JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
   reviewer    User           @relation("JobApplicationOfferReviewer", fields: [reviewerId], references: [id])
@@ -4676,6 +4686,8 @@ model AssetRequest {
   isAutoProvisioned         Boolean @default(false)
   provisionedFromDispatchId Int?
 
+  clubId Int?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -4686,11 +4698,13 @@ model AssetRequest {
   softwareLicense         SoftwareLicense?       @relation(fields: [softwareLicenseId], references: [id])
   operatingExpense        OperatingExpense?      @relation(fields: [operatingExpenseId], references: [id])
   provisionedFromDispatch HiringDispatch?        @relation("DispatchProvisioned", fields: [provisionedFromDispatchId], references: [id], onDelete: SetNull)
+  club                    Club?                  @relation("AssetRequestClub", fields: [clubId], references: [id])
   approvals               AssetRequestApproval[]
 
   @@index([requesterId, status])
   @@index([departmentId, status])
   @@index([status, createdAt])
+  @@index([clubId, status])
   @@index([provisionedFromDispatchId])
 }
 
@@ -4718,15 +4732,12 @@ model AssetRequestApproval {
  * 부서마다 신입에게 자동 지급할 default 자산(노트북/사원증/유니폼 등) 리스트.
  * HiringDispatch.dispatch() 성공 후 fire-and-forget 훅이 이 모델을 조회해
  * 신입 계정으로 AssetRequest DRAFT 를 자동 생성함.
- *
  * `assetItems` JSON shape: `[{ equipmentItemId: number, quantity: number, note?: string }]`
- *   - equipmentItemId: EquipmentItem.id (하드웨어 마스터 참조; runtime 검증)
- *   - quantity: 신입 1인당 몇 개
- *   - note: draft justification 에 붙는 추가 설명 (옵션)
- *
+ * - equipmentItemId: EquipmentItem.id (하드웨어 마스터 참조; runtime 검증)
+ * - quantity: 신입 1인당 몇 개
+ * - note: draft justification 에 붙는 추가 설명 (옵션)
  * `defaultExpenseCategoryId`: 자동 생성 draft 의 expenseCategoryId 기본값
- *   (신입이 편집 가능)
- *
+ * (신입이 편집 가능)
  * 재고 부족은 provisioning 단계에서 처리하지 않음(#373 grill Q1) — draft 는
  * 항상 생성되고 ASSET_MANAGER 에게만 부족 알림 발송. WAITING_STOCK 상태 도입은
  * 후속 이슈.
@@ -4734,7 +4745,7 @@ model AssetRequestApproval {
 model DepartmentDefaultAssetKit {
   id                       Int      @id @default(autoincrement())
   departmentId             Int      @unique
-  assetItems               Json     // [{equipmentItemId, quantity, note?}]
+  assetItems               Json // [{equipmentItemId, quantity, note?}]
   defaultExpenseCategoryId Int
   createdById              Int
   updatedById              Int?
@@ -4822,16 +4833,16 @@ model HiringDispatch {
   // requiredDocuments is authoritative and this field is ignored by the gate.
   requiredDocuments     String[]             @default([])
 
-  application               JobApplication?          @relation(fields: [applicationId], references: [id])
-  department                Department               @relation(fields: [departmentId], references: [id])
-  reportsToUser             User?                    @relation("DispatchReportsTo", fields: [reportsToUserId], references: [id])
-  createdUser               User?                    @relation("DispatchCreatedUser", fields: [createdUserId], references: [id])
-  createdBy                 User                     @relation("DispatchCreator", fields: [createdById], references: [id])
-  approvals                 HiringDispatchApproval[]
-  onboarding                Onboarding?
-  documents                 HiringDocument[]
-  employeeContracts         EmployeeContract[]
-  provisionedAssetRequests  AssetRequest[]           @relation("DispatchProvisioned")
+  application              JobApplication?          @relation(fields: [applicationId], references: [id])
+  department               Department               @relation(fields: [departmentId], references: [id])
+  reportsToUser            User?                    @relation("DispatchReportsTo", fields: [reportsToUserId], references: [id])
+  createdUser              User?                    @relation("DispatchCreatedUser", fields: [createdUserId], references: [id])
+  createdBy                User                     @relation("DispatchCreator", fields: [createdById], references: [id])
+  approvals                HiringDispatchApproval[]
+  onboarding               Onboarding?
+  documents                HiringDocument[]
+  employeeContracts        EmployeeContract[]
+  provisionedAssetRequests AssetRequest[]           @relation("DispatchProvisioned")
 
   @@index([status, createdAt])
   @@index([departmentId, status])
@@ -4865,26 +4876,26 @@ model HiringDispatchApproval {
  * latest-row APPROVED status.
  */
 model HiringDocument {
-  id                Int                    @id @default(autoincrement())
-  applicationId     Int?
-  hiringDispatchId  Int?
-  docType           String
-  fileUrl           String
-  fileName          String?
-  fileSize          Int?
-  status            HiringDocReviewStatus  @default(PENDING)
-  uploadedById      Int
-  uploadedAt        DateTime               @default(now())
-  reviewedById      Int?
-  reviewedAt        DateTime?
-  reviewNotes       String?
-  createdAt         DateTime               @default(now())
-  updatedAt         DateTime               @updatedAt
+  id               Int                   @id @default(autoincrement())
+  applicationId    Int?
+  hiringDispatchId Int?
+  docType          String
+  fileUrl          String
+  fileName         String?
+  fileSize         Int?
+  status           HiringDocReviewStatus @default(PENDING)
+  uploadedById     Int
+  uploadedAt       DateTime              @default(now())
+  reviewedById     Int?
+  reviewedAt       DateTime?
+  reviewNotes      String?
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
 
-  application    JobApplication?  @relation(fields: [applicationId], references: [id], onDelete: Cascade)
-  hiringDispatch HiringDispatch?  @relation(fields: [hiringDispatchId], references: [id], onDelete: Cascade)
-  uploadedBy     User             @relation("HiringDocUploader", fields: [uploadedById], references: [id])
-  reviewedBy     User?            @relation("HiringDocReviewer", fields: [reviewedById], references: [id])
+  application    JobApplication? @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  hiringDispatch HiringDispatch? @relation(fields: [hiringDispatchId], references: [id], onDelete: Cascade)
+  uploadedBy     User            @relation("HiringDocUploader", fields: [uploadedById], references: [id])
+  reviewedBy     User?           @relation("HiringDocReviewer", fields: [reviewedById], references: [id])
 
   @@index([applicationId, docType, createdAt(sort: Desc)])
   @@index([hiringDispatchId, docType, createdAt(sort: Desc)])
@@ -4904,14 +4915,14 @@ enum EmployeeContractStatus {
 }
 
 model EmployeeContract {
-  id                  Int                    @id @default(autoincrement())
-  hiringDispatchId    Int
-  status              EmployeeContractStatus @default(DRAFT)
+  id               Int                    @id @default(autoincrement())
+  hiringDispatchId Int
+  status           EmployeeContractStatus @default(DRAFT)
 
-  fileUrl             String?
-  fileName            String?
-  signedFileUrl       String?
-  signedFileName      String?
+  fileUrl        String?
+  fileName       String?
+  signedFileUrl  String?
+  signedFileName String?
 
   createdById         Int
   issuedById          Int?
@@ -4947,7 +4958,7 @@ model PlayerAcquisitionSurvey {
   closedAt    DateTime?
 
   createdBy User                              @relation("AcqSurveyCreator", fields: [createdById], references: [id])
-  responses  PlayerAcquisitionSurveyResponse[]
+  responses PlayerAcquisitionSurveyResponse[]
 
   @@index([status])
 }
@@ -4959,8 +4970,8 @@ model PlayerAcquisitionSurveyResponse {
   submittedAt  DateTime?
   createdAt    DateTime  @default(now())
 
-  survey     PlayerAcquisitionSurvey           @relation(fields: [surveyId], references: [id], onDelete: Cascade)
-  respondent User                              @relation("AcqSurveyResponder", fields: [respondentId], references: [id])
+  survey     PlayerAcquisitionSurvey               @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  respondent User                                  @relation("AcqSurveyResponder", fields: [respondentId], references: [id])
   items      PlayerAcquisitionSurveyResponseItem[]
 
   @@unique([surveyId, respondentId])
