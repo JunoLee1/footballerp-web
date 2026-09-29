@@ -34,7 +34,7 @@ export class EquipmentService {
       ...item,
       units: (item as any).units?.map(({ assignments, ...unit }: any) => ({
         ...unit,
-        assignedTo: assignments[0]?.player ? { playerName: assignments[0].player.name } : null,
+        assignedTo: assignments[0]?.player ? { playerName: assignments[0].player.playerName } : null,
       })),
     };
   }
