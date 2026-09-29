@@ -920,6 +920,75 @@
 
 ---
 
+### 74. `td-domain` (TD 세션 통합 러너 · 2026-09-29 신규)
+
+TD (Technical Director · `frontOfficeRole=TD`) 는 별도 endpoint 가 아니라 6개 도메인에 걸친 role. `td@club.com` 세션으로 골든 패스 커버.
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke (7 endpoint groups) | ✅ `td-domain/smoke.json` — 198 req · p95 71ms · 27.27% fail (TD 접근 불가 endpoint 존재) |
+| Stress (5→200 VUs) | ✅ `td-domain/stress.json` — 55,407 req · **RPS 523 (오늘 최고)** · p95 683ms · 27.27% fail |
+| IDOR (PLAYER → TD endpoint 프로브) | ⚠️ `td-domain/idor.json` — **1 LEAK 발견**: `/acquisition-surveys` list PLAYER 200 (예상 403) |
+| 이슈 파일 | ✅ #563 — `GET /acquisition-surveys` role guard 부재 |
+
+커버 도메인: `/coaches` + `/rounds` + `/:id`, `/acquisition-surveys` + `/:id`, `/player-callups` + `/:id`, `/hr-report/{monthly,annual}`, `/recruitment/job-postings`, `/training-loads` + `/weekly-summary` + `/anomalies`.
+
+---
+
+### 75. Domain Sweep — 2026-09-29 통합 배치 러너
+
+`domain-sweep.k6.js` — 4 personas (admin/finance/coach/fo) × 7 도메인 카테고리 = 30 endpoint 신속 커버.
+
+**Smoke** (2 VUs · 20s · **700 req · p95 68ms** · 11.42% fail):
+**Stress** (5→100 VUs · ~1m · **22,820 req · p95 725ms** · 11.42% fail):
+
+#### 💼 트랜스퍼·에이전시
+- `/transfers/player/:playerId` (admin) → **200** ✅
+- `/transfers/recalls` (admin) → **500 🚨** — 이슈 **#564** (INTERNAL_SERVER_ERROR)
+
+#### 💰 재무·예산 세부
+- `/sponsorships`, `/sponsorships/roi`, `/sponsorships/expiring` (finance) → **200** ✅
+- `/budget-control` (finance) → **200** ✅
+- `/sales/summary`, `/ticket-summary`, `/ticket-season-total` (?seasonId=1, finance) → **200** ✅
+- `/monthly-settlement` (finance) → **200** ✅
+- `/account-codes` (finance) → **200** ✅
+- `/operating-expenses?seasonId=1` (finance) → **200** ✅
+→ **Sections 38-43 · 46 smoke 커버 완료**
+
+#### 🏃 코치·훈련 세부
+- `/training`, `/tactical` (coach) → **200** ✅
+- `/development-plans` (coach) → **200** ✅
+- `/coach-availabilities` (coach) → **200** ✅
+- `/training-references` (coach) → **200** ✅
+→ **Sections 34/35/37/57/65 smoke 커버 완료**
+
+#### 📊 리포트·리뷰·분석
+- `/plan-reports`, `/reports`, `/hiring-dispatches`, `/financial-reports/1` (admin) → **200** ✅
+→ **Sections 53-56 smoke 커버 완료**
+
+#### 🛡️ 보호자·유스·안전
+- `/youth-registrations`, `/incident-reports`, `/safeguard-reports` (admin) → **200** ✅
+→ **Sections 55 · 60 smoke 커버 완료**
+
+#### ⚙️ 워크플로우·설정
+- `/departments` (admin) → **200** ✅ (Section 72 상세 참조)
+- `/department-review-configs` (admin) → **400** ℹ️ `subjectDepartmentId` 쿼리 필수
+- `/review-rule-sets` → **404** ℹ️ 실제 마운트 `/admin/review-rule-sets`
+
+#### 🌐 인프라·유틸
+- `/notifications/my` (admin) → **200** ✅
+- `/audit-logs` → **404** ℹ️ 실제 마운트 `/admin/audit-logs`
+- `/countries`, `/clubs` (admin) → **200** ✅
+→ **Sections 31 · 67 smoke 커버 완료**
+
+#### 배치 sweep 발견 요약
+- 🚨 **`GET /transfers/recalls` 500** — 이슈 **#564**
+- ℹ️ 라우팅 경로 문서화: `audit-logs`, `review-rule-sets` 는 `/admin/*` 하위
+- ℹ️ `/department-review-configs` 는 필수 쿼리 파라미터 `subjectDepartmentId` 요구
+- ✅ **26/30 endpoint 200 정상** — 상단 개별 섹션들 smoke 커버로 간주
+
+---
+
 ## 🚨 Cross-Role RBAC 프로브 결과 요약 (`cross-role-test.json`)
 
 45 프로브 (3 attacker × 15 endpoint) → **10 LEAK / 35 BLOCKED (22% 취약).**  
