@@ -76,6 +76,7 @@
 | Stress (baseline · no cache) | ✅ `stress-ASSET_MANAGER.json` p(95) 3,142ms · threshold 1.6배 초과 · RPS 63 · VU peak 200 |
 | Stress (Redis cache 적용) | ✅ `stress-ASSET_MANAGER-redis.json` p(95) **2,281ms** · RPS **86.6** — **1.4× p95 · 1.4× 처리량** (여전히 threshold 근접 초과) |
 | Stress (Redis endpoint + userStatusCache) | ✅ `stress-ASSET_MANAGER-userstatus.json` p(95) **48ms** · RPS **239** — baseline 대비 **65×** (auth 미들웨어 isDeleted 캐시 도입 효과) · VU peak 200 |
+| Stress (post-#551 dueDate 도입 후) | ✅ `results-2026-09-29/stress-ASSET_MANAGER-post551.json` p(95) **19.48ms** · RPS **254** — 이전 최저 대비 **2.5× 추가 개선** · VU peak 198 · dueDate NOT NULL/overdue index 추가로 인한 회귀 없음 |
 | 단발 요청 캐시 개선 | ✅ /asset-requests 105→13ms · /equipment/loans · /equipment 캐시 hit 확인 |
 | 성능 — 잔여 p95 병목 조사 | 🔲 GM 만큼 극적 개선 없음, DB pool/JSON 처리 후속 |
 | 보안 — Cross-role 접근 차단 | ✅ **LEAK** — `/equipment`·`/asset-requests`·`/equipment/loans` 를 HR_MANAGER 세션이 200 반환. PLAYER 는 `/asset-requests` 만 200 (나머지 403) |
