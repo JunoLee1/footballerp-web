@@ -371,11 +371,11 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
+| Smoke | ✅ `results-2026-09-29/teams-seasons-matches/smoke.json` — /teams + /teams/:id 커버 (통합 러너 · 3 도메인) |
+| Stress | ✅ `results-2026-09-29/teams-seasons-matches/stress.json` — 통합 러너에서 함께 실행 |
 | 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
-| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 (POST/PATCH 는 ADMIN/SUPER_ADMIN + club scope 요구 확인됨) |
 
 ---
 
@@ -383,11 +383,11 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
+| Smoke | ✅ `results-2026-09-29/teams-seasons-matches/smoke.json` — /seasons + /seasons/active + /seasons/:id 커버 |
+| Stress | ✅ 통합 러너 (Section 27 과 동일 파일) |
 | 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
-| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 (createSeason·activate·close·setWageCap 는 isAdminLike 요구 확인됨) |
 
 ---
 
@@ -407,11 +407,11 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
+| Smoke | ✅ `results-2026-09-29/teams-seasons-matches/smoke.json` — /matches + /matches/:id + /remaining-capacity 커버 |
+| Stress | ✅ `results-2026-09-29/teams-seasons-matches/stress.json` — **RPS 430** (오늘 최고 처리량) · p95 590ms · 45,612 req · 0% fail |
 | 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
-| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 (WRITE_ROLES + FRIENDLY_WRITE_ROLES 분리 확인됨) |
 
 ---
 

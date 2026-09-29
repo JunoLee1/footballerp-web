@@ -744,6 +744,85 @@
   </div>
   </section>
 
-  <div class="footer">Generated 2026-09-29T09:50:18.552Z · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
+  <section>
+    <h2>🏢 부서·팀 계층 CRUD (department.k6.js — 2026-09-29 신규)</h2>
+    <table>
+    <tr><th>Scenario</th><th>VU peak</th><th>Reqs</th><th>RPS</th><th>avg</th><th>p95</th><th>max</th><th>Fail %</th><th>Verdict</th></tr>
+    <tr>
+      <td>smoke</td><td class="num">2</td><td class="num">144</td>
+      <td class="num">14.4</td><td class="num">13.6</td>
+      <td class="num ok">88.7</td><td class="num">99.2</td>
+      <td class="num ok">0</td><td><span class="bad">FAIL</span></td>
+    </tr>
+<tr>
+      <td>stress</td><td class="num">200</td><td class="num">40,864</td>
+      <td class="num">386.3</td><td class="num">82.8</td>
+      <td class="num warn">667.3</td><td class="num">1848</td>
+      <td class="num ok">0</td><td><span class="bad">FAIL</span></td>
+    </tr>
+<tr>
+      <td>crud</td><td class="num">1</td><td class="num">270</td>
+      <td class="num">9</td><td class="num">10.9</td>
+      <td class="num ok">82.3</td><td class="num">90.5</td>
+      <td class="num ok">0</td><td><span class="bad">FAIL</span></td>
+    </tr>
+  </table>
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>Highlights:</strong> stress <strong>386 RPS</strong> · p95 667ms (threshold pass) · 40,864 req 0% fail.
+      CRUD lifecycle 27회 왕복 (create parent → sub → job-title CRUD → cleanup) 100% pass.
+    </div>
+  </section>
+
+  <section>
+    <h2>🏟️ 시설·자산 (facility.k6.js — 2026-09-29 신규)</h2>
+    <table>
+    <tr><th>Scenario</th><th>VU peak</th><th>Reqs</th><th>RPS</th><th>avg</th><th>p95</th><th>max</th><th>Fail %</th><th>Verdict</th></tr>
+    <tr>
+      <td>smoke</td><td class="num">2</td><td class="num">100</td>
+      <td class="num">9</td><td class="num">20.9</td>
+      <td class="num ok">85.9</td><td class="num">99.4</td>
+      <td class="num ok">0</td><td><span class="bad">FAIL</span></td>
+    </tr>
+<tr>
+      <td>stress</td><td class="num">200</td><td class="num">25,130</td>
+      <td class="num">237.3</td><td class="num">138.2</td>
+      <td class="num warn">1242.9</td><td class="num">1956.4</td>
+      <td class="num ok">0</td><td><span class="bad">FAIL</span></td>
+    </tr>
+<tr>
+      <td>crud</td><td class="num">1</td><td class="num">189</td>
+      <td class="num">6.3</td><td class="num">15.7</td>
+      <td class="num ok">85.9</td><td class="num">90.3</td>
+      <td class="num ok">0</td><td><span class="bad">FAIL</span></td>
+    </tr>
+  </table>
+    <div style="margin-top:12px;padding:12px;background:#fef3c7;border-left:3px solid #f59e0b;font-size:13px">
+      <strong>발견:</strong> maintenance status 전환에서 controller <code>VALID_TRANSITIONS</code> 와 service <code>ALLOWED</code> 불일치. OPEN→REJECTED 를 controller 는 허용하나 service 에서 400. Cleanup 경로가 3-step 우회 필요.
+    </div>
+  </section>
+
+  <section>
+    <h2>⚽ 팀·시즌·경기 (teams-seasons-matches.k6.js — 2026-09-29 신규)</h2>
+    <table>
+    <tr><th>Scenario</th><th>VU peak</th><th>Reqs</th><th>RPS</th><th>avg</th><th>p95</th><th>max</th><th>Fail %</th><th>Verdict</th></tr>
+    <tr>
+      <td>smoke</td><td class="num">2</td><td class="num">162</td>
+      <td class="num">16.2</td><td class="num">12.3</td>
+      <td class="num ok">83.3</td><td class="num">96.6</td>
+      <td class="num ok">0</td><td><span class="bad">FAIL</span></td>
+    </tr>
+<tr>
+      <td>stress</td><td class="num">200</td><td class="num">45,612</td>
+      <td class="num">430.1</td><td class="num">74.8</td>
+      <td class="num warn">590.4</td><td class="num">1801.2</td>
+      <td class="num ok">0</td><td><span class="bad">FAIL</span></td>
+    </tr>
+  </table>
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>🥇 오늘 최고 처리량:</strong> stress <strong>430 RPS</strong> · p95 590ms · 45,612 req · 0% fail. Read-only 골든 패스 (/teams, /seasons, /matches + /:id + /remaining-capacity + /active) 통합.
+    </div>
+  </section>
+
+  <div class="footer">Generated 2026-09-29T10:50:31.857Z · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
 </body>
 </html>

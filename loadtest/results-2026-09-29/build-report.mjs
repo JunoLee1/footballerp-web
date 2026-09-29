@@ -142,9 +142,75 @@ const html = `<!doctype html>
     ${renderRegression()}
   </section>
 
+  <section>
+    <h2>🏢 부서·팀 계층 CRUD (department.k6.js — 2026-09-29 신규)</h2>
+    ${renderDomainSuite('department', ['smoke', 'stress', 'crud'])}
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>Highlights:</strong> stress <strong>386 RPS</strong> · p95 667ms (threshold pass) · 40,864 req 0% fail.
+      CRUD lifecycle 27회 왕복 (create parent → sub → job-title CRUD → cleanup) 100% pass.
+    </div>
+  </section>
+
+  <section>
+    <h2>🏟️ 시설·자산 (facility.k6.js — 2026-09-29 신규)</h2>
+    ${renderDomainSuite('facility', ['smoke', 'stress', 'crud'])}
+    <div style="margin-top:12px;padding:12px;background:#fef3c7;border-left:3px solid #f59e0b;font-size:13px">
+      <strong>발견:</strong> maintenance status 전환에서 controller <code>VALID_TRANSITIONS</code> 와 service <code>ALLOWED</code> 불일치. OPEN→REJECTED 를 controller 는 허용하나 service 에서 400. Cleanup 경로가 3-step 우회 필요.
+    </div>
+  </section>
+
+  <section>
+    <h2>⚽ 팀·시즌·경기 (teams-seasons-matches.k6.js — 2026-09-29 신규)</h2>
+    ${renderDomainSuite('teams-seasons-matches', ['smoke', 'stress'])}
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>🥇 오늘 최고 처리량:</strong> stress <strong>430 RPS</strong> · p95 590ms · 45,612 req · 0% fail. Read-only 골든 패스 (/teams, /seasons, /matches + /:id + /remaining-capacity + /active) 통합.
+    </div>
+  </section>
+
   <div class="footer">Generated ${new Date().toISOString()} · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
 </body>
 </html>`
+
+function renderDomainSuite(domain, scenarios) {
+  const rows = scenarios.map((sc) => {
+    const p = path.join(DIR, domain, `${sc}.json`)
+    if (!fs.existsSync(p)) return { scenario: sc, missing: true }
+    const s = JSON.parse(fs.readFileSync(p, 'utf8'))
+    const m = s.metrics
+    const dur = m.http_req_duration || {}
+    const failed = m.http_req_failed || {}
+    const reqs = m.http_reqs || {}
+    return {
+      scenario: sc,
+      vuPeak: m.vus_max?.value ?? m.vus?.max ?? null,
+      reqs: reqs.count ?? 0,
+      rps: reqs.rate != null ? +reqs.rate.toFixed(1) : null,
+      p95: dur['p(95)'] != null ? +dur['p(95)'].toFixed(1) : null,
+      avg: dur.avg != null ? +dur.avg.toFixed(1) : null,
+      max: dur.max != null ? +dur.max.toFixed(1) : null,
+      failedPct: reqs.count > 0 ? +((failed.passes || 0) / reqs.count * 100).toFixed(2) : 0,
+      p95Ok: dur.thresholds?.['p(95)<2000'] === true,
+      failOk: failed.thresholds?.['rate<0.10'] === true,
+    }
+  })
+  const body = rows.map((r) => {
+    if (r.missing) return `<tr><td>${r.scenario}</td><td colspan="8" class="missing">파일 없음</td></tr>`
+    const p95Cls = r.p95 < 500 ? 'ok' : r.p95 < 2000 ? 'warn' : 'bad'
+    const failCls = r.failedPct === 0 ? 'ok' : r.failedPct < 10 ? 'warn' : 'bad'
+    const verdict = r.p95Ok && r.failOk ? '<span class="ok">PASS</span>' : '<span class="bad">FAIL</span>'
+    return `<tr>
+      <td>${r.scenario}</td><td class="num">${r.vuPeak}</td><td class="num">${r.reqs.toLocaleString()}</td>
+      <td class="num">${r.rps}</td><td class="num">${r.avg}</td>
+      <td class="num ${p95Cls}">${r.p95}</td><td class="num">${r.max}</td>
+      <td class="num ${failCls}">${r.failedPct}</td><td>${verdict}</td>
+    </tr>`
+  }).join('\n')
+  return `<table>
+    <tr><th>Scenario</th><th>VU peak</th><th>Reqs</th><th>RPS</th><th>avg</th><th>p95</th><th>max</th><th>Fail %</th><th>Verdict</th></tr>
+    ${body}
+  </table>`
+}
+
 
 function renderTable(list) {
   const head = `<tr>
