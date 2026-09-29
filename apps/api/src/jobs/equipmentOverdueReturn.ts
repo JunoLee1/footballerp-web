@@ -1,45 +1,52 @@
 import cron from "node-cron";
 import { getPrisma } from "../lib/prisma";
+import { EquipmentRepository } from "../equipment/equipment.repo";
+import { NotificationRepository } from "../notification/notification.repo";
 
-export function startEquipmentOverdueReturnJob() {
-  // Run daily at 08:00
-  cron.schedule("0 8 * * *", async () => {
-    const prisma = getPrisma();
-    const now = new Date();
+// #551: 매일 08:00 → dueDate 지난 미반납 대여 (status=ISSUED, returnedAt=null, dueDate<now)
+// 대상: 신청자(borrower) + 승인자(approver) + 장비 관리자(EQUIPMENT_MANAGER)
+// overdueNotifiedAt 세팅으로 중복 발송 방지.
+export function startEquipmentOverdueReturnJob(schedule = "0 8 * * *") {
+  cron.schedule(schedule, () => runEquipmentOverdueReturnJob().catch((err) => {
+    console.error("[EquipmentOverdue] Job failed:", err);
+  }));
+}
 
-    try {
-      // Find loans past their expected return date (if dueDate exists) or older than 30 days
-      const overdueLoans = await (prisma.equipmentLoan as any).findMany({
-        where: {
-          returnedAt: null,
-          loanedAt: { lt: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000) },
-        },
-        select: {
-          id: true,
-          loanedAt: true,
-          borrowedById: true,
-          unit: { select: { name: true, serialNumber: true } },
-        },
-      });
+type OverdueDeps = { repo: EquipmentRepository; notifRepo: NotificationRepository };
 
-      for (const loan of overdueLoans) {
-        // Notify equipment manager
-        await (prisma as any).notification.create({
-          data: {
-            userId: loan.borrowedById,
-            type: "EQUIPMENT_RETURN_OVERDUE",
-            title: "장비 반납 기한 초과",
-            body: `${loan.unit?.name ?? "장비"} (${loan.unit?.serialNumber ?? loan.id}) 반납이 30일을 초과했습니다.`,
-            entityId: loan.id,
-          } as any,
-        }).catch(console.error);
-      }
+export async function runEquipmentOverdueReturnJob(now: Date = new Date(), deps?: OverdueDeps) {
+  const prisma = deps ? undefined : getPrisma();
+  const repo = deps?.repo ?? new EquipmentRepository(prisma!);
+  const notifRepo = deps?.notifRepo ?? new NotificationRepository(prisma!);
 
-      if (overdueLoans.length > 0) {
-        console.log(`[EquipmentOverdue] ${overdueLoans.length} overdue loans flagged`);
-      }
-    } catch (err) {
-      console.error("[EquipmentOverdue] Job failed:", err);
-    }
-  });
+  const loans = await repo.findLoansToNotifyOverdue(now);
+  if (loans.length === 0) return { notified: 0 };
+
+  const managers = await repo.findEquipmentManagers();
+  const managerIds = managers.map((m) => m.id);
+
+  for (const loan of loans) {
+    const recipients = new Set<number>([loan.requestedById, ...managerIds]);
+    if (loan.approvedById) recipients.add(loan.approvedById);
+
+    const overdueDays = Math.max(1, Math.floor((now.getTime() - new Date(loan.dueDate).getTime()) / 86_400_000));
+    const title = "장비 반납 기한 초과";
+    const body = `${loan.equipmentItem.name} 반납이 ${overdueDays}일 초과됐습니다.`;
+
+    await Promise.all(
+      Array.from(recipients).map((userId) =>
+        notifRepo.create({
+          userId,
+          type: "EQUIPMENT_RETURN_OVERDUE",
+          title,
+          body,
+          entityId: loan.id,
+        }).catch((err) => console.error("[EquipmentOverdue] notify failed:", err))
+      )
+    );
+  }
+
+  await repo.markOverdueNotified(loans.map((l) => l.id), now);
+  console.log(`[EquipmentOverdue] ${loans.length} overdue loans flagged`);
+  return { notified: loans.length };
 }

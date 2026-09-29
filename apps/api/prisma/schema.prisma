@@ -1420,6 +1420,7 @@ model EquipmentLoan {
   id              Int                 @id @default(autoincrement())
   status          EquipmentLoanStatus @default(REQUESTED)
   requestedAt     DateTime            @default(now())
+  dueDate         DateTime
   requestedById   Int
   approvedById    Int?
   issuedAt        DateTime?
@@ -1429,6 +1430,7 @@ model EquipmentLoan {
   equipmentItemId Int
   equipmentUnitId Int?
   clubId          Int?
+  overdueNotifiedAt DateTime?
 
   requestedBy   User                        @relation("LoanRequestedBy", fields: [requestedById], references: [id])
   approvedBy    User?                       @relation("LoanApprovedBy", fields: [approvedById], references: [id])

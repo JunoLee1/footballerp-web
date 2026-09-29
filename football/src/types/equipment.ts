@@ -84,8 +84,10 @@ export interface EquipmentLoan {
   id: number
   status: EquipmentLoanStatus
   requestedAt: string
+  dueDate: string
   issuedAt: string | null
   returnedAt: string | null
+  overdueNotifiedAt: string | null
   notes: string | null
   equipmentItemId: number
   equipmentUnitId: number | null
@@ -93,6 +95,11 @@ export interface EquipmentLoan {
   approvedBy: { id: number; nickname: string } | null
   equipmentItem: { id: number; name: string; category: EquipmentCategory }
   equipmentUnit: { id: number } | null
+}
+
+export function isLoanOverdue(loan: Pick<EquipmentLoan, 'status' | 'dueDate' | 'returnedAt'>, now: Date = new Date()): boolean {
+  if (loan.status !== 'ISSUED' || loan.returnedAt) return false
+  return new Date(loan.dueDate).getTime() < now.getTime()
 }
 
 export const LOAN_STATUS_LABEL: Record<EquipmentLoanStatus, string> = {

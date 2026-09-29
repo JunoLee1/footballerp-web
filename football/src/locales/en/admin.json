@@ -424,8 +424,10 @@
       "requester": "Requester",
       "status": "Status",
       "requestedAt": "Requested At",
+      "dueDate": "Due Date",
       "notes": "Notes"
     },
+    "overdueBadge": "Overdue",
     "createDialog": {
       "title": "Add Equipment",
       "nameLabel": "Name *",
@@ -467,7 +469,10 @@
       "requestTitle": "Loan Request",
       "itemLabel": "Item *",
       "itemPlaceholder": "Select item",
-      "itemRequired": "Please select an item."
+      "itemRequired": "Please select an item.",
+      "dueDateLabel": "Due Date *",
+      "dueDateRequired": "Please select a due date.",
+      "dueDateInvalid": "Due date must be after today."
     },
     "loansAll": "All Loan Requests",
     "loansOwn": "My Loan Requests"

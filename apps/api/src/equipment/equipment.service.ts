@@ -156,6 +156,12 @@ export class EquipmentService {
   async requestLoan(requestedById: number, dto: CreateEquipmentLoanDto, actorClubId?: number) {
     const item = await this.repo.findItemById(dto.equipmentItemId, actorClubId);
     if (!item) throw new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND");
+    if (!dto.dueDate) throw new AppError(400, "DUE_DATE_REQUIRED");
+    const dueDate = new Date(dto.dueDate);
+    if (Number.isNaN(dueDate.getTime())) throw new AppError(400, "INVALID_DUE_DATE");
+    if (dueDate.getTime() <= Date.now()) throw new AppError(400, "DUE_DATE_MUST_BE_FUTURE");
+    const overdue = await this.repo.hasActiveOverdueLoan(requestedById);
+    if (overdue) throw new AppError(403, "HAS_ACTIVE_OVERDUE_LOAN");
     const loan = await this.repo.createLoan(requestedById, dto, actorClubId);
     const managers = await this.repo.findEquipmentManagers();
     await Promise.all(managers.map((m) =>
@@ -212,10 +218,14 @@ export class EquipmentService {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "ISSUED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
+    const returnedAt = new Date();
     const result = await this.repo.returnLoan(loanId, returnedById, returnNote);
     if (loan.equipmentUnitId) {
       await this.repo.updateUnitStatus(loan.equipmentUnitId, "AVAILABLE");
     }
+    const latencyDays = loan.dueDate
+      ? Math.max(0, Math.floor((returnedAt.getTime() - new Date(loan.dueDate).getTime()) / 86_400_000))
+      : 0;
     void this.notificationRepo.create({
       userId: loan.requestedBy.id,
       type: "EQUIPMENT_LOAN_RETURNED",
@@ -226,7 +236,12 @@ export class EquipmentService {
       actorId: returnedById,
       action: "EQUIPMENT_LOAN_RETURNED",
       targetId: loanId,
-      detail: { ...(returnNote && { returnNote }) },
+      detail: {
+        dueDate: loan.dueDate,
+        returnedAt: returnedAt.toISOString(),
+        latencyDays,
+        ...(returnNote && { returnNote }),
+      },
     }).catch(console.error);
     return result;
   }

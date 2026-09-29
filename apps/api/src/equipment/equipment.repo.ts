@@ -38,7 +38,8 @@ const ASSIGNMENT_SELECT = {
 } as const;
 
 const LOAN_SELECT = {
-  id: true, status: true, requestedAt: true, issuedAt: true, returnedAt: true,
+  id: true, status: true, requestedAt: true, dueDate: true, issuedAt: true, returnedAt: true,
+  overdueNotifiedAt: true,
   notes: true, equipmentItemId: true, equipmentUnitId: true,
   requestedBy: { select: { id: true, nickname: true } },
   approvedBy: { select: { id: true, nickname: true } },
@@ -229,9 +230,49 @@ export class EquipmentRepository {
         requestedById,
         equipmentItemId: dto.equipmentItemId,
         clubId: actorClubId ?? null,
+        dueDate: new Date(dto.dueDate),
         ...(dto.notes !== undefined && { notes: dto.notes }),
       },
       select: LOAN_SELECT,
+    });
+  }
+
+  hasActiveOverdueLoan(requestedById: number, now: Date = new Date()) {
+    return this.prisma.equipmentLoan.findFirst({
+      where: {
+        requestedById,
+        status: "ISSUED",
+        returnedAt: null,
+        dueDate: { lt: now },
+      },
+      select: { id: true },
+    });
+  }
+
+  findLoansToNotifyOverdue(now: Date = new Date()) {
+    // 의무장비 대여는 자체 ledger escalation 으로 알림 처리 → 여기서 제외.
+    return this.prisma.equipmentLoan.findMany({
+      where: {
+        status: "ISSUED",
+        returnedAt: null,
+        dueDate: { lt: now },
+        overdueNotifiedAt: null,
+        medicalLedger: { is: null },
+      },
+      select: {
+        id: true,
+        dueDate: true,
+        requestedById: true,
+        approvedById: true,
+        equipmentItem: { select: { name: true } },
+      },
+    });
+  }
+
+  markOverdueNotified(loanIds: number[], now: Date = new Date()) {
+    return this.prisma.equipmentLoan.updateMany({
+      where: { id: { in: loanIds } },
+      data: { overdueNotifiedAt: now },
     });
   }
 

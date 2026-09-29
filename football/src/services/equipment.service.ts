@@ -42,7 +42,7 @@ export const loanApi = {
 
   my: () => api.get<EquipmentLoan[]>('/equipment/loans/my'),
 
-  request: (dto: { equipmentItemId: number; notes?: string }) =>
+  request: (dto: { equipmentItemId: number; dueDate: string; notes?: string }) =>
     api.post<EquipmentLoan>('/equipment/loans', dto),
 
   approve: (loanId: number) =>
