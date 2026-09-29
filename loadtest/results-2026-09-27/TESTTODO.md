@@ -187,9 +187,9 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | 보안 — IDOR (양 세션 임의 ID 프로브) | ✅ 전부 404 반환 (verdict PASS) — record 미존재 · guard 여부는 별도 확인 필요 |
-| 보안 — 실제 존재하는 ID (record hydration 후) 재프로브 | 🔲 미커버 · 404 는 guard 미장착 여부 판정 불가 |
-| Sub-actions 프로브 (총 30+ 건) | 🔲 미커버 (`id-routes-classified.json` 참조) |
-| 보안 — 프론트 · 코칭스태프 만 조회 가능한지 | ✅ **더 엄격하게 차단됨** (실측 `role-boundary-probe.k6.js`) — `/operating-expenses`·`/medical-expenses` 는 사실상 finance-scope 만 통과. HR/ASSET/COACH/MEDICAL/FACILITY 전부 403 (PLAYER 도 403). 요구사항 대비 오히려 더 좁은 접근 → 만약 넓혀야 한다면 별도 검토 필요 |
+| 보안 — 실제 존재하는 ID (record hydration 후) 재프로브 | 🔲 미커버 → **이슈 #566** (record 시드 확인 후 real-ID 프로브 재실행 필요) |
+| Sub-actions 프로브 (총 30+ 건) | 🔲 미커버 (`id-routes-classified.json` 참조) → **이슈 #567** (pentest.mjs 데이터 드라이브화 함께) |
+| 보안 — 프론트 · 코칭스태프 만 조회 가능한지 | ⚠️ **정책 vs 구현 불일치** → **이슈 #568** — 실측 finance-scope 만 통과 (HR/ASSET/COACH/MEDICAL/FACILITY 전부 403). 요구사항 완화 or 정책 확정 결정 필요 |
 ---
 
 ## 15. Definite-Sensitive 미커버 도메인 (`id-routes-classified.json` definite bucket · 153건 · 31 prefix)
