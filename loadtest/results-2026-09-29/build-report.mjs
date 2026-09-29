@@ -196,6 +196,15 @@ const html = `<!doctype html>
   </section>
 
   <section>
+    <h2>🔒 Role Boundary Probe — Payroll/Expense 접근 매트릭스 (2026-09-29)</h2>
+    ${renderDomainSuite('role-boundary', ['probe'])}
+    <div style="margin-top:12px;padding:12px;background:#fef2f2;border-left:3px solid #dc2626;font-size:13px">
+      <strong>🚨 CRITICAL LEAK — Payroll:</strong> <code>GET /payroll/configs</code> 를 HR/ASSET/COACH/PLAYER/MEDICAL/TD/FACILITY <strong>7 role 전부 200</strong> 조회 가능 (이슈 <strong>#565</strong>). auth 만 있고 role guard 없음. 급여 설정 노출.<br>
+      <strong>✅ Operating/Medical Expenses:</strong> 사실상 finance-scope 만 허용 (더 엄격). 요구사항 "프론트·코칭 조회" 보다 좁게 차단됨 — 정책 재확인 필요.
+    </div>
+  </section>
+
+  <section>
     <h2>🌐 Domain Sweep v2 — 미테스트 33개 도메인 확장 (2026-09-29)</h2>
     ${renderDomainSuite('sweep-v2', ['smoke', 'stress'])}
     <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">

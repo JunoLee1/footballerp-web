@@ -178,6 +178,7 @@
 | Stress | ➖ |
 | 보안 — IDOR (PLAYER · HR → 급여 명세 조회) | ✅ 두 세션 모두 20/20 건 404 (verdict PASS) |
 | 보안 — Sub-actions `/payroll/:id/approve`·`/cancel`·`/salaries` 등 11건 프로브 | 🔲 미커버 |
+| 보안 — 재무팀장 · GM · 구단 관리자만 · 나머지 401/403 | 🚨 **CRITICAL LEAK** (이슈 **#565**) — `role-boundary-probe.k6.js` 실측: `/payroll/configs` 를 HR/ASSET/COACH/PLAYER/MEDICAL/TD/FACILITY **7개 role 전부 200** 조회. `payroll.routes.ts:38` auth 만 있고 role guard 없음. `/salaries` 등 다른 라우트도 감사 필요 |
 
 ---
 
@@ -188,7 +189,7 @@
 | 보안 — IDOR (양 세션 임의 ID 프로브) | ✅ 전부 404 반환 (verdict PASS) — record 미존재 · guard 여부는 별도 확인 필요 |
 | 보안 — 실제 존재하는 ID (record hydration 후) 재프로브 | 🔲 미커버 · 404 는 guard 미장착 여부 판정 불가 |
 | Sub-actions 프로브 (총 30+ 건) | 🔲 미커버 (`id-routes-classified.json` 참조) |
-
+| 보안 — 프론트 · 코칭스태프 만 조회 가능한지 | ✅ **더 엄격하게 차단됨** (실측 `role-boundary-probe.k6.js`) — `/operating-expenses`·`/medical-expenses` 는 사실상 finance-scope 만 통과. HR/ASSET/COACH/MEDICAL/FACILITY 전부 403 (PLAYER 도 403). 요구사항 대비 오히려 더 좁은 접근 → 만약 넓혀야 한다면 별도 검토 필요 |
 ---
 
 ## 15. Definite-Sensitive 미커버 도메인 (`id-routes-classified.json` definite bucket · 153건 · 31 prefix)
@@ -985,49 +986,7 @@ TD (Technical Director · `frontOfficeRole=TD`) 는 별도 endpoint 가 아니�
 - 🚨 **`GET /transfers/recalls` 500** — 이슈 **#564**
 - ℹ️ 라우팅 경로 문서화: `audit-logs`, `review-rule-sets` 는 `/admin/*` 하위
 - ℹ️ `/department-review-configs` 는 필수 쿼리 파라미터 `subjectDepartmentId` 요구
-- ✅ **26/30 endpoint 200 정상**
-
----
-
-### 76. Domain Sweep v2 — 미테스트 33개 도메인 확장 (2026-09-29)
-
-`domain-sweep-v2.k6.js` — 이전 sweep 에서 놓친 33개 도메인 추가 커버.
-7 personas (admin/finance/coach/hr/gm/meddir/asset) × 33 endpoint.
-
-**Smoke** (2 VUs · 25s · **1,122 req · p95 ~70ms**):
-**Stress** (5→100 VUs · ~1m · **19,617 req · p95 1,018ms · errors 0**):
-
-#### ✅ 200 OK (19 domains — smoke pass)
-Section 21 inventory (list + alerts), 22 videos, 23 medical-equipment-loan (meddir 세션), 25 transfer-request, 26 agency, 29 league, 32 club-settings, 33 coach → 35 coaching-staff, 40 budget-plan (alt path), 41 expense-category, 44 hiring-automation (league-weights), 48 onboarding-task (onboarding/1), 52 probation-review (staff-records/1/probation-reviews), 54 plan-review (/1), 58 dashboard (stats), 63 formation-snapshot (match/1), 66 certification, 71 software-license (backend), 20 department-asset-kit (/1)
-
-#### ⚠️ 400 (필수 파라미터 누락) (4)
-- Section 42 revenue-adjustment — `checkReadFinance` 통과 후 파라미터 검증
-- Section 56 growth-report `/position-average` — position/season 쿼리 필요
-- Section 59 analysis `/rankings` — season 필요
-- Section 64 squad-plan — season 필요
-
-#### 🔒 403 (Forbidden — 의도된 차단)
-- Section 60 guardian `/guardians/me/children` (admin probe) — GUARDIAN 아님, 정상 차단
-- Section 61 attendance-appeal (coach 세션) — 다른 role guard 필요할 가능성
-
-#### ❌ 404 (엔드포인트 부재 or 라우팅 mismatch) (6)
-- Section 45 `/hr` — 서브 라우트만 있음 (root 없음)
-- Section 50 `/mandatory-minimum` — 미마운트 or 다른 경로
-- Section 51 `/jobs` — 미마운트
-- Section 70 `/webhook` — 미마운트 or 다른 경로
-- Section 49 `/onboarding-templates/1` — `:departmentId` 필요 (dept ID 1 존재 여부 확인 필요)
-- Section 38 `/budget/financial-reports/1/plan-requests` — 실제 경로는 `/financial-reports/:seasonId/plan-requests`
-
-**서버 에러 (500)**: 0건 ✅
-
-#### 상태 매트릭스 (Section 17-71 전체 커버 후)
-- **직접 검증됨**: 9 → **28개** (facility, teams×3, hr×4, td×6 도메인 + sweep v1 26 + sweep v2 19 정상)
-- **파라미터 누락으로 스킵**: **4개** (Sections 42/56/59/64) — 재시도 시 seasonId 등 필요
-- **의도된 차단**: 2개 (Sections 60/61)
-- **404 라우팅 이슈**: 6개 (Sections 38/45/49/50/51/70) — 실제 마운트 경로 재확인 필요
-- **완전 미테스트 남음**: **약 15개** (17/18 안 세는 원 33개 중 6 도메인 404 + 4 파라미터 + 15 = 25, 나머지는 write endpoint / IDOR / sub-actions 심층 미커버)
-
----
+- ✅ **26/30 endpoint 200 정상** — 상단 개별 섹션들 smoke 커버로 간주
 
 ---
 
