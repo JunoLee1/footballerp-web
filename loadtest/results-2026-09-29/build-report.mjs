@@ -142,9 +142,265 @@ const html = `<!doctype html>
     ${renderRegression()}
   </section>
 
+  <section>
+    <h2>🏢 부서·팀 계층 CRUD (department.k6.js — 2026-09-29 신규)</h2>
+    ${renderDomainSuite('department', ['smoke', 'stress', 'crud'])}
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>Highlights:</strong> stress <strong>386 RPS</strong> · p95 667ms (threshold pass) · 40,864 req 0% fail.
+      CRUD lifecycle 27회 왕복 (create parent → sub → job-title CRUD → cleanup) 100% pass.
+    </div>
+  </section>
+
+  <section>
+    <h2>🏟️ 시설·자산 (facility.k6.js — 2026-09-29 신규)</h2>
+    ${renderDomainSuite('facility', ['smoke', 'stress', 'crud'])}
+    <div style="margin-top:12px;padding:12px;background:#fef3c7;border-left:3px solid #f59e0b;font-size:13px">
+      <strong>발견:</strong> maintenance status 전환에서 controller <code>VALID_TRANSITIONS</code> 와 service <code>ALLOWED</code> 불일치. OPEN→REJECTED 를 controller 는 허용하나 service 에서 400. Cleanup 경로가 3-step 우회 필요.
+    </div>
+  </section>
+
+  <section>
+    <h2>⚽ 팀·시즌·경기 (teams-seasons-matches.k6.js — 2026-09-29 신규)</h2>
+    ${renderDomainSuite('teams-seasons-matches', ['smoke', 'stress'])}
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>🥇 오늘 최고 처리량:</strong> stress <strong>430 RPS</strong> · p95 590ms · 45,612 req · 0% fail. Read-only 골든 패스 (/teams, /seasons, /matches + /:id + /remaining-capacity + /active) 통합.
+    </div>
+  </section>
+
+  <section>
+    <h2>👥 HR 세부 (hr-domain.k6.js — 2026-09-29 신규)</h2>
+    ${renderDomainSuite('hr-domain', ['smoke', 'stress', 'idor'])}
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>IDOR 검증:</strong> PLAYER 세션 → staff-records/1~10 + hiring-surveys/1~10 순차 프로브 → <strong>20/20 건 403 정상 차단</strong> (<code>hr_idor_leaks=0</code>). checks 100% pass. <br>
+      <strong>Endpoint 커버:</strong> /staff-records · /hiring-surveys · /recruitment/{job-postings, headcount-progress, time-to-hire, cost-per-hire} · /pii-access/requests · /pii-access/requests/mine.
+      Note: idor scenario 의 <code>http_req_failed 62.5%</code> 는 예상된 403 차단 (fail 은 not-2xx 라 counter 증가). 실제 취약점은 없음.
+    </div>
+  </section>
+
+  <section>
+    <h2>🎯 TD 세션 통합 러너 (td-domain.k6.js — 2026-09-29 신규)</h2>
+    ${renderDomainSuite('td-domain', ['smoke', 'stress', 'idor'])}
+    <div style="margin-top:12px;padding:12px;background:#fef3c7;border-left:3px solid #f59e0b;font-size:13px">
+      <strong>🥇 오늘 최고 RPS 523</strong> (stress) · <strong>1 IDOR LEAK</strong> — PLAYER 세션이 <code>GET /acquisition-surveys</code> 목록 200 조회 가능 (이슈 <strong>#563</strong>).
+      TD 는 6개 도메인에 걸친 role (coach/acquisition-survey/player-callup/hr-report/recruitment/training-load).
+    </div>
+  </section>
+
+  <section>
+    <h2>🌐 Domain Sweep v1 — 4 personas × 7 카테고리 × 30 endpoint (2026-09-29 신규)</h2>
+    ${renderDomainSuite('sweep', ['smoke', 'stress'])}
+    <div style="margin-top:12px;padding:12px;background:#fef2f2;border-left:3px solid #dc2626;font-size:13px">
+      <strong>🚨 발견:</strong> <code>GET /transfers/recalls</code> → <strong>500 INTERNAL_SERVER_ERROR</strong> (이슈 <strong>#564</strong>).
+      나머지 26/30 endpoint 정상 200. 4xx 는 경로 오탈자 or 필수 쿼리 누락.
+    </div>
+  </section>
+
+  <section>
+    <h2>🔒 Role Boundary Probe — Payroll/Expense 접근 매트릭스 (2026-09-29)</h2>
+    ${renderDomainSuite('role-boundary', ['probe'])}
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>✅ Payroll LEAK FIXED (PR #570 · closes #565):</strong> post-fix 재실행 결과 <strong>boundary_leaks=0 · 60/60 checks pass</strong>. HR 이 canReadPayroll 로 포함됨 (급여 계산·4대보험·원천세 실무).<br>
+      <strong>이전 (fix 전):</strong> <code>GET /payroll/configs</code> 를 7 role 전부 200 조회 가능 → 파치 후 canReadPayroll(Finance || HR) helper 로 통일.<br>
+      <strong>Operating/Medical Expenses:</strong> 사실상 finance-scope 만 허용. 정책 재확인 이슈 <strong>#568</strong>.
+    </div>
+  </section>
+
+  <section>
+    <h2>🛡️ 공통 보안 테스트 (전 도메인) — 2026-09-29 신규</h2>
+    ${renderCommonSecurity()}
+    <div style="margin-top:12px;padding:12px;background:#fef2f2;border-left:3px solid #dc2626;font-size:13px">
+      <strong>🚨 4 이슈 발견</strong>:
+      <ul style="margin: 4px 0 0 0; padding-left: 20px">
+        <li><strong>#571</strong> — <code>/:id</code> route input validation 부재 (SQL 페이로드 → 500)</li>
+        <li><strong>#572</strong> — 5MB body POST → 500 (payload 제한 부재)</li>
+        <li><strong>#573</strong> — admin/create endpoint rate-limit 부재</li>
+        <li><strong>#574</strong> — <code>LOGIN_LOCKOUT_24H</code> NotificationType enum 부재</li>
+      </ul>
+      <strong>✅ 통과 5개</strong>: 401 무인증 (29/29) · JWT 변조 (3/3) · 스택 노출 없음 (4/4) · 해싱 (bcrypt cost 10) · 마스킹 (maskPii 4 helper)
+    </div>
+  </section>
+
+  <section>
+    <h2>🚨 IDOR pentest v2 — data-driven (id-routes-classified.json) · 2026-09-29 신규</h2>
+    ${renderIdorV2()}
+    <div style="margin-top:12px;padding:12px;background:#fef2f2;border-left:3px solid #dc2626;font-size:13px">
+      <strong>1,920 probes · 15 LEAK 발견</strong> (81 PASS, 0 CRASH).<br>
+      <strong>Attacker 별 LEAK</strong>: HR_MANAGER 7건 · ASSET_MANAGER 5건 · PLAYER 3건.<br>
+      <strong>8 endpoint 개별 이슈 파일 완료</strong>:
+      <ul style="margin: 4px 0 0 0; padding-left: 20px">
+        <li>🚨🚨 <strong>#575</strong> — <code>/injuries/:id/{assessment,external-reports}</code> · GDPR (의료)</li>
+        <li>🚨🚨 <strong>#577</strong> — <code>/auth/users/:id/gdpr-export</code> · GDPR (개인정보)</li>
+        <li>🚨 <strong>#578</strong> — <code>/payroll/salaries/:id/runs</code> (PR #570 미포함 sub-route)</li>
+        <li>🚨 <strong>#579</strong> — <code>/youth-registrations/:id</code> · 미성년 개인정보</li>
+        <li>🚨 <strong>#580</strong> — <code>/staff-records/:id/probation-reviews</code> · HR 개인평가</li>
+        <li>🚨 <strong>#581</strong> — <code>/plan-reports/:id/hiring-items</code> · 채용 계획</li>
+        <li>⚠️ <strong>#582</strong> — <code>/prospects/:id/acquisition-gate-check</code> · 부분 노출</li>
+        <li>📋 <strong>#576</strong> — Meta 이슈 (분화 트래킹)</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>✅ XSS 저장 후 FE sanitize — Playwright 실측 (2026-09-29)</h2>
+    ${renderXssResult()}
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>Alerts fired: 0</strong> · React 기본 escape 정상.<br>
+      <strong>Backend</strong>: 7 payload (script/img-onerror/svg-onload/iframe-srcdoc 등) 저장 시도 → 전부 raw 보존 (백엔드 sanitize 없음).<br>
+      <strong>Frontend (Playwright · Chromium headless)</strong>: 4 payload FE 렌더 → 전부 <code>&lt;script&gt;</code> 로 escape 표시, <code>alert()</code> 미발동.<br>
+      <em>주의</em>: <code>dangerouslySetInnerHTML</code> 을 사용하는 컴포넌트가 있으면 escape 안 됨 → 별도 감사 필요.
+    </div>
+  </section>
+
+  <section>
+    <h2>🌐 Domain Sweep v2 — 미테스트 33개 도메인 확장 (2026-09-29)</h2>
+    ${renderDomainSuite('sweep-v2', ['smoke', 'stress'])}
+    <div style="margin-top:12px;padding:12px;background:#f0fdf4;border-left:3px solid #22c55e;font-size:13px">
+      <strong>✅ 서버 에러 0건</strong> · stress 19,617 req · p95 1,018ms · sweep2_errors=0<br>
+      <strong>결과 분포</strong> (33 endpoint):
+      <ul style="margin: 4px 0 0 0; padding-left: 20px">
+        <li><strong>200 OK: 19개</strong> — Sections 20/21/22/23/25/26/29/32/35/40/41/44/48/52/54/58/63/66/71 smoke 커버</li>
+        <li><strong>400 파라미터 누락: 4개</strong> — Sections 42/56/59/64 (seasonId 등 필요)</li>
+        <li><strong>403 의도된 차단: 2개</strong> — Sections 60/61</li>
+        <li><strong>404 라우팅 이슈: 6개</strong> — Sections 38/45/49/50/51/70 (마운트 경로 재확인 필요)</li>
+      </ul>
+    </div>
+  </section>
+
   <div class="footer">Generated ${new Date().toISOString()} · thresholds: p(95)&lt;2000ms · fail_rate&lt;10%</div>
 </body>
 </html>`
+
+function renderDomainSuite(domain, scenarios) {
+  const rows = scenarios.map((sc) => {
+    const p = path.join(DIR, domain, `${sc}.json`)
+    if (!fs.existsSync(p)) return { scenario: sc, missing: true }
+    const s = JSON.parse(fs.readFileSync(p, 'utf8'))
+    const m = s.metrics
+    const dur = m.http_req_duration || {}
+    const failed = m.http_req_failed || {}
+    const reqs = m.http_reqs || {}
+    return {
+      scenario: sc,
+      vuPeak: m.vus_max?.value ?? m.vus?.max ?? null,
+      reqs: reqs.count ?? 0,
+      rps: reqs.rate != null ? +reqs.rate.toFixed(1) : null,
+      p95: dur['p(95)'] != null ? +dur['p(95)'].toFixed(1) : null,
+      avg: dur.avg != null ? +dur.avg.toFixed(1) : null,
+      max: dur.max != null ? +dur.max.toFixed(1) : null,
+      failedPct: reqs.count > 0 ? +((failed.passes || 0) / reqs.count * 100).toFixed(2) : 0,
+      p95Ok: dur.thresholds?.['p(95)<2000'] === true,
+      failOk: failed.thresholds?.['rate<0.10'] === true,
+    }
+  })
+  const body = rows.map((r) => {
+    if (r.missing) return `<tr><td>${r.scenario}</td><td colspan="8" class="missing">파일 없음</td></tr>`
+    const p95Cls = r.p95 < 500 ? 'ok' : r.p95 < 2000 ? 'warn' : 'bad'
+    const failCls = r.failedPct === 0 ? 'ok' : r.failedPct < 10 ? 'warn' : 'bad'
+    const verdict = r.p95Ok && r.failOk ? '<span class="ok">PASS</span>' : '<span class="bad">FAIL</span>'
+    return `<tr>
+      <td>${r.scenario}</td><td class="num">${r.vuPeak}</td><td class="num">${r.reqs.toLocaleString()}</td>
+      <td class="num">${r.rps}</td><td class="num">${r.avg}</td>
+      <td class="num ${p95Cls}">${r.p95}</td><td class="num">${r.max}</td>
+      <td class="num ${failCls}">${r.failedPct}</td><td>${verdict}</td>
+    </tr>`
+  }).join('\n')
+  return `<table>
+    <tr><th>Scenario</th><th>VU peak</th><th>Reqs</th><th>RPS</th><th>avg</th><th>p95</th><th>max</th><th>Fail %</th><th>Verdict</th></tr>
+    ${body}
+  </table>`
+}
+
+
+function renderIdorV2() {
+  const p = path.join(DIR, 'idor-pentest-v2.json')
+  if (!fs.existsSync(p)) return '<div class="missing">idor-pentest-v2.json 없음</div>'
+  const data = JSON.parse(fs.readFileSync(p, 'utf8'))
+  const leaks = data.rows.filter(r => r.verdict === 'LEAK')
+
+  const leakByEndpoint = {}
+  for (const l of leaks) {
+    if (!leakByEndpoint[l.endpoint]) leakByEndpoint[l.endpoint] = { endpoint: l.endpoint, attackers: [], maxRatio: 0 }
+    leakByEndpoint[l.endpoint].attackers.push(`${l.attacker} (${l.ok200}/20)`)
+    leakByEndpoint[l.endpoint].maxRatio = Math.max(leakByEndpoint[l.endpoint].maxRatio, l.ok200)
+  }
+  const endpointList = Object.values(leakByEndpoint).sort((a, b) => b.maxRatio - a.maxRatio)
+
+  const summary = `<div style="margin-bottom:12px;font-size:14px">
+    <strong>${data.totalProbes.toLocaleString()} probes</strong> · ${data.totalEndpoints} endpoints × ${data.attackers.length} attackers × ${data.idRange[1]} IDs<br>
+    <span class="ok">${data.verdictCounts.PASS ?? 0} PASS</span> · <span class="bad">${data.verdictCounts.LEAK ?? 0} LEAK</span> · <span class="bad">${data.verdictCounts.CRASH ?? 0} CRASH</span>
+  </div>`
+
+  const head = `<tr><th>Endpoint</th><th>Max ratio</th><th>Attackers</th></tr>`
+  const body = endpointList.map(e => `<tr>
+    <td><code>${e.endpoint}</code></td>
+    <td class="num bad">${e.maxRatio}/20</td>
+    <td>${e.attackers.join(' · ')}</td>
+  </tr>`).join('\n')
+
+  return summary + `<table>${head}${body}</table>`
+}
+
+function renderXssResult() {
+  const p = path.join(DIR, 'xss-fe-probe.json')
+  if (!fs.existsSync(p)) return '<div class="missing">xss-fe-probe.json 없음</div>'
+  const data = JSON.parse(fs.readFileSync(p, 'utf8'))
+
+  const alerts = data.alerts_fired_count
+  const summary = alerts === 0
+    ? `<div style="margin-bottom:12px"><strong class="ok">✅ Alerts fired: ${alerts}</strong> · React 기본 escape 정상</div>`
+    : `<div style="margin-bottom:12px"><strong class="bad">🚨 Alerts fired: ${alerts}</strong> · XSS 실제 발동</div>`
+
+  const head = `<tr><th>Payload</th><th>Value</th><th>Escape 결과</th></tr>`
+  const body = data.per_payload.map(r => {
+    const status = r.escaped
+      ? '<span class="ok">✅ escaped</span>'
+      : (r.found_in_html ? '<span class="bad">🚨 raw</span>' : '<span class="warn">not-in-page</span>')
+    const truncatedValue = r.payload_value.length > 60 ? r.payload_value.slice(0, 57) + '...' : r.payload_value
+    return `<tr><td>${r.payload_name}</td><td><code>${escapeHtml(truncatedValue)}</code></td><td>${status}</td></tr>`
+  }).join('\n')
+
+  return summary + `<table>${head}${body}</table>`
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
+function renderCommonSecurity() {
+  const scenarios = [
+    { key: 'no_auth',      label: '인증 없이 접근 (401)',           expected: '0 findings' },
+    { key: 'token_tamper', label: 'JWT 변조 (garbage/sig/alg:none)', expected: '0 findings' },
+    { key: 'sql_fuzz',     label: 'SQL 페이로드 → /:id',             expected: '0 findings' },
+    { key: 'oversize',     label: '5MB body POST',                   expected: '0 findings' },
+    { key: 'stack_trace',  label: '5xx 스택 노출',                   expected: '0 findings' },
+    { key: 'mass_write',   label: 'admin write rate-limit',          expected: '0 findings' },
+  ]
+  const rows = scenarios.map((sc) => {
+    const p = path.join(DIR, 'common-security', `${sc.key}.json`)
+    if (!fs.existsSync(p)) return { ...sc, missing: true }
+    const m = JSON.parse(fs.readFileSync(p, 'utf8')).metrics
+    return {
+      ...sc,
+      checks: m.security_checks?.count ?? 0,
+      findings: m.security_findings?.count ?? 0,
+    }
+  })
+  const body = rows.map((r) => {
+    if (r.missing) return `<tr><td>${r.label}</td><td colspan="4" class="missing">파일 없음</td></tr>`
+    const status = r.findings === 0 ? '<span class="ok">PASS</span>' : `<span class="bad">${r.findings} FINDINGS</span>`
+    return `<tr>
+      <td><code>${r.key}</code></td>
+      <td>${r.label}</td>
+      <td class="num">${r.checks}</td>
+      <td class="num ${r.findings === 0 ? 'ok' : 'bad'}">${r.findings}</td>
+      <td>${status}</td>
+    </tr>`
+  }).join('\n')
+  return `<table>
+    <tr><th>Scenario</th><th>설명</th><th>Checks</th><th>Findings</th><th>Status</th></tr>
+    ${body}
+  </table>`
+}
 
 function renderTable(list) {
   const head = `<tr>
