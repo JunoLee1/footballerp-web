@@ -26,9 +26,9 @@ router.get('/:id', auth, requireReadHR, controller.get)
 
 ## 3. authMiddleware 매-요청 DB 조회 병목
 
-**배경** Redis 로 각 도메인 endpoint 응답을 캐시했는데도 stress p95 가 500~2500ms 대로 유지. GM 690ms · MEDICAL 946ms 등 endpoint cache hit 이 명확한데 tail latency 안 떨어짐.
+**배경** Redis 로 각 도메인 endpoint 응답을 캐시했는데도 stress p95 가 500~2500ms 대로 유지되는 문제 확인. GM 690ms · MEDICAL 946ms 등 endpoint cache hit 이 명확한데 tail latency 안 떨어짐.
 
-**원인** `authMiddleware.ts` 가 매 인증 요청마다 `SELECT isDeleted FROM User WHERE id=?` 를 실행 (JWT 는 서명·만료 검증만 하고 활성 상태는 DB 로 확인). 200 VU 동시성에서 Prisma pool (기본 10~20 커넥션) 이 auth 단계부터 큐잉 → endpoint cache hit 여부와 무관하게 전체 요청이 대기. Redis endpoint 캐시는 응답 body 만 재사용하고 이 조회는 매번 그대로.
+**원인** `authMiddleware.ts` 가 매 인증 요청마다 `SELECT isDeleted FROM User WHERE id=?` 를 실행 (JWT 는 서명·만료 검증만 하고 활성 상태는 DB 로 확인). 200 VU 동시성에서 Prisma pool (기본 10~20 커넥션) 이 auth 단계부터 큐잉 → endpoint cache hit 여부와 무관하게 전체 요청이 대기. Redis endpoint 캐시는 응답 body 만 재사용하고 이 조회는 매번 그대로 실행 되는 문제였음.
 
 **작업** `lib/userStatusCache.ts` 신설 · 5분 TTL Redis 캐시로 `SELECT isDeleted` 결과를 재사용. `authMiddleware` 는 `isUserActive(userId)` 한 줄로 교체 (Redis miss 시 DB fallback + 재세팅). `admin.service` 의 `deactivateUser`·`reactivateUser`·`deleteUser` 에 `invalidateUserActive(id)` 훅 추가하여 soft-delete/hard-delete 시 즉시 캐시 무효화 (반영 지연 최대 5분 → 훅으로 0초).
 
@@ -51,3 +51,8 @@ if (!(await isUserActive(user.id))) return res.status(401).json({ code: "UNAUTHO
 - MEDICAL 1,827 → 41ms (45×)
 - FINANCE 3,563 → 439ms (8× · endpoint 자체 무거움, financial-report include 트리 후속 튜닝 대상)
 
+
+
+## 4. 자산관리 도메인 멀티 클럽 스코핑 부재
+
+**배경** 
