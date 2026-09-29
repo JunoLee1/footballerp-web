@@ -57,6 +57,14 @@ export const canWriteHR = (role: string, foRole?: string | null, deptCategories?
   (role === 'FRONT_OFFICE' && foRole === 'HR_MANAGER') ||
   (deptCategories?.includes('HR') ?? false)
 
+// 급여 도메인은 Finance + HR 이 함께 접근 (HR: 급여 계산/4대보험/원천세, Finance: 예산/승인)
+// 관련 이슈 #565 · 스펙 docs/superpowers/specs/2026-09-29-payroll-role-guard-design.md
+export const canReadPayroll = (role: string, foRole?: string | null, deptCategories?: string[]): boolean =>
+  canReadFinance(role, foRole, deptCategories) || canReadHR(role, foRole, deptCategories)
+
+export const canWritePayroll = (role: string, foRole?: string | null, deptCategories?: string[]): boolean =>
+  canWriteFinance(role, foRole, deptCategories) || canWriteHR(role, foRole, deptCategories)
+
 export const canReadFacility = (role: string, foRole?: string | null, deptCategories?: string[]): boolean =>
   isAdminLike(role) ||
   (role === 'FRONT_OFFICE' && (foRole === 'FACILITY_MANAGER' || foRole === 'FACILITY_STAFF')) ||
