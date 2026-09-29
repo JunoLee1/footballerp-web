@@ -250,6 +250,12 @@ export class AuthController {
       const targetId = Number(req.params["id"]);
       if (!Number.isFinite(targetId)) throw new AppError(400, "INVALID_ID");
 
+      // #577: 본인 GDPR 데이터만 export 가능 (또는 관리자 · GM).
+      // 타인 GDPR export 는 개인정보보호법 · GDPR 위반.
+      if (targetId !== user.id && !isAdminLike(user.role)) {
+        throw new AppError(403, "FORBIDDEN");
+      }
+
       const data = await this.service.gdprExport(targetId, user.id, user.role);
       res.json(data);
     } catch (err) {
