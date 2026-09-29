@@ -12,7 +12,7 @@ const TTL_SEC = 5 * 60; // 5분 — soft-delete 반영 최대 지연
  * Redis hit → 즉시 반환. miss → DB 조회 후 캐시 세팅.
  * Redis 불가 시 DB fallback (기존 동작).
  */
-export async function isUserActive(userId: number): Promise<boolean> {
+export async function isUserActive(userId: string): Promise<boolean> {
   const client = getRedisClient();
   const key = `${KEY_PREFIX}${userId}`;
   if (client) {
@@ -41,7 +41,7 @@ export async function isUserActive(userId: number): Promise<boolean> {
 /**
  * 유저 활성 상태 변경 시 (setDeleted true/false, hardDelete) 캐시 무효화.
  */
-export async function invalidateUserActive(userId: number): Promise<void> {
+export async function invalidateUserActive(userId: string): Promise<void> {
   const client = getRedisClient();
   if (!client) return;
   try {

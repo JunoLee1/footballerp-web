@@ -13,9 +13,9 @@ const refreshTokenOptions = {
   secretOrKey: JWT_REFRESH_TOKEN_SECRET,
 };
 
-export const jwtVerify = async (payload: Express.User & { sub?: number }, done: (err: unknown, user?: Express.User | false) => void) => {
+export const jwtVerify = async (payload: Express.User & { sub?: string }, done: (err: unknown, user?: Express.User | false) => void) => {
   try {
-    const { sub, ...rest } = payload as Express.User & { sub?: number };
+    const { sub, ...rest } = payload as Express.User & { sub?: string };
     const user: Express.User = { ...rest, id: sub ?? (payload as Express.User).id };
     done(null, user);
   } catch (err) {
