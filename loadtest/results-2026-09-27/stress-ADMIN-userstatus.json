@@ -1,0 +1,184 @@
+{
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "ADMIN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6IkFETUlOIiwiY29hY2hpbmdSb2xlIjpudWxsLCJmcm9udE9mZmljZVJvbGUiOm51bGwsImRlcGFydG1lbnRDYXRlZ29yaWVzIjpbXSwidGVhbUlkIjpudWxsLCJjbHViSWQiOjEsImlzRGVtbyI6ZmFsc2UsImlhdCI6MTc5MDUxNjc1NCwiZXhwIjoxNzkwNTIwMzU0fQ.t90NzVCmHEvlUU6Wfvs09hxxNuIPgsZ9q-EA9jPY1XM"
+            }
+    },
+    "root_group": {
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+                "ADMIN": {
+                    "name": "ADMIN",
+                    "path": "::ADMIN",
+                    "id": "ba754061d495f01eeb69948d27d98517",
+                    "groups": {},
+                    "checks": {
+                            "ADMIN admin_audit_logs status<500": {
+                                "name": "ADMIN admin_audit_logs status<500",
+                                "path": "::ADMIN::ADMIN admin_audit_logs status<500",
+                                "id": "aa413df33d8bb03649e11896d8a67cb7",
+                                "passes": 5297,
+                                "fails": 0
+                            },
+                            "ADMIN admin_users status<500": {
+                                "name": "ADMIN admin_users status<500",
+                                "path": "::ADMIN::ADMIN admin_users status<500",
+                                "id": "a936c88df1b91e0424a10237f71f184a",
+                                "passes": 5297,
+                                "fails": 0
+                            },
+                            "ADMIN admin_departments status<500": {
+                                "path": "::ADMIN::ADMIN admin_departments status<500",
+                                "id": "c4a82092ce09471c412370fa0ff7a2c2",
+                                "passes": 5297,
+                                "fails": 0,
+                                "name": "ADMIN admin_departments status<500"
+                            }
+                        }
+                }
+            }
+    },
+    "metrics": {
+        "http_req_duration{expected_response:true}": {
+            "max": 16896.416,
+            "p(90)": 46.54810000000001,
+            "p(95)": 70.12394999999998,
+            "avg": 241.59751170400176,
+            "min": 0.657,
+            "med": 10.135000000000002
+        },
+        "persona_latency": {
+            "avg": 241.6031890378199,
+            "min": 0.657,
+            "med": 10.127,
+            "max": 16896.416,
+            "p(90)": 46.513,
+            "p(95)": 70.08549999999997
+        },
+        "group_duration": {
+            "max": 17494.171292,
+            "p(90)": 255.20120900000003,
+            "p(95)": 3844.7582915999933,
+            "avg": 725.2239032231453,
+            "min": 2.725042,
+            "med": 40.294584
+        },
+        "http_req_waiting": {
+            "p(95)": 70.04514999999996,
+            "avg": 241.52161389378276,
+            "min": 0.639,
+            "med": 10.064,
+            "max": 16896.372,
+            "p(90)": 46.3207
+        },
+        "data_sent": {
+            "count": 6557873,
+            "rate": 61723.06655996909
+        },
+        "http_req_sending": {
+            "avg": 0.026318776743013896,
+            "min": 0.001,
+            "med": 0.008,
+            "max": 38.26,
+            "p(90)": 0.018,
+            "p(95)": 0.03
+        },
+        "http_req_blocked": {
+            "avg": 0.01643418071985943,
+            "min": 0,
+            "med": 0.002,
+            "max": 14.038,
+            "p(90)": 0.005,
+            "p(95)": 0.01
+        },
+        "data_received": {
+            "count": 119946418,
+            "rate": 1128942.378396757
+        },
+        "http_req_duration": {
+            "avg": 241.59751170400176,
+            "min": 0.657,
+            "med": 10.135000000000002,
+            "max": 16896.416,
+            "p(90)": 46.54810000000001,
+            "p(95)": 70.12394999999998,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 15892,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "vus": {
+            "value": 3,
+            "min": 3,
+            "max": 198
+        },
+        "http_reqs": {
+            "count": 15892,
+            "rate": 149.57639066371502
+        },
+        "iteration_duration": {
+            "p(90)": 1256.6226914000001,
+            "p(95)": 4846.698541799994,
+            "avg": 1727.3279948112151,
+            "min": 1002.911208,
+            "med": 1042.758041,
+            "max": 18498.163833
+        },
+        "vus_max": {
+            "value": 200,
+            "min": 200,
+            "max": 200
+        },
+        "http_req_connecting": {
+            "med": 0,
+            "max": 10.262,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.009014472690661966,
+            "min": 0
+        },
+        "checks": {
+            "fails": 0,
+            "passes": 15891,
+            "value": 1
+        },
+        "http_req_tls_handshaking": {
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0
+        },
+        "http_req_receiving": {
+            "avg": 0.049579033475962354,
+            "min": 0.005,
+            "med": 0.028,
+            "max": 29.978,
+            "p(90)": 0.061,
+            "p(95)": 0.083
+        },
+        "iterations": {
+            "count": 5297,
+            "rate": 49.85565953597398
+        },
+        "persona_errors": {
+            "rate": 0,
+            "count": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        }
+    }
+}

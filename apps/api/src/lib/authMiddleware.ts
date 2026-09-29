@@ -5,6 +5,7 @@ import { getPrisma } from "./prisma";
 import { AppError } from "./appError";
 import { writeAuditLog } from "./auditLog";
 import { Role } from "../generated/enums";
+import { isUserActive } from "./userStatusCache";
 
 export function requireUser(req: Request) {
   if (!req.user) throw new AppError(401, "UNAUTHORIZED");
@@ -39,11 +40,9 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
         return res.status(401).json({ code: "UNAUTHORIZED" });
       }
 
-      const record = await getPrisma().user.findUnique({
-        where: { id: user.id },
-        select: { isDeleted: true },
-      });
-      if (!record || record.isDeleted) {
+      // Redis 캐시 우선 조회 (5분 TTL) — 매-요청 DB roundtrip 제거.
+      // soft-delete/재활성화 시 admin.service 에서 invalidate.
+      if (!(await isUserActive(user.id))) {
         return res.status(401).json({ code: "UNAUTHORIZED" });
       }
 
