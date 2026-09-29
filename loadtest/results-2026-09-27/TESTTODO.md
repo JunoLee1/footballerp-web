@@ -30,6 +30,7 @@
 | 보안 — 비밀번호 수정시 6개월동안 사용 혹은 타입이 맞지 않는 경우 에러나오는가 | ✅ 타입 검증 `INVALID_PASSWORD_FORMAT` (8+ 대소문자·숫자·특수) · 현재 비번 재사용 `SAME_AS_CURRENT_PASSWORD` 409 · **6개월 재사용 방지 `PASSWORD_RECENTLY_USED` 409 도입 완료** (`PasswordHistory` 모델 · 변경 시 이전 hash 저장 · 6개월 이내 이력과 bcrypt.compare) · E2E 실측은 shared dev DB player 뮤테이션 이슈로 격리 DB 재검증 필요 |
 | 보안 — 비밀번호 해싱처리 잘되는 가 | ✅ `lib/hash.ts` bcrypt cost 10 (`bcrypt.hash(password, 10)`) · `createUser`·`updatePassword`·`acceptInvite` 세 곳에서 사용 확인 |
 | 보안 — 로그인 실패 시 이메일 존재 여부 노출 없음 | ✅ 미존재 이메일·잘못된 비번 모두 401 균일 (`auth-test.json` T7) |
+| 보안 — /users/:id/gdpr-export owner-scope | ✅ **FIXED** (PR **#583** · closes #577) — 본인 (targetId === user.id) OR isAdminLike 만 허용. PLAYER 타인 export → 403 실측 |
 ---
 
 ## 2. HR_MANAGER 도메인 `/hiring-surveys`, `/plan-reports`, `/recruitment/job-postings`
@@ -115,7 +116,9 @@
 | Smoke | ✅ `smoke-MEDICAL_DIRECTOR.json` 49/49 PASS, p(95) 195ms  · VU 2|
 | Stress | ✅ `stress-MEDICAL_DIRECTOR.json` p(95) 1,827ms · threshold 근접 · RPS 98 · VU peak 200 |
 | 보안 — Cross-role 접근 차단 | ✅ **부분 LEAK** — `/injuries/active` 는 403 정상, `/medical-equipment-loan`·`/medical-expenses` 는 PLAYER · HR · ASSET 모두 200. **의료 개인정보 노출** (GDPR 관점 심각) |
+| 보안 — /injuries/:id/{assessment,external-reports} GDPR | ✅ **FIXED** (PR **#583** · closes #575) — canReadInjuryReport route guard 추가. PLAYER/HR/ASSET/FACILITY 4 role 20/20 200 → **전부 403** 차단 실측 |
 | 보안 — GDPR 개인정보 스코프 검증 | 🔲 guardian 계정 접근 범위 미검증 |
+| 보안 — PLAYER self-scope (본인 부상 조회) | 🔲 이슈 **#584** — PR #583 side-effect, self-only 라우트 or self-scope 조건 결정 필요 |
 
 ---
 
@@ -211,7 +214,8 @@
 | `/safeguard-reports/:id/*` (2) IDOR 프로브 | 🔲 |
 | `/player-callups/:id/*` (6) IDOR 프로브 | 🔲 |
 | `/youth-registrations/:id/*` (4) IDOR 프로브 | 🔲 |
-| `pentest.mjs` `TARGETS` 데이터 드라이브화 | 🔲 `id-routes-classified.json` 에서 로드 |
+| `pentest.mjs` `TARGETS` 데이터 드라이브화 | ✅ **DONE** — `idor-pentest-v2.mjs` (2026-09-29) · id-routes-classified.json 로드 · 32 GET × 4 attackers × 20 IDs = 2,560 probes 실행 결과 21 LEAK 발견 |
+| Data-driven IDOR — FIXED endpoints (PR #583) | ✅ 4 CRITICAL LEAK 파치: /injuries/:id/{assessment,external-reports} (#575) · /auth/users/:id/gdpr-export (#577) · /staff-records/:id/probation-reviews (#580) · /prospects/:id/acquisition-gate-check (#582) |
 
 ---
 
@@ -615,11 +619,12 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
-| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
-| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| Smoke | ✅ `hr-domain/smoke.json` (통합 HR 러너) — /staff-records + /:id 커버 |
+| Stress | ✅ `hr-domain/stress.json` — 32,296 req · p95 1,460ms · RPS 305 · 0% fail |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ common-security no_auth (29/29 protected 401/403/404) |
+| 보안 — Cross-role IDOR (list) | ✅ PLAYER 세션 20/20 건 403 (`hr-domain/idor.json` hr_idor_leaks=0) |
+| 보안 — /:id/probation-reviews cross-FO LEAK | ✅ **FIXED** (PR **#583** · closes #580) — isFrontOffice fallback 제거. ASSET/FACILITY/PLAYER → 403 실측 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | ✅ canWriteHR 확인 (staff-record.controller `create/update/terminate/delete` 전부 guard) |
 
 ---
 
@@ -978,16 +983,16 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Rate Limiting (`/auth/login` 브루트포스) | ✅ 10건 이후 429 · 5분+ sliding window 로 재시도 지속 차단 |
-| IDOR (숫자 ID 열거 접근) | 🔲 10 endpoint 프로브 결과 3건 LEAK (`/contracts/:id`, `/notifications/:id/read`) — 나머지 360 endpoint 미커버 |
-| 인증 없는 접근 차단 (401) | 🔲 미러닝 |
-| 인증 우회 (토큰 없음/변조/alg:none) | 🔲 미러닝 |
-| 오버사이즈 문자열 / SQL injection 퍼징 | 🔲 미러닝 |
-| 에러 메시지 스택트레이스 노출 여부 | 🔲 미러닝 |
-| XSS 저장 후 프론트 sanitize | 🔲 미러닝 |
-| 탈취 계정 남용 (mass-write rate limit) | 🔲 미러닝 · admin/create endpoint 별 rate-limit 유무 확인 필요 |
-| 비밀번호 해싱 |🔲|
-| 개인정보 마스킹처리 |🔲 |
-| 보안 문제 발생시 보안 관리자에게 알림이나 메시지가 가는 가? |🔲 |
+| IDOR (숫자 ID 열거 접근) | 🟡 **부분 FIXED** — `idor-pentest-v2.mjs` (data-driven · 4 attackers × 32 GET × 20 IDs = 2,560 probes) → 21 LEAK 재분류 결과 진짜 5개. **PR #583 로 4 CRITICAL 파치** (#575 injuries GDPR · #577 gdpr-export · #580 probation · #582 prospects). 오탐 close: #576/#578/#579/#581. 남은 후속: verdict 로직 role-aware 개선 |
+| 인증 없는 접근 차단 (401) | ✅ `common-security-probe.k6.js` no_auth — 29/29 protected endpoints 전부 401/403/404 (0 findings) |
+| 인증 우회 (토큰 없음/변조/alg:none) | ✅ token_tamper — garbage/signature_flip/alg:none 3종 전부 401 (0 findings) |
+| 오버사이즈 문자열 / SQL injection 퍼징 | 🚨 sql_fuzz 15개 500 (이슈 **#571** — /:id input validation) · oversize 3개 500 (이슈 **#572** — 5MB body 크래시) |
+| 에러 메시지 스택트레이스 노출 여부 | ✅ stack_trace — 4개 5xx 트리거 시나리오 전부 body 에 stack 노출 없음 (0 findings) |
+| XSS 저장 후 프론트 sanitize | ✅ `xss-fe-probe.py` (Playwright) — 4 payload 저장 후 FE 렌더 → **alerts fired = 0**. React 기본 escape 정상 (백엔드 raw 저장, FE 안전 렌더) |
+| 탈취 계정 남용 (mass-write rate limit) | 🚨 mass_write — admin `/departments` 30건 create 전부 201 (rate-limit 미장착, 이슈 **#573**) |
+| 비밀번호 해싱 | ✅ `apps/api/src/lib/hash.ts` `bcrypt.hash(password, 10)` + `bcrypt.compare(plain, hashed)` 실측 확인 |
+| 개인정보 마스킹처리 | ✅ `maskPii.ts` 4 helper (email/username/phone/address) 실측: `maskEmail("juno@club.com")` → `ju***@club.com`, `maskPhone("010-1234-5678")` → `010-****-5678` |
+| 보안 문제 발생시 보안 관리자에게 알림이나 메시지가 가는 가? | 🚨 **일부 Broken** — `auth.controller.ts:58` 이 `createForAdmin("LOGIN_LOCKOUT_24H", ...)` 호출하나 `NotificationType` enum 에 미정의 (이슈 **#574**) |
 
 ---
 
