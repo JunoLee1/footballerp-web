@@ -127,11 +127,11 @@
 |---|---|---|
 | Smoke | ➖ (persona endpoint set 에 미포함) |
 | Stress | ➖ |
-| 보안 — IDOR (Player → 타 선수 계약 조회) | ✅ **LEAK** — PLAYER 세션 임의 ID 1~20 전부 200 응답 (`pentest.json` verdict LEAK) |
-| 보안 — IDOR (HR → 타 계약 조회) | ✅ **LEAK** — HR_MANAGER 세션도 20/20 건 200 |
-| 보안 — owner-scope guard 추가 | 🔲 `contract.routes.ts` `GET /:id` 미들웨어 삽입 필요 (`playerId === req.user.id` OR role∈[GM,FINANCE_MANAGER,HR_MANAGER]) |
-| Regression — `apps/api/__test__/contract/contract.access.test.ts` | 🔲 |
-| Sub-actions `/contracts/:id/clauses`·`/extensions`·`/bonuses` 프로브 | 🔲 미커버 |
+| 보안 — IDOR (Player → 타 선수 계약 조회) | ✅ **FIXED** — PR #562 (issue #560) · PLAYER 세션 → 403 실측 확인 |
+| 보안 — IDOR (HR → 타 계약 조회) | ✅ HR_MANAGER 는 canReadHR 로 legitimate access · 실측 200 (의도) |
+| 보안 — owner-scope guard 추가 | ✅ **FIXED** — `contract.service.getContractById(id, actor)` 에 privileged/owner 검사 삽입 (PR #562) |
+| Regression — `apps/api/__test__/contract/contract.access.test.ts` | ✅ 16 케이스 통과 |
+| Sub-actions `/contracts/:id/clauses`·`/extensions`·`/bonuses` 프로브 | 🔲 미커버 (follow-up) |
 
 ---
 
@@ -144,8 +144,9 @@
 | Smoke | ✅ `PLAYER` 페르소나 `/notifications/my` 포함 |
 | Stress | ➖ (`writeWorkflow` 시나리오는 별도) |
 | 보안 — GET IDOR (타 유저 알림 조회) | ✅ 404 반환 (PLAYER · HR 두 세션 전부 20/20 건 404) |
-| 보안 — PATCH `/read` IDOR | ✅ **LEAK** — HR_MANAGER 세션이 임의 ID 2건 read 마킹 성공 |
-| 보안 — recipient guard 추가 | 🔲 PATCH `/:id/read` 앞단 `recipientUserId === req.user.id` 검증 필요 |
+| 보안 — PATCH `/read` IDOR | ✅ **FALSE POSITIVE (재검증)** — issue #561 · 실측 hr@club.com → notif id 3 (userId=15) markRead → 404 정상 차단 |
+| 보안 — recipient guard 추가 | ✅ **이미 안전** — `repo.markRead` 가 `updateMany where { id, userId, readAt: null }` · count=0 → 404 · pentest 성공 2건은 HR 본인 broadcast 알림이었을 가능성 |
+| Regression — `apps/api/__test__/notification/notification.access.test.ts` | ✅ 5 케이스 통과 (PR #562) |
 
 ---
 
@@ -919,6 +920,25 @@
 | 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| FE 페이지 분리 (`/admin/software-licenses`) | ✅ PR #557 — 전용 페이지 · seat 게이지 · 만료 D-30/60/90 뱃지 · 유닛 테스트 9종 통과 |
+
+---
+
+### 72. `department` `/departments` (부서 + 부서내 팀 계층)
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| Smoke | ✅ `results-2026-09-29/department/smoke.json` — 144 req · p95 8.7ms · 0% fail · 5 endpoint (list/get/headcount/members/job-titles) |
+| Stress | ✅ `results-2026-09-29/department/stress.json` — 40,864 req · **p95 667ms** (threshold pass) · **RPS 386** · VU peak 199 · 0% fail |
+| CRUD lifecycle | ✅ `results-2026-09-29/department/crud.json` — 27 lifecycle · 270 req · 0% fail · p95 8.9ms · create parent → get → update → create sub → job-title CRUD → cleanup |
+| 보안 — canManage (create/update/delete) | ✅ ADMIN/GM 만 통과 (`department.controller.canManage`) |
+| 보안 — canRead (list/get) | ✅ ADMIN/GM/FRONT_OFFICE 통과 (`canRead`) |
+| 발견 — job-title POST body 필드 오탈자 방어 | ℹ️ 필드명 `label` (name 아님) — 초기 k6 스크립트에서 오타로 100% 실패 발견 |
+
+---
+
+### 73. `facility` `/facility` (Section 19 참조 — smoke/stress/crud 완료)
+> 상세는 위 Section 19 참조. 요약: 3 시나리오 완료, controller/service 상태 전환 불일치 발견 (별도 이슈 예정).
 
 ---
 
