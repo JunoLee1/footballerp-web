@@ -119,3 +119,33 @@ describe("assertClubAccess", () => {
     );
   });
 });
+
+describe("requireClubScope (Phase 2.5)", () => {
+  const { requireClubScope } = require("../../src/lib/permissions");
+  const { AppError } = require("../../src/lib/appError");
+
+  const mkUser = (role: string, clubId: number | null) =>
+    ({ id: 1, role, clubId } as any);
+
+  test("clubId 있으면 그 값 반환", () => {
+    expect(requireClubScope(mkUser("ADMIN", 7))).toBe(7);
+  });
+
+  test("SUPER_ADMIN + clubId=null → undefined (전 클럽 허용)", () => {
+    expect(requireClubScope(mkUser("SUPER_ADMIN", null))).toBeUndefined();
+  });
+
+  test("SUPER_ADMIN + clubId 있으면 그 값 반환", () => {
+    expect(requireClubScope(mkUser("SUPER_ADMIN", 3))).toBe(3);
+  });
+
+  test("일반 유저 + clubId=null → 403 CLUB_SCOPE_REQUIRED (bypass 차단)", () => {
+    expect(() => requireClubScope(mkUser("PLAYER", null))).toThrow(
+      expect.objectContaining({ statusCode: 403, code: "CLUB_SCOPE_REQUIRED" })
+    );
+  });
+
+  test("ADMIN + clubId=null → 403 (ADMIN도 클럽 필수)", () => {
+    expect(() => requireClubScope(mkUser("ADMIN", null))).toThrow(AppError);
+  });
+});

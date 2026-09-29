@@ -146,6 +146,7 @@ async function seedHrLeafDepartmentHeads() {
 async function seedStaffAccounts() {
   const hashed = await bcrypt.hash('Password1!', 10);
   const korea = await prisma.country.findUniqueOrThrow({ where: { id: 1 } });
+  const fcSeoulClub = await prisma.club.findFirstOrThrow({ orderBy: { id: 'asc' } });
 
   const hrStaffPhone        = await prisma.phoneNumber.create({ data: encryptPhone('010-0000-0018') });
   const assetStaffPhone     = await prisma.phoneNumber.create({ data: encryptPhone('010-0000-0019') });
@@ -155,7 +156,7 @@ async function seedStaffAccounts() {
 
   await prisma.user.upsert({
     where: { email: 'hr.staff@club.com' },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: 'hr.staff@club.com',
       password: hashed,
@@ -166,12 +167,13 @@ async function seedStaffAccounts() {
       dateOfBirth: new Date('1992-07-15'),
       nationalityId: korea.id,
       phoneNumberId: hrStaffPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: 'asset.staff@club.com' },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: 'asset.staff@club.com',
       password: hashed,
@@ -182,12 +184,13 @@ async function seedStaffAccounts() {
       dateOfBirth: new Date('1993-04-22'),
       nationalityId: korea.id,
       phoneNumberId: assetStaffPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: 'finance.staff@club.com' },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: 'finance.staff@club.com',
       password: hashed,
@@ -198,12 +201,13 @@ async function seedStaffAccounts() {
       dateOfBirth: new Date('1991-09-30'),
       nationalityId: korea.id,
       phoneNumberId: financeStaffPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: 'facility.manager@club.com' },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: 'facility.manager@club.com',
       password: hashed,
@@ -214,12 +218,13 @@ async function seedStaffAccounts() {
       dateOfBirth: new Date('1985-03-10'),
       nationalityId: korea.id,
       phoneNumberId: facilityMgrPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: 'facility.staff@club.com' },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: 'facility.staff@club.com',
       password: hashed,
@@ -230,6 +235,7 @@ async function seedStaffAccounts() {
       dateOfBirth: new Date('1996-11-05'),
       nationalityId: korea.id,
       phoneNumberId: facilityStaffPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
@@ -484,6 +490,7 @@ async function seedRecruitment() {
   const hashed = await bcrypt.hash('Password1!', 10);
 
   const korea = await prisma.country.findUniqueOrThrow({ where: { id: 1 } });
+  const fcSeoulClub = await prisma.club.findFirstOrThrow({ orderBy: { id: 'asc' } });
 
   // ── HR Manager user ──────────────────────────────────
   const existingHr = await prisma.user.findUnique({ where: { email: 'hr@club.com' } });
@@ -501,10 +508,12 @@ async function seedRecruitment() {
         dateOfBirth: new Date('1985-03-20'),
         nationalityId: korea.id,
         phoneNumberId: hrPhone.id,
+        clubId: fcSeoulClub.id,
       },
     });
   } else {
     hr = existingHr;
+    await prisma.user.update({ where: { id: hr.id }, data: { clubId: fcSeoulClub.id } });
   }
 
   const admin = await prisma.user.findUniqueOrThrow({ where: { email: 'admin@club.com' }, select: { id: true } });
@@ -972,7 +981,7 @@ async function main() {
 
   const admin = await prisma.user.upsert({
     where: { email: "admin@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "admin@club.com",
       password: hashed,
@@ -1003,7 +1012,7 @@ async function main() {
 
   const coach = await prisma.user.upsert({
     where: { email: "coach@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "coach@club.com",
       password: hashed,
@@ -1014,12 +1023,13 @@ async function main() {
       dateOfBirth: new Date("1975-06-15"),
       nationalityId: korea.id,
       phoneNumberId: coachPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "assistant@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "assistant@club.com",
       password: hashed,
@@ -1030,12 +1040,13 @@ async function main() {
       dateOfBirth: new Date("1978-03-10"),
       nationalityId: korea.id,
       phoneNumberId: assistPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "defensive@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "defensive@club.com",
       password: hashed,
@@ -1046,12 +1057,13 @@ async function main() {
       dateOfBirth: new Date("1976-08-22"),
       nationalityId: korea.id,
       phoneNumberId: defPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "attacking@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "attacking@club.com",
       password: hashed,
@@ -1062,12 +1074,13 @@ async function main() {
       dateOfBirth: new Date("1979-05-14"),
       nationalityId: korea.id,
       phoneNumberId: atkPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "physical@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "physical@club.com",
       password: hashed,
@@ -1078,12 +1091,13 @@ async function main() {
       dateOfBirth: new Date("1982-11-03"),
       nationalityId: korea.id,
       phoneNumberId: physPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "setpiece@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "setpiece@club.com",
       password: hashed,
@@ -1094,12 +1108,13 @@ async function main() {
       dateOfBirth: new Date("1981-02-28"),
       nationalityId: korea.id,
       phoneNumberId: setPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "gk@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "gk@club.com",
       password: hashed,
@@ -1110,12 +1125,13 @@ async function main() {
       dateOfBirth: new Date("1977-09-17"),
       nationalityId: korea.id,
       phoneNumberId: gkPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "medical@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "medical@club.com",
       password: hashed,
@@ -1126,12 +1142,13 @@ async function main() {
       dateOfBirth: new Date("1983-06-05"),
       nationalityId: korea.id,
       phoneNumberId: medPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "meddir@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "meddir@club.com",
       password: hashed,
@@ -1142,12 +1159,13 @@ async function main() {
       dateOfBirth: new Date("1974-12-20"),
       nationalityId: korea.id,
       phoneNumberId: meddirPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   const frontOffice = await prisma.user.upsert({
     where: { email: "fo@club.com" },
-    update: { frontOfficeRole: "SCOUT" },
+    update: { frontOfficeRole: "SCOUT", clubId: fcSeoulClub.id },
     create: {
       email: "fo@club.com",
       password: hashed,
@@ -1158,12 +1176,13 @@ async function main() {
       dateOfBirth: new Date("1985-03-20"),
       nationalityId: korea.id,
       phoneNumberId: foPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: "gm@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "gm@club.com",
       password: hashed,
@@ -1180,7 +1199,7 @@ async function main() {
 
   await prisma.user.upsert({
     where: { email: "td@club.com" },
-    update: { frontOfficeRole: "TD" },
+    update: { frontOfficeRole: "TD", clubId: fcSeoulClub.id },
     create: {
       email: "td@club.com",
       password: hashed,
@@ -1191,12 +1210,13 @@ async function main() {
       dateOfBirth: new Date("1972-09-25"),
       nationalityId: korea.id,
       phoneNumberId: tdPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: 'asset@club.com' },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: 'asset@club.com',
       password: hashed,
@@ -1207,12 +1227,13 @@ async function main() {
       dateOfBirth: new Date('1980-06-10'),
       nationalityId: korea.id,
       phoneNumberId: assetPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   await prisma.user.upsert({
     where: { email: 'finance@club.com' },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: 'finance@club.com',
       password: hashed,
@@ -1223,12 +1244,13 @@ async function main() {
       dateOfBirth: new Date('1978-11-25'),
       nationalityId: korea.id,
       phoneNumberId: financePhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   const playerUser = await prisma.user.upsert({
     where: { email: "player@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "player@club.com",
       password: hashed,
@@ -1238,6 +1260,7 @@ async function main() {
       dateOfBirth: new Date("1998-07-01"),
       nationalityId: korea.id,
       phoneNumberId: playerPhone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
@@ -2420,7 +2443,7 @@ async function main() {
 
   const youthCoach1 = await prisma.user.upsert({
     where: { email: "youth.coach1@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "youth.coach1@club.com",
       password: hashed,
@@ -2431,12 +2454,13 @@ async function main() {
       dateOfBirth: new Date("1982-04-10"),
       nationalityId: korea.id,
       phoneNumberId: yc1Phone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
   const youthCoach2 = await prisma.user.upsert({
     where: { email: "youth.coach2@club.com" },
-    update: {},
+    update: { clubId: fcSeoulClub.id },
     create: {
       email: "youth.coach2@club.com",
       password: hashed,
@@ -2447,6 +2471,7 @@ async function main() {
       dateOfBirth: new Date("1985-08-22"),
       nationalityId: korea.id,
       phoneNumberId: yc2Phone.id,
+      clubId: fcSeoulClub.id,
     },
   });
 
@@ -2477,7 +2502,7 @@ async function main() {
     guardianData.map((g, i) =>
       prisma.user.upsert({
         where: { email: g.email },
-        update: {},
+        update: { clubId: fcSeoulClub.id },
         create: {
           email: g.email,
           password: hashed,
@@ -2487,6 +2512,7 @@ async function main() {
           dateOfBirth: new Date(g.dob),
           nationalityId: korea.id,
           phoneNumberId: guardianPhones[i]!.id,
+          clubId: fcSeoulClub.id,
         },
       }),
     ),

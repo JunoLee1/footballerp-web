@@ -41,7 +41,7 @@ const listInclude = {
 export class AssetRequestRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(dto: CreateAssetRequestDto, requesterId: number, departmentId: number) {
+  create(dto: CreateAssetRequestDto, requesterId: number, departmentId: number, actorClubId?: number) {
     return this.prisma.assetRequest.create({
       data: {
         requesterId,
@@ -51,6 +51,7 @@ export class AssetRequestRepository {
         expenseCategoryId: dto.expenseCategoryId,
         expectedAmount: dto.expectedAmount,
         justification: dto.justification,
+        clubId: actorClubId ?? null,
         ...(dto.equipmentItemId !== undefined && { equipmentItemId: dto.equipmentItemId }),
         ...(dto.softwareLicenseId !== undefined && { softwareLicenseId: dto.softwareLicenseId }),
         ...(dto.customName !== undefined && { customName: dto.customName }),
@@ -61,24 +62,32 @@ export class AssetRequestRepository {
     });
   }
 
-  findById(id: number) {
-    return this.prisma.assetRequest.findUnique({
-      where: { id },
+  findById(id: number, actorClubId?: number) {
+    return this.prisma.assetRequest.findFirst({
+      where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       include: detailInclude,
     });
   }
 
-  findByRequester(requesterId: number, status?: AssetRequestStatus) {
+  findByRequester(requesterId: number, status?: AssetRequestStatus, actorClubId?: number) {
     return this.prisma.assetRequest.findMany({
-      where: { requesterId, ...(status !== undefined && { status }) },
+      where: {
+        requesterId,
+        ...(status !== undefined && { status }),
+        ...(actorClubId !== undefined ? { clubId: actorClubId } : {}),
+      },
       include: listInclude,
       orderBy: { createdAt: "desc" },
     });
   }
 
-  findByDepartment(departmentId: number, status?: AssetRequestStatus) {
+  findByDepartment(departmentId: number, status?: AssetRequestStatus, actorClubId?: number) {
     return this.prisma.assetRequest.findMany({
-      where: { departmentId, ...(status !== undefined && { status }) },
+      where: {
+        departmentId,
+        ...(status !== undefined && { status }),
+        ...(actorClubId !== undefined ? { clubId: actorClubId } : {}),
+      },
       include: listInclude,
       orderBy: { createdAt: "desc" },
     });
@@ -87,11 +96,12 @@ export class AssetRequestRepository {
   /**
    * SUBMITTED requests where the user is the leaf department's head (팀장).
    */
-  findPendingForLeader(userId: number) {
+  findPendingForLeader(userId: number, actorClubId?: number) {
     return this.prisma.assetRequest.findMany({
       where: {
         status: "SUBMITTED",
         department: { headId: userId },
+        ...(actorClubId !== undefined ? { clubId: actorClubId } : {}),
       },
       include: listInclude,
       orderBy: { createdAt: "desc" },
@@ -101,20 +111,24 @@ export class AssetRequestRepository {
   /**
    * LEADER_APPROVED requests where the user is the parent department's head (부서장).
    */
-  findPendingForDeptHead(userId: number) {
+  findPendingForDeptHead(userId: number, actorClubId?: number) {
     return this.prisma.assetRequest.findMany({
       where: {
         status: "LEADER_APPROVED",
         department: { parent: { headId: userId } },
+        ...(actorClubId !== undefined ? { clubId: actorClubId } : {}),
       },
       include: listInclude,
       orderBy: { createdAt: "desc" },
     });
   }
 
-  findAll(status?: AssetRequestStatus) {
+  findAll(status?: AssetRequestStatus, actorClubId?: number) {
     return this.prisma.assetRequest.findMany({
-      where: status !== undefined ? { status } : {},
+      where: {
+        ...(status !== undefined && { status }),
+        ...(actorClubId !== undefined ? { clubId: actorClubId } : {}),
+      },
       include: listInclude,
       orderBy: { createdAt: "desc" },
     });

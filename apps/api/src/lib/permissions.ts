@@ -100,6 +100,18 @@ export function assertClubAccess(req: Request, targetClubId: number | null | und
   }
 }
 
+/**
+ * 스코핑용 clubId 획득. Phase 2.5: clubId=null 유저의 크로스클럽 접근 차단.
+ * - SUPER_ADMIN: undefined (전 클럽 조회 허용)
+ * - clubId 있음: 그 값
+ * - 그 외 (clubId=null 인 일반 유저): 403 throw
+ */
+export function requireClubScope(user: Express.User): number | undefined {
+  if (user.role === 'SUPER_ADMIN') return user.clubId ?? undefined;
+  if (user.clubId != null) return user.clubId;
+  throw new AppError(403, 'CLUB_SCOPE_REQUIRED');
+}
+
 export function canApprovePlan(userRole: string, requiredLevel: string | null): boolean {
   switch (requiredLevel ?? 'HEAD') {
     case 'HEAD':

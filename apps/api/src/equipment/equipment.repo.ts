@@ -49,13 +49,16 @@ const LOAN_SELECT = {
 export class EquipmentRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findAllItems() {
-    return this.prisma.equipmentItem.findMany({ select: ITEM_SELECT });
+  findAllItems(actorClubId?: number) {
+    return this.prisma.equipmentItem.findMany({
+      where: actorClubId !== undefined ? { clubId: actorClubId } : undefined,
+      select: ITEM_SELECT,
+    });
   }
 
-  findItemById(id: number) {
-    return this.prisma.equipmentItem.findUnique({
-      where: { id },
+  findItemById(id: number, actorClubId?: number) {
+    return this.prisma.equipmentItem.findFirst({
+      where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       select: {
         ...ITEM_SELECT,
         units: { select: UNIT_SELECT },
@@ -64,7 +67,7 @@ export class EquipmentRepository {
     });
   }
 
-  createItem(dto: CreateEquipmentItemDto) {
+  createItem(dto: CreateEquipmentItemDto, actorClubId?: number) {
     return this.prisma.equipmentItem.create({
       data: {
         name: dto.name,
@@ -72,6 +75,7 @@ export class EquipmentRepository {
         trackedIndividually: dto.trackedIndividually,
         quantity: dto.quantity ?? null,
         lowStockThreshold: dto.lowStockThreshold ?? null,
+        clubId: actorClubId ?? null,
       },
       select: ITEM_SELECT,
     });
@@ -85,10 +89,11 @@ export class EquipmentRepository {
     });
   }
 
-  createUnit(equipmentItemId: number, dto?: CreateEquipmentUnitDto) {
+  createUnit(equipmentItemId: number, dto?: CreateEquipmentUnitDto, actorClubId?: number) {
     return this.prisma.equipmentUnit.create({
       data: {
         equipmentItemId,
+        clubId: actorClubId ?? null,
         ...(dto?.serialNumber && { serialNumber: dto.serialNumber }),
         ...(dto?.purchasedAt && { purchasedAt: dto.purchasedAt }),
         ...(dto?.purchaseValue !== undefined && { purchaseValue: dto.purchaseValue, bookValue: dto.purchaseValue }),
@@ -121,8 +126,11 @@ export class EquipmentRepository {
     });
   }
 
-  findUnitById(id: number) {
-    return this.prisma.equipmentUnit.findUnique({ where: { id }, select: UNIT_SELECT });
+  findUnitById(id: number, actorClubId?: number) {
+    return this.prisma.equipmentUnit.findFirst({
+      where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
+      select: UNIT_SELECT,
+    });
   }
 
   updateUnitStatus(id: number, status: EquipmentUnitStatus, disposalData?: { disposedById?: number; disposedAt?: Date; disposalNote?: string }) {
@@ -189,31 +197,38 @@ export class EquipmentRepository {
     });
   }
 
-  findLoanById(id: number) {
-    return this.prisma.equipmentLoan.findUnique({ where: { id }, select: LOAN_SELECT });
+  findLoanById(id: number, actorClubId?: number) {
+    return this.prisma.equipmentLoan.findFirst({
+      where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
+      select: LOAN_SELECT,
+    });
   }
 
-  findAllLoans(status?: EquipmentLoanStatus) {
+  findAllLoans(status?: EquipmentLoanStatus, actorClubId?: number) {
+    const where: any = {};
+    if (status !== undefined) where.status = status;
+    if (actorClubId !== undefined) where.clubId = actorClubId;
     return this.prisma.equipmentLoan.findMany({
-      ...(status !== undefined && { where: { status } }),
+      ...(Object.keys(where).length > 0 && { where }),
       select: LOAN_SELECT,
       orderBy: { requestedAt: "desc" },
     });
   }
 
-  findMyLoans(userId: number) {
+  findMyLoans(userId: number, actorClubId?: number) {
     return this.prisma.equipmentLoan.findMany({
-      where: { requestedById: userId },
+      where: { requestedById: userId, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       select: LOAN_SELECT,
       orderBy: { requestedAt: "desc" },
     });
   }
 
-  createLoan(requestedById: number, dto: CreateEquipmentLoanDto) {
+  createLoan(requestedById: number, dto: CreateEquipmentLoanDto, actorClubId?: number) {
     return this.prisma.equipmentLoan.create({
       data: {
         requestedById,
         equipmentItemId: dto.equipmentItemId,
+        clubId: actorClubId ?? null,
         ...(dto.notes !== undefined && { notes: dto.notes }),
       },
       select: LOAN_SELECT,
