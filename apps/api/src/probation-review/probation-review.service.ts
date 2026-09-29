@@ -156,12 +156,13 @@ export class ProbationReviewService {
     const staff = await this.repo.findStaffWithDept(staffRecordId);
     if (!staff) throw new AppError(404, "STAFF_RECORD_NOT_FOUND");
 
-    // Read gate: dept head, HR_MANAGER/HR_STAFF, admin, or self.
+    // Read gate: dept head, HR_MANAGER/HR_STAFF, admin-like, or self.
+    // #580: 이전 isFrontOffice fallback 이 너무 넓어 (ASSET/FACILITY/TD/FINANCE 등) 전 FO role 통과
+    // → 제거. HR 관계자 + dept.head + admin-like + 본인만 허용.
     const isDeptHead = staff.department?.headId === reviewerId;
     const isHR = role === "FRONT_OFFICE" && (foRole === "HR_MANAGER" || foRole === "HR_STAFF");
-    const isFrontOffice = role === "FRONT_OFFICE" && !!foRole;
     const isSelf = !!staff.email && (await this.repo.findStaffIdByUserEmail(staff.email))?.id === reviewerId;
-    if (!isDeptHead && !isHR && !isAdminLike(role) && !isSelf && !isFrontOffice) {
+    if (!isDeptHead && !isHR && !isAdminLike(role) && !isSelf) {
       throw new AppError(403, "FORBIDDEN");
     }
 
