@@ -1,0 +1,35 @@
+{
+  "alerts_fired_count": 0,
+  "alerts_messages": [],
+  "per_payload": [
+    {
+      "payload_name": "script_tag",
+      "payload_value": "<script>alert('XSS1')</script>",
+      "dept_id": 222,
+      "found_in_html": false,
+      "escaped": true
+    },
+    {
+      "payload_name": "img_onerror",
+      "payload_value": "<img src=x onerror=alert('XSS2')>",
+      "dept_id": 223,
+      "found_in_html": false,
+      "escaped": true
+    },
+    {
+      "payload_name": "svg_onload",
+      "payload_value": "<svg onload=alert('XSS3')>",
+      "dept_id": 224,
+      "found_in_html": false,
+      "escaped": true
+    },
+    {
+      "payload_name": "iframe_srcdoc",
+      "payload_value": "<iframe srcdoc=\"<script>alert('XSS4')</script>\"></iframe>",
+      "dept_id": 225,
+      "found_in_html": false,
+      "escaped": true
+    }
+  ],
+  "fe_url": "http://localhost:5173/admin/departments"
+}
