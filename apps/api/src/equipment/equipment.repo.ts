@@ -24,7 +24,7 @@ const UNIT_SELECT = {
   assignments: {
     where: { returnedAt: null },
     take: 1,
-    select: { player: { select: { name: true } } },
+    select: { player: { select: { playerName: true } } },
   },
 } as any;
 
@@ -290,14 +290,14 @@ export class EquipmentRepository {
     });
   }
 
-  returnLoan(id: number, returnedById: number, returnNote?: string) {
+  returnLoan(id: number, _returnedById: number, returnNote?: string) {
+    // NOTE: returnedById 파라미터는 audit log 에서만 사용됨 (schema 에 필드 없음).
     return this.prisma.equipmentLoan.update({
       where: { id },
       data: {
         status: "RETURNED" as EquipmentLoanStatus,
         returnedAt: new Date(),
-        returnedById,
-        ...(returnNote && { returnNote }) as any,
+        ...(returnNote !== undefined && { returnNote }),
       },
       select: LOAN_SELECT,
     });
