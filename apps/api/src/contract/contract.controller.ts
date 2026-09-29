@@ -28,8 +28,13 @@ export class ContractController {
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      //console.log(12)
-      res.status(200).json(await this.service.getContractById(Number(req.params["id"])));
+      const user = requireUser(req);
+      res.status(200).json(await this.service.getContractById(Number(req.params["id"]), {
+        userId: user.id,
+        role: user.role,
+        frontOfficeRole: user.frontOfficeRole ?? null,
+        departmentCategories: user.departmentCategories ?? [],
+      }));
     } catch (err) {
       next(err);
     }

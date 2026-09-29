@@ -2,6 +2,7 @@ import { ContractRepository } from "./contract.repo";
 import { WageCapService } from "./wage-cap.service";
 import { NotificationRepository } from "../notification/notification.repo";
 import { AppError } from "../lib/appError";
+import { isAdminLike, canReadFinance, canReadHR } from "../lib/permissions";
 import { writeAuditLog } from "../lib/auditLog";
 import { getPrisma } from "../lib/prisma";
 import {
@@ -28,9 +29,31 @@ export class ContractService {
     return this.repo.findByPlayerId(playerId);
   }
 
-  async getContractById(id: number) {
+  // Issue #560: /contracts/:id owner-scope guard.
+  // Actor 컨텍스트가 없으면 하위 호환 위해 그대로 리턴(내부 호출용). 컨트롤러는 반드시 actor 를 넘겨야 함.
+  async getContractById(id: number, actor?: {
+    userId: number
+    role: string
+    frontOfficeRole?: string | null
+    departmentCategories?: string[]
+  }) {
     const contract = await this.repo.findById(id);
     if (!contract) throw new AppError(404, "CONTRACT_NOT_FOUND");
+    if (!actor) return contract;
+
+    const isPrivileged =
+      isAdminLike(actor.role) ||
+      actor.role === "GM" ||
+      canReadFinance(actor.role, actor.frontOfficeRole, actor.departmentCategories) ||
+      canReadHR(actor.role, actor.frontOfficeRole, actor.departmentCategories);
+
+    if (isPrivileged) return contract;
+
+    // PLAYER 본인 계약만 조회 허용. contract.playerId → Player.userId 매핑 확인.
+    const owner = await this.repo.findPlayerOwnerUserId(contract.playerId);
+    if (!owner || owner.userId !== actor.userId) {
+      throw new AppError(403, "FORBIDDEN");
+    }
     return contract;
   }
 
