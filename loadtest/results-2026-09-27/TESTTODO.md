@@ -178,6 +178,7 @@
 | Stress | ➖ |
 | 보안 — IDOR (PLAYER · HR → 급여 명세 조회) | ✅ 두 세션 모두 20/20 건 404 (verdict PASS) |
 | 보안 — Sub-actions `/payroll/:id/approve`·`/cancel`·`/salaries` 등 11건 프로브 | 🔲 미커버 |
+| 보안 — 재무팀장 · GM · 관리자 + HR · 나머지 401/403 | ✅ **FIXED** (PR #570 · closes #565) — `canReadPayroll` / `canWritePayroll` helper 도입. `role-boundary-probe.k6.js` 재실행 `boundary_leaks=0` 검증. Payroll 은 Finance + HR (급여 계산·4대보험·원천세) 공동 접근 정책. 43 unit tests 통과 |
 
 ---
 
