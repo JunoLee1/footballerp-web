@@ -32,6 +32,7 @@ import { MatchLineupPage } from '@/pages/matches/MatchLineupPage'
 import { RankingsPage } from '@/pages/matches/RankingsPage'
 import { TacticalAnalysisPage } from '@/pages/tactical/TacticalAnalysisPage'
 import { AssetInventoryPage } from '@/pages/asset/AssetInventoryPage'
+import { SoftwareLicensePage } from '@/pages/admin/SoftwareLicensePage'
 import { AssetRequestPage } from '@/pages/asset/AssetRequestPage'
 import { AssetRequestApprovalPage } from '@/pages/asset/AssetRequestApprovalPage'
 import DepartmentAssetKitPage from '@/pages/asset/DepartmentAssetKitPage'
@@ -211,6 +212,7 @@ function App() {
             <Route path="/matches/:id/lineup" element={<MatchLineupPage />} />
             <Route path="/matches/:id" element={<MatchDetailPage />} />
             <Route path="/asset/inventory" element={<AssetInventoryPage />} />
+            <Route path="/admin/software-licenses" element={<SoftwareLicensePage />} />
             <Route path="/asset/request" element={<AssetRequestPage />} />
             <Route path="/asset/approval" element={<AssetRequestApprovalPage />} />
             <Route path="/hiring" element={<HiringDispatchPage />} />

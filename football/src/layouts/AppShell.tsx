@@ -71,6 +71,7 @@ import {
   Warehouse,
   Wrench,
   Lock,
+  KeyRound,
 } from 'lucide-react'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -714,6 +715,15 @@ const NAV_ITEMS: NavItem[] = [
     section: 'nav.section.management',
     subSection: 'nav.subsection.system',
     roles: ['SUPER_ADMIN'],
+  },
+  {
+    to: '/admin/software-licenses',
+    label: 'nav.item.softwareLicenses',
+    icon: KeyRound,
+    section: 'nav.section.management',
+    subSection: 'nav.subsection.system',
+    roles: ['ADMIN', 'SUPER_ADMIN', 'GM', 'FRONT_OFFICE'],
+    frontOfficeRoles: ['ASSET_MANAGER', 'ASSET_STAFF'],
   },
 
   // PLAYER 전용

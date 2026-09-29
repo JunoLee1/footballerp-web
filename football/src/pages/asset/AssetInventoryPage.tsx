@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { inventoryApi, type InventoryItem, type CreateInventoryItemDto } from '@/services/inventory.service'
-import { softwareLicenseApi, type SoftwareLicense, type CreateSoftwareLicenseDto } from '@/services/software-license.service'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -15,7 +13,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { AlertTriangle, Plus, Minus, ChevronUp, ChevronDown } from 'lucide-react'
 
 function InventoryTab() {
@@ -201,156 +198,15 @@ function InventoryTab() {
   )
 }
 
-function SoftwareLicenseTab() {
-  const { user } = useCurrentUser()
-  const isAssetManager = user?.role === 'FRONT_OFFICE' && user?.frontOfficeRole === 'ASSET_MANAGER'
-
-  const [licenses, setLicenses] = useState<SoftwareLicense[]>([])
-  const [loading, setLoading] = useState(true)
-  const [addOpen, setAddOpen] = useState(false)
-  const [form, setForm] = useState<CreateSoftwareLicenseDto>({ name: '', vendor: '', totalSeats: 1 })
-  const [acting, setActing] = useState(false)
-
-  const load = async () => {
-    try {
-      setLicenses(await softwareLicenseApi.list())
-    } catch {
-      toast.error('라이선스 목록을 불러오지 못했습니다')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => { load() }, [])
-
-  const handleAdd = async () => {
-    if (!form.name.trim() || !form.vendor.trim() || form.totalSeats < 1) {
-      toast.error('이름, 공급사, 시트 수를 입력해주세요')
-      return
-    }
-    setActing(true)
-    try {
-      const created = await softwareLicenseApi.create(form)
-      setLicenses(prev => [created, ...prev])
-      setAddOpen(false)
-      setForm({ name: '', vendor: '', totalSeats: 1 })
-      toast.success('라이선스가 등록됐습니다')
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : '등록에 실패했습니다')
-    } finally { setActing(false) }
-  }
-
-  if (loading) return <div className="space-y-2 p-4">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-14 w-full" />)}</div>
-
-  return (
-    <div className="space-y-4">
-      {isAssetManager && (
-        <div className="flex justify-end">
-          <Button size="sm" onClick={() => setAddOpen(true)}><Plus className="h-4 w-4 mr-1" />라이선스 추가</Button>
-        </div>
-      )}
-
-      <div className="rounded border divide-y">
-        {licenses.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center py-8">등록된 라이선스가 없습니다</p>
-        )}
-        {licenses.map(lic => {
-          const isFull = lic.usedSeats >= lic.totalSeats
-          const usagePct = lic.totalSeats > 0 ? Math.round((lic.usedSeats / lic.totalSeats) * 100) : 0
-          const isExpiringSoon = lic.expiresAt && new Date(lic.expiresAt) < new Date(Date.now() + 30 * 86400_000)
-          return (
-            <div key={lic.id} className="px-4 py-3 space-y-2">
-              <div className="flex items-start justify-between gap-2">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium">{lic.name}</p>
-                    {isFull && <Badge variant="destructive" className="text-xs">시트 소진</Badge>}
-                    {isExpiringSoon && !isFull && <Badge variant="outline" className="text-xs border-yellow-400 text-yellow-700">만료 임박</Badge>}
-                  </div>
-                  <p className="text-xs text-muted-foreground">{lic.vendor}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className={`text-sm font-semibold ${isFull ? 'text-red-600' : ''}`}>
-                    {lic.usedSeats} / {lic.totalSeats}석
-                  </p>
-                  <p className="text-xs text-muted-foreground">{usagePct}% 사용</p>
-                </div>
-              </div>
-              <div className="w-full bg-muted rounded-full h-1.5">
-                <div
-                  className={`h-1.5 rounded-full ${isFull ? 'bg-red-500' : usagePct > 80 ? 'bg-yellow-500' : 'bg-green-500'}`}
-                  style={{ width: `${Math.min(usagePct, 100)}%` }}
-                />
-              </div>
-              {lic.expiresAt && (
-                <p className="text-xs text-muted-foreground">
-                  만료: {new Date(lic.expiresAt).toLocaleDateString('ko-KR')}
-                  {lic.renewalCost != null && ` · 갱신비 ${Number(lic.renewalCost).toLocaleString()}원`}
-                </p>
-              )}
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Add dialog */}
-      <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader><DialogTitle>소프트웨어 라이선스 추가</DialogTitle></DialogHeader>
-          <div className="space-y-3 py-2">
-            <div className="space-y-1">
-              <Label>소프트웨어명 *</Label>
-              <Input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="예: Adobe Creative Cloud" />
-            </div>
-            <div className="space-y-1">
-              <Label>공급사 *</Label>
-              <Input value={form.vendor} onChange={e => setForm(f => ({ ...f, vendor: e.target.value }))} placeholder="예: Adobe Inc." />
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="space-y-1">
-                <Label>총 시트 수 *</Label>
-                <Input type="number" min={1} value={form.totalSeats} onChange={e => setForm(f => ({ ...f, totalSeats: Number(e.target.value) }))} />
-              </div>
-              <div className="space-y-1">
-                <Label>갱신 비용</Label>
-                <Input type="number" placeholder="원" value={form.renewalCost ?? ''} onChange={e => setForm(f => ({ ...f, renewalCost: e.target.value ? Number(e.target.value) : undefined }))} />
-              </div>
-            </div>
-            <div className="space-y-1">
-              <Label>만료일</Label>
-              <Input type="date" value={form.expiresAt ?? ''} onChange={e => setForm(f => ({ ...f, expiresAt: e.target.value || undefined }))} />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAddOpen(false)} disabled={acting}>취소</Button>
-            <Button onClick={handleAdd} disabled={acting}>{acting ? '추가 중...' : '추가'}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
-  )
-}
-
 export function AssetInventoryPage() {
   return (
     <div className="flex flex-col h-full">
       <div className="border-b px-6 py-4 shrink-0">
-        <h1 className="text-lg font-semibold tracking-tight">재고 · 라이선스 관리</h1>
-        <p className="text-sm text-muted-foreground mt-0.5">소모품 재고 조정 및 소프트웨어 라이선스 현황</p>
+        <h1 className="text-lg font-semibold tracking-tight">소모품 재고</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">소모품 재고 조정 · 최소 임계값 알림</p>
       </div>
       <div className="flex-1 overflow-auto p-6">
-        <Tabs defaultValue="inventory">
-          <TabsList className="mb-4">
-            <TabsTrigger value="inventory">소모품 재고</TabsTrigger>
-            <TabsTrigger value="licenses">소프트웨어 라이선스</TabsTrigger>
-          </TabsList>
-          <TabsContent value="inventory">
-            <InventoryTab />
-          </TabsContent>
-          <TabsContent value="licenses">
-            <SoftwareLicenseTab />
-          </TabsContent>
-        </Tabs>
+        <InventoryTab />
       </div>
     </div>
   )
