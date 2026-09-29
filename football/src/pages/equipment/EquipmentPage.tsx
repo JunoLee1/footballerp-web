@@ -10,6 +10,7 @@ import {
   UNIT_STATUS_STYLE,
   LOAN_STATUS_LABEL,
   LOAN_STATUS_STYLE,
+  isLoanOverdue,
 } from '@/types/equipment'
 import { useCurrentUser } from '@/hooks/useCurrentUser'
 import { usePlayers } from '@/hooks/usePlayers'
@@ -238,24 +239,42 @@ function LoanRequestDialog({ open, onOpenChange, onSaved }: {
   const { t } = useTranslation('admin')
   const [items, setItems] = useState<EquipmentItem[]>([])
   const [itemId, setItemId] = useState('')
+  const [dueDate, setDueDate] = useState('')
   const [notes, setNotes] = useState('')
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
-    if (open) equipmentApi.listItems().then(setItems).catch(() => null)
+    if (open) {
+      equipmentApi.listItems().then(setItems).catch(() => null)
+      const def = new Date()
+      def.setDate(def.getDate() + 14)
+      setDueDate(def.toISOString().slice(0, 10))
+    }
   }, [open])
 
   const handleSave = async () => {
     if (!itemId) { toast.error(t('equipmentPage.loanRequestDialog.itemRequired')); return }
+    if (!dueDate) { toast.error(t('equipmentPage.loanRequestDialog.dueDateRequired')); return }
+    const parsed = new Date(dueDate)
+    if (Number.isNaN(parsed.getTime()) || parsed.getTime() <= Date.now()) {
+      toast.error(t('equipmentPage.loanRequestDialog.dueDateInvalid'))
+      return
+    }
     setSaving(true)
     try {
-      await loanApi.request({ equipmentItemId: Number(itemId), ...(notes && { notes }) })
+      await loanApi.request({
+        equipmentItemId: Number(itemId),
+        dueDate: parsed.toISOString(),
+        ...(notes && { notes }),
+      })
       toast.success(t('equipmentPage.loanRequestDialog.saved'))
       onSaved()
       onOpenChange(false)
     } catch { toast.error(t('equipmentPage.loanRequestDialog.saveFailed')) }
     finally { setSaving(false) }
   }
+
+  const minDate = new Date(Date.now() + 86_400_000).toISOString().slice(0, 10)
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -272,6 +291,10 @@ function LoanRequestDialog({ open, onOpenChange, onSaved }: {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div>
+            <Label>{t('equipmentPage.loanRequestDialog.dueDateLabel')}</Label>
+            <Input type="date" min={minDate} value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
           </div>
           <div><Label>{t('equipmentPage.loanRequestDialog.notesLabel')}</Label><Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} /></div>
         </div>
@@ -327,22 +350,37 @@ function LoansTab({ isKitManager }: { isKitManager: boolean }) {
               <TableHead>{t('equipmentPage.loansTable.item')}</TableHead>
               {isKitManager && <TableHead>{t('equipmentPage.loansTable.requester')}</TableHead>}
               <TableHead>{t('equipmentPage.loansTable.requestedAt')}</TableHead>
+              <TableHead>{t('equipmentPage.loansTable.dueDate')}</TableHead>
               <TableHead>{t('equipmentPage.loansTable.status')}</TableHead>
               {isKitManager && <TableHead>{t('equipmentPage.loansTable.notes')}</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loans.map((loan) => (
-              <TableRow key={loan.id}>
+            {loans.map((loan) => {
+              const overdue = isLoanOverdue(loan)
+              return (
+              <TableRow key={loan.id} className={overdue ? 'bg-red-50/40' : undefined}>
                 <TableCell className="font-medium">{loan.equipmentItem.name}</TableCell>
                 {isKitManager && <TableCell className="text-sm">{loan.requestedBy.nickname}</TableCell>}
                 <TableCell className="text-sm text-muted-foreground">
                   {new Date(loan.requestedAt).toLocaleDateString('ko-KR')}
                 </TableCell>
+                <TableCell className="text-sm">
+                  <span className={overdue ? 'text-red-700 font-medium' : 'text-muted-foreground'}>
+                    {new Date(loan.dueDate).toLocaleDateString('ko-KR')}
+                  </span>
+                </TableCell>
                 <TableCell>
-                  <Badge variant="outline" className={LOAN_STATUS_STYLE[loan.status]}>
-                    {LOAN_STATUS_LABEL[loan.status]}
-                  </Badge>
+                  <div className="flex items-center gap-1.5">
+                    <Badge variant="outline" className={LOAN_STATUS_STYLE[loan.status]}>
+                      {LOAN_STATUS_LABEL[loan.status]}
+                    </Badge>
+                    {overdue && (
+                      <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200">
+                        {t('equipmentPage.overdueBadge')}
+                      </Badge>
+                    )}
+                  </div>
                 </TableCell>
                 {isKitManager && (
                   <TableCell>
@@ -363,7 +401,8 @@ function LoansTab({ isKitManager }: { isKitManager: boolean }) {
                   </TableCell>
                 )}
               </TableRow>
-            ))}
+              )
+            })}
           </TableBody>
         </Table>
       )}

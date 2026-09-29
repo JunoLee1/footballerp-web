@@ -32,6 +32,13 @@ function computeFinalCost(originalCost: number, discountRate: number): number {
   return Math.round(originalCost * (1 - discountRate / 100));
 }
 
+// #551: EquipmentLoan.dueDate 필수 필드 → 의무장비 대여는 자체 ledger 로 escalation 관리하므로
+// 기본 30일 dueDate 를 부여하고, 일반 EquipmentLoan overdue cron 은 medicalLedger 있으면 제외한다.
+const MEDICAL_LOAN_DEFAULT_DUE_DAYS = 30;
+function defaultMedicalLoanDueDate(): Date {
+  return new Date(Date.now() + MEDICAL_LOAN_DEFAULT_DUE_DAYS * 86_400_000);
+}
+
 async function getMedicalDeptId(
   tx: Prisma.TransactionClient | typeof prisma = prisma
 ): Promise<number> {
@@ -88,6 +95,7 @@ export async function requestNormalLoan(
         ...(dto.equipmentUnitId !== undefined && { equipmentUnitId: dto.equipmentUnitId }),
         ...(dto.notes !== undefined && { notes: dto.notes }),
         status: "REQUESTED",
+        dueDate: defaultMedicalLoanDueDate(),
       },
     });
 
@@ -151,6 +159,7 @@ export async function requestEmergencyLoan(
         ...(dto.notes !== undefined && { notes: dto.notes }),
         status: "ISSUED",
         issuedAt: new Date(),
+        dueDate: defaultMedicalLoanDueDate(),
       },
     });
 

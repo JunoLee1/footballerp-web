@@ -426,8 +426,10 @@
       "requester": "신청자",
       "status": "상태",
       "requestedAt": "신청일",
+      "dueDate": "반납기한",
       "notes": "비고"
     },
+    "overdueBadge": "연체",
     "createDialog": {
       "title": "장비 등록",
       "nameLabel": "이름 *",
@@ -469,7 +471,10 @@
       "requestTitle": "대출 신청",
       "itemLabel": "장비 *",
       "itemPlaceholder": "장비를 선택하세요",
-      "itemRequired": "장비를 선택해주세요."
+      "itemRequired": "장비를 선택해주세요.",
+      "dueDateLabel": "반납기한 *",
+      "dueDateRequired": "반납기한을 선택해주세요.",
+      "dueDateInvalid": "반납기한은 오늘 이후 날짜여야 합니다."
     },
     "loansAll": "전체 대여 신청 목록",
     "loansOwn": "내 대여 신청"

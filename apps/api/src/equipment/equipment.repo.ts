@@ -250,12 +250,14 @@ export class EquipmentRepository {
   }
 
   findLoansToNotifyOverdue(now: Date = new Date()) {
+    // 의무장비 대여는 자체 ledger escalation 으로 알림 처리 → 여기서 제외.
     return this.prisma.equipmentLoan.findMany({
       where: {
         status: "ISSUED",
         returnedAt: null,
         dueDate: { lt: now },
         overdueNotifiedAt: null,
+        medicalLedger: { is: null },
       },
       select: {
         id: true,
