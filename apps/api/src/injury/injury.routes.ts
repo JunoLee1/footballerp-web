@@ -65,12 +65,24 @@ router.put("/:id/report", auth, (req, res, next) => {
 router.post("/:id/report/sign", auth, controller.signReport);
 router.delete("/:id/report/sign", auth, controller.unsignReport);
 
-// Assessment
-router.get("/:id/assessment", auth, controller.getAssessment);
+// Assessment (issue #575 · GDPR — 의무팀·감독진·관리자만)
+router.get("/:id/assessment", auth, (req, res, next) => {
+  const user = req.user!;
+  if (!canReadInjuryReport(user.role, user.coachingRole, user.departmentCategories)) {
+    return next(new AppError(403, "FORBIDDEN"));
+  }
+  next();
+}, controller.getAssessment);
 router.put("/:id/assessment", auth, controller.processAssessment);
 
-// External Reports
-router.get("/:id/external-reports", auth, controller.getExternalReports);
+// External Reports (issue #575)
+router.get("/:id/external-reports", auth, (req, res, next) => {
+  const user = req.user!;
+  if (!canReadInjuryReport(user.role, user.coachingRole, user.departmentCategories)) {
+    return next(new AppError(403, "FORBIDDEN"));
+  }
+  next();
+}, controller.getExternalReports);
 router.patch("/:id/external-reports/:reportId/status", auth, controller.updateExternalReportStatus);
 
 export default router;
