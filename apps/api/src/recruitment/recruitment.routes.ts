@@ -6,8 +6,9 @@ import { RecruitmentController } from "./recruitment.controller";
 import { NotificationRepository } from "../notification/notification.repo";
 import { PlanReportRepository } from "../plan-report/plan-report.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new RecruitmentRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

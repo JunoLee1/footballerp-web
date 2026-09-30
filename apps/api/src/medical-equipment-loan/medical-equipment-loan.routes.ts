@@ -2,8 +2,9 @@ import { Router } from "express";
 import { auth } from "../lib/authMiddleware";
 import { requireReadMedical } from "../lib/medicalGuards";
 import * as controller from "./medical-equipment-loan.controller";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 
 router.get("/", auth, requireReadMedical, controller.listLoans);
 router.post("/request", auth, controller.requestNormal);

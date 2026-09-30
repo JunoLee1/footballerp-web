@@ -14,8 +14,9 @@ import { AllowanceController } from "./allowance/allowance.controller";
 import { RunRepository } from "./run/run.repo";
 import { RunService } from "./run/run.service";
 import { RunController } from "./run/run.controller";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 
 const prisma = getPrisma();
 

@@ -6,8 +6,9 @@ import { HiringAutomationService } from "./hiring-automation.service";
 import { HiringAutomationController } from "./hiring-automation.controller";
 import { AppError } from "../lib/appError";
 import { canReadHR, canWriteHR, isAdminLike } from "../lib/permissions";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new HiringAutomationRepository(getPrisma());
 const service = new HiringAutomationService(repo);
 const controller = new HiringAutomationController(service);

@@ -4,6 +4,7 @@ import { getPrisma } from "../lib/prisma";
 import { DepartmentAssetKitController } from "./department-asset-kit.controller";
 import { DepartmentAssetKitRepository } from "./department-asset-kit.repo";
 import { DepartmentAssetKitService } from "./department-asset-kit.service";
+import { intIdRouter } from "../lib/idParamGuard";
 
 /**
  * Routes for DepartmentDefaultAssetKit (#373).
@@ -17,7 +18,7 @@ const repo = new DepartmentAssetKitRepository(prisma);
 const service = new DepartmentAssetKitService(repo, prisma);
 const controller = new DepartmentAssetKitController(service);
 
-const router = Router();
+const router = intIdRouter();
 
 // GET /department-asset-kits/:departmentId — ADMIN + ASSET_MANAGER + ASSET_STAFF (read).
 router.get("/:departmentId", auth, controller.get);

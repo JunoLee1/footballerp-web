@@ -10,8 +10,9 @@ import { RecruitmentService } from '../recruitment/recruitment.service'
 import { auth } from '../lib/authMiddleware'
 import { requireReadHR, requireWriteHR } from '../lib/hrGuards'
 import { getPrisma } from '../lib/prisma'
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router()
+const router = intIdRouter()
 const prisma = getPrisma()
 const repo = new PlanReportRepository(prisma)
 const notifRepo = new NotificationRepository(prisma)

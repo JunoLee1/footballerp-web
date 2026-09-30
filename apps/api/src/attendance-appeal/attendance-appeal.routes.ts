@@ -6,8 +6,9 @@ import { AttendanceAppealRepository } from "./attendance-appeal.repo";
 import { AttendanceAppealService } from "./attendance-appeal.service";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new AttendanceAppealRepository(getPrisma());
 const notifRepo = new NotificationRepository(getPrisma());
 const service = new AttendanceAppealService(repo, notifRepo);

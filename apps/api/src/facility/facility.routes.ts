@@ -17,8 +17,9 @@ import { PreventiveScheduleController } from "./preventive-schedule/preventive-s
 import { AccessLogRepository } from "./access-log/access-log.repo";
 import { AccessLogService } from "./access-log/access-log.service";
 import { AccessLogController } from "./access-log/access-log.controller";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 
 const reservationCtrl = new ReservationController();
 

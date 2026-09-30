@@ -4,12 +4,13 @@ import { CoachRepository } from "./coach.repo";
 import { CoachService } from "./coach.service";
 import { CoachController } from "./coach.controller";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
 const repo = new CoachRepository(getPrisma());
 const service = new CoachService(repo);
 const controller = new CoachController(service);
 
-const router = Router();
+const router = intIdRouter();
 
 // HiringRound
 router.get("/rounds", auth, controller.listRounds);

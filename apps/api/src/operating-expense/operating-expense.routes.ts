@@ -8,8 +8,9 @@ import { getPrisma } from "../lib/prisma";
 import { canWriteFinance } from "../lib/permissions";
 import { AppError } from "../lib/appError";
 import { expenseCategoryService } from "../expense-category/expense-category.routes";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new OperatingExpenseRepository(getPrisma());
 const notifRepo = new NotificationRepository(getPrisma());
 const service = new OperatingExpenseService(repo, notifRepo, expenseCategoryService);

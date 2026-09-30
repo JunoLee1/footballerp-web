@@ -10,8 +10,9 @@ import { AppError } from "../lib/appError";
 import { canReadHR, canReadFinance, isAdminLike } from "../lib/permissions";
 import multer from "multer";
 import { gcsUpload } from "../lib/gcs";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 
 const uploadProof = multer({
   storage: multer.memoryStorage(),

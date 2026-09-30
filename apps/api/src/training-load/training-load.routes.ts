@@ -7,8 +7,9 @@ import { TrainingLoadService } from "./training-load.service";
 import { TrainingLoadRepository } from "./training-load.repo";
 import { NotificationRepository } from "../notification/notification.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new TrainingLoadRepository(getPrisma());
 const notifRepo = new NotificationRepository(getPrisma());
 const service = new TrainingLoadService(repo, notifRepo);

@@ -9,8 +9,9 @@ import { ContactLogService } from "./contact-log/contact-log.service";
 import { ContactLogController } from "./contact-log/contact-log.controller";
 import { isAdminLike } from "../lib/permissions";
 import { AppError } from "../lib/appError";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new PartnerRepository(getPrisma());
 const service = new PartnerService(repo);
 const controller = new PartnerController(service);

@@ -5,6 +5,7 @@ import type { Request, Response, NextFunction } from "express";
 import { canReadHR } from "../lib/permissions";
 import { uploadDocument } from "./hr.controller";
 import { gcsUpload } from "../lib/gcs";
+import { intIdRouter } from "../lib/idParamGuard";
 
 const ALLOWED_MIMES = [
   "application/pdf",
@@ -33,6 +34,6 @@ function requireHR(req: Request, res: Response, next: NextFunction) {
   next();
 }
 
-const router = Router();
+const router = intIdRouter();
 router.post("/documents", auth, requireHR, upload.single("file"), gcsUpload("hr-documents", true), uploadDocument);
 export default router;

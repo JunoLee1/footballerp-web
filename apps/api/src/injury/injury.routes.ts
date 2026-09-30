@@ -8,8 +8,9 @@ import { TrainingLoadRepository } from "../training-load/training-load.repo";
 import { getPrisma } from "../lib/prisma";
 import { canReadActiveInjury, canReadInjuryReport } from "../lib/permissions";
 import { AppError } from "../lib/appError";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new InjuryRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

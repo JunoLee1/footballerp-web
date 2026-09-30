@@ -9,8 +9,9 @@ import { requireUser } from "../lib/authMiddleware";
 import { canReadFinance } from "../lib/permissions";
 import { AppError } from "../lib/appError";
 import { getSeasonRevenueActuals } from "../lib/season-actuals";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new DashboardRepository(getPrisma());
 const service = new DashboardService(repo);
 const controller = new DashboardController(service);

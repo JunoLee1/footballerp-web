@@ -6,8 +6,9 @@ import { NotificationRepository } from "../notification/notification.repo";
 import { WageCapService } from "../contract/wage-cap.service";
 import { auth } from "../lib/authMiddleware";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new TransferRequestRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

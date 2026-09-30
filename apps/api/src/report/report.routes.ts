@@ -10,8 +10,9 @@ import { getPrisma } from "../lib/prisma";
 import { isAdminLike } from "../lib/permissions";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new ReportRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

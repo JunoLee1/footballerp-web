@@ -13,6 +13,7 @@ import {
 } from "../lib/email";
 import { BudgetOverrideService } from "./override.service";
 import { BudgetOverrideController } from "./override.controller";
+import { intIdRouter } from "../lib/idParamGuard";
 
 const prisma = getPrisma();
 const notificationRepo = new NotificationRepository(prisma);
@@ -25,7 +26,7 @@ const notifyHook = (event: Parameters<typeof notifyBudgetPlanEvent>[0], ctx: Par
   notifyBudgetPlanEvent(event, ctx, { notificationRepo, email: emailSender });
 const reviewersFn = () => resolveBudgetPlanReviewers(prisma);
 
-const router = Router();
+const router = intIdRouter();
 const service = new BudgetPlanRequestService(prisma, new KnapsackService(), notifyHook, reviewersFn);
 const controller = new BudgetPlanRequestController(service);
 

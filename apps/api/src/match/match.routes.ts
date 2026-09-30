@@ -12,8 +12,9 @@ import { getPrisma } from "../lib/prisma";
 import { MatchSubstitutionRepository } from "./match.substitution.repo";
 import { MatchSubstitutionService } from "./match.substitution.service";
 import { MatchSubstitutionController } from "./match.substitution.controller";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new MatchRepository(getPrisma());
 const service = new MatchService(repo);
 const controller = new MatchController(service);

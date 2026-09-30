@@ -4,8 +4,9 @@ import { getPrisma } from "../lib/prisma";
 import { FormationSnapshotRepository } from "./formation-snapshot.repo";
 import { FormationSnapshotService } from "./formation-snapshot.service";
 import { FormationSnapshotController } from "./formation-snapshot.controller";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new FormationSnapshotRepository(prisma);
 const service = new FormationSnapshotService(repo);

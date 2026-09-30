@@ -7,8 +7,9 @@ import { BudgetControlRepository } from "./budget-control.repo";
 import { BudgetControlService } from "./budget-control.service";
 import { BudgetControlController } from "./budget-control.controller";
 import { expenseCategoryService } from "../expense-category/expense-category.routes";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new BudgetControlRepository(getPrisma());
 const service = new BudgetControlService(repo, expenseCategoryService);
 const controller = new BudgetControlController(service);

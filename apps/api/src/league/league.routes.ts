@@ -7,8 +7,9 @@ import { LeagueController } from "./league.controller";
 import { ClubRepository } from "../club/club.repo";
 import { ClubService } from "../club/club.service";
 import CountryRepository from "../country/country.repo";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 
 const prisma = getPrisma();
 const clubRepo = new ClubRepository(prisma);

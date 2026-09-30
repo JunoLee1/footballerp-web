@@ -5,8 +5,9 @@ import Service from "./country.service"
 import Repository from "./country.repo"
 import {getPrisma} from "../lib/prisma"
 import { CountryApiClient} from "../externalAPI"
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router()
+const router = intIdRouter()
 const client = new CountryApiClient()
 const prisma = getPrisma()
 const repo = new Repository(prisma)

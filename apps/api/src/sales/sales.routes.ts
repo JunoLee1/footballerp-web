@@ -7,8 +7,9 @@ import { SalesController } from "./sales.controller";
 import { FanController } from "./fan/fan.controller";
 import { canReadFinance, canWriteFinance } from "../lib/permissions";
 import { AppError } from "../lib/appError";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new SalesRepository(getPrisma());
 const service = new SalesService(repo, getPrisma());
 const ctrl = new SalesController(service);

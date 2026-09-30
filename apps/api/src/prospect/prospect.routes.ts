@@ -9,9 +9,10 @@ import { getPrisma } from "../lib/prisma";
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { isAdminLike } from "../lib/permissions";
+import { intIdRouter } from "../lib/idParamGuard";
 
 
-const router = Router();
+const router = intIdRouter();
 const repo = new ProspectRepository(getPrisma());
 const service = new ProspectService(repo);
 const controller = new ProspectController(service);

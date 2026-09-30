@@ -8,6 +8,7 @@ import { TrainingRepository } from "../training/training.repo";
 import { InjuryRepository } from "../injury/injury.repo";
 import { AcademyFeeRepository } from "../academy-fee/academy-fee.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
 const prisma = getPrisma();
 const repo = new GuardianRepository(prisma);
@@ -17,7 +18,7 @@ const feeRepo = new AcademyFeeRepository(prisma);
 const service = new GuardianService(repo, trainingRepo, injuryRepo, feeRepo);
 const controller = new GuardianController(service);
 
-const router = Router();
+const router = intIdRouter();
 
 // 초대 코드 발급 — auth만 (ADMIN/FRONT_OFFICE/GM, controller에서 체크)
 router.post("/invite-code", auth, controller.issueInviteCode);

@@ -3,8 +3,9 @@ import { PlanReviewRepository } from "./plan-review.repo";
 import { PlanReviewService } from "./plan-review.service";
 import { auth } from "../lib/authMiddleware";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new PlanReviewRepository(prisma);
 const service = new PlanReviewService(repo, prisma);

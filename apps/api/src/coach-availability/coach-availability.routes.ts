@@ -4,8 +4,9 @@ import { CoachAvailabilityController } from "./coach-availability.controller";
 import { CoachAvailabilityService } from "./coach-availability.service";
 import { CoachAvailabilityRepository } from "./coach-availability.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new CoachAvailabilityRepository(getPrisma());
 const service = new CoachAvailabilityService(repo);
 const controller = new CoachAvailabilityController(service);

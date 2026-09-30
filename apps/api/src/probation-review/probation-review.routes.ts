@@ -5,8 +5,9 @@ import { NotificationRepository } from "../notification/notification.repo";
 import { ProbationReviewController } from "./probation-review.controller";
 import { ProbationReviewRepository } from "./probation-review.repo";
 import { ProbationReviewService } from "./probation-review.service";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new ProbationReviewRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

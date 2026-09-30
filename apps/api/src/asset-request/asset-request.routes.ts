@@ -6,8 +6,9 @@ import { OperatingExpenseRepository } from "../operating-expense/operating-expen
 import { AssetRequestController } from "./asset-request.controller";
 import { AssetRequestRepository } from "./asset-request.repo";
 import { AssetRequestService } from "./asset-request.service";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new AssetRequestRepository(prisma);
 const expenseRepo = new OperatingExpenseRepository(prisma);

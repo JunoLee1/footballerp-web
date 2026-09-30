@@ -5,8 +5,9 @@ import { AcquisitionSurveyController } from "./acquisition-survey.controller";
 import { AcquisitionSurveyService } from "./acquisition-survey.service";
 import { AcquisitionSurveyRepository } from "./acquisition-survey.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new AcquisitionSurveyRepository(getPrisma());
 const service = new AcquisitionSurveyService(repo);
 const controller = new AcquisitionSurveyController(service);

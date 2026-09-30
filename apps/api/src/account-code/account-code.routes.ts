@@ -5,8 +5,9 @@ import { getPrisma } from "../lib/prisma";
 import { AppError } from "../lib/appError";
 import { AccountCodeRepository } from "./account-code.repo";
 import type { AccountCodeType } from "../generated/client";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new AccountCodeRepository(getPrisma());
 
 const checkReadFinance = (req: Request, res: Response, next: NextFunction) => {

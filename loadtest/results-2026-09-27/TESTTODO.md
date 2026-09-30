@@ -989,7 +989,7 @@
 | IDOR (숫자 ID 열거 접근) | 🔲 10 endpoint 프로브 결과 3건 LEAK (`/contracts/:id`, `/notifications/:id/read`) — 나머지 360 endpoint 미커버 |
 | 인증 없는 접근 차단 (401) | 🔲 미러닝 |
 | 인증 우회 (토큰 없음/변조/alg:none) | 🔲 미러닝 |
-| 오버사이즈 문자열 / SQL injection 퍼징 | 🔲 미러닝 |
+| 오버사이즈 문자열 / SQL injection 퍼징 | ✅ **부분 FIXED** (#571 · PR: `fix/id-input-validation-571`) — `common-security-probe.k6.js sql_fuzz` 에서 `/departments/:id`·`/matches/:id`·`/contracts/:id` 500 확인. 원인: Prisma parameterized query 라 실 SQL injection 위험 없으나 `Number(req.params.id) = NaN` 이 Prisma 검증 500 유발. `apps/api/src/lib/idParamGuard.ts` + `intIdRouter()` 팩토리로 79 sub-router 자동 변환, 컨트롤러 도달 전 400 INVALID_ID. UUID :id (player·auth·admin) 는 기존 `requireUuidParam` 유지 (skip). curl 재프로브: 6개 SQL/특수문자 페이로드 모두 400 |
 | 에러 메시지 스택트레이스 노출 여부 | 🔲 미러닝 |
 | XSS 저장 후 프론트 sanitize | 🔲 미러닝 |
 | 탈취 계정 남용 (mass-write rate limit) | 🔲 미러닝 · admin/create endpoint 별 rate-limit 유무 확인 필요 |

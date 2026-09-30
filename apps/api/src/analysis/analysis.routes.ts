@@ -7,8 +7,9 @@ import { getPrisma } from "../lib/prisma";
 import { hasPermission, Permission } from "../lib/permissions";
 import { AppError } from "../lib/appError";
 import { Role } from "../generated/enums";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new AnalysisRepository(getPrisma());
 const service = new AnalysisService(repo);
 const controller = new AnalysisController(service);

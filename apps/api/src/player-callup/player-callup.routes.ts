@@ -5,8 +5,9 @@ import { PlayerCallupService } from "./player-callup.service";
 import { PlayerCallupRepository } from "./player-callup.repo";
 import { NotificationRepository } from "../notification/notification.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new PlayerCallupRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

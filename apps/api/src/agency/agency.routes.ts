@@ -4,8 +4,9 @@ import { AgencyService } from "./agency.service";
 import { AgencyRepository } from "./agency.repo";
 import { auth } from "../lib/authMiddleware";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new AgencyRepository(getPrisma());
 const service = new AgencyService(repo);
 const controller = new AgencyController(service);

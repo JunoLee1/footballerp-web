@@ -5,6 +5,7 @@ import { NotificationRepository } from "../notification/notification.repo";
 import { OnboardingTaskController } from "./onboarding-task.controller";
 import { OnboardingTaskRepository } from "./onboarding-task.repo";
 import { OnboardingTaskService } from "./onboarding-task.service";
+import { intIdRouter } from "../lib/idParamGuard";
 
 const prisma = getPrisma();
 const repo = new OnboardingTaskRepository(prisma);
@@ -12,7 +13,7 @@ const notifRepo = new NotificationRepository(prisma);
 const service = new OnboardingTaskService(repo, notifRepo, prisma);
 const controller = new OnboardingTaskController(service);
 
-const router = Router();
+const router = intIdRouter();
 
 // GET /onboarding-tasks/onboarding/:onboardingId — trainee sees own, HR sees any.
 router.get("/onboarding/:onboardingId", auth, controller.list);

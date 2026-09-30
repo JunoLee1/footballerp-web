@@ -5,8 +5,9 @@ import { VideoService } from "./video.service";
 import { VideoRepository } from "./video.repo";
 import { NotificationRepository } from "../notification/notification.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new VideoRepository(getPrisma());
 const notifRepo = new NotificationRepository(getPrisma());
 const service = new VideoService(repo, notifRepo);
