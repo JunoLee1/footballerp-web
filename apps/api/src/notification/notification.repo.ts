@@ -146,14 +146,20 @@ export class NotificationRepository {
     return this.createForUser(dept.headId, type, getMsg, entityId);
   }
 
-  async createForUser(userId: string, type: string, getMsg: MsgFactory, entityId?: number) {
+  async createForUser(userId: string, type: string, getMsg: MsgFactory, entityId?: number | string) {
     const userRecord = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { language: true },
     });
     const { title, body } = getMsg(userRecord?.language ?? "ko");
+    const entityField =
+      entityId == null
+        ? {}
+        : typeof entityId === "string"
+          ? { entityIdStr: entityId }
+          : { entityId };
     return this.prisma.notification.create({
-      data: { userId, type, title, body, ...(entityId && { entityId }) } as any,
+      data: { userId, type, title, body, ...entityField } as any,
     });
   }
 

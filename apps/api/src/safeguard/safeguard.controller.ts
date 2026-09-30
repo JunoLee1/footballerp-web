@@ -20,7 +20,7 @@ export class SafeguardController {
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.getById(Number(req.params.id)))
+      res.json(await this.service.getById(String(req.params.id)))
     } catch (e) { next(e) }
   }
 
@@ -28,7 +28,7 @@ export class SafeguardController {
     try {
       const dto = validateUpdateSafeguardStatus(req.body)
       const actorId = req.user!.id
-      res.json(await this.service.updateStatus(Number(req.params.id), dto, actorId))
+      res.json(await this.service.updateStatus(String(req.params.id), dto, actorId))
     } catch (e) { next(e) }
   }
 }

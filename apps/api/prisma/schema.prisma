@@ -1579,7 +1579,7 @@ model ExternalReport {
   id                Int                  @id @default(autoincrement())
   injuryId          Int?
   incidentReportId  Int?
-  safeguardReportId Int?
+  safeguardReportId String?
   target            ExternalReportTarget
   status            ExternalReportStatus @default(PENDING_SUBMISSION)
   reportData        Json
@@ -1887,14 +1887,15 @@ model FormationSnapshot {
 }
 
 model Notification {
-  id        Int              @id @default(autoincrement())
-  type      NotificationType
-  title     String
-  body      String
-  entityId  Int?
-  readAt    DateTime?
-  createdAt DateTime         @default(now())
-  userId    String
+  id           Int              @id @default(autoincrement())
+  type         NotificationType
+  title        String
+  body         String
+  entityId     Int?
+  entityIdStr  String?
+  readAt       DateTime?
+  createdAt    DateTime         @default(now())
+  userId       String
 
   user User @relation(fields: [userId], references: [id])
 }
@@ -2554,7 +2555,7 @@ model IncidentReport {
 }
 
 model SafeguardReport {
-  id            Int                   @id @default(autoincrement())
+  id            String                @id @default(cuid())
   description   String                @db.Text
   contactInfo   String?
   accusedUserId String?

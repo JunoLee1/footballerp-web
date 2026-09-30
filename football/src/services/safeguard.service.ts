@@ -8,6 +8,6 @@ export const safeguardApi = {
   getAll: () =>
     api.get<SafeguardReport[]>('/safeguard-reports'),
 
-  updateStatus: (id: number, status: string, resolvedNote?: string) =>
+  updateStatus: (id: string, status: string, resolvedNote?: string) =>
     api.patch<SafeguardReport>(`/safeguard-reports/${id}/status`, { status, resolvedNote }),
 }

@@ -25,12 +25,12 @@ export default function SafeguardReportPage() {
 
   useEffect(() => { void load() }, [])
 
-  const handleReview = async (id: number) => {
+  const handleReview = async (id: string) => {
     await safeguardApi.updateStatus(id, 'UNDER_REVIEW')
     void load()
   }
 
-  const handleResolve = async (id: number) => {
+  const handleResolve = async (id: string) => {
     const note = prompt(t('safeguardPage.resolvePrompt'))
     if (note === null) return
     await safeguardApi.updateStatus(id, 'RESOLVED', note)
