@@ -6,17 +6,17 @@ export class SoftwareLicenseService {
   constructor(private repo: SoftwareLicenseRepository) {}
 
   findAll() { return this.repo.findAll(); }
-  findById(id: number) { return this.repo.findById(id); }
+  findById(id: string) { return this.repo.findById(id); }
 
   create(dto: CreateSoftwareLicenseDto, createdById: string) {
     return this.repo.create({ ...dto, createdById });
   }
 
-  update(id: number, dto: UpdateSoftwareLicenseDto) {
+  update(id: string, dto: UpdateSoftwareLicenseDto) {
     return this.repo.update(id, dto);
   }
 
-  async assign(id: number, _userId: number) {
+  async assign(id: string, _userId: number) {
     const license = await this.repo.findById(id);
     if (!license) throw new AppError(404, "LICENSE_NOT_FOUND");
     if (license.usedSeats >= license.totalSeats) {
@@ -25,7 +25,7 @@ export class SoftwareLicenseService {
     return this.repo.incrementSeats(id, +1);
   }
 
-  async revoke(id: number, _userId: number) {
+  async revoke(id: string, _userId: number) {
     const license = await this.repo.findById(id);
     if (!license) throw new AppError(404, "LICENSE_NOT_FOUND");
     const delta = license.usedSeats > 0 ? -1 : 0;

@@ -7,7 +7,7 @@ const ACTOR_ID = "55555555-5555-5555-5555-555555555555";
 
 const makeLog = (overrides: Record<string, unknown> = {}) => ({
   id: 1,
-  partnerId: 10,
+  partnerId: "cmxtestpartner00000000010",
   channel: "CALL",
   contactedAt: new Date("2026-08-17"),
   actorId: ACTOR_ID,
@@ -44,37 +44,37 @@ describe("ContactLogService.create", () => {
   it("throws 404 when partner not found", async () => {
     const service = makeService(makeContactLogRepo(), makePartnerRepo());
     await expect(
-      service.create(99, { channel: "CALL", contactedAt: "2026-08-17", summary: "test" }, ACTOR_ID),
+      service.create("cmxtestpartner000000000099", { channel: "CALL", contactedAt: "2026-08-17", summary: "test" }, ACTOR_ID),
     ).rejects.toThrow(new AppError(404, "PARTNER_NOT_FOUND"));
   });
 
   it("throws 400 when nextActionDate provided without nextActionNote", async () => {
-    const partnerRepo = makePartnerRepo({ findById: jest.fn().mockResolvedValue({ id: 10 }) });
+    const partnerRepo = makePartnerRepo({ findById: jest.fn().mockResolvedValue({ id: "cmxtestpartner00000000010" }) });
     const service = makeService(makeContactLogRepo(), partnerRepo);
     await expect(
-      service.create(10, { channel: "EMAIL", contactedAt: "2026-08-17", summary: "test", nextActionDate: "2026-08-20" }, ACTOR_ID),
+      service.create("cmxtestpartner00000000010", { channel: "EMAIL", contactedAt: "2026-08-17", summary: "test", nextActionDate: "2026-08-20" }, ACTOR_ID),
     ).rejects.toThrow(new AppError(400, "NEXT_ACTION_NOTE_REQUIRED"));
   });
 
   it("creates log when valid", async () => {
-    const partnerRepo = makePartnerRepo({ findById: jest.fn().mockResolvedValue({ id: 10 }) });
+    const partnerRepo = makePartnerRepo({ findById: jest.fn().mockResolvedValue({ id: "cmxtestpartner00000000010" }) });
     const logRepo = makeContactLogRepo({ create: jest.fn().mockResolvedValue(makeLog()) });
     const service = makeService(logRepo, partnerRepo);
-    await service.create(10, { channel: "CALL", contactedAt: "2026-08-17", summary: "논의" }, ACTOR_ID);
-    expect(logRepo.create).toHaveBeenCalledWith(10, expect.objectContaining({ channel: "CALL", actorId: ACTOR_ID }));
+    await service.create("cmxtestpartner00000000010", { channel: "CALL", contactedAt: "2026-08-17", summary: "논의" }, ACTOR_ID);
+    expect(logRepo.create).toHaveBeenCalledWith("cmxtestpartner00000000010", expect.objectContaining({ channel: "CALL", actorId: ACTOR_ID }));
   });
 });
 
 describe("ContactLogService.list", () => {
   it("throws 404 when partner not found", async () => {
     const service = makeService(makeContactLogRepo(), makePartnerRepo());
-    await expect(service.list(99)).rejects.toThrow(new AppError(404, "PARTNER_NOT_FOUND"));
+    await expect(service.list("cmxtestpartner000000000099")).rejects.toThrow(new AppError(404, "PARTNER_NOT_FOUND"));
   });
 
   it("returns logs when partner exists", async () => {
-    const partnerRepo = makePartnerRepo({ findById: jest.fn().mockResolvedValue({ id: 10 }) });
+    const partnerRepo = makePartnerRepo({ findById: jest.fn().mockResolvedValue({ id: "cmxtestpartner00000000010" }) });
     const logRepo = makeContactLogRepo({ findAll: jest.fn().mockResolvedValue([makeLog()]) });
-    const result = await makeService(logRepo, partnerRepo).list(10);
+    const result = await makeService(logRepo, partnerRepo).list("cmxtestpartner00000000010");
     expect(result).toHaveLength(1);
   });
 });

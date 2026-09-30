@@ -1,5 +1,5 @@
 export interface RequestNormalMedicalLoanDto {
-  equipmentItemId: number;
+  equipmentItemId: string;
   equipmentUnitId?: number;
   notes?: string;
   originalCost: number;
@@ -11,7 +11,7 @@ export interface RequestNormalMedicalLoanDto {
 }
 
 export interface RequestEmergencyMedicalLoanDto {
-  equipmentItemId: number;
+  equipmentItemId: string;
   equipmentUnitId?: number;
   notes?: string;
   emergencyReason: string;

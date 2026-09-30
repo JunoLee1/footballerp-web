@@ -9,13 +9,13 @@ export class ContactLogService {
     private partnerRepo: PartnerRepository,
   ) {}
 
-  async list(partnerId: number) {
+  async list(partnerId: string) {
     const partner = await this.partnerRepo.findById(partnerId);
     if (!partner) throw new AppError(404, "PARTNER_NOT_FOUND");
     return this.repo.findAll(partnerId);
   }
 
-  async create(partnerId: number, dto: CreateContactLogDto, actorId: string) {
+  async create(partnerId: string, dto: CreateContactLogDto, actorId: string) {
     const partner = await this.partnerRepo.findById(partnerId);
     if (!partner) throw new AppError(404, "PARTNER_NOT_FOUND");
     if (dto.nextActionDate && !dto.nextActionNote) {

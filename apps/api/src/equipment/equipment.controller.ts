@@ -3,6 +3,7 @@ import { AppError } from "../lib/appError";
 import { isAdminLike, requireClubScope } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
 import { EquipmentService } from "./equipment.service";
+import { assertCuid } from "../lib/cuidGuard";
 
 const canWrite = (role: string, frontOfficeRole: string | null | undefined): boolean =>
   isAdminLike(role) ||
@@ -29,7 +30,7 @@ export class EquipmentController {
       const user = requireUser(req);
       if (!canRead(user.role)) throw new AppError(403, "FORBIDDEN");
       const clubScope = requireClubScope(user);
-      res.status(200).json(await this.service.getItemById(Number(req.params["id"]), clubScope));
+      res.status(200).json(await this.service.getItemById(assertCuid(req.params["id"]), clubScope));
     } catch (err) { next(err); }
   };
 
@@ -47,7 +48,7 @@ export class EquipmentController {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       const clubScope = requireClubScope(user);
-      res.status(200).json(await this.service.adjustQuantity(Number(req.params["id"]), req.body, clubScope));
+      res.status(200).json(await this.service.adjustQuantity(assertCuid(req.params["id"]), req.body, clubScope));
     } catch (err) { next(err); }
   };
 
@@ -56,7 +57,7 @@ export class EquipmentController {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       const clubScope = requireClubScope(user);
-      res.status(201).json(await this.service.addUnit(Number(req.params["id"]), undefined, clubScope));
+      res.status(201).json(await this.service.addUnit(assertCuid(req.params["id"]), undefined, clubScope));
     } catch (err) { next(err); }
   };
 

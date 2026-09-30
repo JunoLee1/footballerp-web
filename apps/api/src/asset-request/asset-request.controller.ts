@@ -4,6 +4,7 @@ import { requireUser } from "../lib/authMiddleware";
 import { requireClubScope } from "../lib/permissions";
 import { AssetRequestService } from "./asset-request.service";
 import { CreateAssetRequestDto, ListAssetRequestQuery, RejectDto } from "./dto/asset-request.dto";
+import { assertCuid } from "../lib/cuidGuard";
 
 export class AssetRequestController {
   constructor(private service: AssetRequestService) {}

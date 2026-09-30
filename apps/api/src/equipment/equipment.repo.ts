@@ -57,7 +57,7 @@ export class EquipmentRepository {
     });
   }
 
-  findItemById(id: number, actorClubId?: number) {
+  findItemById(id: string, actorClubId?: number) {
     return this.prisma.equipmentItem.findFirst({
       where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       select: {
@@ -82,7 +82,7 @@ export class EquipmentRepository {
     });
   }
 
-  adjustQuantity(id: number, delta: number) {
+  adjustQuantity(id: string, delta: number) {
     return this.prisma.equipmentItem.update({
       where: { id },
       data: { quantity: { increment: delta } },
@@ -90,7 +90,7 @@ export class EquipmentRepository {
     });
   }
 
-  createUnit(equipmentItemId: number, dto?: CreateEquipmentUnitDto, actorClubId?: number) {
+  createUnit(equipmentItemId: string, dto?: CreateEquipmentUnitDto, actorClubId?: number) {
     return this.prisma.equipmentUnit.create({
       data: {
         equipmentItemId,

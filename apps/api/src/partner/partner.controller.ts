@@ -4,6 +4,7 @@ import { isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
 import { PartnerService } from "./partner.service";
 import { PartnerType } from "../generated/enums";
+import { assertCuid } from "../lib/cuidGuard";
 
 const isAssetManager = (role: string, frontOfficeRole: string | null | undefined) =>
   isAdminLike(role) || (role === "FRONT_OFFICE" && frontOfficeRole === "ASSET_MANAGER");
@@ -33,7 +34,7 @@ export class PartnerController {
     try {
       const user = requireUser(req);
       if (!canRead(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.getById(Number(req.params["id"])));
+      res.status(200).json(await this.service.getById(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -49,7 +50,7 @@ export class PartnerController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canManage(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.update(Number(req.params["id"]), req.body));
+      res.status(200).json(await this.service.update(assertCuid(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 
@@ -57,7 +58,7 @@ export class PartnerController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!isAssetManager(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.status(201).json(await this.service.createContract(Number(req.params["id"]), req.body));
+      res.status(201).json(await this.service.createContract(assertCuid(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 
@@ -66,7 +67,7 @@ export class PartnerController {
       const { role, frontOfficeRole } = requireUser(req);
       if (!isAssetManager(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       res.status(200).json(await this.service.updateContract(
-        Number(req.params["id"]),
+        assertCuid(req.params["id"]),
         Number(req.params["contractId"]),
         req.body,
       ));

@@ -71,8 +71,8 @@ export interface AssetRequest {
     parent: { id: number; name: string; headId: string | null } | null
   }
   expenseCategory: { id: number; code: string; label: string }
-  equipmentItem: { id: number; name: string; category: string } | null
-  softwareLicense: { id: number; name: string; vendor: string } | null
+  equipmentItem: { id: string; name: string; category: string } | null
+  softwareLicense: { id: string; name: string; vendor: string } | null
   operatingExpense: {
     id: number
     status: string

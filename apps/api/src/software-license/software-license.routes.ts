@@ -8,9 +8,9 @@ import { SoftwareLicenseRepository } from "./software-license.repo";
 import { SoftwareLicenseService } from "./software-license.service";
 import { SoftwareLicenseController } from "./software-license.controller";
 import { requireUuidParam } from "../lib/uuidGuard";
-import { intIdRouter } from "../lib/idParamGuard";
+import { cuidRouter } from "../lib/cuidGuard";
 
-const router = intIdRouter();
+const router = cuidRouter();
 const repo = new SoftwareLicenseRepository(getPrisma());
 const service = new SoftwareLicenseService(repo);
 const ctrl = new SoftwareLicenseController(service);

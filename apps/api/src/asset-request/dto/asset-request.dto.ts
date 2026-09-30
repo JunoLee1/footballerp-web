@@ -1,7 +1,7 @@
 export interface CreateAssetRequestDto {
   type: "SOFTWARE" | "HARDWARE";
-  equipmentItemId?: number;
-  softwareLicenseId?: number;
+  equipmentItemId?: string;
+  softwareLicenseId?: string;
   customName?: string;
   customDescription?: string;
   expenseCategoryId: number;
