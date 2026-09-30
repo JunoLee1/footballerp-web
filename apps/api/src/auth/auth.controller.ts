@@ -50,17 +50,19 @@ export class AuthController {
     } catch (err) {
       void this.repo.createLoginHistory({ email, ip, userAgent, success: false }).catch(console.error);
       // 로그인 실패: progressive lockout 카운터 증분 → tier 도달 시 후속 요청 429.
-      // 24h tier (20회) 도달 시 ADMIN 에게 보안 알림 발송.
+      // 24h tier (20회) 도달 시 ADMIN + SECURITY_LEAD 에게 보안 알림 발송 (#574).
       if (email) {
         void recordFailedAttempt(ip, email)
           .then((r) => {
             if (r.lockedTier === "24h") {
-              void this.notifRepo
-                .createForAdmin("LOGIN_LOCKOUT_24H", () => ({
-                  title: "로그인 브루트포스 의심",
-                  body: `${email} (IP ${ip}) · 20회 이상 로그인 실패로 24시간 잠금 발동`,
-                }))
-                .catch(console.error);
+              const getMsg = () => ({
+                title: "로그인 브루트포스 의심",
+                body: `${email} (IP ${ip}) · 20회 이상 로그인 실패로 24시간 잠금 발동`,
+              });
+              void Promise.all([
+                this.notifRepo.createForAdmin("LOGIN_LOCKOUT_24H", getMsg),
+                this.notifRepo.createForSecurityLead("LOGIN_LOCKOUT_24H", getMsg),
+              ]).catch(console.error);
             }
           })
           .catch(console.error);

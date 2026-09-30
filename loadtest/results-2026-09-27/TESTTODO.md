@@ -19,7 +19,7 @@
 | Smoke | ✅ 로그인 sweep 33 계정 · 10건 200 확인 (rate-limit 이후 429) |
 | Stress (인증된 read `/auth/me` · `/auth/login-history`) | ✅ `stress-AUTH.json` p(95) 3,329ms · avg 959ms · RPS 60 · **fail 49.99%** (`/auth/login-history` 접근 불가 role 존재 추정) · VU peak 200 |
 | Stress (login 전용) | ➖ rate-limiter (progressive lockout) 로 스트레스 불가 — 5회 실패 만에 잠금 시작 |
-| 보안 — 브루트포스 / Progressive Rate Limiting | ✅ **도입 완료** (`lib/loginRateLimit.ts` · Redis 백엔드). 5회→5분·10회→30분·15회→1시간·20회→24시간 progressive tier. 실측: 5회 401 → 6회 429·tier=`5m`·TTL 300s. **20회 tier 도달 시 ADMIN 에게 `LOGIN_LOCKOUT_24H` 알림 발송** (`notification.repo.createForAdmin`) |
+| 보안 — 브루트포스 / Progressive Rate Limiting | ✅ **도입 완료** (`lib/loginRateLimit.ts` · Redis 백엔드). 5회→5분·10회→30분·15회→1시간·20회→24시간 progressive tier. 실측: 5회 401 → 6회 429·tier=`5m`·TTL 300s. **20회 tier 도달 시 ADMIN + SECURITY_LEAD 에게 `LOGIN_LOCKOUT_24H` 알림 발송** (#574 FIXED · migration `20260930000000_add_security_lead_and_login_lockout_types` 로 enum + FrontOfficeRole 추가) |
 | 보안 — 인증 우회 (토큰 없음/변조) | ✅ 토큰 없음·잘못된 토큰 모두 `401 UNAUTHORIZED` (`auth-test.json` T4·T5) |
 | 보안 — Refresh 토큰 재사용 (sequential) | 🔲 rate-limit cooldown 후 재테스트 필요 · `auth-test.mjs` T9 |
 | 보안 — Refresh 토큰 재사용 (concurrent race) | ⚠️ `auth.controller.ts:65` blacklist 가 `void ...fire-and-forget` → 병렬 2회 요청 시 둘 다 통과 가능. **동시성 취약 코드** — Redis SETNX 또는 DB 트랜잭션 필요 · 실측은 rate-limit cooldown 후 재검증 |
