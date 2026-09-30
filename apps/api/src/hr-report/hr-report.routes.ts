@@ -7,10 +7,11 @@ import { HrReportRepository } from "./hr-report.repo";
 import { HrReportService } from "./hr-report.service";
 import { HrReportController } from "./hr-report.controller";
 import { AppError } from "../lib/appError";
+import { intIdRouter } from "../lib/idParamGuard";
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
-const router = Router();
+const router = intIdRouter();
 const repo = new HrReportRepository(getPrisma());
 const service = new HrReportService(repo);
 const controller = new HrReportController(service);

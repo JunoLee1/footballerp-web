@@ -7,8 +7,9 @@ import { NotificationRepository } from "../notification/notification.repo";
 import { HiringDispatchController } from "./hiring-dispatch.controller";
 import { HiringDispatchRepository } from "./hiring-dispatch.repo";
 import { HiringDispatchService } from "./hiring-dispatch.service";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new HiringDispatchRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

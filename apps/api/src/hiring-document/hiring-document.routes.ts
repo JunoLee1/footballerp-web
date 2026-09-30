@@ -6,6 +6,7 @@ import { gcsUpload } from "../lib/gcs";
 import { HiringDocumentController } from "./hiring-document.controller";
 import { HiringDocumentRepository } from "./hiring-document.repo";
 import { HiringDocumentService } from "./hiring-document.service";
+import { intIdRouter } from "../lib/idParamGuard";
 
 // Same allowlist as `hr.routes.ts` — PDF + docx/xlsx + Hangul word processor.
 // Adding image formats (jpg/png) up front so scanned IDs / bank slips don't
@@ -34,7 +35,7 @@ const repo = new HiringDocumentRepository(prisma);
 const service = new HiringDocumentService(repo, prisma);
 const controller = new HiringDocumentController(service);
 
-const router = Router();
+const router = intIdRouter();
 
 // POST /hiring-documents — multipart upload (docType + applicationId XOR
 // hiringDispatchId in the form body, file in `file` field).

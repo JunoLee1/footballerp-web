@@ -4,8 +4,9 @@ import { getPrisma } from "../lib/prisma";
 import { OpsReportRepository } from "./ops-report.repo";
 import { OpsReportService } from "./ops-report.service";
 import { OpsReportController } from "./ops-report.controller";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new OpsReportRepository(getPrisma());
 const service = new OpsReportService(repo, getPrisma());
 const controller = new OpsReportController(service);

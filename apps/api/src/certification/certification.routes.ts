@@ -8,8 +8,9 @@ import { NotificationService } from "../notification/notification.service";
 import { CertificationRepository } from "./certification.repo";
 import { CertificationService } from "./certification.service";
 import { CertificationController } from "./certification.controller";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const upload = multer({ dest: path.join(process.cwd(), "uploads", "certifications") });
 
 const notificationService = new NotificationService(new NotificationRepository(getPrisma()));

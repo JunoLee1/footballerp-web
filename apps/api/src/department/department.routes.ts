@@ -5,8 +5,9 @@ import { DepartmentService } from "./department.service";
 import { DepartmentController } from "./department.controller";
 import { getPrisma } from "../lib/prisma";
 import { requireUuidParam } from "../lib/uuidGuard";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new DepartmentRepository(getPrisma());
 const service = new DepartmentService(repo);
 const controller = new DepartmentController(service);

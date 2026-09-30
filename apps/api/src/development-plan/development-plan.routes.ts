@@ -5,8 +5,9 @@ import { DevelopmentPlanService } from "./development-plan.service";
 import { DevelopmentPlanRepository } from "./development-plan.repo";
 import { NotificationRepository } from "../notification/notification.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new DevelopmentPlanRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

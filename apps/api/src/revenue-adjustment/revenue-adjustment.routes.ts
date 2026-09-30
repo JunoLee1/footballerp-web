@@ -6,8 +6,9 @@ import { AppError } from "../lib/appError";
 import { RevenueAdjustmentRepository } from "./revenue-adjustment.repo";
 import { RevenueAdjustmentService } from "./revenue-adjustment.service";
 import type { RevenueField } from "../generated/client";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new RevenueAdjustmentRepository(getPrisma());
 export const revenueAdjustmentService = new RevenueAdjustmentService(repo, getPrisma());
 

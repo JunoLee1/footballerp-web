@@ -7,8 +7,9 @@ import { TacticalService } from "./tactical.service";
 import { TacticalRepository } from "./tactical.repo";
 import { NotificationRepository } from "../notification/notification.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new TacticalRepository(getPrisma());
 const notifRepo = new NotificationRepository(getPrisma());
 const service = new TacticalService(repo, notifRepo);

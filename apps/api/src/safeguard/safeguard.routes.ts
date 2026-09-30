@@ -7,8 +7,9 @@ import { SafeguardService } from './safeguard.service'
 import { SafeguardRepository } from './safeguard.repo'
 import { NotificationRepository } from '../notification/notification.repo'
 import { getPrisma } from '../lib/prisma'
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router()
+const router = intIdRouter()
 const prisma = getPrisma()
 const repo = new SafeguardRepository(prisma)
 const notifRepo = new NotificationRepository(prisma)

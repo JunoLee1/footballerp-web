@@ -4,8 +4,9 @@ import { TeamController } from "./team.controller";
 import { TeamService } from "./team.service";
 import { TeamRepository } from "./team.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new TeamRepository(getPrisma());
 const service = new TeamService(repo);
 const controller = new TeamController(service);

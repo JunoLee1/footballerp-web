@@ -5,6 +5,7 @@ import { MandatoryMinimumService } from "./mandatory-minimum.service";
 import { MandatoryMinimumController } from "./mandatory-minimum.controller";
 import { NotificationRepository } from "../notification/notification.repo";
 import { notifyMinimumViolation } from "./notify";
+import { intIdRouter } from "../lib/idParamGuard";
 
 const prisma = getPrisma();
 
@@ -19,7 +20,7 @@ const violationNotifier = (
 const service = new MandatoryMinimumService(prisma, violationNotifier);
 const controller = new MandatoryMinimumController(service);
 
-const router = Router();
+const router = intIdRouter();
 
 // #448 B2: mandatoryMinimum 워크플로우 API (ADR 0022)
 // Cross-resource path 라서 apiRouter root ("/") 에 mount — override.routes 와 동일한 패턴.

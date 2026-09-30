@@ -4,8 +4,9 @@ import { ClubSettingsRepository } from "./club-settings.repo";
 import { ClubSettingsService } from "./club-settings.service";
 import { ClubSettingsController } from "./club-settings.controller";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new ClubSettingsRepository(getPrisma());
 const service = new ClubSettingsService(repo);
 const controller = new ClubSettingsController(service);

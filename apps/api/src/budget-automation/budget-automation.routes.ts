@@ -7,8 +7,9 @@ import { BudgetAutomationRepository } from "./budget-automation.repo";
 import { BudgetAutomationService } from "./budget-automation.service";
 import type { BudgetPreviewRequestDto, BudgetApplyRequestDto } from "./dto/budget-automation.dto";
 import { expenseCategoryService } from "../expense-category/expense-category.routes";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new BudgetAutomationRepository(getPrisma());
 const service = new BudgetAutomationService(repo, expenseCategoryService);
 

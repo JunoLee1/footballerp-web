@@ -5,8 +5,9 @@ import { TransferService } from "./transfer.service";
 import { TransferRepository } from "./transfer.repo";
 import { ContractRepository } from "../contract/contract.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new TransferRepository(getPrisma());
 const contractRepo = new ContractRepository(getPrisma());
 const service = new TransferService(repo, contractRepo);

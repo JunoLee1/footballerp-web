@@ -4,8 +4,9 @@ import { StaffRecordRepository } from "./staff-record.repo";
 import { StaffRecordService } from "./staff-record.service";
 import { StaffRecordController } from "./staff-record.controller";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new StaffRecordRepository(getPrisma());
 const service = new StaffRecordService(repo);
 const controller = new StaffRecordController(service);

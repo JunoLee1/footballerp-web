@@ -7,8 +7,9 @@ import { FinancialReportRepository } from "./financial-report.repo";
 import { KnapsackService } from "../budget/knapsack.service";
 import { getPrisma } from "../lib/prisma";
 import { expenseCategoryService } from "../expense-category/expense-category.routes";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new FinancialReportRepository(getPrisma());
 const knapsack = new KnapsackService();
 const service = new FinancialReportService(repo, knapsack, expenseCategoryService);

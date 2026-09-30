@@ -6,6 +6,7 @@ import { getPrisma } from "../lib/prisma";
 import { EmployeeContractController } from "./employee-contract.controller";
 import { EmployeeContractRepository } from "./employee-contract.repo";
 import { EmployeeContractService } from "./employee-contract.service";
+import { intIdRouter } from "../lib/idParamGuard";
 
 /**
  * Multer setup mirrors hiring-document.routes.ts — PDF + images (JPG/PNG),
@@ -33,7 +34,7 @@ const repo = new EmployeeContractRepository(prisma);
 const service = new EmployeeContractService(repo, prisma);
 const controller = new EmployeeContractController(service);
 
-const router = Router();
+const router = intIdRouter();
 
 // POST /employee-contracts — { hiringDispatchId } → creates DRAFT row.
 router.post("/", auth, controller.create);

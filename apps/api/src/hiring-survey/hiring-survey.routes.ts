@@ -7,8 +7,9 @@ import { HiringSurveyService } from './hiring-survey.service'
 import { HiringSurveyController } from './hiring-survey.controller'
 import { PlanReportRepository } from '../plan-report/plan-report.repo'
 import { NotificationRepository } from '../notification/notification.repo'
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router()
+const router = intIdRouter()
 const prisma = getPrisma()
 const repo = new HiringSurveyRepository(prisma)
 const planReportRepo = new PlanReportRepository(prisma)

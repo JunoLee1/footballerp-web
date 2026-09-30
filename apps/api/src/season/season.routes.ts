@@ -12,13 +12,14 @@ import { expenseCategoryService } from "../expense-category/expense-category.rou
 import { createDraftForNextSeason } from "../budget-plan/draft";
 import { NotificationRepository } from "../notification/notification.repo";
 import { notifyBudgetPlanEvent } from "../budget-plan/notify";
+import { intIdRouter } from "../lib/idParamGuard";
 import {
   sendCapacityFailedEmail,
   sendReviewOpenedEmail,
   sendReviewDeadlineD1Email,
 } from "../lib/email";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new SeasonRepository(prisma);
 // Fix #366: wire RecruitmentService so closeSeason can expire remaining waitlists.

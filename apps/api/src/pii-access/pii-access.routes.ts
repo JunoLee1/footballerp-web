@@ -4,8 +4,9 @@ import { getPrisma } from "../lib/prisma";
 import { PiiAccessRepository } from "./pii-access.repo";
 import { PiiAccessService } from "./pii-access.service";
 import { PiiAccessController } from "./pii-access.controller";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new PiiAccessRepository(getPrisma());
 const service = new PiiAccessService(repo);
 const controller = new PiiAccessController(service);

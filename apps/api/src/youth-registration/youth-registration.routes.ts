@@ -10,8 +10,9 @@ import { NotificationRepository } from "../notification/notification.repo";
 import { AuthRepository } from "../auth/auth.repo";
 import { AuthService } from "../auth/auth.service";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new YouthRegistrationRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

@@ -4,8 +4,9 @@ import { auth } from "../lib/authMiddleware";
 import { getPrisma } from "../lib/prisma";
 import { isAdminLike } from "../lib/permissions";
 import { AppError } from "../lib/appError";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new DepartmentReviewerConfigRepository(prisma);
 

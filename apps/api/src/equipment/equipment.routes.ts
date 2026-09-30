@@ -10,8 +10,9 @@ import { DisposalService } from "./disposal/disposal.service";
 import { DisposalController } from "./disposal/disposal.controller";
 import { getPrisma } from "../lib/prisma";
 import { ledgerService } from "../ledger/ledger.routes";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const equipmentRepo = new EquipmentRepository(getPrisma());
 const notificationRepo = new NotificationRepository(getPrisma());
 const service = new EquipmentService(equipmentRepo, notificationRepo, ledgerService);

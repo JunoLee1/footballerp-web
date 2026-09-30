@@ -6,8 +6,9 @@ import { AppError } from "../lib/appError";
 import { LedgerRepository } from "./ledger.repo";
 import { LedgerService } from "./ledger.service";
 import { LedgerController } from "./ledger.controller";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const repo = new LedgerRepository(getPrisma());
 export const ledgerService = new LedgerService(repo);
 const ctrl = new LedgerController(ledgerService);

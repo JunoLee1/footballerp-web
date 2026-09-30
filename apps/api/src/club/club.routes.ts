@@ -5,8 +5,9 @@ import { ClubService } from "./club.service";
 import { ClubRepository } from "./club.repo";
 import CountryRepository from "../country/country.repo";
 import { getPrisma } from "../lib/prisma";
+import { intIdRouter } from "../lib/idParamGuard";
 
-const router = Router();
+const router = intIdRouter();
 const prisma = getPrisma();
 const repo = new ClubRepository(prisma);
 const countryRepo = new CountryRepository(prisma);
