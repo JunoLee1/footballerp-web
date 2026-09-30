@@ -221,6 +221,100 @@
 
 ---
 
+## 15.5 소속 스코프 (Multi-tenant Isolation) 검증 — 전 도메인 (#595)
+
+> ⚠️ 현 pentest 매트릭스 (`pentest-real-ids.mjs` · `cross-role-test.k6.js`) 는 **단일 구단 `@club.com` seed 만 커버**.
+> 다른 구단 · 다른 부서 · 다른 팀 소속 유저가 우리 record 에 접근 가능한지는 **미검증**.
+> 이 섹션은 seed 확장 후 순차 프로브 대상.
+
+### 15.5.0 Seed / Fixture 확장
+
+| 항목 | 상태 | 비고 |
+|---|---|---|
+| 2번째 구단 (Club B) seed — 전 role 최소 1명씩 (ADMIN·GM·HR·FINANCE·ASSET·MEDICAL·PLAYER·COACH) | 🔲 | multi-tenant 격리 프로브 전제조건 |
+| 2번째 부서 (Dept B) seed — 부서장 (DEPT_HEAD) + 부서원 (LEADER · MEMBER) | 🔲 | dept scope 프로브 전제조건 |
+| 2번째 팀 (Team B) seed — 헤드코치 + 어시스턴트 + 선수 3명 | 🔲 | team scope 프로브 전제조건 |
+| `pentest-real-ids.mjs` attacker 매트릭스에 cross-tenant persona 추가 (`clubB_GM`, `clubB_ADMIN`, `otherDept_HEAD`, `otherTeam_COACH`) | 🔲 | 프로브 스크립트 확장 |
+| `personas.k6.js` 에 Club B / Dept B / Team B persona 추가 | 🔲 | k6 스트레스 매트릭스에서도 재사용 |
+
+### 15.5.1 소속 구단 (`clubId`) 스코프 — Club B 유저가 Club A record 접근 시 403/404 여야 함
+
+| 도메인 | 예상 스코프 필드 | 상태 | 비고 |
+|---|---|---|---|
+| `GET /contracts/:id` | `player.clubId` | 🔲 | 계약금 · 서명 보너스 노출 |
+| `GET /transfers/:id` | `player.clubId` | 🔲 | 이적 조건 노출 |
+| `GET /transfer-requests/:id` | `player.clubId` | 🔲 | 협상 데이터 |
+| `GET /payroll/:id` | `employee.clubId` | 🔲 | 급여 명세 |
+| `GET /medical-expenses/:id` | `clubId` | 🔲 | 의료비 개인정보 |
+| `GET /operating-expenses/:id` | `clubId` | 🔲 | 재무 |
+| `GET /financial-reports/:id` | `clubId` | 🔲 | 재무 |
+| `GET /matches/:id` | `homeTeam.clubId` OR `awayTeam.clubId` | 🔲 | 경기 데이터 |
+| `GET /players/:id` | `player.clubId` | 🔲 | 선수 상세 · 시장가치 |
+| `GET /injuries/:id` | `player.clubId` | 🔲 | 의료 GDPR |
+| `GET /prospects/:id` | `clubId` (이미 스코프됨) | ✅ 코드 확인 | 참고 예시 |
+| `GET /partners/:id` | `clubId` | 🔲 | 파트너 계약 |
+| `GET /sponsorships/:id` | `clubId` | 🔲 | 스폰서 계약금 |
+| `GET /equipment/:id` | `clubId` | 🔲 | 자산 명세 |
+| `GET /academy-fees/:id` | `clubId` | 🔲 | 유소년 수업료 |
+| `GET /training/:id` (세션) | `team.clubId` | 🔲 | 훈련 데이터 |
+| `GET /formation-snapshots/:id` | `team.clubId` | 🔲 | 전술 데이터 |
+
+### 15.5.2 소속 부서 (`deptId`) 스코프 — 다른 부서 소속 유저가 우리 부서 record 접근 시 403 여야 함
+
+| 도메인 | 예상 스코프 필드 | 상태 | 비고 |
+|---|---|---|---|
+| `GET /departments/:id` | `dept.id === user.deptId` (또는 상위 부서장) | 🔲 | 부서 정보 |
+| `GET /departments/:id/headcount` | 위와 동일 | 🔲 | 인원 수 |
+| `GET /staff-records/:id` | `staff.deptId` | 🔲 | 인사 기록 |
+| `GET /probation-reviews/:id` | `subject.deptId` | 🔲 | 수습 평가 |
+| `GET /employee-contracts/:id` | `employee.deptId` | 🔲 | 근로 계약 |
+| `GET /development-plans/:id` | `subject.deptId` | 🔲 | 개인 개발 계획 |
+| `GET /department-review-configs/:id` | `deptId` | 🔲 | 부서별 리뷰 설정 |
+| `GET /department-asset-kits/:id` | `deptId` | 🔲 | 부서별 자산 키트 |
+| `GET /onboarding-tasks/:id` | `assignee.deptId` OR `task.deptId` | 🔲 | 온보딩 태스크 |
+| `GET /hiring-dispatches/:id` | `posting.deptId` | 🔲 | 채용 파견 |
+| `GET /hiring-surveys/:id` | `posting.deptId` | 🔲 | 채용 서베이 |
+| `GET /plan-reports/:id` | `report.deptId` | 🔲 | 부서 보고서 |
+| `GET /plan-reviews/:id` | `subject.deptId` | 🔲 | 부서 리뷰 |
+
+### 15.5.3 소속 팀 (`teamId`) 스코프 — 다른 팀 코치가 우리 팀 데이터 접근 시 403 여야 함
+
+| 도메인 | 예상 스코프 필드 | 상태 | 비고 |
+|---|---|---|---|
+| `GET /teams/:id` | `team.id === user.teamId` (또는 상위 코치) | 🔲 | 팀 정보 |
+| `GET /formation-snapshots/:id` | `snapshot.teamId` | 🔲 | 전술 |
+| `GET /tactical/:id` | `analysis.teamId` | 🔲 | 전술 분석 · 미디어 |
+| `GET /training-loads/:id` | `session.teamId` | 🔲 | 훈련 부하 |
+| `GET /training/:id` | `session.teamId` | 🔲 | 훈련 세션 상세 |
+| `GET /training/:id/results` | 위와 동일 | 🔲 | 훈련 결과 |
+| `GET /player-callups/:id` | `callup.teamId` | 🔲 | 소집 명단 |
+| `GET /squad-plan/:id` | `plan.teamId` | 🔲 | 스쿼드 플랜 |
+| `GET /matches/:id/squad` | `match.homeTeamId` OR `match.awayTeamId` | 🔲 | 스쿼드 |
+| `GET /matches/:id/lineup` | 위와 동일 | 🔲 | 라인업 |
+| `GET /coach-availabilities/:id` | `coach.teamId` | 🔲 | 코치 가용성 |
+| `GET /coaching-staff/:id` | `staff.teamId` | 🔲 | 코칭 스태프 |
+| `GET /growth-reports/:id` | `subject.teamId` (선수 소속) | 🔲 | 성장 리포트 |
+
+### 15.5.4 서비스 레이어 코드 감사 (구현 gap)
+
+| 도메인 | `req.user.clubId/deptId/teamId` 전달 여부 | 상태 |
+|---|---|---|
+| ContractService | 🔲 미확인 (grep 결과 clubId 인자 없음) | 🔲 감사 필요 |
+| TransferService | 🔲 미확인 | 🔲 |
+| PayrollService | 🔲 미확인 | 🔲 |
+| MedicalExpenseService | 🔲 미확인 | 🔲 |
+| MatchService | 🔲 미확인 | 🔲 |
+| DepartmentService | 🔲 미확인 | 🔲 |
+| StaffRecordService | 🔲 미확인 | 🔲 |
+| TacticalService | 🔲 미확인 | 🔲 |
+| TrainingService | 🔲 미확인 | 🔲 |
+| ProspectService | ✅ 이미 `clubId` 스코프 (참고 구현) | ✅ |
+| ClubService | ✅ 이미 `clubId` 스코프 | ✅ |
+
+> 감사 후 gap 있는 서비스는 개별 이슈로 분해 (#595 서브이슈).
+
+---
+
 ## 16. 다중 역할 확장 커버리지 (Multi-Role Extended Personas · stress 러닝 완료)
 
 | 항목 | 상태 | 비고 |
