@@ -62,7 +62,7 @@ export class AssetRequestRepository {
     });
   }
 
-  findById(id: number, actorClubId?: number) {
+  findById(id: string, actorClubId?: number) {
     return this.prisma.assetRequest.findFirst({
       where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       include: detailInclude,
@@ -135,8 +135,8 @@ export class AssetRequestRepository {
   }
 
   updateStatus(
-    id: number,
-    patch: { status: AssetRequestStatus; operatingExpenseId?: number },
+    id: string,
+    patch: { status: AssetRequestStatus; operatingExpenseId?: string },
     tx?: Tx,
   ) {
     const client = tx ?? this.prisma;
@@ -153,7 +153,7 @@ export class AssetRequestRepository {
   }
 
   addApproval(
-    id: number,
+    id: string,
     data: {
       stage: AssetRequestApprovalStage;
       action: AssetRequestApprovalAction;
@@ -174,14 +174,14 @@ export class AssetRequestRepository {
     });
   }
 
-  linkEquipmentItem(id: number, equipmentItemId: string) {
+  linkEquipmentItem(id: string, equipmentItemId: string) {
     return this.prisma.assetRequest.update({
       where: { id },
       data: { equipmentItemId },
     });
   }
 
-  linkSoftwareLicense(id: number, softwareLicenseId: string) {
+  linkSoftwareLicense(id: string, softwareLicenseId: string) {
     return this.prisma.assetRequest.update({
       where: { id },
       data: { softwareLicenseId },

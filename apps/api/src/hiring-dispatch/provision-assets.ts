@@ -105,7 +105,7 @@ export async function provisionNewEmployeeAssets(
 
   // 5. 각 kit item 마다 draft 생성 (재고 무관) + 부족 여부 기록.
   const shortages: ShortageReport[] = [];
-  const createdRequestIds: number[] = []; // AssetRequest.id (Int) — 그대로 유지
+  const createdRequestIds: string[] = [];
   for (const kitItem of items) {
     const stock = stockById.get(kitItem.equipmentItemId);
     if (!stock) continue; // EquipmentItem 삭제됨 — skip (draft 는 FK 위반 방지)

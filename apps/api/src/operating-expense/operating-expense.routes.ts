@@ -8,9 +8,9 @@ import { getPrisma } from "../lib/prisma";
 import { canWriteFinance } from "../lib/permissions";
 import { AppError } from "../lib/appError";
 import { expenseCategoryService } from "../expense-category/expense-category.routes";
-import { intIdRouter } from "../lib/idParamGuard";
+import { cuidRouter, assertCuid } from "../lib/cuidGuard";
 
-const router = intIdRouter();
+const router = cuidRouter();
 const repo = new OperatingExpenseRepository(getPrisma());
 const notifRepo = new NotificationRepository(getPrisma());
 const service = new OperatingExpenseService(repo, notifRepo, expenseCategoryService);
@@ -27,7 +27,7 @@ router.post("/", auth, controller.create);
 
 router.patch("/:id/first-approve", auth, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = Number(req.params["id"]);
+    const id = assertCuid(req.params["id"]);
     const { role, frontOfficeRole, departmentCategories, id: userId, clubId } = req.user!;
     const result = await service.firstApprove(id, userId, role, frontOfficeRole, departmentCategories, clubId);
     res.json(result);
@@ -36,7 +36,7 @@ router.patch("/:id/first-approve", auth, async (req: Request, res: Response, nex
 
 router.patch("/:id/approve", auth, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = Number(req.params["id"]);
+    const id = assertCuid(req.params["id"]);
     const { role, frontOfficeRole, departmentCategories, id: userId, clubId } = req.user!;
     const result = await service.approve(id, userId, role, frontOfficeRole, departmentCategories, clubId);
     res.json(result);
@@ -45,7 +45,7 @@ router.patch("/:id/approve", auth, async (req: Request, res: Response, next: Nex
 
 router.patch("/:id/reject", auth, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = Number(req.params["id"]);
+    const id = assertCuid(req.params["id"]);
     const { role, frontOfficeRole, departmentCategories, id: userId, clubId } = req.user!;
     const { reason } = req.body as { reason?: string };
     if (!reason?.trim()) throw new AppError(400, "REASON_REQUIRED");
@@ -56,7 +56,7 @@ router.patch("/:id/reject", auth, async (req: Request, res: Response, next: Next
 
 router.patch("/:id/cancel", auth, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = Number(req.params["id"]);
+    const id = assertCuid(req.params["id"]);
     const { role, frontOfficeRole, departmentCategories, id: userId, clubId } = req.user!;
     const { reason } = req.body as { reason?: string };
     if (!reason?.trim()) throw new AppError(400, "REASON_REQUIRED");
@@ -67,7 +67,7 @@ router.patch("/:id/cancel", auth, async (req: Request, res: Response, next: Next
 
 router.patch("/:id/pay", auth, checkWriteFinance, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = Number(req.params["id"]);
+    const id = assertCuid(req.params["id"]);
     const { id: userId, clubId } = req.user!;
     const result = await service.markPaid(id, userId, clubId);
     res.json(result);

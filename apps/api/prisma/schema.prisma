@@ -1503,7 +1503,7 @@ model MedicalEquipmentLoanLedger {
   // 예산 연결
   budgetLineId       Int?
   budgetLine         BudgetLine?       @relation(fields: [budgetLineId], references: [id])
-  operatingExpenseId Int?              @unique
+  operatingExpenseId String?           @unique
   operatingExpense   OperatingExpense? @relation(fields: [operatingExpenseId], references: [id])
 
   // escalation 추적
@@ -3222,7 +3222,7 @@ enum ExpenseCostType {
 }
 
 model OperatingExpense {
-  id                         Int                         @id @default(autoincrement())
+  id                         String                      @id @default(cuid())
   seasonId                   Int
   categoryId                 Int
   costType                   ExpenseCostType?
@@ -4702,7 +4702,7 @@ enum AssetRequestApprovalAction {
 }
 
 model AssetRequest {
-  id           Int                @id @default(autoincrement())
+  id           String             @id @default(cuid())
   requesterId  String
   departmentId Int
   type         AssetRequestType
@@ -4719,7 +4719,7 @@ model AssetRequest {
   neededBy          DateTime?
   justification     String
 
-  operatingExpenseId Int?
+  operatingExpenseId String?
 
   // #373 자동 프로비저닝 추적: dispatch() 성공 후 부서 default kit 로부터 자동 생성된 draft
   // 여부와 어떤 dispatch 로부터 왔는지 감사용 링크. FE 에서 "자동 프로비저닝" 배지 + 링크 제공.
@@ -4750,7 +4750,7 @@ model AssetRequest {
 
 model AssetRequestApproval {
   id             Int                        @id @default(autoincrement())
-  assetRequestId Int
+  assetRequestId String
   stage          AssetRequestApprovalStage
   action         AssetRequestApprovalAction
   reviewerId     String

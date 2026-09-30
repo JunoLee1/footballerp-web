@@ -34,7 +34,7 @@ export class AssetRequestService {
   // Read
   // ────────────────────────────────────────────
 
-  async getById(id: number, actorClubId?: number) {
+  async getById(id: string, actorClubId?: number) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     return request;
@@ -112,7 +112,7 @@ export class AssetRequestService {
   // Requester actions
   // ────────────────────────────────────────────
 
-  async submit(id: number, userId: string, actorClubId?: number) {
+  async submit(id: string, userId: string, actorClubId?: number) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.requesterId !== userId) throw new AppError(403, "NOT_YOUR_REQUEST");
@@ -149,7 +149,7 @@ export class AssetRequestService {
     return updated;
   }
 
-  async cancel(id: number, userId: string, actorClubId?: number) {
+  async cancel(id: string, userId: string, actorClubId?: number) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.requesterId !== userId) throw new AppError(403, "NOT_YOUR_REQUEST");
@@ -175,7 +175,7 @@ export class AssetRequestService {
   // Leader (leaf dept.head) approvals
   // ────────────────────────────────────────────
 
-  async leaderApprove(id: number, reviewerId: string, actorClubId?: number) {
+  async leaderApprove(id: string, reviewerId: string, actorClubId?: number) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.status !== "SUBMITTED") throw new AppError(400, "INVALID_STATUS");
@@ -220,7 +220,7 @@ export class AssetRequestService {
     return updated;
   }
 
-  async leaderReject(id: number, reviewerId: string, reason: string, actorClubId?: number) {
+  async leaderReject(id: string, reviewerId: string, reason: string, actorClubId?: number) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -266,7 +266,7 @@ export class AssetRequestService {
   // Dept-head (parent dept.head) approvals
   // ────────────────────────────────────────────
 
-  async approve(id: number, reviewerId: string, actorClubId?: number) {
+  async approve(id: string, reviewerId: string, actorClubId?: number) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.status !== "LEADER_APPROVED") throw new AppError(400, "INVALID_STATUS");
@@ -381,7 +381,7 @@ export class AssetRequestService {
     return updated;
   }
 
-  async reject(id: number, reviewerId: string, reason: string, actorClubId?: number) {
+  async reject(id: string, reviewerId: string, reason: string, actorClubId?: number) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -442,7 +442,7 @@ export class AssetRequestService {
    * reflects the newly-purchased asset.
    */
   async fulfill(
-    id: number,
+    id: string,
     userId: string,
     role: string,
     foRole: string | null | undefined,

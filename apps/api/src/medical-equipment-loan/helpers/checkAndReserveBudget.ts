@@ -2,7 +2,7 @@ import { Prisma } from "../../generated/client";
 import { AppError } from "../../lib/appError";
 
 interface ReserveBudgetResult {
-  operatingExpenseId: number;
+  operatingExpenseId: string;
 }
 
 /**

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { canReadFinance, canWriteFinance } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { OperatingExpenseService } from "./operating-expense.service";
 import type { UpdateOperatingExpenseDto } from "./dto/operating-expense.dto";
 
@@ -57,7 +58,7 @@ export class OperatingExpenseController {
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: userId, clubId } = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const body = req.body as UpdateOperatingExpenseDto;
       const data: UpdateOperatingExpenseDto = {};
       if (body.amount !== undefined) data.amount = body.amount;
@@ -72,7 +73,7 @@ export class OperatingExpenseController {
     try {
       const { role, frontOfficeRole, departmentCategories, id: userId, clubId } = requireUser(req);
       if (!canDelete(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const { reason } = req.body as { reason?: string };
       if (!reason?.trim()) throw new AppError(400, "DELETION_REASON_REQUIRED");
       await this.service.delete(id, userId, role, reason.trim(), clubId);

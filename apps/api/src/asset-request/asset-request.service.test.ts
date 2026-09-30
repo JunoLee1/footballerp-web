@@ -63,7 +63,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      const result = await service.getById(1, 1);
+      const result = await service.getById("cmxtestassreq0000000000001", 1);
       expect(repo.findById).toHaveBeenCalledWith(1, 1);
       expect(result.id).toBe(1);
     });
@@ -75,7 +75,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.getById(1, 99))
+      await expect(service.getById("cmxtestassreq0000000000001", 99))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
 
@@ -86,7 +86,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      const result = await service.getById(1);
+      const result = await service.getById("cmxtestassreq0000000000001");
       expect(repo.findById).toHaveBeenCalledWith(1, undefined);
       expect(result.id).toBe(1);
     });
@@ -164,7 +164,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.submit(1, "user-5", 99))
+      await expect(service.submit("cmxtestassreq0000000000001", "user-5", 99))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
 
@@ -175,7 +175,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      const result = await service.submit(1, "user-5", 1);
+      const result = await service.submit("cmxtestassreq0000000000001", "user-5", 1);
       expect(findById).toHaveBeenCalledWith(1, 1);
       expect(updateStatus).toHaveBeenCalledWith(1, { status: "SUBMITTED" });
       expect((result as any).status).toBe("SUBMITTED");
@@ -190,7 +190,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.cancel(1, "user-5", 99))
+      await expect(service.cancel("cmxtestassreq0000000000001", "user-5", 99))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
   });
@@ -203,7 +203,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.leaderApprove(1, "user-7", 99))
+      await expect(service.leaderApprove("cmxtestassreq0000000000001", "user-7", 99))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
   });
