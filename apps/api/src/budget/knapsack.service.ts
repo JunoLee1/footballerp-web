@@ -1,11 +1,11 @@
 export interface KnapsackTier {
-  tierId: number;
+  tierId: string;
   cost: number;
   value: number;
 }
 
 export interface KnapsackGroup {
-  categoryPlanId: number;
+  categoryPlanId: string;
   category: string;
   tiers: KnapsackTier[];
 }
@@ -16,8 +16,8 @@ export interface KnapsackInput {
 }
 
 export interface SelectedTier {
-  tierId: number;
-  categoryPlanId: number;
+  tierId: string;
+  categoryPlanId: string;
   allocated: number;
 }
 
