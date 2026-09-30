@@ -1,0 +1,198 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "HW_SECURITY": {
+                "name": "HW_SECURITY",
+                "path": "::HW_SECURITY",
+                "id": "a946bf4783fb61b67c1608c1bbd44881",
+                "groups": {},
+                "checks": {
+                        "HW_SECURITY hw_equipment status<500": {
+                            "name": "HW_SECURITY hw_equipment status<500",
+                            "path": "::HW_SECURITY::HW_SECURITY hw_equipment status<500",
+                            "id": "8a17d24f64b12a130c938abca268720c",
+                            "passes": 8964,
+                            "fails": 0
+                        },
+                        "HW_SECURITY hw_inventory status<500": {
+                            "id": "c5ebb87d1df8e83a4b19d1baa107af61",
+                            "passes": 8964,
+                            "fails": 0,
+                            "name": "HW_SECURITY hw_inventory status<500",
+                            "path": "::HW_SECURITY::HW_SECURITY hw_inventory status<500"
+                        },
+                        "HW_SECURITY hw_dept_kits status<500": {
+                            "passes": 8964,
+                            "fails": 0,
+                            "name": "HW_SECURITY hw_dept_kits status<500",
+                            "path": "::HW_SECURITY::HW_SECURITY hw_dept_kits status<500",
+                            "id": "00212f587422f5816016c1d87c9f7405"
+                        },
+                        "HW_SECURITY hw_asset_requests status<500": {
+                            "name": "HW_SECURITY hw_asset_requests status<500",
+                            "path": "::HW_SECURITY::HW_SECURITY hw_asset_requests status<500",
+                            "id": "ec6b90364f5e2b383022dc71117e6f11",
+                            "passes": 8964,
+                            "fails": 0
+                        },
+                        "HW_SECURITY hw_equipment_loans status<500": {
+                            "name": "HW_SECURITY hw_equipment_loans status<500",
+                            "path": "::HW_SECURITY::HW_SECURITY hw_equipment_loans status<500",
+                            "id": "c642c90ab1373df2e6ef7a4f19f415ba",
+                            "passes": 8964,
+                            "fails": 0
+                        }
+                    }
+            }
+        },
+        "checks": {}
+    },
+    "metrics": {
+        "persona_latency": {
+            "med": 2.622,
+            "max": 81.192,
+            "p(90)": 8.398100000000001,
+            "p(95)": 10.691149999999995,
+            "avg": 3.8696952922802232,
+            "min": 0.099
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 81.192,
+            "p(90)": 9.9178,
+            "p(95)": 12.545399999999999,
+            "avg": 5.109580931841021,
+            "min": 0.863,
+            "med": 3.847
+        },
+        "http_req_tls_handshaking": {
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0
+        },
+        "vus": {
+            "max": 199,
+            "value": 10,
+            "min": 6
+        },
+        "http_req_waiting": {
+            "max": 81.121,
+            "p(90)": 8.375,
+            "p(95)": 10.672,
+            "avg": 3.854447535753352,
+            "min": 0.088,
+            "med": 2.605
+        },
+        "group_duration": {
+            "p(90)": 36.3082377,
+            "p(95)": 45.496775,
+            "avg": 19.56663790127176,
+            "min": 4.292209,
+            "med": 15.8989165,
+            "max": 152.464583
+        },
+        "iterations": {
+            "count": 8964,
+            "rate": 84.63155533425216
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_connecting": {
+            "avg": 0.001056491376809978,
+            "min": 0,
+            "med": 0,
+            "max": 0.623,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "data_received": {
+            "count": 11018248,
+            "rate": 104026.2678824758
+        },
+        "checks": {
+            "passes": 44820,
+            "fails": 0,
+            "value": 1
+        },
+        "http_req_sending": {
+            "avg": 0.004883269003366522,
+            "min": 0.001,
+            "med": 0.004,
+            "max": 6.397,
+            "p(90)": 0.007,
+            "p(95)": 0.009
+        },
+        "vus_max": {
+            "max": 200,
+            "value": 200,
+            "min": 200
+        },
+        "http_req_duration": {
+            "min": 0.099,
+            "med": 2.622,
+            "max": 81.192,
+            "p(90)": 8.399,
+            "p(95)": 10.694,
+            "avg": 3.871092478971902,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_failed": {
+            "passes": 17928,
+            "fails": 26893,
+            "thresholds": {
+                "rate<0.10": true
+            },
+            "value": 0.39999107561187836
+        },
+        "http_req_receiving": {
+            "max": 10.81,
+            "p(90)": 0.015,
+            "p(95)": 0.022,
+            "avg": 0.011761674215210254,
+            "min": 0.004,
+            "med": 0.009
+        },
+        "http_reqs": {
+            "count": 44821,
+            "rate": 423.16721794249395
+        },
+        "http_req_blocked": {
+            "p(95)": 0.003,
+            "avg": 0.002488230963165942,
+            "min": 0,
+            "med": 0.001,
+            "max": 2.896,
+            "p(90)": 0.002
+        },
+        "data_sent": {
+            "count": 24095419,
+            "rate": 227491.3862561904
+        },
+        "iteration_duration": {
+            "avg": 1019.9218960495355,
+            "min": 1004.476084,
+            "med": 1016.1697505,
+            "max": 1152.609792,
+            "p(90)": 1036.5077793,
+            "p(95)": 1045.9012625
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "HW_SECURITY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNmMTNlN2Y3LWQyMDQtNGIyMi04YzkzLTk2NGZhOWUyNzhiYiIsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkFTU0VUX01BTkFHRVIiLCJkZXBhcnRtZW50Q2F0ZWdvcmllcyI6WyJPUEVSQVRJT05TIl0sInRlYW1JZCI6bnVsbCwiY2x1YklkIjoiY211bzN4YnA5MDAwMGhmcW8wcXJ2Y3VoYSIsImlzRGVtbyI6ZmFsc2UsImlhdCI6MTc5MDc3NzgwNywiZXhwIjoxNzkwNzgxNDA3fQ.XmINumuhOAPP40WUY-J4UIZxifSxmsh-U3WPlHUE8TY"
+            }
+    }
+}

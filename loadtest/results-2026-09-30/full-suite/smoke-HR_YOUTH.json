@@ -1,0 +1,191 @@
+{
+    "metrics": {
+        "http_req_blocked": {
+            "avg": 0.006350559862187891,
+            "min": 0,
+            "med": 0.001,
+            "max": 1.152,
+            "p(90)": 0.004,
+            "p(95)": 0.006
+        },
+        "persona_errors": {
+            "rate": 0,
+            "count": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_receiving": {
+            "avg": 0.02319121447028425,
+            "min": 0.005,
+            "med": 0.014,
+            "max": 0.853,
+            "p(90)": 0.046,
+            "p(95)": 0.059
+        },
+        "http_req_connecting": {
+            "avg": 0.003340223944875107,
+            "min": 0,
+            "med": 0,
+            "max": 1.132,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "iteration_duration": {
+            "p(90)": 1069.9769581,
+            "p(95)": 1074.3479273,
+            "avg": 1048.335654444827,
+            "min": 1010.244333,
+            "med": 1044.517729,
+            "max": 1091.358
+        },
+        "http_req_tls_handshaking": {
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "persona_latency": {
+            "avg": 11.943837068965498,
+            "min": 1.056,
+            "med": 9.940999999999999,
+            "max": 50.164,
+            "p(90)": 22.1513,
+            "p(95)": 28.952649999999995
+        },
+        "http_req_sending": {
+            "med": 0.005,
+            "max": 0.264,
+            "p(90)": 0.013,
+            "p(95)": 0.019,
+            "avg": 0.007937123169681237,
+            "min": 0.001
+        },
+        "http_req_duration": {
+            "avg": 11.984061154177414,
+            "min": 1.056,
+            "med": 9.952,
+            "max": 58.644,
+            "p(90)": 22.154,
+            "p(95)": 29.041,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_reqs": {
+            "count": 1161,
+            "rate": 37.858526111817845
+        },
+        "vus": {
+            "value": 10,
+            "min": 10,
+            "max": 10
+        },
+        "http_req_waiting": {
+            "avg": 11.952932816537482,
+            "min": 1.044,
+            "med": 9.915,
+            "max": 58.558,
+            "p(90)": 22.125,
+            "p(95)": 29.018
+        },
+        "data_sent": {
+            "count": 614694,
+            "rate": 20044.2798017035
+        },
+        "vus_max": {
+            "value": 10,
+            "min": 10,
+            "max": 10
+        },
+        "http_req_failed": {
+            "passes": 580,
+            "fails": 581,
+            "thresholds": {
+                "rate<0.10": true
+            },
+            "value": 0.49956933677863913
+        },
+        "iterations": {
+            "count": 290,
+            "rate": 9.456479390548816
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 58.644,
+            "p(90)": 29.041,
+            "p(95)": 35.03,
+            "avg": 16.370690189328734,
+            "min": 2.343,
+            "med": 14.908
+        },
+        "checks": {
+            "passes": 1160,
+            "fails": 0,
+            "value": 1
+        },
+        "group_duration": {
+            "avg": 48.01210689655172,
+            "min": 10.193333,
+            "med": 44.2852915,
+            "max": 91.018791,
+            "p(90)": 69.0392875,
+            "p(95)": 74.02787095
+        },
+        "data_received": {
+            "count": 24352762,
+            "rate": 794108.2481239324
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "HR_YOUTH": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI4NTc2YmQ3LTFlYmEtNDA1NS04OGNjLTJjMDUzOGQwOTY1YyIsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkhSX01BTkFHRVIiLCJkZXBhcnRtZW50Q2F0ZWdvcmllcyI6WyJIUiJdLCJ0ZWFtSWQiOm51bGwsImNsdWJJZCI6ImNtdW8zeGJwOTAwMDBoZnFvMHFydmN1aGEiLCJpc0RlbW8iOmZhbHNlLCJpYXQiOjE3OTA3NzczNzksImV4cCI6MTc5MDc4MDk3OX0.CGGtVLmDGeZNNb4eYmI4UB-7x7nVFn1zBLFxK9RV6Ao"
+            }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "HR_YOUTH": {
+                "path": "::HR_YOUTH",
+                "id": "10f6f1344e3d22f16b14d80c590f7199",
+                "groups": {},
+                "checks": {
+                        "HR_YOUTH youth_registrations status<500": {
+                            "name": "HR_YOUTH youth_registrations status<500",
+                            "path": "::HR_YOUTH::HR_YOUTH youth_registrations status<500",
+                            "id": "0031da9cfc9f8b36e6f72690578619cc",
+                            "passes": 290,
+                            "fails": 0
+                        },
+                        "HR_YOUTH youth_academy_fees status<500": {
+                            "fails": 0,
+                            "name": "HR_YOUTH youth_academy_fees status<500",
+                            "path": "::HR_YOUTH::HR_YOUTH youth_academy_fees status<500",
+                            "id": "c22d58ac360c26391b2e07aee95bae07",
+                            "passes": 290
+                        },
+                        "HR_YOUTH youth_dev_dashboard status<500": {
+                            "path": "::HR_YOUTH::HR_YOUTH youth_dev_dashboard status<500",
+                            "id": "206a34007007b5e9d30e78f20fdd7dbb",
+                            "passes": 290,
+                            "fails": 0,
+                            "name": "HR_YOUTH youth_dev_dashboard status<500"
+                        },
+                        "HR_YOUTH youth_finance_dashboard status<500": {
+                            "name": "HR_YOUTH youth_finance_dashboard status<500",
+                            "path": "::HR_YOUTH::HR_YOUTH youth_finance_dashboard status<500",
+                            "id": "1f7e5d2ab75c22f779ba3ac219c12d97",
+                            "passes": 290,
+                            "fails": 0
+                        }
+                    },
+                "name": "HR_YOUTH"
+            }
+        },
+        "checks": {}
+    }
+}
