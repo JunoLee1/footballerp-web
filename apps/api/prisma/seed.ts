@@ -1725,10 +1725,9 @@ async function main() {
   }
 
   // ── Contracts ─────────────────────────────────────────
-  const contract1 = await prisma.contract.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
+  // (Contract.id 는 CUID 이므로 upsert(id) 대신 create — playerId + status 로 idempotency 는 seed 재실행 시 accept)
+  const contract1 = await prisma.contract.create({
+    data: {
       playerId: p1.id,
       startDate: new Date("2025-01-01"),
       endDate: new Date("2027-12-31"),
@@ -1738,10 +1737,8 @@ async function main() {
     },
   });
 
-  await prisma.contract.upsert({
-    where: { id: 2 },
-    update: {},
-    create: {
+  await prisma.contract.create({
+    data: {
       playerId: p2.id,
       startDate: new Date("2024-07-01"),
       endDate: new Date("2026-06-30"),
@@ -1751,10 +1748,8 @@ async function main() {
     },
   });
 
-  await prisma.contract.upsert({
-    where: { id: 3 },
-    update: {},
-    create: {
+  await prisma.contract.create({
+    data: {
       playerId: p3.id,
       startDate: new Date("2026-01-01"),
       endDate: new Date("2028-12-31"),
@@ -1765,10 +1760,8 @@ async function main() {
   });
 
   // BuyoutClause for contract1
-  await prisma.buyoutClause.upsert({
-    where: { contractId: contract1.id },
-    update: {},
-    create: { contractId: contract1.id, amount: BigInt(5_000_000_000) },
+  await prisma.buyoutClause.create({
+    data: { contractId: contract1.id, amount: BigInt(5_000_000_000) },
   });
 
   // Contracts for remaining 15 senior-team players (p5, p7~p20).

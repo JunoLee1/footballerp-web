@@ -106,14 +106,14 @@ export class EquipmentRepository {
     });
   }
 
-  updateUnitDepreciation(unitId: number, bookValue: number) {
+  updateUnitDepreciation(unitId: string, bookValue: number) {
     return this.prisma.equipmentUnit.update({
       where: { id: unitId },
       data: { bookValue },
     });
   }
 
-  findUnitWithDepreciation(unitId: number) {
+  findUnitWithDepreciation(unitId: string) {
     return this.prisma.equipmentUnit.findUnique({
       where: { id: unitId },
       select: {
@@ -127,14 +127,14 @@ export class EquipmentRepository {
     });
   }
 
-  findUnitById(id: number, actorClubId?: number) {
+  findUnitById(id: string, actorClubId?: number) {
     return this.prisma.equipmentUnit.findFirst({
       where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       select: UNIT_SELECT,
     });
   }
 
-  updateUnitStatus(id: number, status: EquipmentUnitStatus, disposalData?: { disposedById?: string; disposedAt?: Date; disposalNote?: string }) {
+  updateUnitStatus(id: string, status: EquipmentUnitStatus, disposalData?: { disposedById?: string; disposedAt?: Date; disposalNote?: string }) {
     return this.prisma.equipmentUnit.update({
       where: { id },
       data: {
@@ -147,7 +147,7 @@ export class EquipmentRepository {
     });
   }
 
-  updateUnit(id: number, data: {
+  updateUnit(id: string, data: {
     lastSanitizedAt?: Date;
     sanitationStatus?: string;
     lastInspectedAt?: Date;
@@ -179,11 +179,11 @@ export class EquipmentRepository {
     });
   }
 
-  findAssignmentById(id: number) {
+  findAssignmentById(id: string) {
     return this.prisma.equipmentAssignment.findUnique({ where: { id }, select: ASSIGNMENT_SELECT });
   }
 
-  markReturned(id: number) {
+  markReturned(id: string) {
     return this.prisma.equipmentAssignment.update({
       where: { id },
       data: { returnedAt: new Date() },
@@ -198,7 +198,7 @@ export class EquipmentRepository {
     });
   }
 
-  findLoanById(id: number, actorClubId?: number) {
+  findLoanById(id: string, actorClubId?: number) {
     return this.prisma.equipmentLoan.findFirst({
       where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       select: LOAN_SELECT,
@@ -269,17 +269,17 @@ export class EquipmentRepository {
     });
   }
 
-  markOverdueNotified(loanIds: number[], now: Date = new Date()) {
+  markOverdueNotified(loanIds: string[], now: Date = new Date()) {
     return this.prisma.equipmentLoan.updateMany({
       where: { id: { in: loanIds } },
       data: { overdueNotifiedAt: now },
     });
   }
 
-  updateLoan(id: number, data: {
+  updateLoan(id: string, data: {
     status: EquipmentLoanStatus;
     approvedById?: string;
-    equipmentUnitId?: number;
+    equipmentUnitId?: string;
     issuedAt?: Date;
     returnedAt?: Date;
   }) {
@@ -290,7 +290,7 @@ export class EquipmentRepository {
     });
   }
 
-  returnLoan(id: number, _returnedById: string, returnNote?: string) {
+  returnLoan(id: string, _returnedById: string, returnNote?: string) {
     // NOTE: returnedById 파라미터는 audit log 에서만 사용됨 (schema 에 필드 없음).
     return this.prisma.equipmentLoan.update({
       where: { id },

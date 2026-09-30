@@ -10,7 +10,7 @@ export const medicalEquipmentLoanRepo = {
     });
   },
 
-  async findLedgerByLoanId(equipmentLoanId: number) {
+  async findLedgerByLoanId(equipmentLoanId: string) {
     return prisma.medicalEquipmentLoanLedger.findUnique({
       where: { equipmentLoanId },
       include: { equipmentLoan: true },

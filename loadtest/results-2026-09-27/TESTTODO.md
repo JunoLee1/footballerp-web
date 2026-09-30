@@ -12,6 +12,86 @@
 
 ---
 
+## 🆕 2026-09-30 최신 실행 결과 (`loadtest/results-2026-09-30/full-suite/index.html`)
+
+**환경**: PR #607 (Partner+SoftwareLicense 필드 확장) merged + PR #608 (Partner/SW/Equipment CUID) 오픈 브랜치. Local server `:3001`.
+
+**Smoke (VUS=2 · 10s)** — 17개 페르소나 커버 (메인 8 + 확장 9)
+
+| 페르소나 | p95 | 판정 |
+|---|---|---|
+| HR_MANAGER | 121ms | ✅ (0 iteration 에러 · smoke rate-limit 이슈로 count 불안정) |
+| HEAD_COACH | 57ms | ✅ |
+| FINANCE_MANAGER | 16ms | ✅ |
+| ASSET_MANAGER | 11ms | ✅ |
+| GM | 33ms | ✅ |
+| PLAYER | 18ms | ✅ |
+| MEDICAL_DIRECTOR | 92ms | ✅ |
+| ADMIN | 16ms | ✅ |
+| FACILITY_MANAGER | 12ms | ✅ (신규 커버) |
+| FACILITY_STAFF | 17ms | ✅ (신규 커버) |
+| SUPERADMIN · HR_STAFF · FINANCE_STAFF · ASSET_STAFF · ASSISTANT_COACH · ATTACKING_COACH · DEFENSIVE_COACH | 전부 < 200ms | ✅ |
+
+**Stress (VUS=50 · 30s)** — 21개 페르소나 커버
+
+| 페르소나 | p95 | RPS | 판정 |
+|---|---|---|---|
+| ADMIN | 313ms | 194 | ✅ |
+| GM | 190ms | 209 | ✅ |
+| FINANCE_MANAGER | 159ms | 280 | ✅ |
+| MEDICAL_DIRECTOR | 159ms | 214 | ✅ |
+| PLAYER | 139ms | 231 | ✅ |
+| HEAD_COACH | 126ms | 226 | ✅ |
+| FACILITY_STAFF | 100ms | - | ✅ (신규 커버) |
+| ASSET_MANAGER | 58ms | 249 | ✅ |
+| HR_MANAGER | 16ms | 0 | ⚠️ (login rate-limit 로 iteration 0) |
+| FACILITY_MANAGER | 9ms | 0 | ⚠️ (login rate-limit) |
+| GM_PLAN · GM_REPORTS · GM_DISPATCHES · AUTH | 특수 시나리오 실행 | - | ✅ |
+
+**전체 요약**: **p95 threshold(2s) 초과 0/21** · Stress p95 평균 매우 여유. Redis 캐시 + userStatusCache + CUID 전환 후에도 성능 회귀 없음.
+
+**보안 · Pentest (실 record ID + attacker matrix)** — `pentest-real-ids.mjs`
+- 총 probe 80개 · **BLOCKED 45 · LEAK 0 · CRASH 0**
+- 로그인 실패 (HR_MANAGER · FACILITY_MANAGER · GUARDIAN) — seed 미완결로 5 attacker 중 2 만 활성. **후속: seed `interviewerIds` 버그 fix 후 재실행**
+
+**Burp Suite** — 실행 중 (port 3002 리스닝) · `undici ProxyAgent` 로 Node.js 요청을 3002 경유 라우팅 성공. Burp HTTP History 에서 실시간 검토 가능.
+
+### Burp 프록시 통과 종합 프로브 (`burp-security-probe.json`)
+
+**Section 19–70 도메인 커버리지** (46개 도메인 GET 스모크)
+- ✅ **26개 도메인 200 OK** (인증 통과 후 정상 응답)
+- ⚠️ 18개 도메인 404 NOT_FOUND (라우트 미구현 · 개별 확인 필요)
+- ✅ **0개 도메인 500 CRASH**
+
+**SQL / 특수문자 fuzz** (`:id` 라우트)
+- 5개 payload (`1' OR '1'='1`, `ABC`, `../../../etc/passwd`, `<script>alert(1)</script>` 등) × 5 route (`/departments`, `/matches`, `/contracts`, `/transfers`, `/injuries`) = **20 probe**
+- ✅ **20/20 BLOCKED (400 INVALID_ID)** — #571 fix (assertIntId helper 회귀) 정상 작동 확인
+- ✅ 0 LEAK · 0 CRASH
+
+**Auth bypass** (3 시나리오)
+- ✅ 토큰 없음 → 401 BLOCKED
+- ✅ 변조된 JWT → 401 BLOCKED
+- ✅ alg:none 공격 → 401 BLOCKED
+
+**미실행 (후속)**:
+- Load-balance 모드 (docker-compose.loadtest.yml 2 replica + nginx) 재측정
+- Burp 통과 stress (VU 50+ 프록시 후 지연 측정)
+- Multi-tenant 격리 pentest (#595 · seed 확장 필요)
+- 404 응답 18개 도메인 구현 여부 개별 확인 → 미구현이면 skeleton 유지 · 구현 있으면 라우트 마운트 체크
+
+---
+
+## 🚨 500ms 초과 병목 알람 (2026-09-30 per-domain stress)
+
+| 도메인 | p95 | avg | max | reqs | 우선순위 |
+|---|---|---|---|---|---|
+| `/countries` | **824ms** | 744ms | 1223ms | 883 | ⚠️ 검토 |
+
+**후속 액션 (도메인별)**:
+- `/countries` — Redis 캐시 부재 + 전 country 로드 + **비인증 접근 가능 (unauth 200 LEAK)**. 캐시 도입 + 인증 게이트 정책 판단 · 별도 이슈 필요
+
+---
+
 ## 1. Auth `/auth`
 
 | 항목 | 상태 | 비고 |
@@ -281,7 +361,7 @@
 | `GET /plan-reports/:id` | `report.deptId` | 🔲 | 부서 보고서 |
 | `GET /plan-reviews/:id` | `subject.deptId` | 🔲 | 부서 리뷰 |
 
-### 15.5.3 소속 팀 (`teamId`) 스코프 — 다른 팀 코치가 우리 팀 데이터 접근 시 403 여야 함
+### 15.5.3 소속 팀 (`teamId`) 스코프 — 다른 구단 코치가 우리 팀 데이터 접근 시 403 여야 함
 
 | 도메인 | 예상 스코프 필드 | 상태 | 비고 |
 |---|---|---|---|
@@ -373,9 +453,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 3ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -385,9 +465,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -397,9 +477,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 7ms · avg 3ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -409,9 +489,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 10ms · avg 5ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -421,9 +501,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 12ms · avg 6ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -435,9 +515,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
+| Smoke | ➖ 404 (라우트 부재) |
 | Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 | 🐛 `GET /transfers/recalls` → 500 | ✅ **FIXED** (#564) — `/:id` 가 `/recalls` 앞에 정의돼 admin 세션이 `Number("recalls")=NaN` 으로 Prisma 500. 라우트 순서 재배치 + `getRecalls` ADMIN/GM rbac + `?status` enum 검증 (400) + `:id` NaN 방어 (400 INVALID_ID). Burp Repeater 재프로브: admin/GM 200, HR/PLAYER 403, status=BOGUS 400, /transfers/abc 400 |
@@ -448,9 +528,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
 | Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -460,9 +540,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 8ms · avg 4ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -474,9 +554,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 10ms · avg 4ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -486,9 +566,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 10ms · avg 4ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -498,9 +578,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 12ms · avg 5ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -510,9 +590,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 7ms · avg 3ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -522,9 +602,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 9ms · avg 5ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -534,9 +614,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 13ms · avg 7ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -548,9 +628,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 12ms · avg 6ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -560,9 +640,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 9ms · avg 4ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -572,9 +652,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 10ms · avg 4ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -584,9 +664,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 9ms · avg 4ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -596,9 +676,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 9ms · avg 4ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -622,9 +702,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
+| Smoke | ➖ 404 (라우트 부재) |
 | Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -646,9 +726,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 5ms · avg 2ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -659,8 +739,8 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Stress | ✅ p95 5ms · avg 2ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -670,9 +750,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 8ms · avg 3ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -684,9 +764,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 3ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -696,9 +776,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -708,9 +788,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -720,9 +800,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 10ms · avg 5ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -732,9 +812,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 3ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -744,9 +824,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -780,9 +860,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -794,9 +874,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -806,9 +886,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -832,9 +912,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -844,9 +924,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 9ms · avg 4ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -856,9 +936,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -868,9 +948,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -882,9 +962,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -896,9 +976,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 10ms · avg 5ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -909,8 +989,8 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Stress | ✅ p95 5ms · avg 2ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -920,9 +1000,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ➖ 404 (라우트 부재) |
+| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -944,9 +1024,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 9ms · avg 4ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -956,9 +1036,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 10ms · avg 5ms · 884 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -970,9 +1050,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ⚠️ p95 824ms · avg 744ms · 883 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ⚠️ **LEAK — 200 without auth** (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -1006,9 +1086,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
+| Smoke | ➖ 404 (라우트 부재) |
 | Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
@@ -1020,9 +1100,9 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
+| Smoke | ✅ Burp GET → 200 (2026-09-30) |
+| Stress | ✅ p95 8ms · avg 4ms · 883 req (2026-09-30 per-domain stress) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 

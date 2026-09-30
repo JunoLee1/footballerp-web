@@ -1,0 +1,374 @@
+{
+  "domain_coverage": [
+    {
+      "domain": "/facility",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/department-asset-kits",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/inventory",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/videos",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/medical-equipment-loan",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/transfers",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/transfer-requests",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/agencies",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/teams",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/seasons",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/leagues",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/matches",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/clubs",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/club-settings",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/coaches",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/coach-availabilities",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/coaching-staff",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/training-loads",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/training-references",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/budget-automation",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/expense-categories",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/revenue-adjustment",
+      "status": 400,
+      "verdict": "OTHER"
+    },
+    {
+      "domain": "/account-codes",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/hiring-automation",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/hr",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/hr-reports",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/staff-records",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/onboarding-tasks",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/onboarding-templates",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/probation-reviews",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/ops-reports",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/plan-reviews",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/incident-reports",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/growth-reports",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/development-plans",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/dashboard",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/analysis",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/guardians",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/attendance-appeals",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/department-review-configs",
+      "status": 400,
+      "verdict": "OTHER"
+    },
+    {
+      "domain": "/formation-snapshots",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/tactical",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/certification",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/countries",
+      "status": 200,
+      "verdict": "OK"
+    },
+    {
+      "domain": "/webhook",
+      "status": 404,
+      "verdict": "NOT_FOUND"
+    },
+    {
+      "domain": "/software-licenses",
+      "status": 200,
+      "verdict": "OK"
+    }
+  ],
+  "sql_fuzz": [
+    {
+      "route": "/departments",
+      "payload": "1' OR '1'='1",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/departments",
+      "payload": "ABC",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/departments",
+      "payload": "../../../etc/passwd",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/departments",
+      "payload": "<script>alert(1)</script>",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/matches",
+      "payload": "1' OR '1'='1",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/matches",
+      "payload": "ABC",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/matches",
+      "payload": "../../../etc/passwd",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/matches",
+      "payload": "<script>alert(1)</script>",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/contracts",
+      "payload": "1' OR '1'='1",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/contracts",
+      "payload": "ABC",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/contracts",
+      "payload": "../../../etc/passwd",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/contracts",
+      "payload": "<script>alert(1)</script>",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/transfers",
+      "payload": "1' OR '1'='1",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/transfers",
+      "payload": "ABC",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/transfers",
+      "payload": "../../../etc/passwd",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/transfers",
+      "payload": "<script>alert(1)</script>",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/injuries",
+      "payload": "1' OR '1'='1",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/injuries",
+      "payload": "ABC",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/injuries",
+      "payload": "../../../etc/passwd",
+      "status": 400,
+      "verdict": "BLOCKED"
+    },
+    {
+      "route": "/injuries",
+      "payload": "<script>alert(1)</script>",
+      "status": 400,
+      "verdict": "BLOCKED"
+    }
+  ],
+  "auth_bypass": [
+    {
+      "note": "no-token",
+      "status": 401,
+      "verdict": "BLOCKED"
+    },
+    {
+      "note": "invalid-jwt",
+      "status": 401,
+      "verdict": "BLOCKED"
+    },
+    {
+      "note": "alg-none",
+      "status": 401,
+      "verdict": "BLOCKED"
+    }
+  ],
+  "timestamp": "2026-09-30T09:25:03.524Z"
+}

@@ -1,0 +1,184 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "MEDICAL_DIRECTOR": {
+                "name": "MEDICAL_DIRECTOR",
+                "path": "::MEDICAL_DIRECTOR",
+                "id": "c08f3bdf9c7399a53b586de2f81b0a6f",
+                "groups": {},
+                "checks": {
+                        "MEDICAL_DIRECTOR list_active_injuries status<500": {
+                            "passes": 7538,
+                            "fails": 0,
+                            "name": "MEDICAL_DIRECTOR list_active_injuries status<500",
+                            "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_active_injuries status<500",
+                            "id": "270227c27923b4a758d587a4f98d4f49"
+                        },
+                        "MEDICAL_DIRECTOR list_medical_equipment_loans status<500": {
+                            "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_medical_equipment_loans status<500",
+                            "id": "7e4de5030c4bd20f6f6fc21a0e3eec15",
+                            "passes": 7538,
+                            "fails": 0,
+                            "name": "MEDICAL_DIRECTOR list_medical_equipment_loans status<500"
+                        },
+                        "MEDICAL_DIRECTOR list_medical_expenses status<500": {
+                            "fails": 0,
+                            "name": "MEDICAL_DIRECTOR list_medical_expenses status<500",
+                            "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_medical_expenses status<500",
+                            "id": "598e54005f81bafc6103a4aa7a8bb603",
+                            "passes": 7538
+                        }
+                    }
+            }
+        },
+        "checks": {}
+    },
+    "metrics": {
+        "http_req_receiving": {
+            "avg": 0.01469086889232712,
+            "min": 0.004,
+            "med": 0.01,
+            "max": 2.107,
+            "p(90)": 0.024,
+            "p(95)": 0.036
+        },
+        "http_req_connecting": {
+            "min": 0,
+            "med": 0,
+            "max": 2.391,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.002801370771611761
+        },
+        "http_req_blocked": {
+            "avg": 0.005903205836835477,
+            "min": 0,
+            "med": 0.001,
+            "max": 10.155,
+            "p(90)": 0.004,
+            "p(95)": 0.006
+        },
+        "group_duration": {
+            "avg": 215.03970311236424,
+            "min": 4.161875,
+            "med": 215.329312,
+            "max": 525.364125,
+            "p(90)": 409.9602956,
+            "p(95)": 414.23300455
+        },
+        "vus": {
+            "value": 7,
+            "min": 6,
+            "max": 200
+        },
+        "http_reqs": {
+            "count": 22615,
+            "rate": 213.66614320744844
+        },
+        "data_sent": {
+            "count": 11254422,
+            "rate": 106331.59154406625
+        },
+        "http_req_duration": {
+            "p(90)": 143.1682,
+            "p(95)": 158.9431,
+            "avg": 71.6191479991155,
+            "min": 1.067,
+            "med": 69.836,
+            "max": 256.223,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "persona_latency": {
+            "avg": 71.6195855664631,
+            "min": 1.067,
+            "med": 69.83699999999999,
+            "max": 256.223,
+            "p(90)": 143.16840000000002,
+            "p(95)": 158.94394999999997
+        },
+        "iteration_duration": {
+            "med": 1215.4745625,
+            "max": 1526.601292,
+            "p(90)": 1410.0410498,
+            "p(95)": 1414.2743080999999,
+            "avg": 1215.3013868263506,
+            "min": 1004.217708
+        },
+        "http_req_waiting": {
+            "med": 69.815,
+            "max": 256.197,
+            "p(90)": 143.1548,
+            "p(95)": 158.93089999999998,
+            "avg": 71.59601525536145,
+            "min": 1.054
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(90)": 143.1682,
+            "p(95)": 158.9431,
+            "avg": 71.6191479991155,
+            "min": 1.067,
+            "med": 69.836,
+            "max": 256.223
+        },
+        "checks": {
+            "fails": 0,
+            "passes": 22614,
+            "value": 1
+        },
+        "http_req_sending": {
+            "avg": 0.008441874861815605,
+            "min": 0.001,
+            "med": 0.004,
+            "max": 3.353,
+            "p(90)": 0.012,
+            "p(95)": 0.019
+        },
+        "http_req_tls_handshaking": {
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "vus_max": {
+            "value": 200,
+            "min": 200,
+            "max": 200
+        },
+        "iterations": {
+            "count": 7538,
+            "rate": 71.21889840803654
+        },
+        "data_received": {
+            "count": 5315600,
+            "rate": 50221.70023583962
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 22615,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "MEDICAL_DIRECTOR": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFiYzFmY2Y5LWUxYzMtNDI0NS04YzIyLTFjOWFmNWZjYWJhMyIsInJvbGUiOiJDT0FDSElOR19TVEFGRiIsImNvYWNoaW5nUm9sZSI6Ik1FRElDQUxfRElSRUNUT1IiLCJmcm9udE9mZmljZVJvbGUiOm51bGwsImRlcGFydG1lbnRDYXRlZ29yaWVzIjpbXSwidGVhbUlkIjpudWxsLCJjbHViSWQiOjEsImlzRGVtbyI6ZmFsc2UsImlhdCI6MTc5MDc1Nzg2NywiZXhwIjoxNzkwNzYxNDY3fQ.UVgLHSj0xdFeWu8BpIP-Fed_rdNwwfSt0XlUp3JCZuc"
+            }
+    }
+}
