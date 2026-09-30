@@ -6,21 +6,21 @@ type UserWhere = Prisma.UserWhereInput;
 export class NotificationRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findByUserId(userId: number) {
+  findByUserId(userId: string) {
     return this.prisma.notification.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
     });
   }
 
-  markRead(id: number, userId: number) {
+  markRead(id: number, userId: string) {
     return this.prisma.notification.updateMany({
       where: { id, userId, readAt: null },
       data: { readAt: new Date() },
     });
   }
 
-  create(data: { userId: number; type: string; title: string; body: string; entityId?: number }) {
+  create(data: { userId: string; type: string; title: string; body: string; entityId?: number }) {
     return this.prisma.notification.create({ data: data as any });
   }
 
@@ -141,7 +141,7 @@ export class NotificationRepository {
     return this.createForUser(dept.headId, type, getMsg, entityId);
   }
 
-  async createForUser(userId: number, type: string, getMsg: MsgFactory, entityId?: number) {
+  async createForUser(userId: string, type: string, getMsg: MsgFactory, entityId?: number) {
     const userRecord = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { language: true },
@@ -152,12 +152,12 @@ export class NotificationRepository {
     });
   }
 
-  createForGuardian(guardianUserId: number, type: string, getMsg: MsgFactory, entityId?: number) {
+  createForGuardian(guardianUserId: string, type: string, getMsg: MsgFactory, entityId?: number) {
     return this.createForUser(guardianUserId, type, getMsg, entityId);
   }
 
   async createForUsers(
-    userIds: number[],
+    userIds: string[],
     type: string,
     getMsg: MsgFactory,
     entityId?: number,

@@ -13,8 +13,8 @@ import { isAdminLike } from "./permissions";
  */
 export async function canViewPii(
   prisma: PrismaClient,
-  viewerId: number,
-  targetUserId: number,
+  viewerId: string,
+  targetUserId: string,
   viewerRole: string,
 ): Promise<boolean> {
   if (viewerId === targetUserId) return true;

@@ -21,7 +21,7 @@ function sanitizeDetail(detail: Record<string, unknown>): Record<string, unknown
 }
 
 export async function writeAuditLog(params: {
-  actorId: number
+  actorId: string
   action: string
   targetId?: string | number
   detail?: Record<string, unknown>
