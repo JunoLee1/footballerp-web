@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import type { IncidentReportService } from "./incident-report.service";
 import type { CreateIncidentReportDto, SignIncidentReportDto, IncidentReportListQuery } from "./dto/incident-report.dto";
 import { IncidentReportStatus, IncidentType } from "../generated/enums";
@@ -31,7 +32,7 @@ export class IncidentReportController {
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!canAccess(req)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.getById(String(req.params["id"])));
+      res.json(await this.service.getById(assertCuid(req.params["id"])));
     } catch (e) { next(e); }
   };
 
@@ -53,7 +54,7 @@ export class IncidentReportController {
     try {
       const user = requireUser(req);
       if (!(ALLOWED_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.submit(String(req.params["id"])));
+      res.json(await this.service.submit(assertCuid(req.params["id"])));
     } catch (e) { next(e); }
   };
 
@@ -71,7 +72,7 @@ export class IncidentReportController {
           u.role === "COACHING_STAFF" &&
           u.coachingRole === "HEAD_COACH");
       if (!canSign) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.sign(String(req.params["id"]), role));
+      res.json(await this.service.sign(assertCuid(req.params["id"]), role));
     } catch (e) { next(e); }
   };
 }
