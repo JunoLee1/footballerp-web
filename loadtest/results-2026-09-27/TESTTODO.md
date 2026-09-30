@@ -12,9 +12,9 @@
 
 ---
 
-## 🆕 2026-09-30 최신 실행 결과 (`loadtest/results-2026-09-30/full-suite/index.html`)
+## 🆕 2026-09-30 최신 실행 결과 (`loadtest/results-2026-09-30/full-suite/report.html`)
 
-**환경**: PR #607 (Partner+SoftwareLicense 필드 확장) merged + PR #608 (Partner/SW/Equipment CUID) 오픈 브랜치. Local server `:3001`.
+**환경**: PR #607 (Partner+SoftwareLicense 필드 확장) merged + PR #608 (Partner/SW/Equipment CUID) merged + **PR #610 (Club/Budget/PlanReport C4+ 통합 + 소규모 5개 모델 C5) merged** — SponsorshipPayment·AccountCode·JobPosting·LedgerEntry·RevenueAdjustment id → String cuid. Local server `:3001`.
 
 **Smoke (VUS=2 · 10s)** — 17개 페르소나 커버 (메인 8 + 확장 9)
 
@@ -286,14 +286,14 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| `/sponsorships/:id/*` (12) IDOR 프로브 | 🔲 |
+| `/sponsorships/:id/*` (12) IDOR 프로브 | ✅ **CUID 전환 완료** (#593 PR C5) — `SponsorshipPayment.id Int → String @default(cuid())` (Sponsorship / SponsorshipClause 는 이전 마이그레이션에서 이미 CUID). `sponsorship.routes` 에 `cuidRouter("id", "paymentId", "clauseId", "sourceId")` 적용 · `assertCuid` 로 controller 이중 방어. Sub-route 12개 (payments·markPaid·clauses·apply·waive·copy-from·exposure-events 등) 전부 enumerable IDOR 실질 불가 |
 | `/budget-control/:id/*` (11) IDOR 프로브 | 🔲 |
 | `/hiring-surveys/:id/*` (11) IDOR 프로브 | 🔲 |
-| `/monthly-settlement/:id/*` (7) IDOR 프로브 | 🔲 |
+| `/monthly-settlement/:id/*` (7) IDOR 프로브 | ✅ **CUID 전환 완료** (#593 PR C5) — MonthlySettlementReport.id 이전 마이그레이션에서 이미 CUID. C5 에서 `monthly-settlement.routes` 를 `cuidRouter()` 로 교체, controller 에 `assertCuid` 적용. Sub-route 7개 (note·submit-first·approve-first·approve·reject·export 등) enumerable IDOR 실질 불가 |
 | `/hiring-dispatches/:id/*` (8) IDOR 프로브 | 🔲 |
 | `/academy-fees/:id/*` (9) IDOR 프로브 | 🔲 |
 | `/sales/:id/*` (5) IDOR 프로브 | 🔲 |
-| `/ledger/:id/*` (2) IDOR 프로브 | 🔲 |
+| `/ledger/:id/*` (2) IDOR 프로브 | ✅ **CUID 전환 완료** (#593 PR C5) — `LedgerEntry.id Int → String @default(cuid())` + `reversedById · accountCodeId · relatedId · RevenueAdjustment.ledgerEntryId` String 이동. `ledger.routes` 를 `cuidRouter()` 로 교체, controller 에 `assertCuid` 적용. GET/refund sub-action enumerable IDOR 실질 불가 |
 | `/acquisition-surveys/:id/*` (4) IDOR 프로브 | 🔲 |
 | `/staff-records/:id/*` (2) IDOR 프로브 | 🔲 · #580 파치로 probation-review 만 확인 (2 route 중 1) |
 | `/pii-access/:id/*` (2) IDOR 프로브 | 🔲 |
@@ -741,7 +741,8 @@
 | Smoke | 🔲 미러닝 |
 | Stress | ✅ p95 5ms · avg 2ms · 884 req (2026-09-30 per-domain stress) |
 | 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
-| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
+| 보안 — enumerable IDOR (id 열거) | ✅ **CUID 전환 완료** (#593 PR C5) — `RevenueAdjustment.id Int → String @default(cuid())`. `revenue-adjustment.routes` 에서 `intIdRouter` 제거, `financialReportId`·`monthlyReportId` 쿼리 파라미터 String 처리 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 (실 record ID 확보 후 프로브 필요) |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
 
 ---
@@ -753,8 +754,9 @@
 | Smoke | ✅ Burp GET → 200 (2026-09-30) |
 | Stress | ✅ p95 8ms · avg 3ms · 884 req (2026-09-30 per-domain stress) |
 | 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
-| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
-| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| 보안 — enumerable IDOR (id 열거) | ✅ **CUID 전환 완료** (#593 PR C5) — `AccountCode.id Int → String @default(cuid())` + `LedgerEntry.accountCodeId · OperatingExpense.accountCodeId` String 이동. `account-code.routes` 를 `cuidRouter()` 로 교체, `assertCuid` 로 controller 이중 방어 |
+| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 (ADMIN-only endpoint · PLAYER·HR·FINANCE 세션 프로브 필요) |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 (PUT · DELETE 는 isAdminLike 만 통과 확인 필요) |
 
 ---
 
