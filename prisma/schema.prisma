@@ -80,7 +80,7 @@ model Season {
 }
 
 model League {
-  id   Int    @id @default(autoincrement())
+  id             String   @id @default(cuid())
   name String
 
   nation_id Int
@@ -106,7 +106,7 @@ model PhoneNumber {
 }
 
 model User {
-  id            Int         @id @default(autoincrement())
+  id             String   @id @default(cuid())
   date_of_birth DateTime
   password      String
   email         String      @unique
@@ -129,7 +129,7 @@ model Team {
   founded    DateTime
   short_name String   @unique
 
-  league_id Int
+  league_id String
   league    League @relation(fields: [league_id], references: [id])
 
   homeMatches Match[] @relation("HomeTeam")
@@ -201,7 +201,7 @@ model Team_season_stats {
 }
 
 model Player_season_stats {
-  id Int @id @default(autoincrement())
+  id             String   @id @default(cuid())
 
   avg_xG                            Float?
   avg_xA                            Float?
@@ -332,7 +332,7 @@ model JerseyNumber {
 }
 
 model MarketValueHistory {
-  id            Int               @id @default(autoincrement())
+  id            String   @id @default(cuid())
   value         Float
   source        MarketValueSource
   recorded_at   DateTime          @default(now())
