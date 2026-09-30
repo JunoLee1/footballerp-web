@@ -332,6 +332,19 @@ export class RecruitmentRepository {
     });
   }
 
+  // #533 safety net: onboarding 완료 시점에 UserDepartment 존재 확인.
+  // 이미 있으면 그대로 유지 (role 변경 없음), 없으면 MEMBER 로 신규 생성.
+  // hiring-dispatch 경로는 이미 create 하므로 이 upsert 는 no-op 이지만,
+  // application-based (invite → startOnboarding → completeMfa) 경로에서는
+  // 최초 배정이 됨.
+  ensureUserDepartment(userId: string, departmentId: number) {
+    return this.prisma.userDepartment.upsert({
+      where: { userId_departmentId: { userId, departmentId } },
+      create: { userId, departmentId, role: "MEMBER" },
+      update: {},
+    });
+  }
+
   async getHeadcountProgress() {
     const postings = await this.prisma.jobPosting.findMany({
       where: { status: { in: ["OPEN", "CLOSED"] } },

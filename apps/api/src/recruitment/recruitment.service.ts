@@ -802,6 +802,15 @@ export class RecruitmentService {
     if (application) {
       await this.repo.completeOnboarding(applicationId, "");
 
+      // #533 safety net: application-based onboarding 경로에서는 hiring-dispatch 없이
+      // acceptInvite → startOnboarding → completeMfa 로 종료 가능. 이 경우 UserDepartment
+      // 배정이 누락되어 /auth/me.departmentMemberships 가 빈 배열 → dept-based RBAC 미적용.
+      // posting.departmentId 가 있으면 MEMBER 로 idempotent upsert.
+      const postingDeptId = application.posting?.departmentId ?? null;
+      if (postingDeptId !== null && onboarding.userId) {
+        await this.repo.ensureUserDepartment(onboarding.userId, postingDeptId);
+      }
+
       // Auto-create StaffRecord if not already exists
       const existingRecord = await prisma.staffRecord.findFirst({
         where: { employeeId: String(applicationId) },
