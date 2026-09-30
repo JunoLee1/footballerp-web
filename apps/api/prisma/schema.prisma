@@ -1397,6 +1397,18 @@ model Partner {
   tier       PartnerTier?
   tierReason String?
 
+  // #593 — 업체 등록 확장 필드
+  sla                            String? @db.Text
+  contactName                    String?
+  contactPhone                   String?
+  contactEmail                   String?
+  paymentBankName                String?
+  paymentAccountNumberEncrypted  String?
+  paymentAccountNumberIv         String?
+  paymentTerms                   String? @db.Text
+  businessRegNumberEncrypted     String?
+  businessRegNumberIv            String?
+
   injuries                    Injury[]
   equipmentItems              EquipmentItem[]
   contracts                   PartnerContract[]
@@ -3918,6 +3930,11 @@ model UserInvite {
 // Feature 16 — 자산관리부서
 // ─────────────────────────────────────────────
 
+enum LicenseSupplyType {
+  EXCLUSIVE
+  NON_EXCLUSIVE
+}
+
 model SoftwareLicense {
   id          Int       @id @default(autoincrement())
   name        String
@@ -3929,6 +3946,17 @@ model SoftwareLicense {
   createdById String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  // #593 — 라이선스 등록 확장 필드
+  version                String?
+  ipRegistrationNumber   String?
+  licenseCertificateUrl  String?
+  contractDocumentUrl    String?
+  supplyType             LicenseSupplyType?
+  territory              String?            @db.Text
+  deviceLimit            Int?
+  serverSpec             String?
+  siteLimit              Int?
 
   createdBy     User           @relation("SoftwareLicenseCreator", fields: [createdById], references: [id])
   assetRequests AssetRequest[]
