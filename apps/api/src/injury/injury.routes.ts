@@ -8,9 +8,10 @@ import { TrainingLoadRepository } from "../training-load/training-load.repo";
 import { getPrisma } from "../lib/prisma";
 import { canReadActiveInjury, canReadInjuryReport } from "../lib/permissions";
 import { AppError } from "../lib/appError";
-import { intIdRouter } from "../lib/idParamGuard";
+import { cuidRouter } from "../lib/cuidGuard";
+import { assertCuid } from "../lib/cuidGuard";
 
-const router = intIdRouter();
+const router = cuidRouter();
 const prisma = getPrisma();
 const repo = new InjuryRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);
@@ -20,7 +21,7 @@ const controller = new InjuryController(service);
 
 // #584: PLAYER self-scope 지원 — role-guard 통과 못하면 본인 리소스인지 검사.
 // role 이 PLAYER 이거나 unlinked user 도 self-check 로 들어와야 함 (관리자면 이미 통과).
-type SelfCheck = (req: Request, userId: number) => Promise<boolean>;
+type SelfCheck = (req: Request, userId: string) => Promise<boolean>;
 const guardOrSelf = (
   perm: (role: string, coachingRole?: string | null, deptCategories?: string[]) => boolean,
   selfCheck: SelfCheck,
@@ -36,7 +37,7 @@ const guardOrSelf = (
 };
 
 const selfByInjuryId: SelfCheck = (req, uid) =>
-  service.isSelfOwnedInjury(Number(req.params["id"]), uid);
+  service.isSelfOwnedInjury(assertCuid(req.params["id"]), uid);
 const selfByPlayerId: SelfCheck = (req, uid) =>
   service.isSelfOwnedPlayer(String(req.params["playerId"]), uid);
 

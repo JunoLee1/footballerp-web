@@ -10,7 +10,7 @@ export interface ExpenseUser {
 }
 
 export interface ExpenseInjury {
-  id: number
+  id: string
   bodyPart: string
   playerId: string
 }
@@ -25,7 +25,7 @@ export interface ExpensePlayer {
 export interface MedicalExpense {
   id: string
   status: MedicalExpenseStatus
-  injuryId: number | null
+  injuryId: string | null
   injury: ExpenseInjury | null
   playerId: string | null
   player: ExpensePlayer | null
@@ -55,7 +55,7 @@ export interface CreateExpenseDto {
   costCategory: ExpenseCostCategory
   totalAmount: number
   payerType: ExpensePayerType
-  injuryId?: number
+  injuryId?: string
   playerId?: string
   description?: string
   file?: File
@@ -66,7 +66,7 @@ export interface UpdateExpenseDto {
   costCategory?: ExpenseCostCategory
   totalAmount?: number
   payerType?: ExpensePayerType
-  injuryId?: number | null
+  injuryId?: string | null
   playerId?: string | null
   description?: string
   file?: File

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { InjuryService } from "./injury.service";
 import { writeAuditLog } from "../lib/auditLog";
 
@@ -42,7 +43,7 @@ export class InjuryController {
     try {
       const user = requireUser(req);
       void writeAuditLog({ actorId: user.id, action: "MEDICAL_DATA_READ", targetId: String(req.params["id"]) }).catch(console.error);
-      res.status(200).json(await this.service.getById(Number(req.params["id"])));
+      res.status(200).json(await this.service.getById(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -58,7 +59,7 @@ export class InjuryController {
     try {
       const user = requireUser(req);
       if (!(MEDICAL_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.updateStatus(Number(req.params["id"]), req.body));
+      res.status(200).json(await this.service.updateStatus(assertCuid(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 
@@ -67,7 +68,7 @@ export class InjuryController {
       const user = requireUser(req);
       void writeAuditLog({ actorId: user.id, action: "MEDICAL_DATA_READ", targetId: String(req.params["id"]) }).catch(console.error);
       const report = await this.service.getReport(
-        Number(req.params["id"]),
+        assertCuid(req.params["id"]),
         { role: user.role, coachingRole: user.coachingRole ?? null },
       );
       res.status(200).json(report ?? null);
@@ -80,7 +81,7 @@ export class InjuryController {
       if (!(MEDICAL_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
       res.status(200).json(
         await this.service.saveReport(
-          Number(req.params["id"]),
+          assertCuid(req.params["id"]),
           req.body,
           user.id,
           { role: user.role, coachingRole: user.coachingRole ?? null },
@@ -107,7 +108,7 @@ export class InjuryController {
       // SH20: SUPER_ADMIN은 모든 팀 접근 가능, 그 외는 자신의 팀 부상 선수만 서명 가능
       const signerTeamId = user.role === "SUPER_ADMIN" ? undefined : user.teamId;
       res.status(200).json(
-        await this.service.signReport(Number(req.params["id"]), role, user.id, signerTeamId)
+        await this.service.signReport(assertCuid(req.params["id"]), role, user.id, signerTeamId)
       );
     } catch (err) { next(err); }
   };
@@ -118,7 +119,7 @@ export class InjuryController {
       const role = this.getSignRole(user);
       if (!role) throw new AppError(403, "FORBIDDEN");
       res.status(200).json(
-        await this.service.unsignReport(Number(req.params["id"]), role)
+        await this.service.unsignReport(assertCuid(req.params["id"]), role)
       );
     } catch (err) { next(err); }
   };
@@ -127,7 +128,7 @@ export class InjuryController {
     try {
       const user = requireUser(req);
       void writeAuditLog({ actorId: user.id, action: "MEDICAL_DATA_READ", targetId: String(req.params["id"]) }).catch(console.error);
-      const data = await this.service.getAssessment(Number(req.params["id"]));
+      const data = await this.service.getAssessment(assertCuid(req.params["id"]));
       res.status(200).json(data);
     } catch (err) { next(err); }
   };
@@ -137,7 +138,7 @@ export class InjuryController {
       const user = requireUser(req);
       if (!(MEDICAL_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
       const result = await this.service.processAssessment(
-        Number(req.params["id"]),
+        assertCuid(req.params["id"]),
         req.body,
         user.id
       );
@@ -149,7 +150,7 @@ export class InjuryController {
     try {
       const user = requireUser(req);
       void writeAuditLog({ actorId: user.id, action: "MEDICAL_DATA_READ", targetId: String(req.params["id"]) }).catch(console.error);
-      const data = await this.service.getExternalReports(Number(req.params["id"]));
+      const data = await this.service.getExternalReports(assertCuid(req.params["id"]));
       res.status(200).json(data);
     } catch (err) { next(err); }
   };

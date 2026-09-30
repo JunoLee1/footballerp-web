@@ -8,7 +8,7 @@ export const injuryApi = {
   byPlayer: (playerId: string) =>
     api.get<Injury[]>(`/injuries/player/${playerId}`),
 
-  get: (id: number) =>
+  get: (id: string) =>
     api.get<InjuryDetail>(`/injuries/${id}`),
 
   create: (payload: {
@@ -21,7 +21,7 @@ export const injuryApi = {
     customHospitalName?: string
   }) => api.post<Injury>('/injuries', payload),
 
-  updateStatus: (id: number, status: InjuryStatus, expectedReturnDate?: string) =>
+  updateStatus: (id: string, status: InjuryStatus, expectedReturnDate?: string) =>
     api.patch<Injury>(`/injuries/${id}/status`, {
       status,
       ...(expectedReturnDate && { expectedReturnDate }),
@@ -35,10 +35,10 @@ export const injuryApi = {
       avgRecoveryDays: number | null
     }>('/injuries/stats'),
 
-  getReport: (injuryId: number) =>
+  getReport: (injuryId: string) =>
     api.get<InjuryReport | null>(`/injuries/${injuryId}/report`),
 
-  saveReport: (injuryId: number, payload: {
+  saveReport: (injuryId: string, payload: {
     diagnosisName?: string
     treatmentContent?: string
     rehabStage?: RehabStage
@@ -51,16 +51,16 @@ export const injuryApi = {
     securityLevel?: SecurityLevel
   }) => api.put<InjuryReport>(`/injuries/${injuryId}/report`, payload),
 
-  signReport: (injuryId: number) =>
+  signReport: (injuryId: string) =>
     api.post<InjuryReport>(`/injuries/${injuryId}/report/sign`, {}),
 
-  unsignReport: (injuryId: number) =>
+  unsignReport: (injuryId: string) =>
     api.delete<InjuryReport>(`/injuries/${injuryId}/report/sign`),
 
-  getAssessment: (injuryId: number) =>
+  getAssessment: (injuryId: string) =>
     api.get<InjuryAssessment | null>(`/injuries/${injuryId}/assessment`),
 
-  saveAssessment: (injuryId: number, dto: {
+  saveAssessment: (injuryId: string, dto: {
     painLevel: number
     hasSwelling: boolean
     romScore: number
@@ -71,10 +71,10 @@ export const injuryApi = {
     positionRiskScore: number
   }) => api.put<{ assessment: InjuryAssessment; triggeredReports: boolean }>(`/injuries/${injuryId}/assessment`, dto),
 
-  getExternalReports: (injuryId: number) =>
+  getExternalReports: (injuryId: string) =>
     api.get<ExternalReport[]>(`/injuries/${injuryId}/external-reports`),
 
-  updateExternalReportStatus: (injuryId: number, reportId: number, status: ExternalReportStatus, note?: string) =>
+  updateExternalReportStatus: (injuryId: string, reportId: number, status: ExternalReportStatus, note?: string) =>
     api.patch<ExternalReport>(`/injuries/${injuryId}/external-reports/${reportId}/status`, {
       status,
       ...(note !== undefined && { note }),

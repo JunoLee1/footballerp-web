@@ -111,7 +111,7 @@ export class InjuryRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.injury.findUnique({
       where: { id },
       select: {
@@ -123,7 +123,7 @@ export class InjuryRepository {
   }
 
   // #584: PLAYER self-scope 체크용 — injuryId → player.userId
-  findPlayerUserIdByInjury(injuryId: number) {
+  findPlayerUserIdByInjury(injuryId: string) {
     return this.prisma.injury.findUnique({
       where: { id: injuryId },
       select: { player: { select: { userId: true } } },
@@ -154,14 +154,14 @@ export class InjuryRepository {
     });
   }
 
-  updatePriorWeeklyLoad(injuryId: number, load: number) {
+  updatePriorWeeklyLoad(injuryId: string, load: number) {
     return this.prisma.injury.update({
       where: { id: injuryId },
       data: { priorWeeklyLoad: load },
     });
   }
 
-  updateStatus(id: number, dto: UpdateInjuryStatusDto) {
+  updateStatus(id: string, dto: UpdateInjuryStatusDto) {
     return this.prisma.injury.update({
       where: { id },
       data: {
@@ -172,21 +172,21 @@ export class InjuryRepository {
     });
   }
 
-  findReport(injuryId: number) {
+  findReport(injuryId: string) {
     return this.prisma.injuryReport.findUnique({
       where: { injuryId },
       select: INJURY_REPORT_SELECT,
     });
   }
 
-  getReport(injuryId: number) {
+  getReport(injuryId: string) {
     return this.prisma.injuryReport.findUnique({
       where: { injuryId },
       select: { rehabLoadPercentage: true, allowedActivities: true },
     });
   }
 
-  upsertReport(injuryId: number, dto: UpsertInjuryReportDto, userId: string) {
+  upsertReport(injuryId: string, dto: UpsertInjuryReportDto, userId: string) {
     const data = {
       diagnosisName: dto.diagnosisName ?? null,
       treatmentContent: dto.treatmentContent ?? null,
@@ -207,7 +207,7 @@ export class InjuryRepository {
     });
   }
 
-  signReport(injuryId: number, role: 'COACH' | 'TRAINER' | 'MEDICAL', userId: string) {
+  signReport(injuryId: string, role: 'COACH' | 'TRAINER' | 'MEDICAL', userId: string) {
     const now = new Date();
     const data =
       role === 'COACH'
@@ -222,7 +222,7 @@ export class InjuryRepository {
     });
   }
 
-  unsignReport(injuryId: number, role: 'COACH' | 'TRAINER' | 'MEDICAL') {
+  unsignReport(injuryId: string, role: 'COACH' | 'TRAINER' | 'MEDICAL') {
     const data =
       role === 'COACH'
         ? { coachSignedAt: null, coachSignedById: null }
@@ -273,12 +273,12 @@ export class InjuryRepository {
     });
   }
 
-  getAssessment(injuryId: number) {
+  getAssessment(injuryId: string) {
     return this.prisma.injuryAssessment.findUnique({ where: { injuryId } });
   }
 
   upsertAssessment(
-    injuryId: number,
+    injuryId: string,
     scores: {
       painLevel: number; hasSwelling: boolean; romScore: number;
       strengthScore: number; sprintScore: number; jumpScore: number;
@@ -295,7 +295,7 @@ export class InjuryRepository {
   }
 
   async createExternalReports(
-    injuryId: number,
+    injuryId: string,
     targets: { target: ExternalReportTarget; dueDate: Date }[],
     reportData: object
   ) {
@@ -305,7 +305,7 @@ export class InjuryRepository {
     });
   }
 
-  getExternalReports(injuryId: number) {
+  getExternalReports(injuryId: string) {
     return this.prisma.externalReport.findMany({ where: { injuryId }, orderBy: { createdAt: "asc" } });
   }
 

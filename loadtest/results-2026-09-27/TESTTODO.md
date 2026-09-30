@@ -167,6 +167,7 @@
 | Stress | 🔲 MEDICAL 페르소나 stress 근접 초과 |
 | 보안 — IDOR (PLAYER · HR → 부상 상세 조회) | ✅ 두 세션 모두 20/20 건 401/403 반환 (verdict PASS) |
 | 보안 — Player 본인 부상 조회 허용 여부 | 🔲 미검증 |
+| 보안 — enumerable IDOR (Injury + InjuryReport) | ✅ **CUID 전환 완료** (#598 tracer 4 · `refactor/injury-cuid-598`) — `Injury.id`·`InjuryReport.id Int → String @default(cuid())` + 5개 FK 컬럼 String 이동 (InjuryAssessment.injuryId · ExternalReport.injuryId · MedicalExpense.injuryId · InjuryReport.injuryId · IncidentReport.injuryId). 51/51 injury 테스트 + 23/23 incident-report 테스트 통과. 전체 회귀 0 (남은 25 실패는 main pre-existing) |
 
 ---
 
