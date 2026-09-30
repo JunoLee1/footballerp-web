@@ -158,7 +158,7 @@ export async function resolveBudgetPlanReviewers(
         email: t.user?.email ?? null,
         language: t.user?.language ?? null,
         scope: "TEAM",
-        ownerId: t.teamId,
+        ownerId: String(t.teamId),
       });
     }
   }
@@ -169,7 +169,7 @@ export async function resolveBudgetPlanReviewers(
         email: d.head?.email ?? null,
         language: d.head?.language ?? null,
         scope: "DEPARTMENT",
-        ownerId: d.id,
+        ownerId: String(d.id),
       });
     }
   }
