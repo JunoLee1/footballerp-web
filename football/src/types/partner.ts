@@ -2,7 +2,7 @@ export type PartnerType = 'MANUFACTURER' | 'HOSPITAL'
 export type PartnerContractStatus = 'ACTIVE' | 'EXPIRED' | 'TERMINATED'
 
 export interface Partner {
-  id: number
+  id: string
   type: PartnerType
   name: string
   country: string | null
@@ -25,7 +25,7 @@ export interface Partner {
 
 export interface PartnerContract {
   id: number
-  partnerId: number
+  partnerId: string
   status: PartnerContractStatus
   startDate: string
   endDate: string

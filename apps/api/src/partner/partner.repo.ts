@@ -32,14 +32,14 @@ export class PartnerRepository {
     });
   }
 
-  findByName(name: string, excludeId?: number) {
+  findByName(name: string, excludeId?: string) {
     return this.prisma.partner.findFirst({
       where: { name, ...(excludeId !== undefined && { id: { not: excludeId } }) },
       select: { id: true },
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.partner.findUnique({
       where: { id },
       select: { ...PARTNER_SELECT, contracts: { select: CONTRACT_SELECT, orderBy: { createdAt: "desc" } } },
@@ -76,7 +76,7 @@ export class PartnerRepository {
     });
   }
 
-  update(id: number, data: Prisma.PartnerUncheckedUpdateInput) {
+  update(id: string, data: Prisma.PartnerUncheckedUpdateInput) {
     return this.prisma.partner.update({
       where: { id },
       data: {
@@ -106,7 +106,7 @@ export class PartnerRepository {
     });
   }
 
-  createContract(partnerId: number, dto: CreatePartnerContractDto) {
+  createContract(partnerId: string, dto: CreatePartnerContractDto) {
     return this.prisma.partnerContract.create({
       data: {
         partnerId,

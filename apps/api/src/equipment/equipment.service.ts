@@ -27,7 +27,7 @@ export class EquipmentService {
     return cached(key, 30, () => this.repo.findAllItems(actorClubId));
   }
 
-  async getItemById(id: number, actorClubId?: number) {
+  async getItemById(id: string, actorClubId?: number) {
     const item = await this.repo.findItemById(id, actorClubId);
     if (!item) throw new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND");
     return {
@@ -43,7 +43,7 @@ export class EquipmentService {
     return this.repo.createItem(dto, actorClubId);
   }
 
-  async adjustQuantity(id: number, dto: UpdateQuantityDto, actorClubId?: number) {
+  async adjustQuantity(id: string, dto: UpdateQuantityDto, actorClubId?: number) {
     const item = await this.repo.findItemById(id, actorClubId);
     if (!item) throw new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND");
     if (item.trackedIndividually) throw new AppError(400, "ITEM_IS_TRACKED_INDIVIDUALLY");
@@ -56,7 +56,7 @@ export class EquipmentService {
     return updated;
   }
 
-  async addUnit(itemId: number, dto: CreateEquipmentUnitDto = {}, actorClubId?: number) {
+  async addUnit(itemId: string, dto: CreateEquipmentUnitDto = {}, actorClubId?: number) {
     const item = await this.repo.findItemById(itemId, actorClubId);
     if (!item) throw new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND");
     if (!item.trackedIndividually) throw new AppError(400, "ITEM_NOT_TRACKED_INDIVIDUALLY");

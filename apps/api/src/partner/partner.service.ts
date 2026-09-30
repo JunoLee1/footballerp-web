@@ -13,7 +13,7 @@ type EncryptedPair = {
   businessRegNumberIv?: string | null;
 };
 
-function encryptPair<T extends { paymentAccountNumber?: string | null; businessRegNumber?: string | null }>(dto: T): Omit<T, "paymentAccountNumber" | "businessRegNumber"> & EncryptedPair {
+function encryptPair<T extends Record<string, unknown> & { paymentAccountNumber?: string | null; businessRegNumber?: string | null }>(dto: T): Omit<T, "paymentAccountNumber" | "businessRegNumber"> & EncryptedPair {
   const { paymentAccountNumber, businessRegNumber, ...rest } = dto;
   const extra: EncryptedPair = {};
   if (paymentAccountNumber !== undefined) {
@@ -46,7 +46,7 @@ export class PartnerService {
     return this.repo.findAll(type);
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const partner = await this.repo.findById(id);
     if (!partner) throw new AppError(404, "PARTNER_NOT_FOUND");
     return partner;
@@ -60,7 +60,7 @@ export class PartnerService {
     return this.repo.create(payload);
   }
 
-  async update(id: number, dto: UpdatePartnerDto) {
+  async update(id: string, dto: UpdatePartnerDto) {
     await this.getById(id);
     if (dto.name !== undefined && !dto.name.trim()) throw new AppError(400, "PARTNER_NAME_REQUIRED");
     const trimmed = dto.name !== undefined ? dto.name.trim() : undefined;
@@ -72,7 +72,7 @@ export class PartnerService {
     return this.repo.update(id, payload);
   }
 
-  async createContract(partnerId: number, dto: CreatePartnerContractDto) {
+  async createContract(partnerId: string, dto: CreatePartnerContractDto) {
     await this.getById(partnerId);
     if (new Date(dto.endDate) <= new Date(dto.startDate)) {
       throw new AppError(400, "CONTRACT_END_BEFORE_START");
@@ -80,7 +80,7 @@ export class PartnerService {
     return this.repo.createContract(partnerId, dto);
   }
 
-  async updateContract(partnerId: number, contractId: number, dto: UpdatePartnerContractDto) {
+  async updateContract(partnerId: string, contractId: number, dto: UpdatePartnerContractDto) {
     await this.getById(partnerId);
     const contract = await this.repo.findContractById(contractId);
     if (!contract || contract.partnerId !== partnerId) throw new AppError(404, "CONTRACT_NOT_FOUND");

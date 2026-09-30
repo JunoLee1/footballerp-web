@@ -12,7 +12,7 @@ import type {
 export const equipmentApi = {
   listItems: () => api.get<EquipmentItem[]>('/equipment'),
 
-  getItem: (id: number) => api.get<EquipmentItem>(`/equipment/${id}`),
+  getItem: (id: string) => api.get<EquipmentItem>(`/equipment/${id}`),
 
   createItem: (dto: CreateEquipmentItemDto) =>
     api.post<EquipmentItem>('/equipment', dto),
@@ -25,7 +25,7 @@ export const equipmentApi = {
       `/equipment/assignments${playerId ? `?playerId=${playerId}` : ''}`,
     ),
 
-  assign: (playerId: string, equipmentItemId: number, equipmentUnitId?: number) =>
+  assign: (playerId: string, equipmentItemId: string, equipmentUnitId?: number) =>
     api.post<EquipmentAssignment>('/equipment/assignments', {
       playerId,
       equipmentItemId,
@@ -42,7 +42,7 @@ export const loanApi = {
 
   my: () => api.get<EquipmentLoan[]>('/equipment/loans/my'),
 
-  request: (dto: { equipmentItemId: number; dueDate: string; notes?: string }) =>
+  request: (dto: { equipmentItemId: string; dueDate: string; notes?: string }) =>
     api.post<EquipmentLoan>('/equipment/loans', dto),
 
   approve: (loanId: number) =>

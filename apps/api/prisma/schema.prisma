@@ -1386,7 +1386,7 @@ model TransferNegotiationLog {
 }
 
 model Partner {
-  id         Int          @id @default(autoincrement())
+  id         String       @id @default(cuid())
   type       PartnerType
   name       String
   country    String?
@@ -1420,7 +1420,7 @@ model Partner {
 
 model PartnerContract {
   id             Int                   @id @default(autoincrement())
-  partnerId      Int
+  partnerId      String
   status         PartnerContractStatus @default(ACTIVE)
   startDate      DateTime
   endDate        DateTime
@@ -1448,7 +1448,7 @@ model EquipmentLoan {
   returnedAt        DateTime?
   returnNote        String?
   notes             String?
-  equipmentItemId   Int
+  equipmentItemId   String
   equipmentUnitId   Int?
   clubId            Int?
   overdueNotifiedAt DateTime?
@@ -1487,7 +1487,7 @@ model MedicalEquipmentLoanLedger {
   emergencyReason String? @db.Text
 
   // 파트너 / 스폰서 참조
-  partnerId         Int?
+  partnerId         String?
   partner           Partner?         @relation(fields: [partnerId], references: [id])
   partnerContractId Int?
   partnerContract   PartnerContract? @relation(fields: [partnerContractId], references: [id])
@@ -1525,7 +1525,7 @@ model Injury {
   playerId           String
   medicalStaffId     String
   hospitalType       HospitalType?
-  partnerId          Int?
+  partnerId          String?
   customHospitalName String?
 
   player                 Player            @relation(fields: [playerId], references: [id])
@@ -1913,13 +1913,13 @@ model Notification {
 }
 
 model EquipmentItem {
-  id                  Int               @id @default(autoincrement())
+  id                  String            @id @default(cuid())
   name                String
   category            EquipmentCategory
   trackedIndividually Boolean
   quantity            Int?
   lowStockThreshold   Int?
-  partnerId           Int?
+  partnerId           String?
   clubId              Int?
 
   units         EquipmentUnit[]
@@ -1933,7 +1933,7 @@ model EquipmentItem {
 model EquipmentUnit {
   id                     Int                 @id @default(autoincrement())
   status                 EquipmentUnitStatus @default(AVAILABLE)
-  equipmentItemId        Int
+  equipmentItemId        String
   serialNumber           String?
   purchasedAt            DateTime?
   purchaseValue          Decimal?            @db.Decimal(12, 2)
@@ -1965,7 +1965,7 @@ model EquipmentAssignment {
   issuedAt        DateTime  @default(now())
   returnedAt      DateTime?
   playerId        String
-  equipmentItemId Int?
+  equipmentItemId String?
   equipmentUnitId Int?
 
   player        Player         @relation(fields: [playerId], references: [id])
@@ -3701,7 +3701,7 @@ model MaintenanceRequest {
   isLocked           Boolean             @default(false)
   financeSubmittedAt DateTime?
   createdById        String
-  partnerId          Int?
+  partnerId          String?
   sourceScheduleId   Int?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
@@ -3936,7 +3936,7 @@ enum LicenseSupplyType {
 }
 
 model SoftwareLicense {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(cuid())
   name        String
   vendor      String
   totalSeats  Int
@@ -4491,7 +4491,7 @@ model PreventiveSchedule {
   description     String?             @db.Text
   intervalDays    Int
   priority        MaintenancePriority
-  partnerId       Int?
+  partnerId       String?
   lastGeneratedAt DateTime?
   isActive        Boolean             @default(true)
   createdAt       DateTime            @default(now())
@@ -4567,7 +4567,7 @@ model SponsorshipExposureEvent {
 
 model PartnerContactLog {
   id             Int            @id @default(autoincrement())
-  partnerId      Int
+  partnerId      String
   channel        ContactChannel
   contactedAt    DateTime
   actorId        String
@@ -4709,8 +4709,8 @@ model AssetRequest {
   status       AssetRequestStatus @default(DRAFT)
 
   // hybrid payload — one of equipmentItemId/softwareLicenseId/customName required
-  equipmentItemId   Int?
-  softwareLicenseId Int?
+  equipmentItemId   String?
+  softwareLicenseId String?
   customName        String?
   customDescription String?
 

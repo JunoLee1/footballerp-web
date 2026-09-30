@@ -2,7 +2,7 @@ import { PrismaClient } from "../../generated/client";
 import { getPrisma } from "../../lib/prisma";
 
 export interface PartnerDiscountResult {
-  partnerId: number | null;
+  partnerId: string | null;
   partnerContractId: number | null;
   sponsorshipId: number | null;
   discountRate: number; // 0~100
@@ -20,7 +20,7 @@ export interface PartnerDiscountResult {
  * PartnerContract 없이 단독 존재하는 Sponsorship 은 매칭 불가 → 팀장 수동 override 필요.
  */
 export async function resolvePartnerDiscount(
-  equipmentItemId: number,
+  equipmentItemId: string,
   tx?: Pick<PrismaClient, "equipmentItem" | "sponsorship" | "partnerContract">
 ): Promise<PartnerDiscountResult> {
   const client = tx ?? getPrisma();

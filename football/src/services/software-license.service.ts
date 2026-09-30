@@ -3,7 +3,7 @@ import { api } from './api'
 export type LicenseSupplyType = 'EXCLUSIVE' | 'NON_EXCLUSIVE'
 
 export interface SoftwareLicense {
-  id: number
+  id: string
   name: string
   vendor: string
   totalSeats: number
@@ -69,7 +69,7 @@ export const SUPPLY_TYPE_LABEL: Record<LicenseSupplyType, string> = {
 export const softwareLicenseApi = {
   list: () => api.get<SoftwareLicense[]>('/software-licenses'),
   create: (dto: CreateSoftwareLicenseDto) => api.post<SoftwareLicense>('/software-licenses', dto),
-  update: (id: number, dto: UpdateSoftwareLicenseDto) => api.patch<SoftwareLicense>(`/software-licenses/${id}`, dto),
-  assign: (id: number, userId: string) => api.post<SoftwareLicense>(`/software-licenses/${id}/assign`, { userId }),
-  revoke: (id: number, userId: string) => api.delete<SoftwareLicense>(`/software-licenses/${id}/assign/${userId}`),
+  update: (id: string, dto: UpdateSoftwareLicenseDto) => api.patch<SoftwareLicense>(`/software-licenses/${id}`, dto),
+  assign: (id: string, userId: string) => api.post<SoftwareLicense>(`/software-licenses/${id}/assign`, { userId }),
+  revoke: (id: string, userId: string) => api.delete<SoftwareLicense>(`/software-licenses/${id}/assign/${userId}`),
 }

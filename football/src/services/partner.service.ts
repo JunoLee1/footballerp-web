@@ -6,11 +6,11 @@ export const partnerApi = {
   list: (type?: PartnerType) =>
     api.get<Partner[]>(`/partners${type ? `?type=${type}` : ''}`),
 
-  get: (id: number) => api.get<Partner>(`/partners/${id}`),
+  get: (id: string) => api.get<Partner>(`/partners/${id}`),
 
   create: (dto: CreatePartnerDto) => api.post<Partner>('/partners', dto),
 
-  update: (id: number, dto: Partial<CreatePartnerDto>) =>
+  update: (id: string, dto: Partial<CreatePartnerDto>) =>
     api.patch<Partner>(`/partners/${id}`, dto),
 
   createContract: (partnerId: number, dto: CreatePartnerContractDto) =>

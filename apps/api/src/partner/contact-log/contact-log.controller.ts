@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { assertCuid } from "../../lib/cuidGuard";
 import { AppError } from "../../lib/appError";
 import { isAdminLike } from "../../lib/permissions";
 import { requireUser } from "../../lib/authMiddleware";
@@ -21,7 +22,7 @@ export class ContactLogController {
     try {
       const { role } = requireUser(req);
       if (!canRead(role)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.list(Number(req.params["partnerId"])));
+      res.json(await this.service.list(assertCuid(req.params["partnerId"])));
     } catch (err) { next(err); }
   };
 
@@ -30,7 +31,7 @@ export class ContactLogController {
       const { role, frontOfficeRole, id: userId } = requireUser(req);
       if (!canManage(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       res.status(201).json(
-        await this.service.create(Number(req.params["partnerId"]), req.body as CreateContactLogDto, userId),
+        await this.service.create(assertCuid(req.params["partnerId"]), req.body as CreateContactLogDto, userId),
       );
     } catch (err) { next(err); }
   };

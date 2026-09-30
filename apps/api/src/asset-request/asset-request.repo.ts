@@ -174,14 +174,14 @@ export class AssetRequestRepository {
     });
   }
 
-  linkEquipmentItem(id: number, equipmentItemId: number) {
+  linkEquipmentItem(id: number, equipmentItemId: string) {
     return this.prisma.assetRequest.update({
       where: { id },
       data: { equipmentItemId },
     });
   }
 
-  linkSoftwareLicense(id: number, softwareLicenseId: number) {
+  linkSoftwareLicense(id: number, softwareLicenseId: string) {
     return this.prisma.assetRequest.update({
       where: { id },
       data: { softwareLicenseId },

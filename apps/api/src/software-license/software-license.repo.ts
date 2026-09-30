@@ -8,7 +8,7 @@ export class SoftwareLicenseRepository {
     return this.prisma.softwareLicense.findMany({ orderBy: { createdAt: "desc" } });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.softwareLicense.findUnique({ where: { id } });
   }
 
@@ -35,7 +35,7 @@ export class SoftwareLicenseRepository {
     });
   }
 
-  update(id: number, data: UpdateSoftwareLicenseDto) {
+  update(id: string, data: UpdateSoftwareLicenseDto) {
     return this.prisma.softwareLicense.update({
       where: { id },
       data: {
@@ -57,7 +57,7 @@ export class SoftwareLicenseRepository {
     });
   }
 
-  incrementSeats(id: number, delta: number) {
+  incrementSeats(id: string, delta: number) {
     return this.prisma.softwareLicense.update({
       where: { id },
       data: { usedSeats: { increment: delta } },

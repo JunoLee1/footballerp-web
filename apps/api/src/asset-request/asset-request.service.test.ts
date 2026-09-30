@@ -146,7 +146,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       );
       const dto = {
         type: "HARDWARE" as any,
-        equipmentItemId: 1,
+        equipmentItemId: "cmxtestequip0000000000001",
         expenseCategoryId: 1,
         expectedAmount: 10000,
         justification: "필요",

@@ -8,7 +8,7 @@ const INCLUDE = {
 export class ContactLogRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(partnerId: number, data: CreateContactLogDto & { actorId: string }) {
+  create(partnerId: string, data: CreateContactLogDto & { actorId: string }) {
     return this.prisma.partnerContactLog.create({
       data: {
         partnerId,
@@ -23,7 +23,7 @@ export class ContactLogRepository {
     });
   }
 
-  findAll(partnerId: number) {
+  findAll(partnerId: string) {
     return this.prisma.partnerContactLog.findMany({
       where: { partnerId },
       include: INCLUDE,
