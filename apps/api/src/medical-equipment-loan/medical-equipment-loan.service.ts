@@ -50,7 +50,7 @@ async function getMedicalDeptId(
   return dept.id;
 }
 
-function notifyDirector(type: string, entityId: number, title: string, body: string) {
+function notifyDirector(type: string, entityId: string, title: string, body: string) {
   return notifRepo.createForMedicalDirector(type, () => ({ title, body }), entityId);
 }
 

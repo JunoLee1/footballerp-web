@@ -1,0 +1,184 @@
+{
+    "root_group": {
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+                "MEDICAL_DIRECTOR": {
+                    "name": "MEDICAL_DIRECTOR",
+                    "path": "::MEDICAL_DIRECTOR",
+                    "id": "c08f3bdf9c7399a53b586de2f81b0a6f",
+                    "groups": {},
+                    "checks": {
+                            "MEDICAL_DIRECTOR list_active_injuries status<500": {
+                                "name": "MEDICAL_DIRECTOR list_active_injuries status<500",
+                                "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_active_injuries status<500",
+                                "id": "270227c27923b4a758d587a4f98d4f49",
+                                "passes": 20,
+                                "fails": 0
+                            },
+                            "MEDICAL_DIRECTOR list_medical_equipment_loans status<500": {
+                                "name": "MEDICAL_DIRECTOR list_medical_equipment_loans status<500",
+                                "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_medical_equipment_loans status<500",
+                                "id": "7e4de5030c4bd20f6f6fc21a0e3eec15",
+                                "passes": 20,
+                                "fails": 0
+                            },
+                            "MEDICAL_DIRECTOR list_medical_expenses status<500": {
+                                "passes": 20,
+                                "fails": 0,
+                                "name": "MEDICAL_DIRECTOR list_medical_expenses status<500",
+                                "path": "::MEDICAL_DIRECTOR::MEDICAL_DIRECTOR list_medical_expenses status<500",
+                                "id": "598e54005f81bafc6103a4aa7a8bb603"
+                            }
+                        }
+                }
+            }
+    },
+    "metrics": {
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_receiving": {
+            "avg": 0.037606557377049175,
+            "min": 0.012,
+            "med": 0.031,
+            "max": 0.123,
+            "p(90)": 0.066,
+            "p(95)": 0.077
+        },
+        "checks": {
+            "passes": 60,
+            "fails": 0,
+            "value": 1
+        },
+        "data_sent": {
+            "count": 30048,
+            "rate": 2779.415013059033
+        },
+        "group_duration": {
+            "avg": 53.54028345000002,
+            "min": 13.971125,
+            "med": 19.993354500000002,
+            "max": 343.875375,
+            "p(90)": 73.79085440000013,
+            "p(95)": 342.15828895000004
+        },
+        "http_reqs": {
+            "count": 61,
+            "rate": 5.642449274381024
+        },
+        "data_received": {
+            "count": 15410,
+            "rate": 1425.412185544452
+        },
+        "iterations": {
+            "rate": 1.849983368649516,
+            "count": 20
+        },
+        "http_req_sending": {
+            "p(90)": 0.025,
+            "p(95)": 0.027,
+            "avg": 0.01422950819672132,
+            "min": 0.004,
+            "med": 0.012,
+            "max": 0.069
+        },
+        "persona_latency": {
+            "avg": 17.69905,
+            "min": 2.813,
+            "med": 6.316000000000001,
+            "max": 231.775,
+            "p(90)": 17.943900000000003,
+            "p(95)": 93.82054999999988
+        },
+        "vus_max": {
+            "value": 2,
+            "min": 2,
+            "max": 2
+        },
+        "http_req_duration": {
+            "med": 6.333,
+            "max": 231.775,
+            "p(90)": 19.32,
+            "p(95)": 91.732,
+            "avg": 18.387655737704918,
+            "min": 2.813,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_blocked": {
+            "min": 0.001,
+            "med": 0.003,
+            "max": 1.628,
+            "p(90)": 0.007,
+            "p(95)": 0.02,
+            "avg": 0.04614754098360651
+        },
+        "http_req_waiting": {
+            "avg": 18.335819672131148,
+            "min": 2.793,
+            "med": 6.306,
+            "max": 231.714,
+            "p(90)": 19.28,
+            "p(95)": 91.659
+        },
+        "http_req_duration{expected_response:true}": {
+            "min": 2.813,
+            "med": 6.333,
+            "max": 231.775,
+            "p(90)": 19.32,
+            "p(95)": 91.732,
+            "avg": 18.387655737704918
+        },
+        "vus": {
+            "value": 2,
+            "min": 2,
+            "max": 2
+        },
+        "http_req_tls_handshaking": {
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0
+        },
+        "iteration_duration": {
+            "avg": 1054.5960729499998,
+            "min": 1016.026709,
+            "med": 1020.780458,
+            "max": 1344.9575,
+            "p(90)": 1073.9775161,
+            "p(95)": 1343.2439774
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 61,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "http_req_connecting": {
+            "max": 0.436,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.01680327868852459,
+            "min": 0,
+            "med": 0
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "MEDICAL_DIRECTOR": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjFiYzFmY2Y5LWUxYzMtNDI0NS04YzIyLTFjOWFmNWZjYWJhMyIsInJvbGUiOiJDT0FDSElOR19TVEFGRiIsImNvYWNoaW5nUm9sZSI6Ik1FRElDQUxfRElSRUNUT1IiLCJmcm9udE9mZmljZVJvbGUiOm51bGwsImRlcGFydG1lbnRDYXRlZ29yaWVzIjpbXSwidGVhbUlkIjpudWxsLCJjbHViSWQiOjEsImlzRGVtbyI6ZmFsc2UsImlhdCI6MTc5MDc1NzE5OCwiZXhwIjoxNzkwNzYwNzk4fQ.HgRVrYdF-Q3ijn7qx3-VTr9CW03J2o-p9kmpyoo33dM"
+            }
+    }
+}

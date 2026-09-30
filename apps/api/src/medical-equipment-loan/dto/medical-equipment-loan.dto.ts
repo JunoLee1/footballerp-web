@@ -1,6 +1,6 @@
 export interface RequestNormalMedicalLoanDto {
   equipmentItemId: string;
-  equipmentUnitId?: number;
+  equipmentUnitId?: string;
   notes?: string;
   originalCost: number;
   overrideDiscountRate?: number;
@@ -12,7 +12,7 @@ export interface RequestNormalMedicalLoanDto {
 
 export interface RequestEmergencyMedicalLoanDto {
   equipmentItemId: string;
-  equipmentUnitId?: number;
+  equipmentUnitId?: string;
   notes?: string;
   emergencyReason: string;
   originalCost: number;

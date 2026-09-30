@@ -39,7 +39,7 @@ export interface UpdateUnitSanitationDto {
 export interface CreateAssignmentDto {
   playerId: string;
   equipmentItemId?: string;
-  equipmentUnitId?: number;
+  equipmentUnitId?: string;
 }
 
 import { EquipmentLoanStatus } from "../../generated/enums";
@@ -52,5 +52,5 @@ export interface CreateEquipmentLoanDto {
 
 export interface UpdateEquipmentLoanStatusDto {
   status: EquipmentLoanStatus;
-  equipmentUnitId?: number;
+  equipmentUnitId?: string;
 }

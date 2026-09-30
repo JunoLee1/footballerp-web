@@ -23,9 +23,9 @@ describe("EquipmentService.calculateAndSaveDepreciation", () => {
       updateUnitDepreciation,
     });
     const service = new EquipmentService(repo, undefined as any, undefined as any);
-    await service.calculateAndSaveDepreciation(1);
+    await service.calculateAndSaveDepreciation("cmxtestequnit0000000000001");
     // 1000 * (1 - 0.2) = 800
-    expect(updateUnitDepreciation).toHaveBeenCalledWith(1, 800);
+    expect(updateUnitDepreciation).toHaveBeenCalledWith("cmxtestequnit0000000000001", 800);
   });
 
   it("computes straight line correctly", async () => {
@@ -39,9 +39,9 @@ describe("EquipmentService.calculateAndSaveDepreciation", () => {
       updateUnitDepreciation,
     });
     const service = new EquipmentService(repo, undefined as any, undefined as any);
-    await service.calculateAndSaveDepreciation(1);
+    await service.calculateAndSaveDepreciation("cmxtestequnit0000000000001");
     // 1000 - (1000 * 0.1) * 1 month = 900
-    expect(updateUnitDepreciation).toHaveBeenCalledWith(1, 900);
+    expect(updateUnitDepreciation).toHaveBeenCalledWith("cmxtestequnit0000000000001", 900);
   });
 
   it("throws 400 when newBookValue would go negative", async () => {
@@ -53,7 +53,7 @@ describe("EquipmentService.calculateAndSaveDepreciation", () => {
       }),
     });
     const service = new EquipmentService(repo, undefined as any, undefined as any);
-    await expect(service.calculateAndSaveDepreciation(1))
+    await expect(service.calculateAndSaveDepreciation("cmxtestequnit0000000000001"))
       .rejects.toThrow(new AppError(400, "NEGATIVE_BOOK_VALUE"));
   });
 });
@@ -144,7 +144,7 @@ describe("EquipmentService — clubId 스코핑 (Phase 2.5)", () => {
       const findLoanById = jest.fn().mockResolvedValue(null);
       const repo = makeRepo({ findLoanById });
       const service = new EquipmentService(repo, undefined as any, undefined as any);
-      await expect(service.approveLoan(1, "44444444-4444-4444-4444-444444444444", 99))
+      await expect(service.approveLoan("cmxtestloan0000000000001", "44444444-4444-4444-4444-444444444444", 99))
         .rejects.toThrow(new AppError(404, "LOAN_NOT_FOUND"));
     });
   });

@@ -12,21 +12,21 @@ const VERIFICATION_INCLUDE = {
 export class DisposalRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findUnitById(id: number) {
+  findUnitById(id: string) {
     return this.prisma.equipmentUnit.findUnique({
       where: { id },
       select: { id: true, status: true, isHighValue: true, disposedAt: true },
     });
   }
 
-  findVerification(equipmentId: number) {
+  findVerification(equipmentId: string) {
     return this.prisma.equipmentDisposalVerification.findUnique({
       where: { equipmentId },
       include: VERIFICATION_INCLUDE,
     });
   }
 
-  createVerification(equipmentId: number, requestedById: string) {
+  createVerification(equipmentId: string, requestedById: string) {
     return this.prisma.equipmentDisposalVerification.create({
       data: { equipmentId, requestedById },
       include: VERIFICATION_INCLUDE,
@@ -67,7 +67,7 @@ export class DisposalRepository {
     });
   }
 
-  updateUnitDisposed(equipmentId: number, actorId: string) {
+  updateUnitDisposed(equipmentId: string, actorId: string) {
     return this.prisma.equipmentUnit.update({
       where: { id: equipmentId },
       data: {

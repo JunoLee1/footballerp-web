@@ -69,7 +69,7 @@ export class EquipmentService {
     return this.repo.createUnit(itemId, unitDto, actorClubId);
   }
 
-  async calculateAndSaveDepreciation(unitId: number) {
+  async calculateAndSaveDepreciation(unitId: string) {
     const unit = await this.repo.findUnitWithDepreciation(unitId);
     if (!unit) throw new AppError(404, "EQUIPMENT_UNIT_NOT_FOUND");
     if (!unit.depreciationMethod || unit.depreciationRate === null || unit.bookValue === null || unit.purchaseValue === null) {
@@ -95,7 +95,7 @@ export class EquipmentService {
     return this.repo.updateUnitDepreciation(unitId, newBookValue);
   }
 
-  async transitionUnitStatus(unitId: number, dto: UpdateUnitStatusDto, userId?: string, actorClubId?: number) {
+  async transitionUnitStatus(unitId: string, dto: UpdateUnitStatusDto, userId?: string, actorClubId?: number) {
     const unit = await this.repo.findUnitById(unitId, actorClubId);
     if (!unit) throw new AppError(404, "EQUIPMENT_UNIT_NOT_FOUND");
     const allowed = VALID_UNIT_TRANSITIONS[unit.status as unknown as EquipmentUnitStatus];
@@ -128,7 +128,7 @@ export class EquipmentService {
           isRefund: true,
           description: formatLedgerDescription("equipment", "retired", { unitId }),
           relatedModule: "equipment",
-          relatedId: unitId,
+          // relatedId 는 Int 컬럼이라 cuid unitId 저장 불가 (#593 PR C1)
         }, userId ?? "").catch(err => console.error("[LedgerAutoEntry:equipment]", err));
       }
     }
@@ -146,7 +146,7 @@ export class EquipmentService {
     return this.repo.findUnreturnedByPlayer(playerId);
   }
 
-  async returnAssignment(assignmentId: number) {
+  async returnAssignment(assignmentId: string) {
     const assignment = await this.repo.findAssignmentById(assignmentId);
     if (!assignment) throw new AppError(404, "ASSIGNMENT_NOT_FOUND");
     if (assignment.returnedAt) throw new AppError(409, "ALREADY_RETURNED");
@@ -175,7 +175,7 @@ export class EquipmentService {
     return loan;
   }
 
-  async approveLoan(loanId: number, approvedById: string, actorClubId?: number) {
+  async approveLoan(loanId: string, approvedById: string, actorClubId?: number) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "REQUESTED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -189,7 +189,7 @@ export class EquipmentService {
     return updated;
   }
 
-  async rejectLoan(loanId: number, approvedById: string, actorClubId?: number) {
+  async rejectLoan(loanId: string, approvedById: string, actorClubId?: number) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "REQUESTED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -203,7 +203,7 @@ export class EquipmentService {
     return updated;
   }
 
-  async issueLoan(loanId: number, equipmentUnitId?: number, actorClubId?: number) {
+  async issueLoan(loanId: string, equipmentUnitId?: string, actorClubId?: number) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "APPROVED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -214,7 +214,7 @@ export class EquipmentService {
     });
   }
 
-  async returnLoan(loanId: number, returnedById: string, returnNote?: string, actorClubId?: number) {
+  async returnLoan(loanId: string, returnedById: string, returnNote?: string, actorClubId?: number) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "ISSUED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -246,7 +246,7 @@ export class EquipmentService {
     return result;
   }
 
-  async updateUnitSanitation(unitId: number, dto: UpdateUnitSanitationDto, actorClubId?: number) {
+  async updateUnitSanitation(unitId: string, dto: UpdateUnitSanitationDto, actorClubId?: number) {
     const unit = await this.repo.findUnitById(unitId, actorClubId);
     if (!unit) throw new AppError(404, "EQUIPMENT_UNIT_NOT_FOUND");
     return this.repo.updateUnit(unitId, {

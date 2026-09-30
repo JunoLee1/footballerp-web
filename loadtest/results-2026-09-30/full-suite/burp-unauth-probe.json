@@ -1,0 +1,249 @@
+{
+  "get_probe": [
+    {
+      "domain": "/facility",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/department-asset-kits",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/inventory",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/videos",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/medical-equipment-loan",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/transfers",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/transfer-requests",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/agencies",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/teams",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/seasons",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/leagues",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/matches",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/clubs",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/club-settings",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/coaches",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/coach-availabilities",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/coaching-staff",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/training-loads",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/training-references",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/budget-automation",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/expense-categories",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/revenue-adjustment",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/account-codes",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/hiring-automation",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/hr",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/hr-reports",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/staff-records",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/onboarding-tasks",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/onboarding-templates",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/probation-reviews",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/ops-reports",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/plan-reviews",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/incident-reports",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/growth-reports",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/development-plans",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/dashboard",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/analysis",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/guardians",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/attendance-appeals",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/department-review-configs",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/formation-snapshots",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/tactical",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/certification",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    },
+    {
+      "domain": "/countries",
+      "unauth_status": 200,
+      "unauth_verdict": "LEAK"
+    },
+    {
+      "domain": "/webhook",
+      "unauth_status": 404,
+      "unauth_verdict": "OTHER"
+    },
+    {
+      "domain": "/software-licenses",
+      "unauth_status": 401,
+      "unauth_verdict": "BLOCKED"
+    }
+  ],
+  "write_probe": [
+    {
+      "domain": "/facility",
+      "method": "POST",
+      "status": 404,
+      "verdict": "OTHER"
+    },
+    {
+      "domain": "/software-licenses",
+      "method": "POST",
+      "status": 401,
+      "verdict": "BLOCKED"
+    }
+  ],
+  "timestamp": "2026-09-30T09:28:11.401Z"
+}

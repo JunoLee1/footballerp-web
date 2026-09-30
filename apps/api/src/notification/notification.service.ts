@@ -181,7 +181,7 @@ export class NotificationService {
     }), requestId);
   }
 
-  async notifyDisposalRequested(itemName: string, equipmentId: number) {
+  async notifyDisposalRequested(itemName: string, equipmentId: string) {
     const title = "장비 폐기 검증 요청";
     const body = `'${itemName}' 장비의 폐기 검증이 요청됐습니다. 현장 확인 바랍니다.`;
     await this.repo.createForStaff("DISPOSAL_VERIFICATION_REQUESTED", () => ({ title, body }), equipmentId);
@@ -190,7 +190,7 @@ export class NotificationService {
     });
   }
 
-  async notifyDisposalFMVerified(itemName: string, equipmentId: number) {
+  async notifyDisposalFMVerified(itemName: string, equipmentId: string) {
     const title = "고가 장비 폐기 GM 승인 필요";
     const body = `'${itemName}' 고가 장비 폐기가 시설 매니저에 의해 확인됐습니다. GM 최종 승인이 필요합니다.`;
     await this.repo.createForGM("DISPOSAL_FM_VERIFIED", () => ({ title, body }), equipmentId);

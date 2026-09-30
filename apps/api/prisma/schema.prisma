@@ -1438,7 +1438,7 @@ model PartnerContract {
 }
 
 model EquipmentLoan {
-  id                Int                 @id @default(autoincrement())
+  id                String              @id @default(cuid())
   status            EquipmentLoanStatus @default(REQUESTED)
   requestedAt       DateTime            @default(now())
   dueDate           DateTime
@@ -1449,7 +1449,7 @@ model EquipmentLoan {
   returnNote        String?
   notes             String?
   equipmentItemId   String
-  equipmentUnitId   Int?
+  equipmentUnitId   String?
   clubId            Int?
   overdueNotifiedAt DateTime?
 
@@ -1465,7 +1465,7 @@ model MedicalEquipmentLoanLedger {
   id Int @id @default(autoincrement())
 
   // 기존 EquipmentLoan 과 1:1 연결
-  equipmentLoanId Int           @unique
+  equipmentLoanId String        @unique
   equipmentLoan   EquipmentLoan @relation(fields: [equipmentLoanId], references: [id])
 
   // 상태
@@ -1931,7 +1931,7 @@ model EquipmentItem {
 }
 
 model EquipmentUnit {
-  id                     Int                 @id @default(autoincrement())
+  id                     String              @id @default(cuid())
   status                 EquipmentUnitStatus @default(AVAILABLE)
   equipmentItemId        String
   serialNumber           String?
@@ -1961,12 +1961,12 @@ model EquipmentUnit {
 }
 
 model EquipmentAssignment {
-  id              Int       @id @default(autoincrement())
+  id              String    @id @default(cuid())
   issuedAt        DateTime  @default(now())
   returnedAt      DateTime?
   playerId        String
   equipmentItemId String?
-  equipmentUnitId Int?
+  equipmentUnitId String?
 
   player        Player         @relation(fields: [playerId], references: [id])
   equipmentItem EquipmentItem? @relation(fields: [equipmentItemId], references: [id])
@@ -3482,7 +3482,7 @@ model Interview {
   applicationId  Int
   round          InterviewRound
   scheduledAt    DateTime?
-  interviewerIds Int[]
+  interviewerIds String[]
   scoreSkill     Int?
   scoreComm      Int?
   scoreCulture   Int?
@@ -4514,7 +4514,7 @@ model FacilityAccessLog {
 
 model EquipmentDisposalVerification {
   id            Int                        @id @default(autoincrement())
-  equipmentId   Int                        @unique
+  equipmentId   String                     @unique
   requestedById String
   verifiedById  String?
   verifiedAt    DateTime?

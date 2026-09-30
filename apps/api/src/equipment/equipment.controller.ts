@@ -66,7 +66,7 @@ export class EquipmentController {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       const clubScope = requireClubScope(user);
-      res.status(200).json(await this.service.transitionUnitStatus(Number(req.params["unitId"]), req.body, user.id, clubScope));
+      res.status(200).json(await this.service.transitionUnitStatus(assertCuid(req.params["unitId"]), req.body, user.id, clubScope));
     } catch (err) { next(err); }
   };
 
@@ -75,7 +75,7 @@ export class EquipmentController {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       const clubScope = requireClubScope(user);
-      res.json(await this.service.updateUnitSanitation(Number(req.params["unitId"]), req.body, clubScope));
+      res.json(await this.service.updateUnitSanitation(assertCuid(req.params["unitId"]), req.body, clubScope));
     } catch (err) { next(err); }
   };
 
@@ -99,7 +99,7 @@ export class EquipmentController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.returnAssignment(Number(req.params["assignmentId"])));
+      res.status(200).json(await this.service.returnAssignment(assertCuid(req.params["assignmentId"])));
     } catch (err) { next(err); }
   };
 
@@ -135,7 +135,7 @@ export class EquipmentController {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       const clubScope = requireClubScope(user);
-      res.status(200).json(await this.service.approveLoan(Number(req.params["loanId"]), user.id, clubScope));
+      res.status(200).json(await this.service.approveLoan(assertCuid(req.params["loanId"]), user.id, clubScope));
     } catch (err) { next(err); }
   };
 
@@ -144,7 +144,7 @@ export class EquipmentController {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       const clubScope = requireClubScope(user);
-      res.status(200).json(await this.service.rejectLoan(Number(req.params["loanId"]), user.id, clubScope));
+      res.status(200).json(await this.service.rejectLoan(assertCuid(req.params["loanId"]), user.id, clubScope));
     } catch (err) { next(err); }
   };
 
@@ -153,8 +153,8 @@ export class EquipmentController {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       const clubScope = requireClubScope(user);
-      const { equipmentUnitId } = req.body as { equipmentUnitId?: number };
-      res.status(200).json(await this.service.issueLoan(Number(req.params["loanId"]), equipmentUnitId, clubScope));
+      const { equipmentUnitId } = req.body as { equipmentUnitId?: string };
+      res.status(200).json(await this.service.issueLoan(assertCuid(req.params["loanId"]), equipmentUnitId, clubScope));
     } catch (err) { next(err); }
   };
 
@@ -164,7 +164,7 @@ export class EquipmentController {
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       const clubScope = requireClubScope(user);
       const { returnNote } = req.body as { returnNote?: string };
-      res.status(200).json(await this.service.returnLoan(Number(req.params["loanId"]), user.id, returnNote, clubScope));
+      res.status(200).json(await this.service.returnLoan(assertCuid(req.params["loanId"]), user.id, returnNote, clubScope));
     } catch (err) { next(err); }
   };
 }

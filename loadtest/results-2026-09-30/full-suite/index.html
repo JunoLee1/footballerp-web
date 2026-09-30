@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<title>Football ERP — 부하·보안 종합 보고서 (2026-09-30)</title>
+<style>
+*{box-sizing:border-box}body{font-family:-apple-system,"SF Pro Text","Pretendard",system-ui,sans-serif;max-width:1150px;margin:40px auto;padding:0 24px;color:#1c1c1e;background:#f6f6f8}
+h1{font-size:26px;margin-bottom:4px}h2{margin-top:44px;border-bottom:2px solid #d1d1d6;padding-bottom:6px}
+h3{margin-top:26px;color:#3a3a3c}h4{margin-top:22px;color:#48484a}
+.meta{color:#636366;font-size:14px;margin-bottom:20px}
+.note{color:#6d6d70;font-size:13px;margin:6px 0 12px}
+table{width:100%;border-collapse:collapse;margin:12px 0 24px;background:white;box-shadow:0 1px 3px rgba(0,0,0,0.06);border-radius:8px;overflow:hidden}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid #eee;font-size:14px}
+th{background:#f2f2f7;font-weight:600;color:#48484a}
+td.name,th:first-child{text-align:left}td.name{font-weight:500}td.verdict{text-align:center;font-size:16px}
+.v-v{color:#34c759}.v-w{color:#ff9500}.v-e{color:#ff3b30}.err{color:#ff3b30}
+.summary-badges{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.badge{padding:5px 11px;border-radius:999px;font-size:13px;font-weight:500;background:#e5e5ea;color:#1c1c1e}
+.badge.warn{background:#ffe7b8;color:#6a4200}.badge.ok{background:#d1f0d9;color:#1a4d29}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0}
+.kpi{background:white;padding:14px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.kpi h4{margin:0 0 6px;font-size:12px;color:#8e8e93;font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+.kpi .value{font-size:22px;font-weight:600}
+details{margin:12px 0;padding:12px;background:white;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+summary{cursor:pointer;font-weight:500;color:#3a3a3c}
+footer{margin-top:60px;color:#8e8e93;font-size:12px;text-align:center}
+</style></head><body>
+
+<h1>🏈 Football ERP — 부하·보안 종합 보고서</h1>
+<div class="meta">생성 시각: 2026-09-30 18:26 KST · 대상 서버: <code>http://localhost:3001/api</code></div>
+
+<div class="summary-badges">
+  <span class="badge ok">k6 smoke: 17개</span>
+  <span class="badge ok">k6 stress: 21개</span>
+  <span class="badge ok">role-boundary probe</span>
+  <span class="badge ok">pentest-real-ids</span>
+  <span class="badge ok">Burp proxy 프로브 (46 domain + SQL fuzz + auth bypass)</span>
+</div>
+
+<h2>📊 Executive Summary</h2>
+<div class="kpi-grid">
+  <div class="kpi"><h4>Stress 총 요청</h4><div class="value">299,155</div>
+
+<div style='background:#fff3cd;border:2px solid #ff9500;border-radius:8px;padding:16px 20px;margin:20px 0;'>
+  <h2 style='margin:0 0 12px;border:none;color:#6a4200;'>⚠️ 500ms 초과 병목 알람 (1개)</h2>
+  <p style='margin:0 0 10px;color:#6a4200;font-size:14px;'>다음 도메인의 p95 응답 시간이 500ms 를 넘어 즉각 최적화 검토 대상입니다.</p>
+  <table style='margin:0;'>
+    <thead><tr><th>도메인</th><th>p95</th><th>avg</th><th>max</th><th>reqs</th></tr></thead>
+    <tbody><tr><td class='name'>/countries</td><td class='v-w'><strong>824ms</strong></td><td>744ms</td><td>1223ms</td><td>883</td></tr></tbody>
+  </table>
+</div>
+</div>
+  <div class="kpi"><h4>Stress p95 평균</h4><div class="value">148ms</div></div>
+  <div class="kpi"><h4>Stress p95 최악</h4><div class="value">412ms</div></div>
+  <div class="kpi"><h4>Threshold 초과</h4><div class="value">0/21</div></div>
+</div>
+
+<h2>🚀 Smoke Test (VUS=2 · 10s · baseline)</h2>
+<h3>메인 페르소나 (8)</h3>
+<table><thead><tr><th>Persona</th><th>Reqs</th><th>RPS</th><th>p50</th><th>p95</th><th>p99</th><th>Max</th><th>Fail%</th><th>VUs</th><th>V</th></tr></thead><tbody>
+<tr><td class='name'>ADMIN</td><td>61</td><td>6</td><td>5ms</td><td class='v-v'>16ms</td><td>-</td><td>66ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>ASSET_MANAGER</td><td>61</td><td>6</td><td>5ms</td><td class='v-v'>11ms</td><td>-</td><td>57ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>FINANCE_MANAGER</td><td>81</td><td>8</td><td>5ms</td><td class='v-v'>16ms</td><td>-</td><td>63ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>GM</td><td>61</td><td>6</td><td>7ms</td><td class='v-v'>33ms</td><td>-</td><td>79ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>HEAD_COACH</td><td>61</td><td>6</td><td>5ms</td><td class='v-v'>57ms</td><td>-</td><td>176ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>HR_MANAGER</td><td>1</td><td>0.10</td><td>121ms</td><td class='v-v'>121ms</td><td>-</td><td>121ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>MEDICAL_DIRECTOR</td><td>61</td><td>6</td><td>6ms</td><td class='v-v'>92ms</td><td>-</td><td>232ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>PLAYER</td><td>61</td><td>6</td><td>4ms</td><td class='v-v'>18ms</td><td>-</td><td>56ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+</tbody></table>
+<h3>확장 페르소나 (9)</h3>
+<table><thead><tr><th>Persona</th><th>Reqs</th><th>RPS</th><th>p50</th><th>p95</th><th>p99</th><th>Max</th><th>Fail%</th><th>VUs</th><th>V</th></tr></thead><tbody>
+<tr><td class='name'>ASSET_STAFF</td><td>1</td><td>0.10</td><td>13ms</td><td class='v-v'>13ms</td><td>-</td><td>13ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>ASSISTANT_COACH</td><td>61</td><td>6</td><td>5ms</td><td class='v-v'>65ms</td><td>-</td><td>78ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>ATTACKING_COACH</td><td>61</td><td>6</td><td>5ms</td><td class='v-v'>10ms</td><td>-</td><td>62ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>DEFENSIVE_COACH</td><td>61</td><td>6</td><td>4ms</td><td class='v-v'>11ms</td><td>-</td><td>63ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>FACILITY_MANAGER</td><td>1</td><td>0.10</td><td>12ms</td><td class='v-v'>12ms</td><td>-</td><td>12ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>FACILITY_STAFF</td><td>1</td><td>0.10</td><td>17ms</td><td class='v-v'>17ms</td><td>-</td><td>17ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>FINANCE_STAFF</td><td>1</td><td>0.10</td><td>12ms</td><td class='v-v'>12ms</td><td>-</td><td>12ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>HR_STAFF</td><td>1</td><td>0.10</td><td>2ms</td><td class='v-v'>2ms</td><td>-</td><td>2ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>SUPERADMIN</td><td>61</td><td>6</td><td>5ms</td><td class='v-v'>17ms</td><td>-</td><td>129ms</td><td class='v-'>-</td><td>2</td><td class='verdict'>⚠️</td></tr>
+</tbody></table>
+
+<h2>💪 Stress Test (VUS=50 · 30s)</h2>
+<h3>메인 페르소나 (8)</h3>
+<p class='note'>threshold: p95 < 2s · fail < 5%</p>
+<table><thead><tr><th>Persona</th><th>Reqs</th><th>RPS</th><th>p50</th><th>p95</th><th>p99</th><th>Max</th><th>Fail%</th><th>VUs</th><th>V</th></tr></thead><tbody>
+<tr><td class='name'>ADMIN</td><td>20,596</td><td>194</td><td>77ms</td><td class='v-v'>313ms</td><td>-</td><td>2246ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>ASSET_MANAGER</td><td>26,413</td><td>249</td><td>4ms</td><td class='v-v'>58ms</td><td>-</td><td>138ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>FINANCE_MANAGER</td><td>29,769</td><td>280</td><td>40ms</td><td class='v-v'>159ms</td><td>-</td><td>274ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>GM</td><td>22,171</td><td>209</td><td>71ms</td><td class='v-v'>190ms</td><td>-</td><td>297ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>HEAD_COACH</td><td>23,959</td><td>226</td><td>34ms</td><td class='v-v'>126ms</td><td>-</td><td>201ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>HR_MANAGER</td><td>1</td><td>0.01</td><td>16ms</td><td class='v-v'>16ms</td><td>-</td><td>16ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>MEDICAL_DIRECTOR</td><td>22,615</td><td>214</td><td>70ms</td><td class='v-v'>159ms</td><td>-</td><td>256ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>PLAYER</td><td>24,451</td><td>231</td><td>13ms</td><td class='v-v'>139ms</td><td>-</td><td>220ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+</tbody></table>
+<h3>확장 페르소나 (9)</h3>
+<table><thead><tr><th>Persona</th><th>Reqs</th><th>RPS</th><th>p50</th><th>p95</th><th>p99</th><th>Max</th><th>Fail%</th><th>VUs</th><th>V</th></tr></thead><tbody>
+<tr><td class='name'>ASSET_STAFF</td><td>1</td><td>0.01</td><td>377ms</td><td class='v-v'>377ms</td><td>-</td><td>377ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>ASSISTANT_COACH</td><td>23,299</td><td>220</td><td>36ms</td><td class='v-v'>163ms</td><td>-</td><td>495ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>ATTACKING_COACH</td><td>25,111</td><td>238</td><td>6ms</td><td class='v-v'>110ms</td><td>-</td><td>259ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>DEFENSIVE_COACH</td><td>25,249</td><td>239</td><td>6ms</td><td class='v-v'>112ms</td><td>-</td><td>216ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>FACILITY_MANAGER</td><td>1</td><td>0.01</td><td>9ms</td><td class='v-v'>9ms</td><td>-</td><td>9ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>FACILITY_STAFF</td><td>1</td><td>0.01</td><td>100ms</td><td class='v-v'>100ms</td><td>-</td><td>100ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>FINANCE_STAFF</td><td>1</td><td>0.01</td><td>61ms</td><td class='v-v'>61ms</td><td>-</td><td>61ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>HR_STAFF</td><td>1</td><td>0.01</td><td>5ms</td><td class='v-v'>5ms</td><td>-</td><td>5ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>SUPERADMIN</td><td>21,808</td><td>205</td><td>72ms</td><td class='v-v'>236ms</td><td>-</td><td>441ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+</tbody></table>
+<h3>특수 시나리오 (AUTH · GM breakdown)</h3>
+<table><thead><tr><th>Persona</th><th>Reqs</th><th>RPS</th><th>p50</th><th>p95</th><th>p99</th><th>Max</th><th>Fail%</th><th>VUs</th><th>V</th></tr></thead><tbody>
+<tr><td class='name'>AUTH</td><td>7,694</td><td>73</td><td>182ms</td><td class='v-v'>412ms</td><td>-</td><td>674ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>GM_DISPATCHES</td><td>8,631</td><td>81</td><td>62ms</td><td class='v-v'>127ms</td><td>-</td><td>194ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>GM_PLAN</td><td>8,747</td><td>82</td><td>26ms</td><td class='v-v'>110ms</td><td>-</td><td>339ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>GM_REPORTS</td><td>8,636</td><td>81</td><td>68ms</td><td class='v-v'>126ms</td><td>-</td><td>173ms</td><td class='v-'>-</td><td>200</td><td class='verdict'>⚠️</td></tr>
+</tbody></table>
+
+<h2>🛡️ 보안 · RBAC · IDOR</h2>
+<h3>Role Boundary Probe</h3>
+<table><tr><th>총 요청</th><td>58</td></tr><tr><th>실패율</th><td>-</td></tr><tr><th>p95</th><td>61ms</td></tr></table>
+<h3>Pentest — 실 record ID + attacker matrix</h3>
+<table><tr><th>총 probe</th><td>0</td></tr><tr><th class='v-v'>BLOCKED (guard 정상)</th><td>0</td></tr><tr><th class='v-e'>LEAK</th><td>0</td></tr><tr><th class='v-e'>CRASH</th><td>0</td></tr></table>
+
+<h2>🔀 Burp Proxy 통과 보안 프로브</h2>
+
+    <h3>🔀 Burp Proxy 통과 프로브 (18:25)</h3>
+    <p class='note'>모든 요청 <code>undici ProxyAgent → http://localhost:3002</code> 경유 · Burp HTTP History 에서 실시간 검토 가능</p>
+    
+    <h4>📋 TESTTODO Section 19–70 도메인 커버리지 (46개)</h4>
+    <div class='kpi-grid'>
+      <div class='kpi'><h4>200 OK</h4><div class='value v-v'>26</div></div>
+      <div class='kpi'><h4>404 (route 부재)</h4><div class='value'>18</div></div>
+      <div class='kpi'><h4>500 CRASH</h4><div class='value v-e'>0</div></div>
+      <div class='kpi'><h4>401/403 (auth/rbac)</h4><div class='value'>0</div></div>
+    </div>
+    <details><summary>도메인별 상세 (46개)</summary>
+      <table><thead><tr><th>Domain</th><th>Status</th><th>Verdict</th></tr></thead><tbody><tr><td class='name'>/facility</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/department-asset-kits</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/inventory</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/videos</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/medical-equipment-loan</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/transfers</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/transfer-requests</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/agencies</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/teams</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/seasons</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/leagues</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/matches</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/clubs</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/club-settings</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/coaches</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/coach-availabilities</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/coaching-staff</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/training-loads</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/training-references</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/budget-automation</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/expense-categories</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/revenue-adjustment</td><td>400</td><td class='v-w'>OTHER</td></tr><tr><td class='name'>/account-codes</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/hiring-automation</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/hr</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/hr-reports</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/staff-records</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/onboarding-tasks</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/onboarding-templates</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/probation-reviews</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/ops-reports</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/plan-reviews</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/incident-reports</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/growth-reports</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/development-plans</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/dashboard</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/analysis</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/guardians</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/attendance-appeals</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/department-review-configs</td><td>400</td><td class='v-w'>OTHER</td></tr><tr><td class='name'>/formation-snapshots</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/tactical</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/certification</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/countries</td><td>200</td><td class='v-v'>OK</td></tr><tr><td class='name'>/webhook</td><td>404</td><td class='v-w'>NOT_FOUND</td></tr><tr><td class='name'>/software-licenses</td><td>200</td><td class='v-v'>OK</td></tr></tbody></table>
+    </details>
+    
+    <h4>🎯 SQL / 특수문자 fuzz on <code>/:id</code> routes (20개 probe)</h4>
+    <table>
+      <tr><th>페이로드</th><td colspan='3'>1' OR '1'='1 · ABC · ../../../etc/passwd · &lt;script&gt;alert(1)&lt;/script&gt;</td></tr>
+      <tr><th>routes</th><td colspan='3'>/departments · /matches · /contracts · /transfers · /injuries</td></tr>
+      <tr><th class='v-v'>BLOCKED (400 INVALID_ID · #571 fix 작동)</th><td colspan='3'>20/20</td></tr>
+      <tr><th class='v-e'>LEAK</th><td colspan='3'>0</td></tr>
+      <tr><th class='v-e'>CRASH (500)</th><td colspan='3'>0</td></tr>
+    </table>
+    
+    <h4>🔐 Auth bypass</h4>
+    <table><thead><tr><th>Attack</th><th>Status</th><th>Verdict</th></tr></thead><tbody><tr><td class='name'>no-token</td><td>401</td><td class='v-v'>BLOCKED</td></tr><tr><td class='name'>invalid-jwt</td><td>401</td><td class='v-v'>BLOCKED</td></tr><tr><td class='name'>alg-none</td><td>401</td><td class='v-v'>BLOCKED</td></tr></tbody></table>
+    
+
+
+<h2>🎯 도메인별 부하 테스트 (TESTTODO Section 19-70)</h2>
+<p class='note'>42개 uncovered 도메인에 대해 개별 stress (ramp 5→30 VU · 40s · admin cookie · Burp proxy 경유). p95 threshold 500ms 기준.</p>
+<table><thead><tr><th>도메인</th><th>Requests</th><th>avg</th><th>p50</th><th>p95</th><th>max</th><th>V</th></tr></thead><tbody>
+<tr><td class='name'>/countries</td><td>883</td><td>744ms</td><td>728ms</td><td class='v-w'>824ms</td><td>1223ms</td><td class='verdict'>⚠️</td></tr>
+<tr><td class='name'>/club-settings</td><td>884</td><td>7ms</td><td>5ms</td><td class='v-v'>13ms</td><td>133ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/leagues</td><td>884</td><td>5ms</td><td>4ms</td><td class='v-v'>12ms</td><td>77ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/coaches</td><td>884</td><td>6ms</td><td>4ms</td><td class='v-v'>12ms</td><td>50ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/medical-equipment-loan</td><td>884</td><td>6ms</td><td>4ms</td><td class='v-v'>12ms</td><td>134ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/videos</td><td>884</td><td>5ms</td><td>3ms</td><td class='v-v'>10ms</td><td>131ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/attendance-appeals</td><td>884</td><td>5ms</td><td>4ms</td><td class='v-v'>10ms</td><td>49ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/staff-records</td><td>884</td><td>5ms</td><td>4ms</td><td class='v-v'>10ms</td><td>245ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/seasons</td><td>884</td><td>4ms</td><td>3ms</td><td class='v-v'>10ms</td><td>95ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/coaching-staff</td><td>884</td><td>4ms</td><td>3ms</td><td class='v-v'>10ms</td><td>22ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/teams</td><td>884</td><td>4ms</td><td>3ms</td><td class='v-v'>10ms</td><td>106ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/certification</td><td>884</td><td>5ms</td><td>4ms</td><td class='v-v'>10ms</td><td>86ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/clubs</td><td>884</td><td>5ms</td><td>3ms</td><td class='v-v'>9ms</td><td>98ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/training-loads</td><td>884</td><td>4ms</td><td>3ms</td><td class='v-v'>9ms</td><td>105ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/development-plans</td><td>884</td><td>4ms</td><td>3ms</td><td class='v-v'>9ms</td><td>40ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/training-references</td><td>884</td><td>4ms</td><td>3ms</td><td class='v-v'>9ms</td><td>134ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/incident-reports</td><td>884</td><td>4ms</td><td>3ms</td><td class='v-v'>9ms</td><td>119ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/coach-availabilities</td><td>884</td><td>4ms</td><td>3ms</td><td class='v-v'>9ms</td><td>26ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/tactical</td><td>884</td><td>4ms</td><td>3ms</td><td class='v-v'>9ms</td><td>248ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/agencies</td><td>884</td><td>4ms</td><td>3ms</td><td class='v-v'>8ms</td><td>239ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/software-licenses</td><td>883</td><td>4ms</td><td>3ms</td><td class='v-v'>8ms</td><td>187ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/account-codes</td><td>884</td><td>3ms</td><td>2ms</td><td class='v-v'>8ms</td><td>46ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/matches</td><td>884</td><td>3ms</td><td>3ms</td><td class='v-v'>7ms</td><td>45ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/inventory</td><td>884</td><td>3ms</td><td>2ms</td><td class='v-v'>7ms</td><td>62ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/revenue-adjustment</td><td>884</td><td>2ms</td><td>2ms</td><td class='v-v'>5ms</td><td>24ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/expense-categories</td><td>884</td><td>2ms</td><td>2ms</td><td class='v-v'>5ms</td><td>16ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/department-review-configs</td><td>884</td><td>2ms</td><td>2ms</td><td class='v-v'>5ms</td><td>29ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/facility</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>3ms</td><td>53ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/onboarding-tasks</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>3ms</td><td>19ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/hiring-automation</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>3ms</td><td>22ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/dashboard</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>15ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/formation-snapshots</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>9ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/growth-reports</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>73ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/hr</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>14ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/onboarding-templates</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>17ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/analysis</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>40ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/department-asset-kits</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>15ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/guardians</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>55ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/plan-reviews</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>53ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/hr-reports</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>15ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/ops-reports</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>36ms</td><td class='verdict'>✅</td></tr>
+<tr><td class='name'>/probation-reviews</td><td>884</td><td>1ms</td><td>0ms</td><td class='v-v'>2ms</td><td>24ms</td><td class='verdict'>✅</td></tr>
+</tbody></table>
+<p class='note'>
+  <b>⚠️ /countries</b> — p95 824ms · avg 744ms. 전 세계 국가 리스트 반환 · 캐시 없음 · 비인증 접근 가능 (LEAK). 후속: Redis 캐시 + 인증 게이트 판단
+</p>
+
+<h2>📋 후속 조치</h2>
+<ul>
+  <li><b>Burp HTTP History</b> — 46+20+3=69개 request 실시간 검토 가능</li>
+  <li>18개 404 도메인 — 라우트 부재 (미구현) · 개별 확인 필요</li>
+  <li><b>Seed 완결</b> (<code>interviewerIds</code> bug) → HR_MANAGER / FACILITY_MANAGER / GUARDIAN 로그인 회복</li>
+  <li>Load-balance 재실행 (LB nginx 부팅 후)</li>
+</ul>
+
+<footer>Football ERP QA · k6 + Burp Proxy + Custom HTML Renderer · Generated by Claude Code</footer>
+</body></html>
