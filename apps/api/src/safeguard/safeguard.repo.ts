@@ -1,5 +1,6 @@
 import type { PrismaClient } from '../generated/client'
 import type { CreateSafeguardReportDto, UpdateSafeguardStatusDto } from './dto/safeguard.dto'
+import { assertCuid } from '../lib/cuidGuard'
 
 export class SafeguardRepository {
   constructor(private prisma: PrismaClient) {}
@@ -70,6 +71,7 @@ export class SafeguardRepository {
   }
 
   createExternalReports(safeguardReportId: string) {
+    assertCuid(safeguardReportId)
     const targets = ['POLICE', 'CHILD_PROTECTION_AGENCY', 'FOOTBALL_ASSOCIATION'] as const
     const dueDate = new Date()
     dueDate.setDate(dueDate.getDate() + 3)
