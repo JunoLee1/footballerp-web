@@ -1,0 +1,198 @@
+{
+    "root_group": {
+        "groups": {
+            "HW_SECURITY": {
+                "name": "HW_SECURITY",
+                "path": "::HW_SECURITY",
+                "id": "a946bf4783fb61b67c1608c1bbd44881",
+                "groups": {},
+                "checks": {
+                        "HW_SECURITY hw_equipment status<500": {
+                            "name": "HW_SECURITY hw_equipment status<500",
+                            "path": "::HW_SECURITY::HW_SECURITY hw_equipment status<500",
+                            "id": "8a17d24f64b12a130c938abca268720c",
+                            "passes": 290,
+                            "fails": 0
+                        },
+                        "HW_SECURITY hw_inventory status<500": {
+                            "name": "HW_SECURITY hw_inventory status<500",
+                            "path": "::HW_SECURITY::HW_SECURITY hw_inventory status<500",
+                            "id": "c5ebb87d1df8e83a4b19d1baa107af61",
+                            "passes": 290,
+                            "fails": 0
+                        },
+                        "HW_SECURITY hw_dept_kits status<500": {
+                            "path": "::HW_SECURITY::HW_SECURITY hw_dept_kits status<500",
+                            "id": "00212f587422f5816016c1d87c9f7405",
+                            "passes": 290,
+                            "fails": 0,
+                            "name": "HW_SECURITY hw_dept_kits status<500"
+                        },
+                        "HW_SECURITY hw_asset_requests status<500": {
+                            "id": "ec6b90364f5e2b383022dc71117e6f11",
+                            "passes": 290,
+                            "fails": 0,
+                            "name": "HW_SECURITY hw_asset_requests status<500",
+                            "path": "::HW_SECURITY::HW_SECURITY hw_asset_requests status<500"
+                        },
+                        "HW_SECURITY hw_equipment_loans status<500": {
+                            "fails": 0,
+                            "name": "HW_SECURITY hw_equipment_loans status<500",
+                            "path": "::HW_SECURITY::HW_SECURITY hw_equipment_loans status<500",
+                            "id": "c642c90ab1373df2e6ef7a4f19f415ba",
+                            "passes": 290
+                        }
+                    }
+            }
+        },
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    "metrics": {
+        "persona_latency": {
+            "p(90)": 15.3338,
+            "p(95)": 20.637999999999995,
+            "avg": 9.125664137931045,
+            "min": 0.433,
+            "med": 8.222000000000001,
+            "max": 118.526
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_tls_handshaking": {
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0
+        },
+        "http_req_sending": {
+            "max": 1.031,
+            "p(90)": 0.014,
+            "p(95)": 0.021,
+            "avg": 0.011977257064093786,
+            "min": 0.001,
+            "med": 0.005
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 13.144033295063151,
+            "min": 3.077,
+            "med": 10.976,
+            "max": 118.526,
+            "p(90)": 19.503,
+            "p(95)": 24.063499999999998
+        },
+        "http_req_connecting": {
+            "min": 0,
+            "med": 0,
+            "max": 0.558,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.002028256374913853
+        },
+        "http_req_waiting": {
+            "avg": 9.15960992419021,
+            "min": 0.415,
+            "med": 8.204,
+            "max": 117.643,
+            "p(90)": 15.326,
+            "p(95)": 20.6155
+        },
+        "http_req_receiving": {
+            "med": 0.011,
+            "max": 0.943,
+            "p(90)": 0.026,
+            "p(95)": 0.04,
+            "avg": 0.01743831840110271,
+            "min": 0.005
+        },
+        "vus": {
+            "max": 10,
+            "value": 10,
+            "min": 10
+        },
+        "http_req_blocked": {
+            "avg": 0.008716747070985336,
+            "min": 0,
+            "med": 0.001,
+            "max": 3.92,
+            "p(90)": 0.004,
+            "p(95)": 0.007
+        },
+        "group_duration": {
+            "max": 145.787125,
+            "p(90)": 54.2612747,
+            "p(95)": 71.62449619999995,
+            "avg": 45.96582626206897,
+            "min": 23.129708,
+            "med": 41.7799785
+        },
+        "iteration_duration": {
+            "p(90)": 1054.4763289,
+            "p(95)": 1071.7606542,
+            "avg": 1046.3229769965512,
+            "min": 1024.217084,
+            "med": 1042.09375,
+            "max": 1146.386875
+        },
+        "http_reqs": {
+            "count": 1451,
+            "rate": 47.32488658579514
+        },
+        "checks": {
+            "passes": 1450,
+            "fails": 0,
+            "value": 1
+        },
+        "data_sent": {
+            "count": 779707,
+            "rate": 25430.424083494538
+        },
+        "http_req_duration": {
+            "med": 8.227,
+            "max": 118.526,
+            "p(90)": 15.341,
+            "p(95)": 20.694499999999998,
+            "avg": 9.18902549965542,
+            "min": 0.433,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_failed": {
+            "passes": 580,
+            "fails": 871,
+            "thresholds": {
+                "rate<0.10": true
+            },
+            "value": 0.39972432804962094
+        },
+        "data_received": {
+            "count": 357902,
+            "rate": 11673.102383755515
+        },
+        "vus_max": {
+            "value": 10,
+            "min": 10,
+            "max": 10
+        },
+        "iterations": {
+            "count": 290,
+            "rate": 9.458454245265742
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "HW_SECURITY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNmMTNlN2Y3LWQyMDQtNGIyMi04YzkzLTk2NGZhOWUyNzhiYiIsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkFTU0VUX01BTkFHRVIiLCJkZXBhcnRtZW50Q2F0ZWdvcmllcyI6WyJPUEVSQVRJT05TIl0sInRlYW1JZCI6bnVsbCwiY2x1YklkIjoiY211bzN4YnA5MDAwMGhmcW8wcXJ2Y3VoYSIsImlzRGVtbyI6ZmFsc2UsImlhdCI6MTc5MDc3NzcwMywiZXhwIjoxNzkwNzgxMzAzfQ.-p_YdYJZRe3BeOjAUbhgLhgX4THeZAz46VPSpwEicc0"
+            }
+    }
+}

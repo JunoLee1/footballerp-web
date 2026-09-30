@@ -14,7 +14,10 @@ const DOMAINS = [
   '/hiring-automation', '/hr', '/hr-reports', '/staff-records', '/onboarding-tasks', '/onboarding-templates', '/probation-reviews',
   '/ops-reports', '/plan-reviews', '/incident-reports', '/growth-reports', '/development-plans', '/dashboard', '/analysis',
   '/guardians', '/attendance-appeals', '/department-review-configs', '/formation-snapshots', '/tactical', '/certification',
-  '/countries', '/software-licenses'
+  '/countries', '/software-licenses',
+  // 유소년 · 학부모 domain 추가 (2026-09-30 배치)
+  '/youth-registrations', '/academy-fees', '/player-callups',
+  '/guardians/me/children', '/dashboard/youth-development', '/dashboard/academy-finance',
 ]
 
 // Per-domain trends

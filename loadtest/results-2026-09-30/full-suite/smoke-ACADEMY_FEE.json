@@ -1,0 +1,184 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "ACADEMY_FEE": {
+                "id": "734c3867d10f153ff517158910788ca7",
+                "groups": {},
+                "checks": {
+                        "ACADEMY_FEE academy_fees_list status<500": {
+                            "path": "::ACADEMY_FEE::ACADEMY_FEE academy_fees_list status<500",
+                            "id": "708e709edade0119cb3072c0dcee7789",
+                            "passes": 293,
+                            "fails": 0,
+                            "name": "ACADEMY_FEE academy_fees_list status<500"
+                        },
+                        "ACADEMY_FEE academy_fees_stats status<500": {
+                            "name": "ACADEMY_FEE academy_fees_stats status<500",
+                            "path": "::ACADEMY_FEE::ACADEMY_FEE academy_fees_stats status<500",
+                            "id": "b99c92c681d7fa4d06ab98960c0a5002",
+                            "passes": 293,
+                            "fails": 0
+                        },
+                        "ACADEMY_FEE academy_fees_player_search status<500": {
+                            "name": "ACADEMY_FEE academy_fees_player_search status<500",
+                            "path": "::ACADEMY_FEE::ACADEMY_FEE academy_fees_player_search status<500",
+                            "id": "6b8b590f323b7a1abd8a75d890f13c14",
+                            "passes": 293,
+                            "fails": 0
+                        }
+                    },
+                "name": "ACADEMY_FEE",
+                "path": "::ACADEMY_FEE"
+            }
+        },
+        "checks": {}
+    },
+    "metrics": {
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0
+        },
+        "data_received": {
+            "count": 23651569,
+            "rate": 752952.1805847302
+        },
+        "vus": {
+            "value": 3,
+            "min": 3,
+            "max": 10
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_reqs": {
+            "count": 880,
+            "rate": 28.01496674130002
+        },
+        "iterations": {
+            "count": 293,
+            "rate": 9.327710517273758
+        },
+        "http_req_sending": {
+            "avg": 0.016752272727272723,
+            "min": 0.002,
+            "med": 0.007,
+            "max": 0.659,
+            "p(90)": 0.032,
+            "p(95)": 0.057
+        },
+        "http_req_receiving": {
+            "avg": 0.0357329545454545,
+            "min": 0.005,
+            "med": 0.022,
+            "max": 1.365,
+            "p(90)": 0.063,
+            "p(95)": 0.09304999999999997
+        },
+        "http_req_duration": {
+            "p(95)": 33.37399999999999,
+            "avg": 11.212926136363631,
+            "min": 0.067,
+            "med": 6.928,
+            "max": 193.899,
+            "p(90)": 25.7921,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "vus_max": {
+            "value": 10,
+            "min": 10,
+            "max": 10
+        },
+        "persona_latency": {
+            "avg": 11.005092150170638,
+            "min": 0.067,
+            "med": 6.922,
+            "max": 108.919,
+            "p(90)": 25.637000000000004,
+            "p(95)": 33.266
+        },
+        "http_req_waiting": {
+            "p(95)": 33.304299999999984,
+            "avg": 11.160440909090918,
+            "min": 0.049,
+            "med": 6.8835,
+            "max": 193.523,
+            "p(90)": 25.6811
+        },
+        "data_sent": {
+            "count": 478365,
+            "rate": 15228.840415002256
+        },
+        "iteration_duration": {
+            "med": 1029.611916,
+            "max": 1115.135375,
+            "p(90)": 1056.9848166,
+            "p(95)": 1074.480617,
+            "avg": 1034.26774343686,
+            "min": 1007.126042
+        },
+        "group_duration": {
+            "p(90)": 55.1364246,
+            "p(95)": 74.2562332,
+            "avg": 33.50432451535833,
+            "min": 6.617459,
+            "med": 28.767833,
+            "max": 115.01625
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 15.892519591141385,
+            "min": 1.284,
+            "med": 11.183,
+            "max": 193.899,
+            "p(90)": 30.332000000000004,
+            "p(95)": 41.74809999999999
+        },
+        "checks": {
+            "passes": 879,
+            "fails": 0,
+            "value": 1
+        },
+        "http_req_blocked": {
+            "p(95)": 0.43219999999999986,
+            "avg": 0.09960227272727307,
+            "min": 0,
+            "med": 0.002,
+            "max": 4.699,
+            "p(90)": 0.287
+        },
+        "http_req_connecting": {
+            "avg": 0.07902727272727274,
+            "min": 0,
+            "med": 0,
+            "max": 4.617,
+            "p(90)": 0.24030000000000004,
+            "p(95)": 0.3423999999999997
+        },
+        "http_req_failed": {
+            "fails": 587,
+            "passes": 293,
+            "thresholds": {
+                "rate<0.10": true
+            },
+            "value": 0.33295454545454545
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "ACADEMY_FEE": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU0NjVhMmEwLWNkZmYtNDQwYy04MWYwLWY2MmU1Mjk5ZGFhNCIsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkZJTkFOQ0VfTUFOQUdFUiIsImRlcGFydG1lbnRDYXRlZ29yaWVzIjpbIkZJTkFOQ0UiXSwidGVhbUlkIjpudWxsLCJjbHViSWQiOiJjbXVvM3hicDkwMDAwaGZxbzBxcnZjdWhhIiwiaXNEZW1vIjpmYWxzZSwiaWF0IjoxNzkwNzc4MzQyLCJleHAiOjE3OTA3ODE5NDJ9.92INJhdsyObdbVUSAk0tzs2upmo_13F4A63f0p2uBzs"
+            }
+    }
+}

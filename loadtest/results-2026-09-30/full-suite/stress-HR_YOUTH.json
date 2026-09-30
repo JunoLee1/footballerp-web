@@ -1,0 +1,191 @@
+{
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+            "HR_YOUTH": {
+                "path": "::HR_YOUTH",
+                "id": "10f6f1344e3d22f16b14d80c590f7199",
+                "groups": {},
+                "checks": {
+                        "HR_YOUTH youth_registrations status<500": {
+                            "name": "HR_YOUTH youth_registrations status<500",
+                            "path": "::HR_YOUTH::HR_YOUTH youth_registrations status<500",
+                            "id": "0031da9cfc9f8b36e6f72690578619cc",
+                            "passes": 8631,
+                            "fails": 0
+                        },
+                        "HR_YOUTH youth_academy_fees status<500": {
+                            "path": "::HR_YOUTH::HR_YOUTH youth_academy_fees status<500",
+                            "id": "c22d58ac360c26391b2e07aee95bae07",
+                            "passes": 8631,
+                            "fails": 0,
+                            "name": "HR_YOUTH youth_academy_fees status<500"
+                        },
+                        "HR_YOUTH youth_dev_dashboard status<500": {
+                            "name": "HR_YOUTH youth_dev_dashboard status<500",
+                            "path": "::HR_YOUTH::HR_YOUTH youth_dev_dashboard status<500",
+                            "id": "206a34007007b5e9d30e78f20fdd7dbb",
+                            "passes": 8631,
+                            "fails": 0
+                        },
+                        "HR_YOUTH youth_finance_dashboard status<500": {
+                            "name": "HR_YOUTH youth_finance_dashboard status<500",
+                            "path": "::HR_YOUTH::HR_YOUTH youth_finance_dashboard status<500",
+                            "id": "1f7e5d2ab75c22f779ba3ac219c12d97",
+                            "passes": 8631,
+                            "fails": 0
+                        }
+                    },
+                "name": "HR_YOUTH"
+            }
+        },
+        "checks": {}
+    },
+    "metrics": {
+        "vus": {
+            "value": 1,
+            "min": 1,
+            "max": 199
+        },
+        "http_req_failed": {
+            "fails": 17263,
+            "passes": 17262,
+            "thresholds": {
+                "rate<0.10": true
+            },
+            "value": 0.49998551774076755
+        },
+        "http_req_receiving": {
+            "avg": 0.020980680666181594,
+            "min": 0.005,
+            "med": 0.013,
+            "max": 3.215,
+            "p(90)": 0.04,
+            "p(95)": 0.054
+        },
+        "http_req_sending": {
+            "avg": 0.005413960897898165,
+            "min": 0.001,
+            "med": 0.004,
+            "max": 3.275,
+            "p(90)": 0.008,
+            "p(95)": 0.011
+        },
+        "data_received": {
+            "count": 724746532,
+            "rate": 6835366.475152567
+        },
+        "group_duration": {
+            "p(90)": 141.281125,
+            "p(95)": 216.92066649999995,
+            "avg": 58.507036920519155,
+            "min": 6.407541,
+            "med": 27.459833,
+            "max": 652.367333
+        },
+        "iterations": {
+            "count": 8631,
+            "rate": 81.40231852401855
+        },
+        "iteration_duration": {
+            "min": 1006.512833,
+            "med": 1027.793,
+            "max": 1653.128333,
+            "p(90)": 1141.346083,
+            "p(95)": 1216.963417,
+            "avg": 1058.813717609427
+        },
+        "http_req_blocked": {
+            "p(95)": 0.003,
+            "avg": 0.0037541781317907354,
+            "min": 0,
+            "med": 0.001,
+            "max": 6.79,
+            "p(90)": 0.002
+        },
+        "persona_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0
+        },
+        "data_sent": {
+            "count": 18289273,
+            "rate": 172493.24832797272
+        },
+        "vus_max": {
+            "value": 200,
+            "min": 200,
+            "max": 200
+        },
+        "http_reqs": {
+            "count": 34525,
+            "rate": 325.61870548508176
+        },
+        "http_req_duration{expected_response:true}": {
+            "p(95)": 85.1313,
+            "avg": 20.117454440132025,
+            "min": 1.232,
+            "med": 9.215,
+            "max": 344.808,
+            "p(90)": 45.63060000000001
+        },
+        "checks": {
+            "passes": 34524,
+            "fails": 0,
+            "value": 1
+        },
+        "http_req_connecting": {
+            "max": 3.637,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.0015163215061549588,
+            "min": 0,
+            "med": 0
+        },
+        "persona_latency": {
+            "p(95)": 53.54954999999996,
+            "avg": 14.57649684277594,
+            "min": 0.706,
+            "med": 6.775,
+            "max": 344.808,
+            "p(90)": 32.0944
+        },
+        "http_req_waiting": {
+            "avg": 14.55147904417097,
+            "min": 0.69,
+            "med": 6.747,
+            "max": 344.787,
+            "p(90)": 32.0666,
+            "p(95)": 53.53019999999997
+        },
+        "http_req_duration": {
+            "avg": 14.577873685734877,
+            "min": 0.706,
+            "med": 6.775,
+            "max": 344.808,
+            "p(90)": 32.09980000000001,
+            "p(95)": 53.56019999999998,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        }
+    },
+    "setup_data": {
+        "notificationIds": {},
+        "tokens": {
+                "HR_YOUTH": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjI4NTc2YmQ3LTFlYmEtNDA1NS04OGNjLTJjMDUzOGQwOTY1YyIsInJvbGUiOiJGUk9OVF9PRkZJQ0UiLCJjb2FjaGluZ1JvbGUiOm51bGwsImZyb250T2ZmaWNlUm9sZSI6IkhSX01BTkFHRVIiLCJkZXBhcnRtZW50Q2F0ZWdvcmllcyI6WyJIUiJdLCJ0ZWFtSWQiOm51bGwsImNsdWJJZCI6ImNtdW8zeGJwOTAwMDBoZnFvMHFydmN1aGEiLCJpc0RlbW8iOmZhbHNlLCJpYXQiOjE3OTA3Nzc1NTAsImV4cCI6MTc5MDc4MTE1MH0.uB4JFtjSIos3APYN3FqjEQnAyICzJEJM7aj1BcDxMTw"
+            }
+    }
+}

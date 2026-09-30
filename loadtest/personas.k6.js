@@ -231,6 +231,72 @@ const ALL_PERSONAS = [
       { path: '/hiring-dispatches?filter=pending-dispatch', label: 'gm_hiring_dispatches' },
     ],
   },
+  // 학부모 (GUARDIAN) 세션 — 자녀 대시보드 · 알림 read heavy.
+  // /guardians/me/children 이 자녀 목록 반환. 개별 /:playerId sub-route 는 seed 상 GUARDIAN 이
+  // 실제로 연결된 자녀가 있어야 200 이므로 이번 매트릭스는 목록·notifications 위주.
+  {
+    name: 'GUARDIAN',
+    email: 'guardian1@club.com',
+    endpoints: [
+      { path: '/guardians/me/children', label: 'guardian_children' },
+      { path: '/notifications/my', label: 'guardian_notifs' },
+      { path: '/auth/me', label: 'guardian_auth_me' },
+    ],
+  },
+  // 유소년 도메인 (HR 세션으로 youth 관련 endpoint 스트레스).
+  // youth-registrations · academy-fees · dashboard/youth-development · dashboard/academy-finance.
+  // 실 사용 시 유소년 매니저는 HR_MANAGER 또는 GM 이 접근.
+  {
+    name: 'HR_YOUTH',
+    email: 'hr@club.com',
+    endpoints: [
+      { path: '/youth-registrations', label: 'youth_registrations' },
+      { path: '/academy-fees', label: 'youth_academy_fees' },
+      { path: '/dashboard/youth-development', label: 'youth_dev_dashboard' },
+      { path: '/dashboard/academy-finance', label: 'youth_finance_dashboard' },
+    ],
+  },
+  // 하드웨어 보안 담당 — 자산·장비·재고 read heavy.
+  // 실 사용자: ASSET_MANAGER · FACILITY_MANAGER.
+  {
+    name: 'HW_SECURITY',
+    email: 'asset@club.com',
+    endpoints: [
+      { path: '/equipment', label: 'hw_equipment' },
+      { path: '/inventory', label: 'hw_inventory' },
+      { path: '/department-asset-kits', label: 'hw_dept_kits' },
+      { path: '/asset-requests', label: 'hw_asset_requests' },
+      { path: '/equipment/loans', label: 'hw_equipment_loans' },
+    ],
+  },
+  // 소프트웨어 라이선스 관리 — 라이선스 만료·할당 read heavy.
+  {
+    name: 'SW_LICENSE',
+    email: 'asset@club.com',
+    endpoints: [
+      { path: '/software-licenses', label: 'sw_licenses' },
+    ],
+  },
+  // 벤더 (Partner) 관리 — 파트너 계약·연락처·스폰서 계약 read heavy.
+  {
+    name: 'VENDOR',
+    email: 'asset@club.com',
+    endpoints: [
+      { path: '/partners', label: 'vendor_partners' },
+      { path: '/sponsorships', label: 'vendor_sponsorships' },
+    ],
+  },
+  // Academy Fee 관리 — 회비 목록·통계·유소년 검색 read heavy.
+  // 실 사용: FINANCE_MANAGER 가 청구 발행 · 승인 · 통계 조회.
+  {
+    name: 'ACADEMY_FEE',
+    email: 'finance@club.com',
+    endpoints: [
+      { path: '/academy-fees', label: 'academy_fees_list' },
+      { path: '/academy-fees/stats', label: 'academy_fees_stats' },
+      { path: '/academy-fees/players/search?name=김', label: 'academy_fees_player_search' },
+    ],
+  },
 ]
 
 const PERSONAS = PERSONA_FILTER

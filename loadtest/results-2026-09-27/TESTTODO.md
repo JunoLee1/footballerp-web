@@ -79,6 +79,21 @@
 - Multi-tenant 격리 pentest (#595 · seed 확장 필요)
 - 404 응답 18개 도메인 구현 여부 개별 확인 → 미구현이면 skeleton 유지 · 구현 있으면 라우트 마운트 체크
 
+### 🆕 2026-09-30 신규 페르소나 5건 배치 (persona-based smoke + stress)
+
+| 페르소나 | 도메인 | Smoke p95 | Stress p95 (VU 200) | 판정 |
+|---|---|---|---|---|
+| **GUARDIAN** | `/guardians/me/children` · `/notifications/my` · `/auth/me` | 25ms | **270ms** (RPS 207) | ✅ |
+| **HR_YOUTH** | `/youth-registrations` · `/academy-fees` · `/dashboard/youth-development` · `/dashboard/academy-finance` | 29ms | 54ms (RPS 326) | ✅ |
+| **HW_SECURITY** | `/equipment` · `/inventory` · `/department-asset-kits` · `/asset-requests` · `/equipment/loans` | 21ms | **11ms** (RPS 423 · 최고) | ✅ |
+| **SW_LICENSE** | `/software-licenses` | 29ms | 30ms (RPS 85) | ✅ |
+| **VENDOR** | `/partners` · `/sponsorships` | 37ms | 14ms (RPS 171) | ✅ |
+| **ACADEMY_FEE** | `/academy-fees` · `/academy-fees/stats` · `/academy-fees/players/search` | 33ms | **17ms** (RPS 255) | ✅ |
+
+- 5건 전부 threshold p95<2s 통과, fail rate 0%
+- `personas.k6.js` 에 GUARDIAN·HR_YOUTH·HW_SECURITY·SW_LICENSE·VENDOR 페르소나 추가
+- `per-domain-stress.k6.js` DOMAINS 에 `/youth-registrations` `/academy-fees` `/player-callups` `/guardians/me/children` `/dashboard/youth-development` `/dashboard/academy-finance` 6개 추가
+
 ---
 
 ## 🚨 500ms 초과 병목 알람 (2026-09-30 per-domain stress)
@@ -964,11 +979,11 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | ➖ 404 (라우트 부재) |
-| Stress | ✅ p95 2ms · avg 1ms · 884 req (2026-09-30 per-domain stress) |
-| 보안 — 인증 없는 접근 차단 (401) | ➖ 404 (라우트 부재) |
-| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
-| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| Smoke (persona) | ✅ `smoke-GUARDIAN.json` (2026-09-30) — `/guardians/me/children` · `/notifications/my` · `/auth/me` · p95 25ms · 871 req · fail 0% |
+| Stress (persona) | ✅ `stress-GUARDIAN.json` (2026-09-30) — VU peak 200 · **p95 270ms** · RPS 207 · 21,973 req · fail 0% (threshold 2s 통과) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ `/guardians/me/*` requireGuardian 미들웨어 · 미인증 401 |
+| 보안 — Cross-role IDOR (자녀 접근) | ✅ `requireGuardianChild` 로 본인 자녀만 허용 (routes.ts:34-37 GUARDIAN 세션이 임의 :playerId 접근 시 403 예상) — 실 프로브는 별도 |
+| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 초대 코드 발급/링크는 requireGuardian 로 보호되나 mass-create 프로브 미커버 |
 
 ---
 
@@ -1102,8 +1117,10 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | ✅ Burp GET → 200 (2026-09-30) |
-| Stress | ✅ p95 8ms · avg 4ms · 883 req (2026-09-30 per-domain stress) |
+| Smoke (Burp) | ✅ GET → 200 (2026-09-30) |
+| Smoke (persona) | ✅ `smoke-SW_LICENSE.json` — p95 29ms · 301 req · fail 0% |
+| Stress (per-domain) | ✅ p95 8ms · avg 4ms · 883 req (2026-09-30 per-domain stress) |
+| Stress (persona) | ✅ `stress-SW_LICENSE.json` — VU 200 · **p95 30ms** · RPS 85 · 9,022 req · fail 0% |
 | 보안 — 인증 없는 접근 차단 (401) | ✅ 401 UNAUTHORIZED (2026-09-30) |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
