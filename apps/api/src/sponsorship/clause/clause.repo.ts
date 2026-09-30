@@ -5,7 +5,7 @@ import type { CreateClauseDto } from "./dto/clause.dto";
 export class ClauseRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(sponsorshipId: number, dto: CreateClauseDto) {
+  create(sponsorshipId: string, dto: CreateClauseDto) {
     return this.prisma.sponsorshipClause.create({
       data: {
         sponsorshipId,
@@ -17,25 +17,25 @@ export class ClauseRepository {
     });
   }
 
-  findAll(sponsorshipId: number) {
+  findAll(sponsorshipId: string) {
     return this.prisma.sponsorshipClause.findMany({
       where: { sponsorshipId },
       orderBy: { createdAt: "asc" },
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.sponsorshipClause.findUnique({ where: { id } });
   }
 
-  updateStatus(id: number, status: ClauseStatus) {
+  updateStatus(id: string, status: ClauseStatus) {
     return this.prisma.sponsorshipClause.update({
       where: { id },
       data: { status: status as any },
     });
   }
 
-  async copyPendingFrom(sourceSponsorshipId: number, targetSponsorshipId: number) {
+  async copyPendingFrom(sourceSponsorshipId: string, targetSponsorshipId: string) {
     const pending = await this.prisma.sponsorshipClause.findMany({
       where: { sponsorshipId: sourceSponsorshipId, status: "PENDING" },
     });

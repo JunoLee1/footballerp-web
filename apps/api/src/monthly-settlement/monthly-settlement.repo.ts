@@ -14,7 +14,7 @@ export class MonthlySettlementRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.monthlySettlementReport.findUnique({
       where: { id },
       include: {
@@ -57,11 +57,11 @@ export class MonthlySettlementRepository {
     });
   }
 
-  updateNote(id: number, note: string) {
+  updateNote(id: string, note: string) {
     return this.prisma.monthlySettlementReport.update({ where: { id }, data: { note } });
   }
 
-  updateStatus(id: number, data: {
+  updateStatus(id: string, data: {
     status: "PENDING_FIRST" | "FIRST_APPROVED" | "APPROVED" | "REJECTED" | "DRAFT";
     firstSubmittedById?: string | null;
     firstSubmittedAt?: Date | null;

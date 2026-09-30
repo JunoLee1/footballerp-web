@@ -33,7 +33,7 @@ export class DisposalRepository {
     });
   }
 
-  fmVerify(id: number, verifiedById: string, dto: FmVerifyDto) {
+  fmVerify(id: string, verifiedById: string, dto: FmVerifyDto) {
     return this.prisma.equipmentDisposalVerification.update({
       where: { id },
       data: {
@@ -48,7 +48,7 @@ export class DisposalRepository {
     });
   }
 
-  gmApprove(id: number, dto: GmApproveDto) {
+  gmApprove(id: string, dto: GmApproveDto) {
     return this.prisma.equipmentDisposalVerification.update({
       where: { id },
       data: {
@@ -59,7 +59,7 @@ export class DisposalRepository {
     });
   }
 
-  rejectVerification(id: number, reason: string) {
+  rejectVerification(id: string, reason: string) {
     return this.prisma.equipmentDisposalVerification.update({
       where: { id },
       data: { status: "REJECTED" as any, notes: reason },

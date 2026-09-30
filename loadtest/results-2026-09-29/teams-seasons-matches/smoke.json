@@ -1,0 +1,229 @@
+{
+    "metrics": {
+        "tsm_read_latency": {
+            "p(90)": 6.700000000000003,
+            "p(95)": 9,
+            "avg": 4.0625,
+            "min": 1,
+            "med": 3,
+            "max": 40
+        },
+        "http_req_failed": {
+            "passes": 0,
+            "fails": 162,
+            "thresholds": {
+                "rate<0.10": false
+            },
+            "value": 0
+        },
+        "vus": {
+            "value": 2,
+            "min": 2,
+            "max": 2
+        },
+        "data_sent": {
+            "rate": 16250.64361996807,
+            "count": 162918
+        },
+        "iteration_duration": {
+            "avg": 1113.746236222222,
+            "min": 1086.520792,
+            "med": 1106.9669795,
+            "max": 1174.723875,
+            "p(90)": 1153.0636339,
+            "p(95)": 1174.7141357
+        },
+        "http_req_duration": {
+            "med": 3.0694999999999997,
+            "max": 96.563,
+            "p(90)": 61.30490000000001,
+            "p(95)": 83.34359999999995,
+            "avg": 12.344901234567898,
+            "min": 1.299,
+            "thresholds": {
+                "p(95)<2000": false
+            }
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 12.344901234567898,
+            "min": 1.299,
+            "med": 3.0694999999999997,
+            "max": 96.563,
+            "p(90)": 61.30490000000001,
+            "p(95)": 83.34359999999995
+        },
+        "checks": {
+            "passes": 144,
+            "fails": 0,
+            "value": 1
+        },
+        "group_duration": {
+            "med": 8.090104499999999,
+            "max": 51.567625,
+            "p(90)": 21.7899708,
+            "p(95)": 23.830910649999996,
+            "avg": 10.96263811111111,
+            "min": 4.431
+        },
+        "vus_max": {
+            "max": 2,
+            "value": 2,
+            "min": 2
+        },
+        "iterations": {
+            "count": 18,
+            "rate": 1.7954528361471738
+        },
+        "http_req_blocked": {
+            "avg": 0.04538888888888904,
+            "min": 0,
+            "med": 0.001,
+            "max": 3.516,
+            "p(90)": 0.004,
+            "p(95)": 0.009899999999999985
+        },
+        "http_req_receiving": {
+            "p(90)": 0.043,
+            "p(95)": 0.06689999999999999,
+            "avg": 0.027160493827160473,
+            "min": 0.009,
+            "med": 0.016,
+            "max": 0.693
+        },
+        "tsm_errors": {
+            "count": 0,
+            "rate": 0,
+            "thresholds": {
+                "count<50": false
+            }
+        },
+        "http_req_connecting": {
+            "avg": 0.003845679012345679,
+            "min": 0,
+            "med": 0,
+            "max": 0.319,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "http_reqs": {
+            "count": 162,
+            "rate": 16.159075525324564
+        },
+        "http_req_tls_handshaking": {
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0
+        },
+        "http_req_sending": {
+            "avg": 0.017876543209876507,
+            "min": 0.002,
+            "med": 0.005,
+            "max": 0.572,
+            "p(90)": 0.018900000000000004,
+            "p(95)": 0.07374999999999995
+        },
+        "http_req_waiting": {
+            "p(90)": 61.2334,
+            "p(95)": 83.14444999999996,
+            "avg": 12.299864197530868,
+            "min": 1.28,
+            "med": 3.0295,
+            "max": 95.961
+        },
+        "data_received": {
+            "rate": 20681.821219579295,
+            "count": 207342
+        }
+    },
+    "root_group": {
+        "checks": {},
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {
+                "teams": {
+                    "path": "::teams",
+                    "id": "3468c6798e827097b8c4d41ce5bcef09",
+                    "groups": {},
+                    "checks": {
+                            "teams 200": {
+                                "name": "teams 200",
+                                "path": "::teams::teams 200",
+                                "id": "22eaf5e0a38a30728dc9d672d9aa056c",
+                                "passes": 18,
+                                "fails": 0
+                            },
+                            "team detail 200": {
+                                "name": "team detail 200",
+                                "path": "::teams::team detail 200",
+                                "id": "6bbe64bef8f4a57bb5dd1df8f0ac9f79",
+                                "passes": 18,
+                                "fails": 0
+                            }
+                        },
+                    "name": "teams"
+                },
+                "seasons": {
+                    "path": "::seasons",
+                    "id": "6f3a26bf70dbcc07e198e208509eadac",
+                    "groups": {},
+                    "checks": {
+                            "seasons 200": {
+                                "fails": 0,
+                                "name": "seasons 200",
+                                "path": "::seasons::seasons 200",
+                                "id": "1a435568b0ab07404b7d9b6bb8ffdb05",
+                                "passes": 18
+                            },
+                            "active 200/404": {
+                                "name": "active 200/404",
+                                "path": "::seasons::active 200/404",
+                                "id": "1cdfa62b8f92405cef55e0dfc578d0ed",
+                                "passes": 18,
+                                "fails": 0
+                            },
+                            "season detail 200": {
+                                "fails": 0,
+                                "name": "season detail 200",
+                                "path": "::seasons::season detail 200",
+                                "id": "48b7bec82ccf0bcc43fbec04866752fe",
+                                "passes": 18
+                            }
+                        },
+                    "name": "seasons"
+                },
+                "matches": {
+                    "checks": {
+                        "matches 200": {
+                            "path": "::matches::matches 200",
+                            "id": "e06c3a3978042bfcaf458fd001799bb2",
+                            "passes": 18,
+                            "fails": 0,
+                            "name": "matches 200"
+                        },
+                        "match detail 200": {
+                            "fails": 0,
+                            "name": "match detail 200",
+                            "path": "::matches::match detail 200",
+                            "id": "4010e4136f1b3bd2d504aa4e894610f3",
+                            "passes": 18
+                        },
+                        "remaining-capacity <500": {
+                            "name": "remaining-capacity <500",
+                            "path": "::matches::remaining-capacity <500",
+                            "id": "10ba19d57d10f0abfd7ed88637453616",
+                            "passes": 18,
+                            "fails": 0
+                        }
+                    },
+                    "name": "matches",
+                    "path": "::matches",
+                    "id": "5722b0f0eeb110b24ab8096abf71ac9b",
+                    "groups": {}
+                }
+            }
+    }
+}

@@ -11,7 +11,7 @@ export class AttendanceAppealService {
   ) {}
 
   async create(data: {
-    trainingResultId: number;
+    trainingResultId: string;
     requestedStatus: string;
     reason: string;
     createdById: string;

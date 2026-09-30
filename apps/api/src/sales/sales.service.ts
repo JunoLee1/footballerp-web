@@ -114,7 +114,7 @@ export class SalesService {
             isRefund: false,
             description: formatLedgerDescription("sales", "ticket_sale", { home: matchHomeTeamName!, away: matchAwayTeamName! }),
             relatedModule: "SalesRecord",
-            relatedId: record.id,
+            relatedId: String(record.id),
             createdById,
           },
         });
@@ -132,7 +132,7 @@ export class SalesService {
             isRefund: false,
             description: `무상 티켓 (사유: ${dto.description}) — ${matchHomeTeamName} vs ${matchAwayTeamName}`,
             relatedModule: "SalesRecord",
-            relatedId: record.id,
+            relatedId: String(record.id),
             createdById,
           } as any,
         });
@@ -149,7 +149,7 @@ export class SalesService {
             isRefund: false,
             description: dto.description ?? ((dto.type as string) === "UNIFORM" ? "유니폼 판매" : "기타 판매"),
             relatedModule: "SalesRecord",
-            relatedId: record.id,
+            relatedId: String(record.id),
             createdById,
           },
         });
@@ -247,7 +247,7 @@ export class SalesService {
               isRefund: false,
               description: formatLedgerDescription("sales", "ticket_sale", { home: matchInfo?.homeTeamName ?? "", away: matchInfo?.awayTeamName ?? "" }),
               relatedModule: "SalesRecord",
-              relatedId: record.id,
+              relatedId: String(record.id),
               createdById,
             },
           });
@@ -285,7 +285,7 @@ export class SalesService {
       });
 
       await tx.ledgerEntry.updateMany({
-        where: { relatedModule: "SalesRecord", relatedId: id },
+        where: { relatedModule: "SalesRecord", relatedId: String(id) },
         data: { amount: totalAmount, amountKrw: totalAmount },
       });
     });
@@ -316,7 +316,7 @@ export class SalesService {
 
       // BS1: reverse the ledger entry linked to this sales record (preserves audit trail)
       const originalEntry = await tx.ledgerEntry.findFirst({
-        where: { relatedModule: "SalesRecord", relatedId: id, reversedById: null },
+        where: { relatedModule: "SalesRecord", relatedId: String(id), reversedById: null },
       });
       if (originalEntry) {
         const reversal = await tx.ledgerEntry.create({
@@ -330,7 +330,7 @@ export class SalesService {
             isRefund: true,
             description: formatLedgerDescription("ledger", "refund", { entryId: originalEntry.id }),
             relatedModule: "SalesRecord",
-            relatedId: id,
+            relatedId: String(id),
             createdById: deletedById,
           },
         });

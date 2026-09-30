@@ -77,8 +77,8 @@ describe("TrainingService — clubId 스코핑", () => {
   describe("getSessions", () => {
     it("actorClubId를 repo.findAll에 전달한다", async () => {
       repo.findAll.mockResolvedValue([]);
-      await service.getSessions({ seasonId: 1 }, 2);
-      expect(repo.findAll).toHaveBeenCalledWith({ seasonId: 1 }, 2);
+      await service.getSessions({ seasonId: 1 }, "cmxtestclub00000000000002");
+      expect(repo.findAll).toHaveBeenCalledWith({ seasonId: 1 }, "cmxtestclub00000000000002");
     });
 
     it("actorClubId = null → null 전달 (SUPER_ADMIN bypass)", async () => {
@@ -91,14 +91,14 @@ describe("TrainingService — clubId 스코핑", () => {
   describe("getSessionById", () => {
     it("일치하는 clubId → 세션 반환", async () => {
       repo.findById.mockResolvedValue(SESSION_FIXTURE as any);
-      const result = await service.getSessionById(1, 5);
-      expect(repo.findById).toHaveBeenCalledWith(1, 5);
+      const result = await service.getSessionById(1, "cmxtestclub00000000000005");
+      expect(repo.findById).toHaveBeenCalledWith(1, "cmxtestclub00000000000005");
       expect(result.id).toBe(1);
     });
 
     it("다른 clubId → repo null → 404 SESSION_NOT_FOUND", async () => {
       repo.findById.mockResolvedValue(null);
-      await expect(service.getSessionById(1, 99)).rejects.toMatchObject({ code: "SESSION_NOT_FOUND" });
+      await expect(service.getSessionById(1, "cmxtestclub0000000000099")).rejects.toMatchObject({ code: "SESSION_NOT_FOUND" });
     });
 
     it("actorClubId = null (SUPER_ADMIN) → 정상 반환", async () => {
@@ -118,22 +118,22 @@ describe("TrainingService — clubId 스코핑", () => {
         sessionType: "TECHNICAL" as any,
         seasonId: 1,
       };
-      await service.createSession(dto, USER_10, 5);
-      expect(repo.create).toHaveBeenCalledWith(dto, USER_10, 5);
+      await service.createSession(dto, USER_10, "cmxtestclub00000000000005");
+      expect(repo.create).toHaveBeenCalledWith(dto, USER_10, "cmxtestclub00000000000005");
     });
   });
 
   describe("approveSession", () => {
     it("다른 clubId → 404 SESSION_NOT_FOUND", async () => {
       repo.findById.mockResolvedValue(null);
-      await expect(service.approveSession(1, USER_10, 99)).rejects.toMatchObject({ code: "SESSION_NOT_FOUND" });
+      await expect(service.approveSession(1, USER_10, "cmxtestclub0000000000099")).rejects.toMatchObject({ code: "SESSION_NOT_FOUND" });
     });
 
     it("일치하는 clubId + 미승인 세션 → 승인 처리", async () => {
       repo.findById.mockResolvedValue(SESSION_FIXTURE as any);
       repo.approve.mockResolvedValue({ id: 1, isApproved: true, approvedById: USER_10 } as any);
-      const result = await service.approveSession(1, USER_10, 5);
-      expect(repo.findById).toHaveBeenCalledWith(1, 5);
+      const result = await service.approveSession(1, USER_10, "cmxtestclub00000000000005");
+      expect(repo.findById).toHaveBeenCalledWith(1, "cmxtestclub00000000000005");
       expect(repo.approve).toHaveBeenCalledWith(1, USER_10);
     });
   });

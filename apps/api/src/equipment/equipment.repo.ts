@@ -50,14 +50,14 @@ const LOAN_SELECT = {
 export class EquipmentRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findAllItems(actorClubId?: number) {
+  findAllItems(actorClubId?: string) {
     return this.prisma.equipmentItem.findMany({
-      where: actorClubId !== undefined ? { clubId: actorClubId } : undefined,
+      ...(actorClubId !== undefined && { where: { clubId: actorClubId } }),
       select: ITEM_SELECT,
     });
   }
 
-  findItemById(id: string, actorClubId?: number) {
+  findItemById(id: string, actorClubId?: string) {
     return this.prisma.equipmentItem.findFirst({
       where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       select: {
@@ -68,7 +68,7 @@ export class EquipmentRepository {
     });
   }
 
-  createItem(dto: CreateEquipmentItemDto, actorClubId?: number) {
+  createItem(dto: CreateEquipmentItemDto, actorClubId?: string) {
     return this.prisma.equipmentItem.create({
       data: {
         name: dto.name,
@@ -90,7 +90,7 @@ export class EquipmentRepository {
     });
   }
 
-  createUnit(equipmentItemId: string, dto?: CreateEquipmentUnitDto, actorClubId?: number) {
+  createUnit(equipmentItemId: string, dto?: CreateEquipmentUnitDto, actorClubId?: string) {
     return this.prisma.equipmentUnit.create({
       data: {
         equipmentItemId,
@@ -127,7 +127,7 @@ export class EquipmentRepository {
     });
   }
 
-  findUnitById(id: string, actorClubId?: number) {
+  findUnitById(id: string, actorClubId?: string) {
     return this.prisma.equipmentUnit.findFirst({
       where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       select: UNIT_SELECT,
@@ -198,14 +198,14 @@ export class EquipmentRepository {
     });
   }
 
-  findLoanById(id: string, actorClubId?: number) {
+  findLoanById(id: string, actorClubId?: string) {
     return this.prisma.equipmentLoan.findFirst({
       where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       select: LOAN_SELECT,
     });
   }
 
-  findAllLoans(status?: EquipmentLoanStatus, actorClubId?: number) {
+  findAllLoans(status?: EquipmentLoanStatus, actorClubId?: string) {
     const where: any = {};
     if (status !== undefined) where.status = status;
     if (actorClubId !== undefined) where.clubId = actorClubId;
@@ -216,7 +216,7 @@ export class EquipmentRepository {
     });
   }
 
-  findMyLoans(userId: string, actorClubId?: number) {
+  findMyLoans(userId: string, actorClubId?: string) {
     return this.prisma.equipmentLoan.findMany({
       where: { requestedById: userId, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       select: LOAN_SELECT,
@@ -224,7 +224,7 @@ export class EquipmentRepository {
     });
   }
 
-  createLoan(requestedById: string, dto: CreateEquipmentLoanDto, actorClubId?: number) {
+  createLoan(requestedById: string, dto: CreateEquipmentLoanDto, actorClubId?: string) {
     return this.prisma.equipmentLoan.create({
       data: {
         requestedById,

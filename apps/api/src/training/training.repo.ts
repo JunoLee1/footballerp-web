@@ -6,7 +6,7 @@ const n = <T>(v: T | undefined): T | null => v ?? null;
 export class TrainingRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findAll(query: SessionListQuery, clubId?: number | null) {
+  findAll(query: SessionListQuery, clubId?: string | null) {
     return this.prisma.trainingSession.findMany({
       where: {
         ...(query.seasonId && { seasonId: query.seasonId }),
@@ -25,7 +25,7 @@ export class TrainingRepository {
     });
   }
 
-  findById(id: number, clubId?: number | null) {
+  findById(id: number, clubId?: string | null) {
     return this.prisma.trainingSession.findFirst({
       where: { id, ...(clubId != null && { clubId }) },
       select: {
@@ -44,7 +44,7 @@ export class TrainingRepository {
     });
   }
 
-  create(dto: CreateSessionDto, createdById: string, clubId?: number | null) {
+  create(dto: CreateSessionDto, createdById: string, clubId?: string | null) {
     return this.prisma.trainingSession.create({
       data: {
         date: new Date(dto.date),
@@ -217,14 +217,14 @@ export class TrainingRepository {
     }))
   }
 
-  findResultById(id: number) {
+  findResultById(id: string) {
     return this.prisma.trainingResult.findUnique({
       where: { id },
       select: { id: true, attendance: true, playerId: true, sessionId: true, feedback: true, performanceScore: true },
     });
   }
 
-  updateAttendance(id: number, attendance: string) {
+  updateAttendance(id: string, attendance: string) {
     return this.prisma.trainingResult.update({
       where: { id },
       data: { attendance: attendance as any },
@@ -238,7 +238,7 @@ export class TrainingRepository {
     });
   }
 
-  findByIdWithTeam(id: number, clubId?: number | null) {
+  findByIdWithTeam(id: number, clubId?: string | null) {
     return this.prisma.trainingSession.findFirst({
       where: { id, ...(clubId != null && { clubId }) },
       select: { id: true, teamId: true, date: true, team: { select: { id: true, type: true, name: true } } },

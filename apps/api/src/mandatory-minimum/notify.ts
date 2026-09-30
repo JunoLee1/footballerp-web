@@ -18,7 +18,7 @@ export interface NotifyMinimumViolationDeps {
 
 export async function notifyMinimumViolation(
   seasonId: number,
-  categoryPlanId: number,
+  categoryPlanId: string,
   detection: ViolationDetection,
   deps: NotifyMinimumViolationDeps,
 ): Promise<void> {

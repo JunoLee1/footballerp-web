@@ -108,7 +108,7 @@ export class MonthlySettlementService {
     return report;
   }
 
-  async submitFirst(id: number, userId: string) {
+  async submitFirst(id: string, userId: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "SETTLEMENT_NOT_FOUND");
     if (report.status !== "DRAFT") throw new AppError(400, "SETTLEMENT_NOT_DRAFT");
@@ -120,7 +120,7 @@ export class MonthlySettlementService {
     });
   }
 
-  async approveFirst(id: number, userId: string) {
+  async approveFirst(id: string, userId: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "SETTLEMENT_NOT_FOUND");
     if (report.status !== "PENDING_FIRST") throw new AppError(400, "SETTLEMENT_NOT_PENDING_FIRST");
@@ -132,7 +132,7 @@ export class MonthlySettlementService {
     });
   }
 
-  async approve(id: number, userId: string) {
+  async approve(id: string, userId: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "SETTLEMENT_NOT_FOUND");
     if (report.status !== "FIRST_APPROVED") throw new AppError(400, "SETTLEMENT_NOT_FIRST_APPROVED");
@@ -151,7 +151,7 @@ export class MonthlySettlementService {
     return updated;
   }
 
-  async reject(id: number, reason: string) {
+  async reject(id: string, reason: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "SETTLEMENT_NOT_FOUND");
     if (report.status !== "PENDING_FIRST" && report.status !== "FIRST_APPROVED") {
@@ -170,7 +170,7 @@ export class MonthlySettlementService {
     });
   }
 
-  async updateNote(id: number, note: string) {
+  async updateNote(id: string, note: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "SETTLEMENT_NOT_FOUND");
     if (report.status !== "DRAFT" && report.status !== "PENDING_FIRST") {
@@ -179,7 +179,7 @@ export class MonthlySettlementService {
     return this.repo.updateNote(id, note);
   }
 
-  getById(id: number) {
+  getById(id: string) {
     return this.repo.findById(id);
   }
 
@@ -187,7 +187,7 @@ export class MonthlySettlementService {
     return this.repo.findAll(seasonId);
   }
 
-  getForExport(id: number) {
+  getForExport(id: string) {
     return this.repo.findById(id);
   }
 }

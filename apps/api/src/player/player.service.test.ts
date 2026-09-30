@@ -46,10 +46,10 @@ describe('PlayerService.updatePlayer — clubId 스코핑', () => {
   it('다른 clubId면 PLAYER_NOT_FOUND 404', async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
     const service = new PlayerService(repo);
-    await expect(service.updatePlayer('p1', {}, 99)).rejects.toThrow(
+    await expect(service.updatePlayer('p1', {}, "cmxtestclub0000000000099")).rejects.toThrow(
       new AppError(404, 'PLAYER_NOT_FOUND'),
     );
-    expect(repo.findById).toHaveBeenCalledWith('p1', 99);
+    expect(repo.findById).toHaveBeenCalledWith('p1', "cmxtestclub0000000000099");
   });
 
   it('같은 clubId면 repo.update 호출', async () => {
@@ -58,7 +58,7 @@ describe('PlayerService.updatePlayer — clubId 스코핑', () => {
       update: jest.fn().mockResolvedValue(PLAYER_STUB),
     });
     const service = new PlayerService(repo);
-    await service.updatePlayer('p1', { playerName: '김철수' }, 10);
+    await service.updatePlayer('p1', { playerName: '김철수' }, "cmxtestclub00000000000010");
     expect(repo.update).toHaveBeenCalledWith('p1', { playerName: '김철수' });
   });
 
@@ -79,10 +79,10 @@ describe('PlayerService.updatePlayerStatus — clubId 스코핑', () => {
   it('다른 clubId면 PLAYER_NOT_FOUND 404', async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
     const service = new PlayerService(repo);
-    await expect(service.updatePlayerStatus('p1', { status: 'RELEASED' }, ACTOR_ID, 99)).rejects.toThrow(
+    await expect(service.updatePlayerStatus('p1', { status: 'RELEASED' }, ACTOR_ID, "cmxtestclub0000000000099")).rejects.toThrow(
       new AppError(404, 'PLAYER_NOT_FOUND'),
     );
-    expect(repo.findById).toHaveBeenCalledWith('p1', 99);
+    expect(repo.findById).toHaveBeenCalledWith('p1', "cmxtestclub0000000000099");
   });
 });
 
@@ -92,10 +92,10 @@ describe('PlayerService.promotePlayer — clubId 스코핑', () => {
   it('다른 clubId면 PLAYER_NOT_FOUND 404', async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
     const service = new PlayerService(repo);
-    await expect(service.promotePlayer('p1', 2, ACTOR_ID, 99)).rejects.toThrow(
+    await expect(service.promotePlayer('p1', 2, ACTOR_ID, "cmxtestclub0000000000099")).rejects.toThrow(
       new AppError(404, 'PLAYER_NOT_FOUND'),
     );
-    expect(repo.findById).toHaveBeenCalledWith('p1', 99);
+    expect(repo.findById).toHaveBeenCalledWith('p1', "cmxtestclub0000000000099");
   });
 });
 
@@ -106,9 +106,9 @@ describe('PlayerService.updateWorkPermit — clubId 스코핑', () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
     const service = new PlayerService(repo);
     await expect(
-      service.updateWorkPermit('p1', { workPermitStatus: 'PENDING' }, 99),
+      service.updateWorkPermit('p1', { workPermitStatus: 'PENDING' }, "cmxtestclub0000000000099"),
     ).rejects.toThrow(new AppError(404, 'PLAYER_NOT_FOUND'));
-    expect(repo.findById).toHaveBeenCalledWith('p1', 99);
+    expect(repo.findById).toHaveBeenCalledWith('p1', "cmxtestclub0000000000099");
   });
 });
 
@@ -118,10 +118,10 @@ describe('PlayerService.deletePlayer — clubId 스코핑', () => {
   it('다른 clubId면 PLAYER_NOT_FOUND 404', async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
     const service = new PlayerService(repo);
-    await expect(service.deletePlayer('p1', ACTOR_ID, 99)).rejects.toThrow(
+    await expect(service.deletePlayer('p1', ACTOR_ID, "cmxtestclub0000000000099")).rejects.toThrow(
       new AppError(404, 'PLAYER_NOT_FOUND'),
     );
-    expect(repo.findById).toHaveBeenCalledWith('p1', 99);
+    expect(repo.findById).toHaveBeenCalledWith('p1', "cmxtestclub0000000000099");
   });
 });
 
@@ -131,9 +131,9 @@ describe('PlayerService.updateMarketValue — clubId 스코핑', () => {
   it('다른 clubId면 PLAYER_NOT_FOUND 404', async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
     const service = new PlayerService(repo, makeMvRepo());
-    await expect(service.updateMarketValue('p1', { value: 1000000 }, ACTOR_ID, 99)).rejects.toThrow(
+    await expect(service.updateMarketValue('p1', { value: 1000000 }, ACTOR_ID, "cmxtestclub0000000000099")).rejects.toThrow(
       new AppError(404, 'PLAYER_NOT_FOUND'),
     );
-    expect(repo.findById).toHaveBeenCalledWith('p1', 99);
+    expect(repo.findById).toHaveBeenCalledWith('p1', "cmxtestclub0000000000099");
   });
 });

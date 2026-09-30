@@ -22,12 +22,12 @@ export class EquipmentService {
     private ledgerService: LedgerService,
   ) {}
 
-  async getAllItems(actorClubId?: number) {
+  async getAllItems(actorClubId?: string) {
     const key = `equipment:list-items:${actorClubId ?? "all"}`;
     return cached(key, 30, () => this.repo.findAllItems(actorClubId));
   }
 
-  async getItemById(id: string, actorClubId?: number) {
+  async getItemById(id: string, actorClubId?: string) {
     const item = await this.repo.findItemById(id, actorClubId);
     if (!item) throw new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND");
     return {
@@ -39,11 +39,11 @@ export class EquipmentService {
     };
   }
 
-  createItem(dto: CreateEquipmentItemDto, actorClubId?: number) {
+  createItem(dto: CreateEquipmentItemDto, actorClubId?: string) {
     return this.repo.createItem(dto, actorClubId);
   }
 
-  async adjustQuantity(id: string, dto: UpdateQuantityDto, actorClubId?: number) {
+  async adjustQuantity(id: string, dto: UpdateQuantityDto, actorClubId?: string) {
     const item = await this.repo.findItemById(id, actorClubId);
     if (!item) throw new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND");
     if (item.trackedIndividually) throw new AppError(400, "ITEM_IS_TRACKED_INDIVIDUALLY");
@@ -56,7 +56,7 @@ export class EquipmentService {
     return updated;
   }
 
-  async addUnit(itemId: string, dto: CreateEquipmentUnitDto = {}, actorClubId?: number) {
+  async addUnit(itemId: string, dto: CreateEquipmentUnitDto = {}, actorClubId?: string) {
     const item = await this.repo.findItemById(itemId, actorClubId);
     if (!item) throw new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND");
     if (!item.trackedIndividually) throw new AppError(400, "ITEM_NOT_TRACKED_INDIVIDUALLY");
@@ -95,7 +95,7 @@ export class EquipmentService {
     return this.repo.updateUnitDepreciation(unitId, newBookValue);
   }
 
-  async transitionUnitStatus(unitId: string, dto: UpdateUnitStatusDto, userId?: string, actorClubId?: number) {
+  async transitionUnitStatus(unitId: string, dto: UpdateUnitStatusDto, userId?: string, actorClubId?: string) {
     const unit = await this.repo.findUnitById(unitId, actorClubId);
     if (!unit) throw new AppError(404, "EQUIPMENT_UNIT_NOT_FOUND");
     const allowed = VALID_UNIT_TRANSITIONS[unit.status as unknown as EquipmentUnitStatus];
@@ -153,7 +153,7 @@ export class EquipmentService {
     return this.repo.markReturned(assignmentId);
   }
 
-  async requestLoan(requestedById: string, dto: CreateEquipmentLoanDto, actorClubId?: number) {
+  async requestLoan(requestedById: string, dto: CreateEquipmentLoanDto, actorClubId?: string) {
     const item = await this.repo.findItemById(dto.equipmentItemId, actorClubId);
     if (!item) throw new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND");
     if (!dto.dueDate) throw new AppError(400, "DUE_DATE_REQUIRED");
@@ -175,7 +175,7 @@ export class EquipmentService {
     return loan;
   }
 
-  async approveLoan(loanId: string, approvedById: string, actorClubId?: number) {
+  async approveLoan(loanId: string, approvedById: string, actorClubId?: string) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "REQUESTED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -189,7 +189,7 @@ export class EquipmentService {
     return updated;
   }
 
-  async rejectLoan(loanId: string, approvedById: string, actorClubId?: number) {
+  async rejectLoan(loanId: string, approvedById: string, actorClubId?: string) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "REQUESTED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -203,7 +203,7 @@ export class EquipmentService {
     return updated;
   }
 
-  async issueLoan(loanId: string, equipmentUnitId?: string, actorClubId?: number) {
+  async issueLoan(loanId: string, equipmentUnitId?: string, actorClubId?: string) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "APPROVED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -214,7 +214,7 @@ export class EquipmentService {
     });
   }
 
-  async returnLoan(loanId: string, returnedById: string, returnNote?: string, actorClubId?: number) {
+  async returnLoan(loanId: string, returnedById: string, returnNote?: string, actorClubId?: string) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "ISSUED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -246,7 +246,7 @@ export class EquipmentService {
     return result;
   }
 
-  async updateUnitSanitation(unitId: string, dto: UpdateUnitSanitationDto, actorClubId?: number) {
+  async updateUnitSanitation(unitId: string, dto: UpdateUnitSanitationDto, actorClubId?: string) {
     const unit = await this.repo.findUnitById(unitId, actorClubId);
     if (!unit) throw new AppError(404, "EQUIPMENT_UNIT_NOT_FOUND");
     return this.repo.updateUnit(unitId, {
@@ -258,12 +258,12 @@ export class EquipmentService {
     });
   }
 
-  listLoans(status?: EquipmentLoanStatus, actorClubId?: number) {
+  listLoans(status?: EquipmentLoanStatus, actorClubId?: string) {
     const key = `equipment:list-loans:${status ?? "all"}:${actorClubId ?? "all"}`;
     return cached(key, 30, () => this.repo.findAllLoans(status, actorClubId));
   }
 
-  listMyLoans(userId: string, actorClubId?: number) {
+  listMyLoans(userId: string, actorClubId?: string) {
     return this.repo.findMyLoans(userId, actorClubId);
   }
 

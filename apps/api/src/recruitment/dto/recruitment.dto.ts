@@ -12,8 +12,8 @@ export interface CreateJobPostingDto {
   departmentId?: number;
   headcount?: number;
   description: string;
-  planReportId: number;
-  hiringPlanItemId: number;
+  planReportId: string;
+  hiringPlanItemId: string;
   // Free-form list of document types HR must approve before the resulting
   // HiringDispatch can execute (fix #372). Empty/omitted = no gate.
   requiredDocuments?: string[];
@@ -50,12 +50,12 @@ export interface UpdateJobApplicationDto {
 export interface CreateInterviewDto {
   round: InterviewRound;
   scheduledAt?: string;
-  interviewerIds?: number[];
+  interviewerIds?: string[];
 }
 
 export interface UpdateInterviewDto {
   scheduledAt?: string;
-  interviewerIds?: number[];
+  interviewerIds?: string[];
   scoreSkill?: number;
   scoreComm?: number;
   scoreCulture?: number;

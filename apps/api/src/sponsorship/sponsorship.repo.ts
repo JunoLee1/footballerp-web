@@ -23,9 +23,9 @@ export class SponsorshipRepository {
     return { data, total, page, totalPages: Math.ceil(total / pageSize) };
   }
 
-  async findBySponsorName(sponsorName: string, excludeId?: number): Promise<{ id: number } | null> {
+  async findBySponsorName(sponsorName: string, excludeId?: string): Promise<{ id: string } | null> {
     const normalized = sponsorName.replace(/\s+/g, '').toLowerCase()
-    type Row = { id: number }
+    type Row = { id: string }
     const rows = excludeId !== undefined
       ? await this.prisma.$queryRaw<Row[]>`
           SELECT id FROM "Sponsorship"
@@ -41,7 +41,7 @@ export class SponsorshipRepository {
     return rows[0] ?? null
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.sponsorship.findFirst({
       where: { id, deletedAt: null } as any,
       include: {
@@ -84,11 +84,11 @@ export class SponsorshipRepository {
     });
   }
 
-  createPayments(data: { sponsorshipId: number; dueDate: Date; amount: number }[]) {
+  createPayments(data: { sponsorshipId: string; dueDate: Date; amount: number }[]) {
     return this.prisma.sponsorshipPayment.createMany({ data });
   }
 
-  update(id: number, data: UpdateSponsorshipDto) {
+  update(id: string, data: UpdateSponsorshipDto) {
     return this.prisma.sponsorship.update({
       where: { id },
       data: {
@@ -106,18 +106,18 @@ export class SponsorshipRepository {
     });
   }
 
-  findPayments(sponsorshipId: number) {
+  findPayments(sponsorshipId: string) {
     return this.prisma.sponsorshipPayment.findMany({
       where: { sponsorshipId },
       orderBy: { dueDate: "asc" },
     });
   }
 
-  findPaymentById(id: number) {
+  findPaymentById(id: string) {
     return this.prisma.sponsorshipPayment.findUnique({ where: { id } });
   }
 
-  updatePayment(id: number, data: { status: "PAID"; paidAt: Date; adjustedAmount?: number; adjustmentReason?: string; appliedClauseId?: number }) {
+  updatePayment(id: string, data: { status: "PAID"; paidAt: Date; adjustedAmount?: number; adjustmentReason?: string; appliedClauseId?: string }) {
     return this.prisma.sponsorshipPayment.update({
       where: { id },
       data: {
@@ -138,7 +138,7 @@ export class SponsorshipRepository {
   }
 
   // PA1: delete all pending payments so they can be regenerated
-  deletePayments(sponsorshipId: number) {
+  deletePayments(sponsorshipId: string) {
     return this.prisma.sponsorshipPayment.deleteMany({
       where: { sponsorshipId, status: "PENDING" } as any,
     });
@@ -211,7 +211,7 @@ export class SponsorshipRepository {
   }
 
   // PB6: soft-delete a sponsorship contract
-  softDelete(id: number) {
+  softDelete(id: string) {
     return this.prisma.sponsorship.update({
       where: { id },
       data: { deletedAt: new Date() } as any,

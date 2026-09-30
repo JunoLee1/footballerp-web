@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { canWriteHR, canManageTD, isHeadCoach } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { RecruitmentService } from "./recruitment.service";
 import type { InterviewRound } from "../generated/enums";
 import type {
@@ -59,7 +60,7 @@ export class RecruitmentController {
     try {
       const { role, frontOfficeRole, coachingRole, departmentCategories } = requireUser(req);
       if (!canRead(role, frontOfficeRole, coachingRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.getPosting(Number(req.params["id"])));
+      res.json(await this.service.getPosting(assertCuid(req.params["id"])));
     } catch (err) {
       next(err);
     }
@@ -70,7 +71,7 @@ export class RecruitmentController {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canWrite(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
       const dto = req.body as UpdateJobPostingDto;
-      res.json(await this.service.updatePosting(Number(req.params["id"]), dto));
+      res.json(await this.service.updatePosting(assertCuid(req.params["id"]), dto));
     } catch (err) {
       next(err);
     }
@@ -80,7 +81,7 @@ export class RecruitmentController {
     try {
       const { role, frontOfficeRole, departmentCategories, id: userId } = requireUser(req);
       if (!canApprove(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.approvePosting(Number(req.params["id"]), userId));
+      res.json(await this.service.approvePosting(assertCuid(req.params["id"]), userId));
     } catch (err) {
       next(err);
     }
@@ -90,7 +91,7 @@ export class RecruitmentController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canWrite(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.closePosting(Number(req.params["id"])));
+      res.json(await this.service.closePosting(assertCuid(req.params["id"])));
     } catch (err) {
       next(err);
     }
@@ -102,7 +103,7 @@ export class RecruitmentController {
     try {
       const { role, frontOfficeRole, coachingRole, departmentCategories } = requireUser(req);
       if (!canRead(role, frontOfficeRole, coachingRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.listApplications(Number(req.params["postingId"])));
+      res.json(await this.service.listApplications(assertCuid(req.params["postingId"])));
     } catch (err) {
       next(err);
     }
@@ -111,7 +112,7 @@ export class RecruitmentController {
   apply = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const dto = req.body as CreateJobApplicationDto;
-      res.status(201).json(await this.service.apply(Number(req.params["postingId"]), dto));
+      res.status(201).json(await this.service.apply(assertCuid(req.params["postingId"]), dto));
     } catch (err) {
       next(err);
     }
@@ -434,7 +435,7 @@ export class RecruitmentController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canWrite(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const postingId = Number(req.params["id"]);
+      const postingId = assertCuid(req.params["id"]);
       res.json(await this.service.getWaitlistForPosting(postingId));
     } catch (err) {
       next(err);

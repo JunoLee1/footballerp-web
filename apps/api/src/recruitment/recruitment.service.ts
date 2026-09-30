@@ -59,7 +59,7 @@ export class RecruitmentService {
     return cached(key, 30, () => this.repo.findAllPostings(query));
   }
 
-  async getPosting(id: number) {
+  async getPosting(id: string) {
     const posting = await this.repo.findPostingById(id);
     if (!posting) throw new AppError(404, "JOB_POSTING_NOT_FOUND");
     return posting;
@@ -94,7 +94,7 @@ export class RecruitmentService {
     return posting;
   }
 
-  async bulkCreatePostingsFromPlanReport(planReportId: number, createdById: string) {
+  async bulkCreatePostingsFromPlanReport(planReportId: string, createdById: string) {
     if (!this.planReportRepo) throw new AppError(500, "INTERNAL_ERROR");
 
     const planReport = await this.planReportRepo.findByIdLight(planReportId);
@@ -105,7 +105,7 @@ export class RecruitmentService {
     const allItems = await this.planReportRepo.listHiringPlanItems(planReportId);
 
     const created: any[] = [];
-    const skipped: { id: number; roleTitle: string; status: string }[] = [];
+    const skipped: { id: string; roleTitle: string; status: string }[] = [];
 
     for (const item of allItems) {
       if (item.status !== "PLANNED") {
@@ -138,7 +138,7 @@ export class RecruitmentService {
     return { created, skipped };
   }
 
-  async updatePosting(id: number, dto: UpdateJobPostingDto) {
+  async updatePosting(id: string, dto: UpdateJobPostingDto) {
     await this.getPosting(id);
     const requiredDocuments = normalizeRequiredDocuments(dto.requiredDocuments);
     return this.repo.updatePosting(id, {
@@ -147,13 +147,13 @@ export class RecruitmentService {
     });
   }
 
-  async approvePosting(id: number, approvedById: string) {
+  async approvePosting(id: string, approvedById: string) {
     const posting = await this.getPosting(id);
     if (posting.status !== "DRAFT") throw new AppError(409, "JOB_POSTING_NOT_DRAFT");
     return this.repo.approvePosting(id, approvedById);
   }
 
-  async closePosting(id: number) {
+  async closePosting(id: string) {
     const posting = await this.getPosting(id);
     if (posting.status === "CLOSED") throw new AppError(409, "JOB_POSTING_ALREADY_CLOSED");
     return this.repo.closePosting(id);
@@ -161,7 +161,7 @@ export class RecruitmentService {
 
   // --- JobApplication ---
 
-  async listApplications(postingId: number) {
+  async listApplications(postingId: string) {
     await this.getPosting(postingId);
     const apps = await this.repo.findApplicationsByPosting(postingId);
     return apps.map(maskApplication);
@@ -173,7 +173,7 @@ export class RecruitmentService {
     return maskApplication(app);
   }
 
-  async apply(postingId: number, dto: CreateJobApplicationDto) {
+  async apply(postingId: string, dto: CreateJobApplicationDto) {
     const posting = await this.getPosting(postingId);
     if (posting.status !== "OPEN") throw new AppError(409, "JOB_POSTING_NOT_OPEN");
     const existing = await this.repo.findApplicationByEmail(postingId, dto.email);
@@ -904,7 +904,7 @@ export class RecruitmentService {
 
   // --- Waitlist (fix #366) ---
 
-  async getWaitlistForPosting(postingId: number) {
+  async getWaitlistForPosting(postingId: string) {
     // I5 fix: 404 if posting doesn't exist (matches listApplications pattern).
     await this.getPosting(postingId);
     const waitlisted = await (this.repo as any).findWaitlistedInterviews(postingId);

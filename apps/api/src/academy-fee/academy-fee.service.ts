@@ -197,7 +197,7 @@ export class AcademyFeeService {
           period: `${(fee as any).year ?? year}년 ${(fee as any).month ?? month}월`,
         }),
         relatedModule: "AcademyFee",
-        relatedId: id,
+        relatedId: String(id),
         createdById: approverId,
       } as any,
     });
@@ -281,7 +281,7 @@ export class AcademyFeeService {
           period: `${(fee as any).year ?? year}년 ${(fee as any).month ?? month}월`,
         }),
         relatedModule: "AcademyFee",
-        relatedId: id,
+        relatedId: String(id),
         createdById: fee.guardianId,
       } as any,
     });

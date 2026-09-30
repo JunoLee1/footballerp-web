@@ -23,11 +23,11 @@ export class ClubRepository {
     return this.prisma.club.findMany({ select: CLUB_SELECT, orderBy: { name: "asc" } });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.club.findUnique({ where: { id }, select: CLUB_SELECT });
   }
 
-  findByIds(ids: number[]) {
+  findByIds(ids: string[]) {
     return this.prisma.club.findMany({ where: { id: { in: ids } }, select: CLUB_SELECT });
   }
 
@@ -59,11 +59,11 @@ export class ClubRepository {
     });
   }
 
-  update(id: number, dto: UpdateClubDto) {
+  update(id: string, dto: UpdateClubDto) {
     return this.prisma.club.update({ where: { id }, data: dto, select: CLUB_SELECT });
   }
 
-  cascadeIsLite(clubId: number, isLite: boolean) {
+  cascadeIsLite(clubId: string, isLite: boolean) {
     return this.prisma.$transaction([
       this.prisma.club.update({ where: { id: clubId }, data: { isLite }, select: CLUB_SELECT }),
       this.prisma.team.updateMany({ where: { clubId }, data: { isLite } }),

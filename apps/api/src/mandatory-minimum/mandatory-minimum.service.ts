@@ -26,7 +26,7 @@ export interface ProposeDto {
 
 export type ReviewDecision = "APPROVED" | "REJECTED";
 
-type UserSelect = { id: number; email: string; username: string };
+type UserSelect = { id: string; email: string; username: string };
 type UserSelectWithRole = UserSelect & { role: string; frontOfficeRole: string | null };
 
 const USER_BASIC_SELECT = { id: true, email: true, username: true } as const;
@@ -50,7 +50,7 @@ type Prisma = Pick<PrismaClient, "budgetCategoryPlan" | "mandatoryMinimumChangeL
 // 테스트에서 spy 할 수 있도록 hook injection.
 export type ViolationNotifier = (
   seasonId: number,
-  categoryPlanId: number,
+  categoryPlanId: string,
   detection: ViolationDetection,
 ) => Promise<void>;
 
@@ -65,7 +65,7 @@ export class MandatoryMinimumService {
    * previousAmount 는 현재 categoryPlan.mandatoryMinimum 스냅샷.
    */
   async propose(
-    categoryPlanId: number,
+    categoryPlanId: string,
     dto: ProposeDto,
     actorId: string,
   ) {
@@ -231,7 +231,7 @@ export class MandatoryMinimumService {
    * 읽기 권한: FM / GM / SUPER_ADMIN (grill Q6). 컨트롤러에서도 재확인.
    */
   async listHistory(
-    categoryPlanId: number,
+    categoryPlanId: string,
     actorRole: string,
     actorFrontOfficeRole: string | null | undefined,
   ) {

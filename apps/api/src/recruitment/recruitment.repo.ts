@@ -65,7 +65,7 @@ export class RecruitmentRepository {
     });
   }
 
-  findPostingById(id: number) {
+  findPostingById(id: string) {
     return this.prisma.jobPosting.findUnique({ where: { id }, include: POSTING_INCLUDE });
   }
 
@@ -73,11 +73,11 @@ export class RecruitmentRepository {
     return this.prisma.jobPosting.create({ data, include: POSTING_INCLUDE });
   }
 
-  updatePosting(id: number, data: UpdateJobPostingDto) {
+  updatePosting(id: string, data: UpdateJobPostingDto) {
     return this.prisma.jobPosting.update({ where: { id }, data, include: POSTING_INCLUDE });
   }
 
-  approvePosting(id: number, approvedById: string) {
+  approvePosting(id: string, approvedById: string) {
     return this.prisma.jobPosting.update({
       where: { id },
       data: { status: "OPEN", approvedById, approvedAt: new Date() },
@@ -85,7 +85,7 @@ export class RecruitmentRepository {
     });
   }
 
-  closePosting(id: number) {
+  closePosting(id: string) {
     return this.prisma.jobPosting.update({
       where: { id },
       data: { status: "CLOSED", closedAt: new Date() },
@@ -95,7 +95,7 @@ export class RecruitmentRepository {
 
   // --- JobApplication ---
 
-  findApplicationsByPosting(postingId: number) {
+  findApplicationsByPosting(postingId: string) {
     return this.prisma.jobApplication.findMany({
       where: { postingId },
       include: APPLICATION_INCLUDE,
@@ -107,13 +107,13 @@ export class RecruitmentRepository {
     return this.prisma.jobApplication.findUnique({ where: { id }, include: APPLICATION_INCLUDE });
   }
 
-  findApplicationByEmail(postingId: number, email: string) {
+  findApplicationByEmail(postingId: string, email: string) {
     return this.prisma.jobApplication.findUnique({
       where: { postingId_email: { postingId, email } },
     });
   }
 
-  createApplication(postingId: number, data: CreateJobApplicationDto) {
+  createApplication(postingId: string, data: CreateJobApplicationDto) {
     return this.prisma.jobApplication.create({
       data: { ...data, postingId },
       include: APPLICATION_INCLUDE,
@@ -425,7 +425,7 @@ export class RecruitmentRepository {
     return this.prisma.clubSettings.findFirst();
   }
 
-  findWaitlistedInterviews(postingId: number) {
+  findWaitlistedInterviews(postingId: string) {
     return this.prisma.interview.findMany({
       where: {
         result: "WAITLIST",
@@ -448,7 +448,7 @@ export class RecruitmentRepository {
     });
   }
 
-  async findTopWaitlistForPosting(postingId: number) {
+  async findTopWaitlistForPosting(postingId: string) {
     const rows = await this.prisma.interview.findMany({
       where: {
         result: "WAITLIST",

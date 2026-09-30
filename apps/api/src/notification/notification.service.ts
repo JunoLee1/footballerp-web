@@ -199,7 +199,7 @@ export class NotificationService {
     });
   }
 
-  async notifyContactFollowUp(partnerName: string, contactLogId: number, actorId: string) {
+  async notifyContactFollowUp(partnerName: string, contactLogId: string, actorId: string) {
     const title = "파트너 팔로업 일정";
     const body = `'${partnerName}' 파트너 접촉 팔로업이 내일 예정되어 있습니다.`;
     await this.repo.create({ userId: actorId, type: "PARTNER_CONTACT_FOLLOWUP", title, body, entityId: contactLogId });
@@ -228,7 +228,7 @@ export class NotificationService {
     });
   }
 
-  async notifyAcquisitionSurveyPublished(surveyId: number, title: string) {
+  async notifyAcquisitionSurveyPublished(surveyId: string, title: string) {
     const getMsg = () => ({
       title: "영입 수요조사 요청",
       body: `"${title}" 수요조사가 등록되었습니다. 의견을 작성해주세요.`,
@@ -246,7 +246,7 @@ export class NotificationService {
     });
   }
 
-  async notifyAcquisitionSurveyClosed(surveyId: number, title: string) {
+  async notifyAcquisitionSurveyClosed(surveyId: string, title: string) {
     const getMsg = () => ({
       title: "영입 수요조사 마감",
       body: `"${title}" 수요조사가 마감됐습니다. 롱리스트 조사를 시작해주세요.`,

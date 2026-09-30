@@ -5,6 +5,7 @@ import type { RecruitmentService } from '../recruitment/recruitment.service'
 import { HiringPlanItemStatus } from '../generated/enums'
 import { AppError } from '../lib/appError'
 import { isAdminLike } from '../lib/permissions'
+import { assertCuid } from "../lib/cuidGuard";
 
 const HIRING_PLAN_ITEM_STATUSES = Object.values(HiringPlanItemStatus) as string[]
 
@@ -29,7 +30,7 @@ export class PlanReportController {
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.getById(Number(req.params.id)))
+      res.json(await this.service.getById(assertCuid(req.params.id)))
     } catch (e) { next(e) }
   }
 
@@ -41,25 +42,25 @@ export class PlanReportController {
 
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.update(Number(req.params.id), req.body, req.user!.id, req.user!.role))
+      res.json(await this.service.update(assertCuid(req.params.id), req.body, req.user!.id, req.user!.role))
     } catch (e) { next(e) }
   }
 
   submit = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.submit(Number(req.params.id), req.user!.id))
+      res.json(await this.service.submit(assertCuid(req.params.id), req.user!.id))
     } catch (e) { next(e) }
   }
 
   approve = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.approve(Number(req.params.id), req.user!.id, req.user!.role))
+      res.json(await this.service.approve(assertCuid(req.params.id), req.user!.id, req.user!.role))
     } catch (e) { next(e) }
   }
 
   reject = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.reject(Number(req.params.id), req.user!.id, req.user!.role, req.body.reason))
+      res.json(await this.service.reject(assertCuid(req.params.id), req.user!.id, req.user!.role, req.body.reason))
     } catch (e) { next(e) }
   }
 
@@ -71,7 +72,7 @@ export class PlanReportController {
 
   submitResult = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.submitResult(Number(req.params.id), req.user!.id, req.body.resultContent, req.user!.role))
+      res.json(await this.service.submitResult(assertCuid(req.params.id), req.user!.id, req.body.resultContent, req.user!.role))
     } catch (e) { next(e) }
   }
 
@@ -87,14 +88,14 @@ export class PlanReportController {
       const statusFilter = typeof statusParam === 'string'
         ? (statusParam.split(',').filter(s => HIRING_PLAN_ITEM_STATUSES.includes(s)) as HiringPlanItemStatus[])
         : undefined
-      const items = await this.repo.listHiringPlanItems(Number(req.params.id), statusFilter)
+      const items = await this.repo.listHiringPlanItems(assertCuid(req.params.id), statusFilter)
       res.json(items)
     } catch (e) { next(e) }
   }
 
   createHiringItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const item = await this.repo.createHiringPlanItem(Number(req.params.id), req.body)
+      const item = await this.repo.createHiringPlanItem(assertCuid(req.params.id), req.body)
       res.status(201).json(item)
     } catch (e) { next(e) }
   }
@@ -102,8 +103,8 @@ export class PlanReportController {
   updateHiringItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const item = await this.repo.updateHiringPlanItem(
-        Number(req.params.itemId),
-        Number(req.params.id),
+        assertCuid(req.params.itemId),
+        assertCuid(req.params.id),
         req.body
       )
       res.json(item)
@@ -112,15 +113,15 @@ export class PlanReportController {
 
   deleteHiringItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.repo.deleteHiringPlanItem(Number(req.params.itemId), Number(req.params.id))
+      await this.repo.deleteHiringPlanItem(assertCuid(req.params.itemId), assertCuid(req.params.id))
       res.status(204).send()
     } catch (e) { next(e) }
   }
 
   cancelHiringItem = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const planReportId = Number(req.params.id)
-      const itemId = Number(req.params.itemId)
+      const planReportId = assertCuid(req.params.id)
+      const itemId = assertCuid(req.params.itemId)
       const result = await this.service.cancelHiringPlanItem(itemId, planReportId, req.user!.id)
       res.json(result)
     } catch (e) { next(e) }
@@ -128,7 +129,7 @@ export class PlanReportController {
 
   publishPostings = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const planReportId = Number(req.params.id)
+      const planReportId = assertCuid(req.params.id)
       const actorId = req.user!.id
       const result = await this.recruitmentService.bulkCreatePostingsFromPlanReport(planReportId, actorId)
       res.status(201).json(result)

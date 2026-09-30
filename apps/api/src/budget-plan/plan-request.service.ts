@@ -12,7 +12,7 @@ interface Reviewer {
   email: string | null;
   language: string | null;
   scope: "TEAM" | "DEPARTMENT";
-  ownerId: number;
+  ownerId: string;
 }
 export type BudgetPlanReviewersFn = () => Promise<Reviewer[]>;
 
@@ -161,13 +161,13 @@ export class BudgetPlanRequestService {
             where: { id: { in: teamIds } },
             select: { id: true, name: true },
           })
-        : Promise.resolve([] as { id: number; name: string }[]),
+        : Promise.resolve([] as { id: string; name: string }[]),
       deptIds.length > 0
         ? this.prisma.department.findMany({
             where: { id: { in: deptIds } },
             select: { id: true, name: true },
           })
-        : Promise.resolve([] as { id: number; name: string }[]),
+        : Promise.resolve([] as { id: string; name: string }[]),
     ]);
     const teamName = new Map(teams.map((t) => [t.id, t.name]));
     const deptName = new Map(departments.map((d) => [d.id, d.name]));
@@ -410,11 +410,11 @@ export class BudgetPlanRequestService {
       where: { categoryPlanId: { in: planIds } },
       select: { id: true, categoryPlanId: true, name: true, cost: true, value: true },
     });
-    const groupsByPlan = new Map<number, { basicCost: number; tiers: { id: number; name: string; cost: number; value: number }[] }>();
+    const groupsByPlan = new Map<number, { basicCost: number; tiers: { id: string; name: string; cost: number; value: number }[] }>();
     for (const t of allTiersAfter) {
       const existing = groupsByPlan.get(t.categoryPlanId) ?? { basicCost: 0, tiers: [] };
       if (t.name === "Basic") existing.basicCost = t.cost;
-      else existing.tiers.push({ id: t.id, name: t.name, cost: t.cost, value: t.value });
+      else existing.tiers.push({ id: t.id, name: t.name, cost: t.cost, value: t.value });//TODO: tmp 타입 지정
       groupsByPlan.set(t.categoryPlanId, existing);
     }
 
@@ -426,7 +426,7 @@ export class BudgetPlanRequestService {
       .filter(([, g]) => g.tiers.length > 0)
       .map(([planId, g]) => ({
         categoryPlanId: planId,
-        category: String(planId),
+        category: planId,
         tiers: g.tiers.map((t) => ({ tierId: t.id, cost: t.cost - g.basicCost, value: t.value })),
       }));
 
@@ -439,7 +439,7 @@ export class BudgetPlanRequestService {
         const selected = selectedByPlan.get(planId);
         const allocated = g.basicCost + (selected ? selected.allocated : 0);
         await this.prisma.budgetCategoryPlan.update({
-          where: { id: planId },
+          where: { id: planId},//TODO: 임의 문자열화
           data: { knapsackAllocated: allocated },
         });
         if (selected) {

@@ -5,7 +5,7 @@ export interface RequestNormalMedicalLoanDto {
   originalCost: number;
   overrideDiscountRate?: number;
   overrideReason?: string;
-  budgetLineId: number;
+  budgetLineId: string;
   seasonId: number;
   categoryId: number;
 }
@@ -21,7 +21,7 @@ export interface RequestEmergencyMedicalLoanDto {
 }
 
 export interface ApproveMedicalLoanDto {
-  budgetLineId?: number;
+  budgetLineId?: string;
   seasonId?: number;
   categoryId?: number;
 }

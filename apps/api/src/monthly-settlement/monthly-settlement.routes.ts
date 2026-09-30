@@ -1,12 +1,10 @@
-import { Router } from "express";
 import { auth } from "../lib/authMiddleware";
 import { MonthlySettlementController } from "./monthly-settlement.controller";
 import { MonthlySettlementService } from "./monthly-settlement.service";
 import { MonthlySettlementRepository } from "./monthly-settlement.repo";
 import { getPrisma } from "../lib/prisma";
-import { intIdRouter } from "../lib/idParamGuard";
-
-const router = intIdRouter();
+import { cuidRouter } from "../lib/cuidGuard";
+const router = cuidRouter();
 const prisma = getPrisma();
 const repo = new MonthlySettlementRepository(prisma);
 const service = new MonthlySettlementService(repo, prisma);

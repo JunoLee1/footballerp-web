@@ -87,7 +87,7 @@ export class MaintenanceService {
         amountKrw: Number(existing.actualCost),
         description: formatLedgerDescription("facility", "repair_completed", { title: existing.title }),
         relatedModule: "facility",
-        relatedId: id,
+        relatedId: String(id),
       }, gmId).catch(err => console.error("[LedgerAutoEntry:facility]", err));
     }
     return record;

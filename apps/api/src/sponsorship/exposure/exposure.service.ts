@@ -5,11 +5,11 @@ import type { CreateExposureEventDto } from "./dto/exposure.dto";
 export class ExposureService {
   constructor(private repo: ExposureRepository) {}
 
-  list(sponsorshipId: number) {
+  list(sponsorshipId: string) {
     return this.repo.findAll(sponsorshipId);
   }
 
-  async create(sponsorshipId: number, dto: CreateExposureEventDto, createdById: string) {
+  async create(sponsorshipId: string, dto: CreateExposureEventDto, createdById: string) {
     if (dto.exposureCount === undefined && dto.fanReach === undefined && dto.mediaValue === undefined) {
       throw new AppError(400, "EXPOSURE_METRIC_REQUIRED");
     }

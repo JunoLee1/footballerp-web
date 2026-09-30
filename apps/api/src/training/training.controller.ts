@@ -4,6 +4,7 @@ import { isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
 import { TrainingService } from "./training.service";
 import { SessionListQuery } from "./dto/training.dto";
+import { assertCuid } from "../lib/cuidGuard";
 
 const STAFF_ROLES = ["ADMIN", "SUPER_ADMIN", "COACHING_STAFF"] as const;
 
@@ -22,7 +23,7 @@ export class TrainingController {
   getSessionById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = requireUser(req);
-      res.status(200).json(await this.service.getSessionById(Number(req.params["id"]), user.clubId));
+      res.status(200).json(await this.service.getSessionById(assertCuid(req.params["id"]), user.clubId));
     } catch (err) { next(err); }
   };
 
@@ -45,7 +46,7 @@ export class TrainingController {
       const canApprove =
         isAdminLike(user.role) || (user.role === "COACHING_STAFF" && user.coachingRole === "HEAD_COACH");
       if (!canApprove) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.approveSession(Number(req.params["id"]), user.id, user.clubId));
+      res.status(200).json(await this.service.approveSession(assertCuid(req.params["id"]), user.id, user.clubId));
     } catch (err) { next(err); }
   };
 
@@ -54,7 +55,7 @@ export class TrainingController {
       const user = requireUser(req);
       if (!(STAFF_ROLES as readonly string[]).includes(user.role) && !(user.departmentCategories?.includes('PERFORMANCE') ?? false))
         throw new AppError(403, "FORBIDDEN");
-      res.status(201).json(await this.service.addContent(Number(req.params["id"]), req.body, user.clubId));
+      res.status(201).json(await this.service.addContent(assertCuid(req.params["id"]), req.body, user.clubId));
     } catch (err) { next(err); }
   };
 
@@ -63,7 +64,7 @@ export class TrainingController {
       const user = requireUser(req);
       if (!(STAFF_ROLES as readonly string[]).includes(user.role) && !(user.departmentCategories?.includes('PERFORMANCE') ?? false))
         throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.addParticipants(Number(req.params["id"]), req.body, user.clubId));
+      res.status(200).json(await this.service.addParticipants(assertCuid(req.params["id"]), req.body, user.clubId));
     } catch (err) { next(err); }
   };
 
@@ -72,7 +73,7 @@ export class TrainingController {
       const user = requireUser(req);
       if (!(STAFF_ROLES as readonly string[]).includes(user.role) && !(user.departmentCategories?.includes('PERFORMANCE') ?? false))
         throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.upsertResult(Number(req.params["id"]), req.body, user.clubId));
+      res.status(200).json(await this.service.upsertResult(assertCuid(req.params["id"]), req.body, user.clubId));
     } catch (err) { next(err); }
   };
 

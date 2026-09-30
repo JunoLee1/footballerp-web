@@ -7,7 +7,7 @@ import type { ExpenseCategoryCode } from './expense-category'
 export type OperatingCategory = ExpenseCategoryCode
 
 export interface BudgetTier {
-  id: number
+  id: string
   categoryPlanId: number
   name: string
   cost: number
@@ -16,8 +16,8 @@ export interface BudgetTier {
 }
 
 export interface BudgetCategoryPlan {
-  id: number
-  financialReportId: number
+  id: string
+  financialReportId: string
   category: OperatingCategory
   mandatoryMinimum: number
   knapsackAllocated: number | null
@@ -25,7 +25,7 @@ export interface BudgetCategoryPlan {
 }
 
 export interface BudgetOverrideLog {
-  id: number
+  id: string
   category: OperatingCategory
   amount: number
   reason: string
@@ -33,7 +33,7 @@ export interface BudgetOverrideLog {
 }
 
 export interface BudgetPlan {
-  id: number
+  id: string
   seasonId: number
   totalRevenue: number
   totalOperatingBudget: number | null

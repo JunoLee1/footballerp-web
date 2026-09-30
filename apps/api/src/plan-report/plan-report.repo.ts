@@ -43,7 +43,7 @@ export class PlanReportRepository {
     })
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.planReport.findUnique({ where: { id }, include: PLAN_INCLUDE })
   }
 
@@ -73,7 +73,7 @@ export class PlanReportRepository {
     })
   }
 
-  update(id: number, dto: UpdatePlanReportDto) {
+  update(id: string, dto: UpdatePlanReportDto) {
     return this.prisma.planReport.update({
       where: { id },
       data: {
@@ -99,7 +99,7 @@ export class PlanReportRepository {
     })
   }
 
-  async submit(id: number, reviewerDeptIds: number[], requiredApproverLevel: string | null) {
+  async submit(id: string, reviewerDeptIds: number[], requiredApproverLevel: string | null) {
     return this.prisma.$transaction(async (tx) => {
       if (reviewerDeptIds.length > 0) {
         await tx.planReview.createMany({
@@ -119,14 +119,14 @@ export class PlanReportRepository {
     })
   }
 
-  async allReviewsComplete(planId: number): Promise<boolean> {
+  async allReviewsComplete(planId: string): Promise<boolean> {
     const total = await this.prisma.planReview.count({ where: { planId } })
     if (total === 0) return true
     const confirmed = await this.prisma.planReview.count({ where: { planId, status: 'CONFIRMED' } })
     return total === confirmed
   }
 
-  approve(id: number, approvedById: string, vaultPath: string) {
+  approve(id: string, approvedById: string, vaultPath: string) {
     return this.prisma.planReport.update({
       where: { id },
       data: { status: 'APPROVED', approvedById, approvedAt: new Date(), vaultPath },
@@ -134,7 +134,7 @@ export class PlanReportRepository {
     })
   }
 
-  reject(id: number, approvedById: string, reason: string) {
+  reject(id: string, approvedById: string, reason: string) {
     return this.prisma.planReport.update({
       where: { id },
       data: { status: 'DRAFT', approvedById, rejectedAt: new Date(), rejectionReason: reason },
@@ -142,7 +142,7 @@ export class PlanReportRepository {
     })
   }
 
-  submitResult(id: number, resultContent: string) {
+  submitResult(id: string, resultContent: string) {
     return this.prisma.planReport.update({
       where: { id },
       data: { resultContent, resultSubmittedAt: new Date() },
@@ -160,21 +160,21 @@ export class PlanReportRepository {
     })
   }
 
-  findByIdLight(id: number) {
+  findByIdLight(id: string) {
     return this.prisma.planReport.findUnique({
       where: { id },
       select: { id: true, status: true, templateType: true, departmentId: true, title: true },
     })
   }
 
-  findHiringPlanItemById(id: number) {
+  findHiringPlanItemById(id: string) {
     return this.prisma.hiringPlanItem.findUnique({
       where: { id },
       select: { id: true, planReportId: true, status: true, headcount: true, fulfilledCount: true },
     })
   }
 
-  updateHiringPlanItemStatus(id: number, status: HiringPlanItemStatus, fulfilledAt?: Date) {
+  updateHiringPlanItemStatus(id: string, status: HiringPlanItemStatus, fulfilledAt?: Date) {
     return this.prisma.hiringPlanItem.update({
       where: { id },
       data: {
@@ -184,7 +184,7 @@ export class PlanReportRepository {
     })
   }
 
-  incrementFulfilledCount(id: number) {
+  incrementFulfilledCount(id: string) {
     return this.prisma.hiringPlanItem.update({
       where: { id },
       data: { fulfilledCount: { increment: 1 } },
@@ -192,7 +192,7 @@ export class PlanReportRepository {
     })
   }
 
-  cancelHiringPlanItem(id: number) {
+  cancelHiringPlanItem(id: string) {
     return this.prisma.hiringPlanItem.update({
       where: { id },
       data: { status: 'CANCELLED' },
@@ -217,7 +217,7 @@ export class PlanReportRepository {
   }
 
   async createDraftForSurvey(data: {
-    surveyId: number
+    surveyId: string
     createdById: string
     title: string
   }) {
@@ -246,7 +246,7 @@ export class PlanReportRepository {
     })
   }
 
-  listHiringPlanItems(planReportId: number, statusFilter?: HiringPlanItemStatus[]) {
+  listHiringPlanItems(planReportId: string, statusFilter?: HiringPlanItemStatus[]) {
     return this.prisma.hiringPlanItem.findMany({
       where: {
         planReportId,
@@ -257,7 +257,7 @@ export class PlanReportRepository {
     })
   }
 
-  createHiringPlanItem(planReportId: number, data: {
+  createHiringPlanItem(planReportId: string, data: {
     roleTitle: string
     headcount: number
     quarter?: number
@@ -270,8 +270,8 @@ export class PlanReportRepository {
   }
 
   createHiringPlanItems(items: Array<{
-    planReportId: number
-    surveyResponseId: number
+    planReportId: string
+    surveyResponseId: string
     roleTitle: string
     headcount: number
     quarter?: number
@@ -281,7 +281,7 @@ export class PlanReportRepository {
     return this.prisma.hiringPlanItem.createMany({ data: items as any })
   }
 
-  updateHiringPlanItem(id: number, planReportId: number, data: {
+  updateHiringPlanItem(id: string, planReportId: string, data: {
     roleTitle?: string
     headcount?: number
     quarter?: number | null
@@ -294,7 +294,7 @@ export class PlanReportRepository {
     })
   }
 
-  deleteHiringPlanItem(id: number, planReportId: number) {
+  deleteHiringPlanItem(id: string, planReportId: string) {
     return this.prisma.hiringPlanItem.delete({ where: { id, planReportId } })
   }
 }

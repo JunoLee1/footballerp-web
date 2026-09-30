@@ -9,7 +9,7 @@
 export interface AssetKitItemDto {
   // EquipmentItem.id — hardware master reference. Runtime existence check
   // lives in the service layer (Prisma FK is not enforced through JSON).
-  equipmentItemId: number;
+  equipmentItemId: string;
   quantity: number;
   note?: string;
 }

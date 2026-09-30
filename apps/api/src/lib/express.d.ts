@@ -9,7 +9,7 @@ declare global {
       frontOfficeRole: FrontOfficeRole | null | undefined;
       departmentCategories?: string[];
       teamId?: number | null;
-      clubId?: number | null;
+      clubId?: string | null;
       isDemo?: boolean;
     }
     interface Request {

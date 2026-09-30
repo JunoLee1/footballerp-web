@@ -90,8 +90,8 @@ describe("SponsorshipService.create — region fields", () => {
 });
 
 describe("SponsorshipService.markPaid — PA4/PA6 paths", () => {
-  const SPONSORSHIP_ID = 10;
-  const PAYMENT_ID = 20;
+  const SPONSORSHIP_ID = "cmxtestspons0000000000010";
+  const PAYMENT_ID = "cmxtestpayment0000000020";
   const USER_ID = "33333333-3333-3333-3333-333333333333";
 
   const makeKrwSponsorship = () => ({

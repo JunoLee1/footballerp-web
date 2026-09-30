@@ -10,7 +10,7 @@ interface TokenPayload {
   frontOfficeRole?: FrontOfficeRole | null;
   departmentCategories?: string[];
   teamId?: number | null;
-  clubId?: number | null;
+  clubId?: string | null;
   isDemo?: boolean;
 }
 

@@ -2,7 +2,7 @@ import { Prisma } from "../../generated/client";
 import { AppError } from "../../lib/appError";
 
 interface ReserveBudgetResult {
-  operatingExpenseId: number;
+  operatingExpenseId: string;
 }
 
 /**
@@ -15,7 +15,7 @@ interface ReserveBudgetResult {
 export async function checkAndReserveBudget(
   tx: Prisma.TransactionClient,
   params: {
-    budgetLineId: number;
+    budgetLineId: string;
     amount: number;
     seasonId: number;
     categoryId: number;

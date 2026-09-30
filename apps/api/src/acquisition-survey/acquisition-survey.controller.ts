@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AcquisitionSurveyService } from "./acquisition-survey.service";
+import { assertCuid } from "../lib/cuidGuard";
 
 export class AcquisitionSurveyController {
   constructor(private service: AcquisitionSurveyService) {}
@@ -14,7 +15,7 @@ export class AcquisitionSurveyController {
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.getById(Number(req.params.id)));
+      res.json(await this.service.getById(assertCuid(req.params.id)));
     } catch (e) {
       next(e);
     }
@@ -31,7 +32,7 @@ export class AcquisitionSurveyController {
 
   close = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.close(Number(req.params.id)));
+      res.json(await this.service.close(assertCuid(req.params.id)));
     } catch (e) {
       next(e);
     }
@@ -40,7 +41,7 @@ export class AcquisitionSurveyController {
   submitResponse = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const result = await this.service.submitResponse(
-        Number(req.params.id),
+        assertCuid(req.params.id),
         req.user!.id,
         req.body.items ?? [],
       );
@@ -52,7 +53,7 @@ export class AcquisitionSurveyController {
 
   getResponses = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.getResponses(Number(req.params.id)));
+      res.json(await this.service.getResponses(assertCuid(req.params.id)));
     } catch (e) {
       next(e);
     }

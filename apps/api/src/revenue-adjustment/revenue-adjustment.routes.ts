@@ -6,9 +6,7 @@ import { AppError } from "../lib/appError";
 import { RevenueAdjustmentRepository } from "./revenue-adjustment.repo";
 import { RevenueAdjustmentService } from "./revenue-adjustment.service";
 import type { RevenueField } from "../generated/client";
-import { intIdRouter } from "../lib/idParamGuard";
-
-const router = intIdRouter();
+const router = Router();
 const repo = new RevenueAdjustmentRepository(getPrisma());
 export const revenueAdjustmentService = new RevenueAdjustmentService(repo, getPrisma());
 
@@ -28,10 +26,10 @@ const checkWriteFinance = (req: Request, res: Response, next: NextFunction) => {
 router.get("/", auth, checkReadFinance, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const financialReportId = req.query["financialReportId"] !== undefined
-      ? Number(req.query["financialReportId"])
+      ? String(req.query["financialReportId"])
       : undefined;
     const monthlyReportId = req.query["monthlyReportId"] !== undefined
-      ? Number(req.query["monthlyReportId"])
+      ? String(req.query["monthlyReportId"])
       : undefined;
 
     const items = await revenueAdjustmentService.list({
@@ -51,10 +49,10 @@ router.get("/drilldown", auth, checkReadFinance, async (req: Request, res: Respo
     const year = Number(req.query["year"]);
     const month = req.query["month"] !== undefined ? Number(req.query["month"]) : undefined;
     const financialReportId = req.query["financialReportId"] !== undefined
-      ? Number(req.query["financialReportId"])
+      ? String(req.query["financialReportId"])
       : undefined;
     const monthlyReportId = req.query["monthlyReportId"] !== undefined
-      ? Number(req.query["monthlyReportId"])
+      ? String(req.query["monthlyReportId"])
       : undefined;
 
     if (!field) return next(new AppError(400, "MISSING_FIELD"));
@@ -86,8 +84,8 @@ router.post("/", auth, checkWriteFinance, async (req: Request, res: Response, ne
       field: field as RevenueField,
       delta: Number(delta),
       createdById,
-      ...(financialReportId !== undefined && { financialReportId: Number(financialReportId) }),
-      ...(monthlyReportId !== undefined && { monthlyReportId: Number(monthlyReportId) }),
+      ...(financialReportId !== undefined && { financialReportId: String(financialReportId) }),
+      ...(monthlyReportId !== undefined && { monthlyReportId: String(monthlyReportId) }),
       ...(memo !== undefined && { memo: String(memo) }),
     });
     res.status(201).json(item);

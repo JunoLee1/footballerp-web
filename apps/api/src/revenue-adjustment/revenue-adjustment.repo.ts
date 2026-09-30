@@ -3,7 +3,7 @@ import type { PrismaClient, RevenueField } from "../generated/client";
 export class RevenueAdjustmentRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findByFinancialReport(financialReportId: number) {
+  findByFinancialReport(financialReportId: string) {
     return this.prisma.revenueAdjustment.findMany({
       where: { financialReportId },
       include: { createdBy: { select: { username: true } }, ledgerEntry: true },
@@ -11,7 +11,7 @@ export class RevenueAdjustmentRepository {
     });
   }
 
-  findByMonthlyReport(monthlyReportId: number) {
+  findByMonthlyReport(monthlyReportId: string) {
     return this.prisma.revenueAdjustment.findMany({
       where: { monthlyReportId },
       include: { createdBy: { select: { username: true } }, ledgerEntry: true },
@@ -20,8 +20,8 @@ export class RevenueAdjustmentRepository {
   }
 
   findByField(params: {
-    financialReportId?: number;
-    monthlyReportId?: number;
+    financialReportId?: string;
+    monthlyReportId?: string;
     field: RevenueField;
   }) {
     return this.prisma.revenueAdjustment.findMany({
@@ -35,7 +35,7 @@ export class RevenueAdjustmentRepository {
     });
   }
 
-  sumByField(target: { financialReportId?: number; monthlyReportId?: number }) {
+  sumByField(target: { financialReportId?: string; monthlyReportId?: string }) {
     return this.prisma.revenueAdjustment.groupBy({
       by: ["field"],
       where: {
@@ -47,8 +47,8 @@ export class RevenueAdjustmentRepository {
   }
 
   async create(data: {
-    financialReportId?: number;
-    monthlyReportId?: number;
+    financialReportId?: string;
+    monthlyReportId?: string;
     field: RevenueField;
     delta: number;
     memo?: string;
@@ -56,7 +56,7 @@ export class RevenueAdjustmentRepository {
     category?: import("../generated/client").LedgerEntryCategory;
   }) {
     return this.prisma.$transaction(async (tx) => {
-      let ledgerEntryId: number | undefined;
+      let ledgerEntryId: string | undefined;
       if (data.category) {
         const le = await tx.ledgerEntry.create({
           data: {

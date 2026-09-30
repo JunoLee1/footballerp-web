@@ -4,7 +4,7 @@ export class AttendanceAppealRepository {
   constructor(private prisma: PrismaClient) {}
 
   async create(data: {
-    trainingResultId: number;
+    trainingResultId: string;
     originalStatus: string;
     requestedStatus: string;
     reason: string;

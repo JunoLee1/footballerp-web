@@ -391,49 +391,54 @@ async function seedQACases(adminId: string) {
 
   // ── 1. Contract edge cases ────────────────────────────
   // p2 (이서준) 계약 만료: endDate 2026-06-30 이미 지났으므로 EXPIRED로 업데이트
-  await prisma.contract.update({ where: { id: 2 }, data: { status: 'EXPIRED' } });
+  await prisma.contract.updateMany({ where: { playerId: 'player-002' }, data: { status: 'EXPIRED' } });
 
   // p4 (박지훈, GK) — 만료 임박 계약 (25일 후)
-  await prisma.contract.upsert({
-    where: { id: 4 },
-    update: {},
-    create: { id: 4, playerId: 'player-004', startDate: new Date('2024-01-01'), endDate: f(25), salary: 45_000_000, status: 'ACTIVE', managedById: adminId },
-  });
+  const p4Contract = await prisma.contract.findFirst({ where: { playerId: 'player-004' } });
+  if (!p4Contract) {
+    await prisma.contract.create({
+      data: { playerId: 'player-004', startDate: new Date('2024-01-01'), endDate: f(25), salary: 45_000_000, status: 'ACTIVE', managedById: adminId },
+    });
+  }
 
   // p6 (최재원) — 해지된 계약
-  await prisma.contract.upsert({
-    where: { id: 5 },
-    update: {},
-    create: { id: 5, playerId: 'player-006', startDate: new Date('2023-01-01'), endDate: new Date('2025-12-31'), salary: 60_000_000, status: 'TERMINATED', managedById: adminId },
-  });
+  const p6Contract = await prisma.contract.findFirst({ where: { playerId: 'player-006' } });
+  if (!p6Contract) {
+    await prisma.contract.create({
+      data: { playerId: 'player-006', startDate: new Date('2023-01-01'), endDate: new Date('2025-12-31'), salary: 60_000_000, status: 'TERMINATED', managedById: adminId },
+    });
+  }
 
   // ── 2. Player status edge cases ───────────────────────
   await prisma.player.update({ where: { id: 'player-003' }, data: { status: 'ON_LOAN' } });   // Carlos Silva 임대 중
   await prisma.player.update({ where: { id: 'player-007' }, data: { status: 'RELEASED' } });  // 한동민 방출
 
   // ── 3. Injury — 현재 부상 중 + 과거 완치 ────────────────
-  await prisma.injury.upsert({
-    where: { id: 2 },
-    update: {},
-    create: {
-      id: 2, playerId: 'player-001',
-      bodyPart: 'ANKLE', cause: 'MATCH',
-      status: 'REHABILITATING',
-      expectedReturnDate: f(14),
-      medicalStaffId: 1,
-    },
-  });
+  const medDir = await prisma.user.findUniqueOrThrow({ where: { email: 'meddir@club.com' }, select: { id: true } });
+  const existingInjury1 = await prisma.injury.findFirst({ where: { playerId: 'player-001', bodyPart: 'ANKLE', status: 'REHABILITATING' } });
+  if (!existingInjury1) {
+    await prisma.injury.create({
+      data: {
+        playerId: 'player-001',
+        bodyPart: 'ANKLE', cause: 'MATCH',
+        status: 'REHABILITATING',
+        expectedReturnDate: f(14),
+        medicalStaffId: medDir.id,
+      },
+    });
+  }
 
-  await prisma.injury.upsert({
-    where: { id: 3 },
-    update: {},
-    create: {
-      id: 3, playerId: 'player-005',
-      bodyPart: 'KNEE', cause: 'TRAINING',
-      status: 'RETURNED',
-      medicalStaffId: 1,
-    },
-  });
+  const existingInjury2 = await prisma.injury.findFirst({ where: { playerId: 'player-005', bodyPart: 'KNEE', status: 'RETURNED' } });
+  if (!existingInjury2) {
+    await prisma.injury.create({
+      data: {
+        playerId: 'player-005',
+        bodyPart: 'KNEE', cause: 'TRAINING',
+        status: 'RETURNED',
+        medicalStaffId: medDir.id,
+      },
+    });
+  }
 
   // ── 4. MaintenanceRequest — 전 단계 커버 ─────────────
   const facilityMgr  = await prisma.user.findUniqueOrThrow({ where: { email: 'facility.manager@club.com' }, select: { id: true } });
@@ -507,30 +512,28 @@ async function seedQACases(adminId: string) {
   // ── 5. EquipmentItem + EquipmentLoan — 전 단계 커버 ──
   const assetStaff = await prisma.user.findUniqueOrThrow({ where: { email: 'asset.staff@club.com' }, select: { id: true } });
 
-  const ball = await prisma.equipmentItem.upsert({
-    where: { id: 1 },
-    update: {},
-    create: { id: 1, name: '훈련용 축구공', category: 'BALL_AND_TOOLS', trackedIndividually: false, quantity: 30, lowStockThreshold: 5 },
-  });
+  const ball = await prisma.equipmentItem.findFirst({ where: { name: '훈련용 축구공' } })
+    ?? await prisma.equipmentItem.create({
+      data: { name: '훈련용 축구공', category: 'BALL_AND_TOOLS', trackedIndividually: false, quantity: 30, lowStockThreshold: 5 },
+    });
 
-  const vest = await prisma.equipmentItem.upsert({
-    where: { id: 2 },
-    update: {},
-    create: { id: 2, name: '훈련 조끼', category: 'CLOTHING', trackedIndividually: true, quantity: 20 },
-  });
+  const vest = await prisma.equipmentItem.findFirst({ where: { name: '훈련 조끼' } })
+    ?? await prisma.equipmentItem.create({
+      data: { name: '훈련 조끼', category: 'CLOTHING', trackedIndividually: true, quantity: 20 },
+    });
 
-  const vestUnit = await prisma.equipmentUnit.upsert({
-    where: { id: 1 },
-    update: {},
-    create: { id: 1, equipmentItemId: vest.id, status: 'IN_USE', serialNumber: 'VEST-001', purchasedAt: new Date('2025-01-01'), purchaseValue: 50_000 },
-  });
+  const vestUnit = await prisma.equipmentUnit.findFirst({ where: { serialNumber: 'VEST-001' } })
+    ?? await prisma.equipmentUnit.create({
+      data: { equipmentItemId: vest.id, status: 'IN_USE', serialNumber: 'VEST-001', purchasedAt: new Date('2025-01-01'), purchaseValue: 50_000 },
+    });
 
+  const defaultDue = f(14);
   const loanCases: Parameters<typeof prisma.equipmentLoan.create>[0]['data'][] = [
-    { equipmentItemId: ball.id, requestedById: assetStaff.id, status: 'REQUESTED' },
-    { equipmentItemId: ball.id, requestedById: assetStaff.id, status: 'APPROVED',  approvedById: assetMgr.id },
-    { equipmentItemId: ball.id, requestedById: assetStaff.id, status: 'REJECTED',  approvedById: assetMgr.id },
-    { equipmentItemId: vest.id, equipmentUnitId: vestUnit.id, requestedById: assetStaff.id, status: 'ISSUED',   approvedById: assetMgr.id, issuedAt: d(10) },
-    { equipmentItemId: vest.id, requestedById: assetStaff.id, status: 'RETURNED',  approvedById: assetMgr.id, issuedAt: d(30), returnedAt: d(2) },
+    { equipmentItemId: ball.id, requestedById: assetStaff.id, status: 'REQUESTED', dueDate: defaultDue },
+    { equipmentItemId: ball.id, requestedById: assetStaff.id, status: 'APPROVED',  approvedById: assetMgr.id, dueDate: defaultDue },
+    { equipmentItemId: ball.id, requestedById: assetStaff.id, status: 'REJECTED',  approvedById: assetMgr.id, dueDate: defaultDue },
+    { equipmentItemId: vest.id, equipmentUnitId: vestUnit.id, requestedById: assetStaff.id, status: 'ISSUED',   approvedById: assetMgr.id, issuedAt: d(10), dueDate: defaultDue },
+    { equipmentItemId: vest.id, requestedById: assetStaff.id, status: 'RETURNED',  approvedById: assetMgr.id, issuedAt: d(30), returnedAt: d(2), dueDate: defaultDue },
   ];
 
   for (const data of loanCases) {
@@ -565,7 +568,7 @@ async function seedRecruitment() {
 
   // ── HR Manager user ──────────────────────────────────
   const existingHr = await prisma.user.findUnique({ where: { email: 'hr@club.com' } });
-  let hr: { id: number };
+  let hr: { id: string };
   if (!existingHr) {
     const hrPhone = await prisma.phoneNumber.create({ data: encryptPhone('010-0000-0015') });
     hr = await prisma.user.create({
@@ -960,11 +963,10 @@ async function main() {
   console.log("🌱 Seeding...");
 
   // ── Club ──────────────────────────────────────────────
-  const fcSeoulClub = await prisma.club.upsert({
-    where: { id: 1 },
-    update: {},
-    create: { name: "FC Seoul", isActive: true, isLite: false },
-  });
+  const fcSeoulClub = await prisma.club.findFirst({ where: { name: "FC Seoul" } })
+    ?? await prisma.club.create({
+      data: { name: "FC Seoul", isActive: true, isLite: false },
+    });
 
   // ── Team ─────────────────────────────────────────────
   const firstTeam = await prisma.team.upsert({
@@ -1788,11 +1790,8 @@ async function main() {
   ];
 
   for (const c of restContracts) {
-    await prisma.contract.upsert({
-      where: { id: c.id },
-      update: {},
-      create: {
-        id: c.id,
+    await prisma.contract.create({
+      data: {
         playerId: c.playerId,
         startDate: new Date(`${c.startYear}-01-01`),
         endDate: new Date(`${c.startYear + c.years - 1}-12-31`),
@@ -2284,10 +2283,8 @@ async function main() {
   });
 
   // ── Injury ────────────────────────────────────────────
-  await prisma.injury.upsert({
-    where: { id: 1 },
-    update: {},
-    create: {
+  await prisma.injury.create({
+    data: {
       playerId: p3.id,
       bodyPart: "THIGH_BACK",
       cause: "TRAINING",
@@ -2916,7 +2913,7 @@ async function main() {
   console.log(`   - YouthRegistrations: 6 (CONTRACTED×3, GUARDIAN_APPROVED×1, PENDING×2)`);
 }
 
-async function seedAcademyFees2025(adminId: number) {
+async function seedAcademyFees2025(adminId: string) {
   // 유소년 선수 + 보호자 조회
   const players = await prisma.player.findMany({
     where: { id: { in: [
@@ -2995,7 +2992,7 @@ async function seedAcademyFees2025(adminId: number) {
       // PAID → LedgerEntry 생성 (autoFillRevenue 집계 대상)
       if (isPaid) {
         const existing = await prisma.ledgerEntry.findFirst({
-          where: { relatedModule: "AcademyFee", relatedId: fee.id },
+          where: { relatedModule: "AcademyFee", relatedId: String(fee.id) },
           select: { id: true },
         });
         if (!existing) {
@@ -3010,7 +3007,7 @@ async function seedAcademyFees2025(adminId: number) {
               isRefund: false,
               description: `[아카데미 회비] ${player.playerName} 2025년 ${month}월`,
               relatedModule: "AcademyFee",
-              relatedId: fee.id,
+              relatedId: String(fee.id),
               createdById: adminId,
               createdAt: paidAt,
             } as any,
@@ -3030,7 +3027,7 @@ async function seedAcademyFees2025(adminId: number) {
   console.log(`✅ 2025 유소년 회비 시드: ${feeCount}건, PAID 원장 ${ledgerCount}건, 총 ${(totalPaid / 1e6).toFixed(1)}백만원`);
 }
 
-async function seedTicketSales2025(adminId: number) {
+async function seedTicketSales2025(adminId: string) {
   const season2025 = await prisma.season.upsert({
     where: { id: 2 },
     update: {},
@@ -3140,6 +3137,20 @@ async function seedBudgetPlanWorkflow() {
   });
 
   const newCategorySeeds = [
+    // 기존 12개 카테고리 재활용 대상 (미시드 시 upsert 로 보완)
+    { code: "MEDICAL",              label: "의료비",             sortOrder: 10, scope: "DEPARTMENT" as const },
+    { code: "MEAL",                 label: "식대",               sortOrder: 11, scope: "DEPARTMENT" as const },
+    { code: "TRAVEL",               label: "출장/이동",          sortOrder: 12, scope: "DEPARTMENT" as const },
+    { code: "SPORTS_EQUIPMENT",     label: "선수 장비",          sortOrder: 13, scope: "DEPARTMENT" as const },
+    { code: "SCOUTING",             label: "스카우팅",           sortOrder: 14, scope: "DEPARTMENT" as const },
+    { code: "YOUTH",                label: "유소년",             sortOrder: 15, scope: "DEPARTMENT" as const },
+    { code: "IT_SECURITY",          label: "IT/보안",            sortOrder: 16, scope: "DEPARTMENT" as const },
+    { code: "FACILITY_EQUIPMENT",   label: "시설/장비",          sortOrder: 17, scope: "DEPARTMENT" as const },
+    { code: "STAFF_RECRUITMENT",    label: "채용 지원",          sortOrder: 18, scope: "DEPARTMENT" as const },
+    { code: "HOME_MATCH_SUPPORT",   label: "홈 경기 지원",       sortOrder: 20, scope: "TEAM" as const },
+    { code: "AWAY_TRAVEL_TEAM",     label: "원정 이동/숙박",     sortOrder: 21, scope: "TEAM" as const },
+    { code: "TEAM_TRAINING_GEAR",   label: "훈련 장비",          sortOrder: 22, scope: "TEAM" as const },
+    // 편성 spec 트리거 매핑용 신규 추가
     { code: "PUBLIC_UTILITY_KRW",   label: "공공요금",       sortOrder: 30, scope: "DEPARTMENT" as const },
     { code: "MULTI_LOCATION_MGMT",  label: "다중거점 관리",  sortOrder: 31, scope: "DEPARTMENT" as const },
     { code: "DIRECT_BUSINESS_EXP",  label: "사업 직접비",    sortOrder: 32, scope: "DEPARTMENT" as const },
@@ -3311,7 +3322,7 @@ async function seedBudgetPlanWorkflow() {
 
 // Sponsorship seed — 2025 실적 + 2026 in-flight 로 FinancialReport 스폰서십 revenue 집계 데이터 확보.
 // getSeasonRevenueActuals 는 status=PAID + paidAt in season window 만 count (cash basis, #325 참조).
-async function seedSponsorships(adminId: number) {
+async function seedSponsorships(adminId: string) {
   const s2025 = new Date("2025-01-01");
   const e2025 = new Date("2025-12-31");
   const s2026 = new Date("2026-01-01");
@@ -3429,7 +3440,7 @@ async function seedSponsorships(adminId: number) {
 // 운영비 실적 seed — 부서·팀별 지출 데이터로 BudgetAutoPage expense CAGR 예측 활성화.
 // budget-automation.getExpenseActualsByCategory 는 status ∈ {APPROVED, PAID} + deletedAt=null 만 집계.
 // getLatestApprovedBudgetLines 는 BudgetHeader status ∈ {APPROVED, LOCKED} 만 lookup.
-async function seedOperatingExpenses(adminId: number) {
+async function seedOperatingExpenses(adminId: string) {
   // 2024 CLOSED 시즌 (CAGR 계산용 이전 시즌). 2025/2026 은 별도 로직에서 이미 생성됨.
   // Season.name 은 unique 아니라 findFirst 후 conditional create.
   let season2024 = await prisma.season.findFirst({ where: { name: "2024 시즌" } });

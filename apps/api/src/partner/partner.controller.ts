@@ -68,7 +68,7 @@ export class PartnerController {
       if (!isAssetManager(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       res.status(200).json(await this.service.updateContract(
         assertCuid(req.params["id"]),
-        Number(req.params["contractId"]),
+        assertCuid(req.params["contractId"]),
         req.body,
       ));
     } catch (err) { next(err); }

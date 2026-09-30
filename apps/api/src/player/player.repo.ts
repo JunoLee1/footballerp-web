@@ -24,7 +24,7 @@ const PLAYER_SELECT = {
 export class PlayerRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findAll(query: PlayerListQuery, clubId?: number | null) {
+  findAll(query: PlayerListQuery, clubId?: string | null) {
     return this.prisma.player.findMany({
       where: {
         ...(clubId != null && { clubId }),
@@ -40,7 +40,7 @@ export class PlayerRepository {
     });
   }
 
-  findById(id: string, clubId?: number | null, includePrivate = false) {
+  findById(id: string, clubId?: string | null, includePrivate = false) {
     return this.prisma.player.findFirst({
       where: { id, ...(clubId != null && { clubId }) },
       select: {
@@ -89,7 +89,7 @@ export class PlayerRepository {
     });
   }
 
-  create(data: CreatePlayerDto, clubId?: number | null) {
+  create(data: CreatePlayerDto, clubId?: string | null) {
     const dobEnc = encrypt(data.dateOfBirth);
 
     const encName = data.emergencyContactName ? encrypt(data.emergencyContactName) : null;

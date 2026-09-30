@@ -17,21 +17,21 @@ export class AcquisitionSurveyRepository {
   constructor(private prisma: PrismaClient) {}
 
   findAll() {
-    return (this.prisma as any).playerAcquisitionSurvey.findMany({
+    return this.prisma.playerAcquisitionSurvey.findMany({
       select: SURVEY_SELECT,
       orderBy: { createdAt: "desc" },
     });
   }
 
-  findById(id: number) {
-    return (this.prisma as any).playerAcquisitionSurvey.findUnique({
+  findById(id: string) {
+    return this.prisma.playerAcquisitionSurvey.findUnique({
       where: { id },
       select: SURVEY_SELECT,
     });
   }
 
   create(dto: CreateAcquisitionSurveyDto & { createdById: string }) {
-    return (this.prisma as any).playerAcquisitionSurvey.create({
+    return this.prisma.playerAcquisitionSurvey.create({
       data: {
         title: dto.title,
         ...(dto.dueDate !== undefined && { dueDate: new Date(dto.dueDate) }),
@@ -42,22 +42,22 @@ export class AcquisitionSurveyRepository {
     });
   }
 
-  close(id: number) {
-    return (this.prisma as any).playerAcquisitionSurvey.update({
+  close(id: string) {
+    return this.prisma.playerAcquisitionSurvey.update({
       where: { id },
       data: { status: "CLOSED", closedAt: new Date() },
       select: SURVEY_SELECT,
     });
   }
 
-  findResponse(surveyId: number, respondentId: string) {
-    return (this.prisma as any).playerAcquisitionSurveyResponse.findUnique({
+  findResponse(surveyId: string, respondentId: string) {
+    return this.prisma.playerAcquisitionSurveyResponse.findUnique({
       where: { surveyId_respondentId: { surveyId, respondentId } },
     });
   }
 
-  async submitResponse(surveyId: number, respondentId: string, items: SubmitAcquisitionSurveyResponseItemDto[]) {
-    return (this.prisma as any).playerAcquisitionSurveyResponse.create({
+  async submitResponse(surveyId: string, respondentId: string, items: SubmitAcquisitionSurveyResponseItemDto[]) {
+    return this.prisma.playerAcquisitionSurveyResponse.create({
       data: {
         surveyId,
         respondentId,
@@ -79,8 +79,8 @@ export class AcquisitionSurveyRepository {
     });
   }
 
-  getResponses(surveyId: number) {
-    return (this.prisma as any).playerAcquisitionSurveyResponse.findMany({
+  getResponses(surveyId: string) {
+    return this.prisma.playerAcquisitionSurveyResponse.findMany({
       where: { surveyId },
       include: {
         respondent: { select: { id: true, nickname: true, role: true } },

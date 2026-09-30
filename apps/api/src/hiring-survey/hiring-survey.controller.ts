@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express'
 import { requireUser } from '../lib/authMiddleware'
 import { HiringSurveyService } from './hiring-survey.service'
+import { assertCuid } from "../lib/cuidGuard";
 
 export class HiringSurveyController {
   constructor(private service: HiringSurveyService) {}
@@ -11,7 +12,7 @@ export class HiringSurveyController {
   }
 
   get = async (req: Request, res: Response) => {
-    const survey = await this.service.getById(Number(req.params.id))
+    const survey = await this.service.getById(assertCuid(req.params.id))
     res.json(survey)
   }
 
@@ -28,7 +29,7 @@ export class HiringSurveyController {
    */
   createResponse = async (req: Request, res: Response) => {
     const user = requireUser(req)
-    const surveyId = Number(req.params.id)
+    const surveyId = assertCuid(req.params.id)
     const departmentId = Number(req.body.departmentId)
     if (!Number.isFinite(departmentId) || departmentId <= 0) {
       res.status(400).json({ code: 'DEPARTMENT_ID_REQUIRED' })
@@ -41,28 +42,28 @@ export class HiringSurveyController {
 
   updateResponse = async (req: Request, res: Response) => {
     const user = requireUser(req)
-    const responseId = Number(req.params.responseId)
+    const responseId = assertCuid(req.params.responseId)
     const result = await this.service.updateResponse(responseId, user.id, req.body)
     res.json(result)
   }
 
   submitResponse = async (req: Request, res: Response) => {
     const user = requireUser(req)
-    const responseId = Number(req.params.responseId)
+    const responseId = assertCuid(req.params.responseId)
     const result = await this.service.submitResponse(responseId, user.id)
     res.json(result)
   }
 
   approveResponse = async (req: Request, res: Response) => {
     const user = requireUser(req)
-    const responseId = Number(req.params.responseId)
+    const responseId = assertCuid(req.params.responseId)
     const result = await this.service.approveResponse(responseId, user.id)
     res.json(result)
   }
 
   rejectResponse = async (req: Request, res: Response) => {
     const user = requireUser(req)
-    const responseId = Number(req.params.responseId)
+    const responseId = assertCuid(req.params.responseId)
     const rejectionReason = String(req.body?.rejectionReason ?? '')
     const result = await this.service.rejectResponse(responseId, user.id, rejectionReason)
     res.json(result)
@@ -70,28 +71,28 @@ export class HiringSurveyController {
 
   close = async (req: Request, res: Response) => {
     const user = requireUser(req)
-    const planReport = await this.service.close(Number(req.params.id), user.id)
+    const planReport = await this.service.close(assertCuid(req.params.id), user.id)
     res.json(planReport)
   }
 
   getParticipationRate = async (req: Request, res: Response) => {
-    res.json(await this.service.getParticipationRate(Number(req.params.id)))
+    res.json(await this.service.getParticipationRate(assertCuid(req.params.id)))
   }
 
   updateDraft = async (req: Request, res: Response) => {
-    const id = Number(req.params.id)
+    const id = assertCuid(req.params.id)
     const result = await this.service.updateDraft(id, req.body)
     res.json(result)
   }
 
   open = async (req: Request, res: Response) => {
-    const id = Number(req.params.id)
+    const id = assertCuid(req.params.id)
     const result = await this.service.open(id)
     res.json(result)
   }
 
   deleteDraft = async (req: Request, res: Response) => {
-    const id = Number(req.params.id)
+    const id = assertCuid(req.params.id)
     await this.service.deleteDraft(id)
     res.status(204).send()
   }

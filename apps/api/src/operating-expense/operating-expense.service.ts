@@ -15,7 +15,7 @@ export class OperatingExpenseService {
     private categoryService: ExpenseCategoryService,
   ) {}
 
-  async list(seasonId: number, actorClubId?: number | null) {
+  async list(seasonId: number, actorClubId?: string | null) {
     const key = `operating-expenses:list:${seasonId}:${actorClubId ?? "null"}`;
     return cached(key, 30, async () => {
       const rows = await this.repo.findBySeasonId(seasonId, actorClubId);
@@ -90,7 +90,7 @@ export class OperatingExpenseService {
     return expense;
   }
 
-  async firstApprove(id: number, approverId: string, role: string, foRole: string | null | undefined, departmentCategories?: string[], actorClubId?: number | null) {
+  async firstApprove(id: string, approverId: string, role: string, foRole: string | null | undefined, departmentCategories?: string[], actorClubId?: string | null) {
     if (!canReadFinance(role, foRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
     const expense = await this.repo.findById(id, actorClubId);
     if (!expense || expense.deletedAt) throw new AppError(404, "NOT_FOUND");
@@ -118,7 +118,7 @@ export class OperatingExpenseService {
     return updated;
   }
 
-  async approve(id: number, approverId: string, role: string, foRole: string | null | undefined, departmentCategories?: string[], actorClubId?: number | null) {
+  async approve(id: string, approverId: string, role: string, foRole: string | null | undefined, departmentCategories?: string[], actorClubId?: string | null) {
     const expense = await this.repo.findById(id, actorClubId);
     if (!expense || expense.deletedAt) throw new AppError(404, "NOT_FOUND");
 
@@ -153,7 +153,7 @@ export class OperatingExpenseService {
     return updated;
   }
 
-  async reject(id: number, rejectorId: string, reason: string, role: string, foRole: string | null | undefined, departmentCategories?: string[], actorClubId?: number | null) {
+  async reject(id: string, rejectorId: string, reason: string, role: string, foRole: string | null | undefined, departmentCategories?: string[], actorClubId?: string | null) {
     if (!canReadFinance(role, foRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
     const expense = await this.repo.findById(id, actorClubId);
     if (!expense || expense.deletedAt) throw new AppError(404, "NOT_FOUND");
@@ -180,7 +180,7 @@ export class OperatingExpenseService {
     return updated;
   }
 
-  async cancel(id: number, cancellerId: string, reason: string, role: string, foRole: string | null | undefined, departmentCategories?: string[], actorClubId?: number | null) {
+  async cancel(id: string, cancellerId: string, reason: string, role: string, foRole: string | null | undefined, departmentCategories?: string[], actorClubId?: string | null) {
     const expense = await this.repo.findById(id, actorClubId);
     if (!expense || expense.deletedAt) throw new AppError(404, "NOT_FOUND");
     if (expense.status !== "APPROVED") throw new AppError(400, "INVALID_STATUS");
@@ -210,7 +210,7 @@ export class OperatingExpenseService {
     return updated;
   }
 
-  async markPaid(id: number, paidById: string, actorClubId?: number | null) {
+  async markPaid(id: string, paidById: string, actorClubId?: string | null) {
     const expense = await this.repo.findById(id, actorClubId);
     if (!expense || expense.deletedAt) throw new AppError(404, "NOT_FOUND");
     if (expense.status !== "APPROVED") throw new AppError(400, "INVALID_STATUS");
@@ -236,7 +236,7 @@ export class OperatingExpenseService {
     return updated;
   }
 
-  async update(id: number, userId: string, data: UpdateOperatingExpenseDto, actorClubId?: number | null) {
+  async update(id: string, userId: string, data: UpdateOperatingExpenseDto, actorClubId?: string | null) {
     const expense = await this.repo.findById(id, actorClubId);
     if (!expense || expense.deletedAt) throw new AppError(404, "NOT_FOUND");
     if (expense.paidAt) throw new AppError(409, "ALREADY_PAID");
@@ -272,7 +272,7 @@ export class OperatingExpenseService {
     return this.repo.update(id, payload);
   }
 
-  async delete(id: number, requesterId: string, requesterRole: string, reason: string, actorClubId?: number | null) {
+  async delete(id: string, requesterId: string, requesterRole: string, reason: string, actorClubId?: string | null) {
     const expense = await this.repo.findById(id, actorClubId);
     if (!expense) throw new AppError(404, "NOT_FOUND");
     if (expense.deletedAt) throw new AppError(404, "NOT_FOUND");

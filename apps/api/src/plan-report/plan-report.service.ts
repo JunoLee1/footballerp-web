@@ -18,7 +18,7 @@ export class PlanReportService {
     return cached(key, 30, () => this.repo.findAll(filters))
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const plan = await this.repo.findById(id)
     if (!plan) throw new AppError(404, 'PLAN_REPORT_NOT_FOUND')
     return plan
@@ -40,7 +40,7 @@ export class PlanReportService {
     return this.repo.create(dto, createdById)
   }
 
-  async update(id: number, dto: UpdatePlanReportDto, userId: string, userRole: string) {
+  async update(id: string, dto: UpdatePlanReportDto, userId: string, userRole: string) {
     const plan = await this.getById(id)
     if (plan.status === 'APPROVED') throw new AppError(409, 'CANNOT_MODIFY_APPROVED_PLAN')
     if (plan.createdBy.id !== userId && plan.department.headId !== userId && !isAdminLike(userRole)) {
@@ -49,7 +49,7 @@ export class PlanReportService {
     return this.repo.update(id, dto)
   }
 
-  async submit(id: number, userId: string) {
+  async submit(id: string, userId: string) {
     const plan = await this.getById(id)
     if (plan.status !== 'DRAFT') throw new AppError(409, 'CANNOT_SUBMIT_NON_DRAFT')
     if (plan.department.headId !== userId) throw new AppError(403, 'ONLY_HEAD_CAN_SUBMIT')
@@ -84,7 +84,7 @@ export class PlanReportService {
     return result
   }
 
-  async approve(id: number, userId: string, userRole: string) {
+  async approve(id: string, userId: string, userRole: string) {
     const plan = await this.getById(id)
     if (plan.status !== 'REVIEWING') throw new AppError(409, 'CANNOT_APPROVE_NON_REVIEWING')
     if (!canApprovePlan(userRole, plan.requiredApproverLevel)) throw new AppError(403, 'FORBIDDEN')
@@ -108,7 +108,7 @@ export class PlanReportService {
     return result
   }
 
-  async reject(id: number, userId: string, userRole: string, reason: string) {
+  async reject(id: string, userId: string, userRole: string, reason: string) {
     if (!canApprovePlan(userRole, 'HEAD')) throw new AppError(403, 'FORBIDDEN')
     if (!reason?.trim()) throw new AppError(400, 'REJECTION_REASON_REQUIRED')
     const plan = await this.getById(id)
@@ -122,7 +122,7 @@ export class PlanReportService {
     return this.repo.findApprovedHrReports()
   }
 
-  async submitResult(id: number, userId: string, resultContent: string, userRole: string) {
+  async submitResult(id: string, userId: string, resultContent: string, userRole: string) {
     if (!resultContent?.trim()) throw new AppError(400, 'RESULT_CONTENT_REQUIRED')
     const plan = await this.getById(id)
     if (plan.status !== 'APPROVED') throw new AppError(409, 'PLAN_NOT_APPROVED')
@@ -143,7 +143,7 @@ export class PlanReportService {
     return updated
   }
 
-  async cancelHiringPlanItem(id: number, planReportId: number, actorId: string) {
+  async cancelHiringPlanItem(id: string, planReportId: string, actorId: string) {
     const item = await this.repo.findHiringPlanItemById(id)
     if (!item) throw new AppError(404, 'HIRING_PLAN_ITEM_NOT_FOUND')
     if (item.planReportId !== planReportId) throw new AppError(400, 'HIRING_PLAN_ITEM_MISMATCH')

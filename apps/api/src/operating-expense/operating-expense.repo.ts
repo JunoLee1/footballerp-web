@@ -5,7 +5,7 @@ type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction"
 export class OperatingExpenseRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findBySeasonId(seasonId: number, clubId?: number | null) {
+  findBySeasonId(seasonId: number, clubId?: string | null) {
     return this.prisma.operatingExpense.findMany({
       where: { seasonId, deletedAt: null, ...(clubId != null && { clubId }) },
       include: {
@@ -17,7 +17,7 @@ export class OperatingExpenseRepository {
     });
   }
 
-  findById(id: number, clubId?: number | null) {
+  findById(id: string, clubId?: string | null) {
     return this.prisma.operatingExpense.findFirst({
       where: { id, ...(clubId != null && { clubId }) },
       include: {
@@ -28,7 +28,7 @@ export class OperatingExpenseRepository {
     });
   }
 
-  findBudgetLine(budgetLineId: number) {
+  findBudgetLine(budgetLineId: string) {
     return this.prisma.budgetLine.findUnique({ where: { id: budgetLineId } });
   }
 
@@ -90,8 +90,8 @@ export class OperatingExpenseRepository {
       date: Date;
       note?: string | null;
       createdById: string;
-      budgetLineId: number;
-      clubId?: number | null;
+      budgetLineId: string;
+      clubId?: string | null;
     },
     tx?: Tx,
   ) {
@@ -156,7 +156,7 @@ export class OperatingExpenseRepository {
   }
 
   updateStatus(
-    id: number,
+    id: string,
     data: Partial<{
       status: ExpenseStatus;
       firstApprovedById: string;
@@ -176,7 +176,7 @@ export class OperatingExpenseRepository {
     return this.prisma.operatingExpense.update({ where: { id }, data });
   }
 
-  update(id: number, data: { amount?: number; categoryId?: number; note?: string }) {
+  update(id: string, data: { amount?: number; categoryId?: number; note?: string }) {
     return this.prisma.operatingExpense.update({ where: { id }, data });
   }
 
@@ -199,7 +199,7 @@ export class OperatingExpenseRepository {
     return result._sum.amount ?? 0;
   }
 
-  softDelete(id: number, reason: string) {
+  softDelete(id: string, reason: string) {
     return this.prisma.operatingExpense.update({
       where: { id },
       data: { deletedAt: new Date(), deletionReason: reason },

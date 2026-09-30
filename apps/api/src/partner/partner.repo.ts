@@ -123,7 +123,7 @@ export class PartnerRepository {
     });
   }
 
-  updateContract(id: number, dto: UpdatePartnerContractDto) {
+  updateContract(id: string, dto: UpdatePartnerContractDto) {
     return this.prisma.partnerContract.update({
       where: { id },
       data: {
@@ -140,7 +140,7 @@ export class PartnerRepository {
     });
   }
 
-  findContractById(id: number) {
+  findContractById(id: string) {
     return this.prisma.partnerContract.findUnique({
       where: { id },
       select: { id: true, partnerId: true },

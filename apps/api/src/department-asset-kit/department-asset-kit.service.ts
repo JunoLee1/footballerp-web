@@ -126,7 +126,7 @@ export class DepartmentAssetKitService {
     if (!Array.isArray(input) || input.length === 0) {
       throw new AppError(400, "ASSET_ITEMS_REQUIRED");
     }
-    const seen = new Set<number>();
+    const seen = new Set<string>();
     const out: AssetKitItemDto[] = [];
     for (const raw of input) {
       if (!raw || typeof raw !== "object") {
@@ -136,11 +136,7 @@ export class DepartmentAssetKitService {
       const equipmentItemId = item["equipmentItemId"];
       const quantity = item["quantity"];
       const note = item["note"];
-      if (
-        typeof equipmentItemId !== "number" ||
-        !Number.isFinite(equipmentItemId) ||
-        equipmentItemId <= 0
-      ) {
+      if (typeof equipmentItemId !== "string" || equipmentItemId.length === 0) {
         throw new AppError(400, "INVALID_EQUIPMENT_ITEM_ID");
       }
       if (

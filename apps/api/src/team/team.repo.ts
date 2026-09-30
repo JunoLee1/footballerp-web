@@ -6,7 +6,7 @@ export interface CreateTeamDto {
   ageGroup?: string;
   trackStats?: boolean;
   requiresContract?: boolean;
-  clubId?: number;
+  clubId?: string;
 }
 
 export interface UpdateTeamDto {
@@ -15,13 +15,13 @@ export interface UpdateTeamDto {
   trackStats?: boolean;
   requiresContract?: boolean;
   isActive?: boolean;
-  clubId?: number | null;
+  clubId?: string | null;
 }
 
 export class TeamRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findAll(clubId?: number | null) {
+  findAll(clubId?: string | null) {
     return this.prisma.team.findMany({
       ...(clubId != null && { where: { clubId } }),
       include: { club: { select: { id: true, name: true, isLite: true } } },
@@ -50,11 +50,11 @@ export class TeamRepository {
     });
   }
 
-  findClubById(id: number) {
+  findClubById(id: string) {
     return this.prisma.club.findUnique({ where: { id }, select: { id: true } });
   }
 
-  findActiveByNameAndClub(name: string, clubId: number, excludeId?: number) {
+  findActiveByNameAndClub(name: string, clubId: string, excludeId?: number) {
     return this.prisma.team.findFirst({
       where: {
         name,

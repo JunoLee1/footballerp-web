@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
 import { requireClubScope } from "../lib/permissions";
 import { AssetRequestService } from "./asset-request.service";
@@ -24,8 +23,7 @@ export class AssetRequestController {
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const clubScope = requireClubScope(requireUser(req));
-      const id = Number(req.params["id"]);
-      if (!Number.isFinite(id)) throw new AppError(400, "INVALID_ID");
+      const id = assertCuid(req.params["id"]);
       const row = await this.service.getById(id, clubScope);
       res.json(row);
     } catch (err) {
@@ -49,7 +47,7 @@ export class AssetRequestController {
     try {
       const user = requireUser(req);
       const clubScope = requireClubScope(user);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const row = await this.service.submit(id, user.id, clubScope);
       res.json(row);
     } catch (err) {
@@ -61,7 +59,7 @@ export class AssetRequestController {
     try {
       const user = requireUser(req);
       const clubScope = requireClubScope(user);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const row = await this.service.leaderApprove(id, user.id, clubScope);
       res.json(row);
     } catch (err) {
@@ -73,7 +71,7 @@ export class AssetRequestController {
     try {
       const user = requireUser(req);
       const clubScope = requireClubScope(user);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const { reason } = (req.body ?? {}) as RejectDto;
       const row = await this.service.leaderReject(id, user.id, reason, clubScope);
       res.json(row);
@@ -86,7 +84,7 @@ export class AssetRequestController {
     try {
       const user = requireUser(req);
       const clubScope = requireClubScope(user);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const row = await this.service.approve(id, user.id, clubScope);
       res.json(row);
     } catch (err) {
@@ -98,7 +96,7 @@ export class AssetRequestController {
     try {
       const user = requireUser(req);
       const clubScope = requireClubScope(user);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const { reason } = (req.body ?? {}) as RejectDto;
       const row = await this.service.reject(id, user.id, reason, clubScope);
       res.json(row);
@@ -111,7 +109,7 @@ export class AssetRequestController {
     try {
       const user = requireUser(req);
       const clubScope = requireClubScope(user);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const row = await this.service.cancel(id, user.id, clubScope);
       res.json(row);
     } catch (err) {
@@ -123,7 +121,7 @@ export class AssetRequestController {
     try {
       const user = requireUser(req);
       const clubScope = requireClubScope(user);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const row = await this.service.fulfill(id, user.id, user.role, user.frontOfficeRole, clubScope);
       res.json(row);
     } catch (err) {

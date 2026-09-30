@@ -21,7 +21,7 @@ interface RunPreviewArgs {
   budgetAutomationService: Pick<BudgetAutomationService, "preview">;
   expenseCategoryService: Pick<ExpenseCategoryService, "resolveCategoryId">;
   nextSeasonId: number;
-  reportId: number;
+  reportId: string;
   goal: GoalWeight;
   // #448: 이전 시즌 categoryId → mandatoryMinimum 매핑. 신규 카테고리는 여기 없어서 0 fallback.
   previousMinimums: Map<number, number>;
@@ -230,7 +230,7 @@ function checkInvariants(basics: BasicTierProbe[]): string | null {
   }
 }
 
-async function failWithReason(prisma: Prisma, reportId: number, reason: string): Promise<void> {
+async function failWithReason(prisma: Prisma, reportId: string, reason: string): Promise<void> {
   await prisma.financialReport.update({
     where: { id: reportId },
     data: {

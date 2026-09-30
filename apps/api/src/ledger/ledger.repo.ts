@@ -17,11 +17,11 @@ export class LedgerRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.ledgerEntry.findUnique({ where: { id } });
   }
 
-  markReversed(originalId: number, refundId: number) {
+  markReversed(originalId: string, refundId: string) {
     return this.prisma.ledgerEntry.update({
       where: { id: originalId },
       data: { reversedById: refundId },

@@ -37,8 +37,8 @@ export class LeagueController {
     try {
       requireSuperAdmin(req);
       const leagueId = Number(req.params["id"]);
-      const { clubId } = req.body as { clubId: number };
-      if (!clubId || typeof clubId !== "number") throw new AppError(400, "CLUB_ID_REQUIRED");
+      const { clubId } = req.body as { clubId: string };
+      if (!clubId || typeof clubId !== "string") throw new AppError(400, "CLUB_ID_REQUIRED");
       res.json(await this.service.registerClub(leagueId, clubId));
     } catch (err) { next(err); }
   };
@@ -47,8 +47,9 @@ export class LeagueController {
     try {
       requireSuperAdmin(req);
       const leagueId = Number(req.params["id"]);
-      const clubId = Number(req.params["clubId"]);
-      res.json(await this.service.removeClub(leagueId, clubId));
+      const clubIdParam = req.params["clubId"];
+      if (typeof clubIdParam !== "string") throw new AppError(400, "CLUB_ID_REQUIRED");
+      res.json(await this.service.removeClub(leagueId, clubIdParam));
     } catch (err) { next(err); }
   };
 }

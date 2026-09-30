@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { auth } from "../lib/authMiddleware";
 import { canReadFinance, canWriteFinance } from "../lib/permissions";
 import { getPrisma } from "../lib/prisma";
@@ -6,9 +6,9 @@ import { AppError } from "../lib/appError";
 import { LedgerRepository } from "./ledger.repo";
 import { LedgerService } from "./ledger.service";
 import { LedgerController } from "./ledger.controller";
-import { intIdRouter } from "../lib/idParamGuard";
+import { cuidRouter } from "../lib/cuidGuard";
 
-const router = intIdRouter();
+const router = cuidRouter();
 const repo = new LedgerRepository(getPrisma());
 export const ledgerService = new LedgerService(repo);
 const ctrl = new LedgerController(ledgerService);

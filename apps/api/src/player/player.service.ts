@@ -11,7 +11,7 @@ import { isAdminLike } from "../lib/permissions";
 export class PlayerService {
   constructor(private repo: PlayerRepository, private mvRepo?: MarketValueRepository) {}
 
-  async getPlayers(query: PlayerListQuery, clubId?: number | null) {
+  async getPlayers(query: PlayerListQuery, clubId?: string | null) {
     const rows = await this.repo.findAll(query, clubId);
     return rows.map((row) => {
       const { dateOfBirthEncrypted, dateOfBirthIv, ...rest } = row as typeof row & {
@@ -27,7 +27,7 @@ export class PlayerService {
     });
   }
 
-  async getPlayerById(id: string, clubId?: number | null, includePrivate = false) {
+  async getPlayerById(id: string, clubId?: string | null, includePrivate = false) {
     const raw = await this.repo.findById(id, clubId, includePrivate);
     if (!raw) throw new AppError(404, "PLAYER_NOT_FOUND");
 
@@ -73,13 +73,13 @@ export class PlayerService {
     return player;
   }
 
-  async updatePlayer(id: string, dto: UpdatePlayerDto, actorClubId?: number | null) {
+  async updatePlayer(id: string, dto: UpdatePlayerDto, actorClubId?: string | null) {
     const player = await this.repo.findById(id, actorClubId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
     return this.repo.update(id, dto);
   }
 
-  async updatePlayerStatus(id: string, { status }: UpdatePlayerStatusDto, actorId: string, actorClubId?: number | null) {
+  async updatePlayerStatus(id: string, { status }: UpdatePlayerStatusDto, actorId: string, actorClubId?: string | null) {
     const player = await this.repo.findById(id, actorClubId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
     const result = await this.repo.updateStatus(id, status);
@@ -107,7 +107,7 @@ export class PlayerService {
     return result;
   }
 
-  async promotePlayer(id: string, targetTeamId: number, actorId: string, actorClubId?: number | null) {
+  async promotePlayer(id: string, targetTeamId: number, actorId: string, actorClubId?: string | null) {
     const player = await this.repo.findById(id, actorClubId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
     if (!player.team || player.team.type !== "YOUTH") {
@@ -123,7 +123,7 @@ export class PlayerService {
     return result;
   }
 
-  async updateWorkPermit(id: string, dto: { workPermitStatus: string; workPermitExpiry?: string }, actorClubId?: number | null) {
+  async updateWorkPermit(id: string, dto: { workPermitStatus: string; workPermitExpiry?: string }, actorClubId?: string | null) {
     const player = await this.repo.findById(id, actorClubId);
     if (!player) throw new AppError(404, 'PLAYER_NOT_FOUND');
     if (dto.workPermitStatus === 'NOT_REQUIRED') throw new AppError(400, 'CANNOT_SET_NOT_REQUIRED');
@@ -136,7 +136,7 @@ export class PlayerService {
     });
   }
 
-  async deletePlayer(id: string, actorId: string, actorClubId?: number | null) {
+  async deletePlayer(id: string, actorId: string, actorClubId?: string | null) {
     const player = await this.repo.findById(id, actorClubId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
     await this.repo.delete(id);
@@ -150,7 +150,7 @@ export class PlayerService {
     return this.mvRepo.getHistory(playerId);
   }
 
-  async updateMarketValue(playerId: string, dto: UpdateMarketValueDto, recordedById: string, actorClubId?: number | null) {
+  async updateMarketValue(playerId: string, dto: UpdateMarketValueDto, recordedById: string, actorClubId?: string | null) {
     const player = await this.repo.findById(playerId, actorClubId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
     if (!this.mvRepo) throw new AppError(500, "MARKET_VALUE_REPO_NOT_CONFIGURED");
