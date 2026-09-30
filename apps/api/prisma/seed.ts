@@ -1788,11 +1788,8 @@ async function main() {
   ];
 
   for (const c of restContracts) {
-    await prisma.contract.upsert({
-      where: { id: c.id },
-      update: {},
-      create: {
-        id: c.id,
+    await prisma.contract.create({
+      data: {
         playerId: c.playerId,
         startDate: new Date(`${c.startYear}-01-01`),
         endDate: new Date(`${c.startYear + c.years - 1}-12-31`),
@@ -2916,7 +2913,7 @@ async function main() {
   console.log(`   - YouthRegistrations: 6 (CONTRACTED×3, GUARDIAN_APPROVED×1, PENDING×2)`);
 }
 
-async function seedAcademyFees2025(adminId: number) {
+async function seedAcademyFees2025(adminId: string) {
   // 유소년 선수 + 보호자 조회
   const players = await prisma.player.findMany({
     where: { id: { in: [
@@ -3030,7 +3027,7 @@ async function seedAcademyFees2025(adminId: number) {
   console.log(`✅ 2025 유소년 회비 시드: ${feeCount}건, PAID 원장 ${ledgerCount}건, 총 ${(totalPaid / 1e6).toFixed(1)}백만원`);
 }
 
-async function seedTicketSales2025(adminId: number) {
+async function seedTicketSales2025(adminId: string) {
   const season2025 = await prisma.season.upsert({
     where: { id: 2 },
     update: {},
