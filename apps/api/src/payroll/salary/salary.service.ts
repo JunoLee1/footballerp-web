@@ -10,7 +10,7 @@ export class SalaryService {
     return this.repo.findAll(query);
   }
 
-  async get(id: number) {
+  async get(id: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "SALARY_NOT_FOUND");
     return record;
@@ -25,7 +25,7 @@ export class SalaryService {
     return record;
   }
 
-  async update(id: number, dto: UpdateSalaryDto, actorId: string) {
+  async update(id: string, dto: UpdateSalaryDto, actorId: string) {
     await this.get(id);
     const record = await this.repo.update(id, dto);
     await writeAuditLog({ actorId, action: "SALARY_UPDATED", targetId: id });

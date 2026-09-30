@@ -31,13 +31,13 @@ export class RunService {
     private prisma: PrismaClient,
   ) {}
 
-  async list(salaryId: number) {
+  async list(salaryId: string) {
     const salary = await this.salaryRepo.findById(salaryId);
     if (!salary) throw new AppError(404, "SALARY_NOT_FOUND");
     return this.runRepo.findAll(salaryId);
   }
 
-  async createRun(salaryId: number, dto: CreateRunDto) {
+  async createRun(salaryId: string, dto: CreateRunDto) {
     const salary = await this.salaryRepo.findById(salaryId);
     if (!salary) throw new AppError(404, "SALARY_NOT_FOUND");
 
@@ -64,7 +64,7 @@ export class RunService {
     return this.runRepo.create({ staffSalaryId: salaryId, month, grossPay, totalDeductions, netPay });
   }
 
-  async secondApproveRun(salaryId: number, runId: number, userId: string) {
+  async secondApproveRun(salaryId: string, runId: string, userId: string) {
     const run = await this.runRepo.findById(runId);
     if (!run || run.staffSalaryId !== salaryId) {
       throw new AppError(404, "PAYROLL_RUN_NOT_FOUND");
@@ -95,7 +95,7 @@ export class RunService {
           isRefund: false,
           description: formatLedgerDescription("payroll", "salary_disbursed", { salaryId, runId }),
           relatedModule: "payroll",
-          relatedId: runId,
+          // relatedId 는 Int 컬럼이라 cuid runId 를 저장하지 못함; 식별자는 description 에 포함.
           createdById: userId,
         },
       });
@@ -103,7 +103,7 @@ export class RunService {
     });
   }
 
-  async confirmRun(salaryId: number, runId: number, userId: string) {
+  async confirmRun(salaryId: string, runId: string, userId: string) {
     const salary = await this.salaryRepo.findById(salaryId);
     if (!salary) throw new AppError(404, "SALARY_NOT_FOUND");
 

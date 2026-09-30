@@ -3849,7 +3849,7 @@ model PayrollConfig {
 }
 
 model StaffSalary {
-  id            Int            @id @default(autoincrement())
+  id            String         @id @default(cuid())
   userId        String?
   staffRecordId Int?
   baseSalary    Decimal        @db.Decimal(12, 2)
@@ -3867,7 +3867,7 @@ model StaffSalary {
 
 model StaffAllowance {
   id            Int      @id @default(autoincrement())
-  staffSalaryId Int
+  staffSalaryId String
   name          String
   amount        Decimal  @db.Decimal(12, 2)
   taxable       Boolean  @default(true)
@@ -3877,8 +3877,8 @@ model StaffAllowance {
 }
 
 model PayrollRun {
-  id                 Int              @id @default(autoincrement())
-  staffSalaryId      Int
+  id                 String           @id @default(cuid())
+  staffSalaryId      String
   month              DateTime
   grossPay           Decimal          @db.Decimal(12, 2)
   totalDeductions    Decimal          @db.Decimal(12, 2)

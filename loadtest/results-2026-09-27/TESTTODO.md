@@ -179,6 +179,7 @@
 | 보안 — IDOR (PLAYER · HR → 급여 명세 조회) | ✅ 두 세션 모두 20/20 건 404 (verdict PASS) |
 | 보안 — Sub-actions `/payroll/:id/approve`·`/cancel`·`/salaries` 등 11건 프로브 | 🔲 미커버 |
 | 보안 — 재무팀장 · GM · 관리자 + HR · 나머지 401/403 | ✅ **FIXED** (PR #570 · closes #565) — `canReadPayroll` / `canWritePayroll` helper 도입. `role-boundary-probe.k6.js` 재실행 `boundary_leaks=0` 검증. Payroll 은 Finance + HR (급여 계산·4대보험·원천세) 공동 접근 정책. 43 unit tests 통과 |
+| 보안 — enumerable IDOR (StaffSalary + PayrollRun) | ✅ **CUID 전환 완료** (#598 tracer 7 · `refactor/payroll-cuid-598`) — `StaffSalary.id`·`PayrollRun.id Int → String @default(cuid())` + `StaffAllowance.staffSalaryId Int → String` + `PayrollRun.staffSalaryId Int → String`. PayrollConfig 는 int 유지 (rate 테이블). LedgerEntry.relatedId 는 Int 유지, cuid runId 는 description 에 포함. 85/85 payroll 테스트 통과, 25 fail = main pre-existing. **#598 옵션 A 완료 (6/6)** |
 
 ---
 

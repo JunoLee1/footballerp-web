@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../../lib/appError";
 import { canReadPayroll, canWritePayroll } from "../../lib/permissions";
 import { requireUser } from "../../lib/authMiddleware";
+import { assertCuid } from "../../lib/cuidGuard";
 import type { SalaryService } from "./salary.service";
 import type { CreateSalaryDto, UpdateSalaryDto, SalaryListQuery } from "./dto/salary.dto";
 
@@ -20,7 +21,7 @@ export class SalaryController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canReadPayroll(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.get(Number(req.params["id"])));
+      res.json(await this.service.get(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -36,7 +37,7 @@ export class SalaryController {
     try {
       const { id: actorId, role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canWritePayroll(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.update(Number(req.params["id"]), req.body as UpdateSalaryDto, actorId));
+      res.json(await this.service.update(assertCuid(req.params["id"]), req.body as UpdateSalaryDto, actorId));
     } catch (err) { next(err); }
   };
 }

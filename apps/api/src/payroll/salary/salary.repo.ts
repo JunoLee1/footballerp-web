@@ -12,7 +12,7 @@ export class SalaryRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.staffSalary.findUnique({
       where: { id },
       include: { allowances: { orderBy: { createdAt: "asc" } } },
@@ -43,7 +43,7 @@ export class SalaryRepository {
     });
   }
 
-  update(id: number, data: UpdateSalaryDto) {
+  update(id: string, data: UpdateSalaryDto) {
     return this.prisma.staffSalary.update({
       where: { id },
       data: {

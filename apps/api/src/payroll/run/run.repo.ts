@@ -3,25 +3,25 @@ import type { PrismaClient } from "../../generated/client";
 export class RunRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findAll(staffSalaryId: number) {
+  findAll(staffSalaryId: string) {
     return this.prisma.payrollRun.findMany({
       where: { staffSalaryId },
       orderBy: { month: "desc" },
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.payrollRun.findUnique({ where: { id } });
   }
 
-  findByMonth(staffSalaryId: number, month: Date) {
+  findByMonth(staffSalaryId: string, month: Date) {
     return this.prisma.payrollRun.findUnique({
       where: { staffSalaryId_month: { staffSalaryId, month } },
     });
   }
 
   create(data: {
-    staffSalaryId: number;
+    staffSalaryId: string;
     month: Date;
     grossPay: number;
     totalDeductions: number;
@@ -38,7 +38,7 @@ export class RunRepository {
     });
   }
 
-  update(id: number, data: { status: "CONFIRMED"; confirmedById: string; confirmedAt: Date }) {
+  update(id: string, data: { status: "CONFIRMED"; confirmedById: string; confirmedAt: Date }) {
     return this.prisma.payrollRun.update({
       where: { id },
       data: {
