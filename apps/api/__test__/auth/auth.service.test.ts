@@ -25,6 +25,8 @@ const MockRepo = {
   findById: jest.fn(),
   anonymizeUser: jest.fn(),
   exportUserData: jest.fn(),
+  findPhoneNumber: jest.fn(),
+  isPhoneHashTaken: jest.fn(),
 } as any;
 
 jest.mock("../../src/lib/token", () => ({
@@ -40,6 +42,7 @@ jest.mock("../../src/lib/crypto", () => ({
   encrypt: jest.fn(() => ({ encrypted: "enc", iv: "iv" })),
   decrypt: jest.fn(),
   validatePhoneEncryptionKey: jest.fn(),
+  hashPhone: jest.fn(() => "phoneHashStub"),
 }));
 
 jest.mock("../../src/lib/auditLog", () => ({
@@ -118,14 +121,14 @@ describe("AuthService - createUser", () => {
     MockRepo.isEmailTaken.mockResolvedValue(false);
     MockRepo.isNicknameTaken.mockResolvedValue(false);
     (hash.hashPassword as jest.Mock).mockResolvedValue("hashed");
-    MockRepo.createUser.mockResolvedValue({ id: 1, email: "ok@test.com", nickname: "nick", role: "ADMIN" });
+    MockRepo.createUser.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000001", email: "ok@test.com", nickname: "nick", role: "ADMIN" });
 
     const result = await service.createUser({
       email: "ok@test.com", password: "1234", confirmedPassword: "1234",
       nickname: "nick", username: "user", phoneNumber: "01011112222",
       role: "ADMIN", nationalityId: 1, dateOfBirth: new Date("2000-01-01"),
     } as any);
-    expect(result).toMatchObject({ id: 1, email: "ok@test.com" });
+    expect(result).toMatchObject({ id: "00000000-0000-4000-8000-000000000001", email: "ok@test.com" });
   });
 });
 
@@ -134,13 +137,13 @@ describe("AuthService - me", () => {
 
   test("유저 없으면 404", async () => {
     MockRepo.findById.mockResolvedValue(null);
-    await expect(service.me(99)).rejects.toMatchObject({ statusCode: 404 });
+    await expect(service.me("00000000-0000-4000-8000-000000000099")).rejects.toMatchObject({ statusCode: 404 });
   });
 
   test("유저 존재하면 반환", async () => {
-    MockRepo.findById.mockResolvedValue({ id: 1, email: "a@a.com", role: "ADMIN" });
-    const result = await service.me(1);
-    expect(result.id).toBe(1);
+    MockRepo.findById.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000001", email: "a@a.com", role: "ADMIN" });
+    const result = await service.me("00000000-0000-4000-8000-000000000001");
+    expect(result.id).toBe("00000000-0000-4000-8000-000000000001");
   });
 });
 
@@ -149,19 +152,19 @@ describe("AuthService - gdprErasure", () => {
 
   test("유저 없으면 404", async () => {
     MockRepo.findById.mockResolvedValue(null);
-    await expect(service.gdprErasure(2, 1)).rejects.toMatchObject({ statusCode: 404 });
+    await expect(service.gdprErasure("00000000-0000-4000-8000-000000000002", "00000000-0000-4000-8000-000000000001")).rejects.toMatchObject({ statusCode: 404 });
   });
 
   test("이미 삭제된 유저면 409", async () => {
-    MockRepo.findById.mockResolvedValue({ id: 2, isDeleted: true });
-    await expect(service.gdprErasure(2, 1)).rejects.toMatchObject({ statusCode: 409 });
+    MockRepo.findById.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000002", isDeleted: true });
+    await expect(service.gdprErasure("00000000-0000-4000-8000-000000000002", "00000000-0000-4000-8000-000000000001")).rejects.toMatchObject({ statusCode: 409 });
   });
 
   test("삭제 성공", async () => {
-    MockRepo.findById.mockResolvedValue({ id: 2, isDeleted: false });
-    MockRepo.anonymizeUser.mockResolvedValue({ id: 2, email: "deleted" });
-    const result = await service.gdprErasure(2, 1);
-    expect(MockRepo.anonymizeUser).toHaveBeenCalledWith(2);
-    expect(result).toMatchObject({ id: 2 });
+    MockRepo.findById.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000002", isDeleted: false });
+    MockRepo.anonymizeUser.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000002", email: "deleted" });
+    const result = await service.gdprErasure("00000000-0000-4000-8000-000000000002", "00000000-0000-4000-8000-000000000001");
+    expect(MockRepo.anonymizeUser).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000002");
+    expect(result).toMatchObject({ id: "00000000-0000-4000-8000-000000000002" });
   });
 });

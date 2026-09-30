@@ -19,7 +19,7 @@ const controller = new AdminController(mockService);
 
 const adminReq = (overrides: any = {}) =>
   ({
-    user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+    user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null },
     body: {},
     params: {},
     query: {},
@@ -28,7 +28,7 @@ const adminReq = (overrides: any = {}) =>
 
 const nonAdminReq = (role: string) =>
   ({
-    user: { id: 2, role, coachingRole: null, frontOfficeRole: null },
+    user: { id: "00000000-0000-4000-8000-000000000002", role, coachingRole: null, frontOfficeRole: null },
     body: {},
     params: {},
     query: {},
@@ -88,7 +88,7 @@ describe("AdminController - updateRole", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("ADMIN gets 200", async () => {
-    mockService.updateUserRole.mockResolvedValue({ id: 2, role: "FRONT_OFFICE" });
+    mockService.updateUserRole.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000002", role: "FRONT_OFFICE" });
     const res = mockRes();
     await controller.updateRole(adminReq({ params: { id: "2" }, body: { role: "FRONT_OFFICE" } }), res, next);
     expect(next).not.toHaveBeenCalled();
@@ -144,7 +144,7 @@ describe("AdminController - deleteUser", () => {
   test("SUPER_ADMIN gets 204", async () => {
     mockService.deleteUser.mockResolvedValue(undefined);
     const res = mockRes();
-    const req = { user: { id: 1, role: "SUPER_ADMIN", coachingRole: null, frontOfficeRole: null }, body: {}, params: { id: "2" }, query: {} } as any;
+    const req = { user: { id: "00000000-0000-4000-8000-000000000001", role: "SUPER_ADMIN", coachingRole: null, frontOfficeRole: null }, body: {}, params: { id: "2" }, query: {} } as any;
     await controller.deleteUser(req, res, next);
     expect(next).not.toHaveBeenCalled();
     expect(res.status).toHaveBeenCalledWith(204);

@@ -159,11 +159,11 @@ describe("RunService.confirmRun", () => {
     mockRunRepo.findById.mockResolvedValue({ id: 5, staffSalaryId: 1, status: "DRAFT" });
     mockRunRepo.update.mockResolvedValue({ id: 5, status: "CONFIRMED" });
 
-    await service.confirmRun(1, 5, 10);
+    await service.confirmRun(1, 5, "00000000-0000-4000-8000-000000000010");
 
     expect(mockRunRepo.update).toHaveBeenCalledWith(5, {
       status: "CONFIRMED",
-      confirmedById: 10,
+      confirmedById: "00000000-0000-4000-8000-000000000010",
       confirmedAt: expect.any(Date),
     });
   });

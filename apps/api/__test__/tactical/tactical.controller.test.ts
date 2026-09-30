@@ -18,7 +18,7 @@ const controller = new TacticalController(mockService);
 
 const mockReq = (overrides: any) =>
   ({
-    user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+    user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null },
     body: {},
     params: {},
     query: {},
@@ -38,7 +38,7 @@ describe("TacticalController - create (TACTICAL_ANALYST)", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("ADMIN can create TacticalAnalysis → 201", async () => {
-    const req = mockReq({ user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null } });
     const res = mockRes();
     await controller.create(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(201);
@@ -47,7 +47,7 @@ describe("TacticalController - create (TACTICAL_ANALYST)", () => {
 
   test("COACHING_STAFF can create TacticalAnalysis → 201", async () => {
     const req = mockReq({
-      user: { id: 2, role: "COACHING_STAFF", coachingRole: "DEFENSIVE_COACH", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000002", role: "COACHING_STAFF", coachingRole: "DEFENSIVE_COACH", frontOfficeRole: null },
     });
     const res = mockRes();
     await controller.create(req, res, mockNext);
@@ -56,7 +56,7 @@ describe("TacticalController - create (TACTICAL_ANALYST)", () => {
 
   test("TACTICAL_ANALYST (FRONT_OFFICE) can create TacticalAnalysis → 201", async () => {
     const req = mockReq({
-      user: { id: 3, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
+      user: { id: "00000000-0000-4000-8000-000000000003", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
     });
     const res = mockRes();
     await controller.create(req, res, mockNext);
@@ -66,7 +66,7 @@ describe("TacticalController - create (TACTICAL_ANALYST)", () => {
 
   test("GM (FRONT_OFFICE, non-analyst) cannot create TacticalAnalysis → 403", async () => {
     const req = mockReq({
-      user: { id: 4, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "GM" },
+      user: { id: "00000000-0000-4000-8000-000000000004", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "GM" },
     });
     const res = mockRes();
     await controller.create(req, res, mockNext);
@@ -78,7 +78,7 @@ describe("TacticalController - create (TACTICAL_ANALYST)", () => {
 
   test("PLAYER cannot create TacticalAnalysis → 403", async () => {
     const req = mockReq({
-      user: { id: 5, role: "PLAYER", coachingRole: null, frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000005", role: "PLAYER", coachingRole: null, frontOfficeRole: null },
     });
     const res = mockRes();
     await controller.create(req, res, mockNext);
@@ -107,7 +107,7 @@ describe("TacticalController - update", () => {
 
   test("PLAYER cannot update TacticalAnalysis → 403 via next", async () => {
     const req = mockReq({
-      user: { id: 5, role: "PLAYER", coachingRole: null, frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000005", role: "PLAYER", coachingRole: null, frontOfficeRole: null },
       params: { id: "1" },
       body: {},
     });
@@ -118,7 +118,7 @@ describe("TacticalController - update", () => {
 
   test("TACTICAL_ANALYST can update TacticalAnalysis → 200", async () => {
     const req = mockReq({
-      user: { id: 6, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
+      user: { id: "00000000-0000-4000-8000-000000000006", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
       params: { id: "2" },
       body: { concededAnalysis: "압박 부족" },
     });
@@ -133,7 +133,7 @@ describe("TacticalController - confirm", () => {
 
   test("HEAD_COACH can confirm TacticalAnalysis → 200", async () => {
     const req = mockReq({
-      user: { id: 1, role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000001", role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null },
       params: { id: "1" },
     });
     const res = mockRes();
@@ -144,7 +144,7 @@ describe("TacticalController - confirm", () => {
 
   test("ADMIN can confirm TacticalAnalysis → 200", async () => {
     const req = mockReq({
-      user: { id: 2, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000002", role: "ADMIN", coachingRole: null, frontOfficeRole: null },
       params: { id: "1" },
     });
     const res = mockRes();
@@ -154,7 +154,7 @@ describe("TacticalController - confirm", () => {
 
   test("TACTICAL_ANALYST cannot confirm TacticalAnalysis → 403", async () => {
     const req = mockReq({
-      user: { id: 3, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
+      user: { id: "00000000-0000-4000-8000-000000000003", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
       params: { id: "1" },
     });
     const res = mockRes();
@@ -167,7 +167,7 @@ describe("TacticalController - confirm", () => {
 
   test("DEFENSIVE_COACH cannot confirm TacticalAnalysis → 403", async () => {
     const req = mockReq({
-      user: { id: 4, role: "COACHING_STAFF", coachingRole: "DEFENSIVE_COACH", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000004", role: "COACHING_STAFF", coachingRole: "DEFENSIVE_COACH", frontOfficeRole: null },
       params: { id: "1" },
     });
     const res = mockRes();

@@ -27,13 +27,13 @@ describe("AcademyFeeService - issueMonthlyFees", () => {
 
   test("활성 유소년 선수에게 청구서 발행", async () => {
     mockRepo.findAllActiveYouthPlayers.mockResolvedValue([
-      { id: "player-1", playerName: "홍길동", guardianId: 10 },
-      { id: "player-2", playerName: "김철수", guardianId: 11 },
+      { id: "player-1", playerName: "홍길동", guardianId: "00000000-0000-4000-8000-000000000010" },
+      { id: "player-2", playerName: "김철수", guardianId: "00000000-0000-4000-8000-000000000011" },
     ]);
     await service.issueMonthlyFees(2026, 7, 50000);
     expect(mockRepo.createMany).toHaveBeenCalledWith(
       expect.arrayContaining([
-        expect.objectContaining({ playerId: "player-1", guardianId: 10, amount: 50000, year: 2026, month: 7 }),
+        expect.objectContaining({ playerId: "player-1", guardianId: "00000000-0000-4000-8000-000000000010", amount: 50000, year: 2026, month: 7 }),
       ]),
     );
     expect(mockNotifRepo.createForGuardian).toHaveBeenCalledTimes(2);
@@ -54,12 +54,12 @@ describe("AcademyFeeService - processOverdue", () => {
   test("D+1: PENDING → 리마인더 발송", async () => {
     const dueDate = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);
     mockRepo.findOverdue.mockResolvedValue([
-      { id: 1, status: "PENDING", dueDate, guardianId: 10, playerId: "p1",
+      { id: 1, status: "PENDING", dueDate, guardianId: "00000000-0000-4000-8000-000000000010", playerId: "p1",
         player: { playerName: "홍길동", status: "ACTIVE" } },
     ]);
     await service.processOverdue();
     expect(mockNotifRepo.createForGuardian).toHaveBeenCalledWith(
-      10, "FEE_REMINDER", expect.any(Function), 1,
+      "00000000-0000-4000-8000-000000000010", "FEE_REMINDER", expect.any(Function), 1,
     );
     expect(mockRepo.lockPlayer).not.toHaveBeenCalled();
   });
@@ -67,14 +67,14 @@ describe("AcademyFeeService - processOverdue", () => {
   test("D+30: LOCKED + Player suspended + 알림", async () => {
     const dueDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     mockRepo.findOverdue.mockResolvedValue([
-      { id: 2, status: "OVERDUE", dueDate, guardianId: 11, playerId: "p2",
+      { id: 2, status: "OVERDUE", dueDate, guardianId: "00000000-0000-4000-8000-000000000011", playerId: "p2",
         player: { playerName: "김철수", status: "ACTIVE" } },
     ]);
     await service.processOverdue();
     expect(mockRepo.updateStatus).toHaveBeenCalledWith(2, "LOCKED");
     expect(mockRepo.lockPlayer).toHaveBeenCalledWith("p2");
     expect(mockNotifRepo.createForGuardian).toHaveBeenCalledWith(
-      11, "FEE_ACCOUNT_LOCKED", expect.any(Function), 2,
+      "00000000-0000-4000-8000-000000000011", "FEE_ACCOUNT_LOCKED", expect.any(Function), 2,
     );
   });
 });

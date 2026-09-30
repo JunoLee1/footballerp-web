@@ -25,7 +25,7 @@ const fakeDept = {
   headId: LEADER_ID,
   isActive: true,
   children: [],
-  parent: { id: PARENT_DEPT_ID, headId: 999, name: "상위부서" },
+  parent: { id: PARENT_DEPT_ID, headId: "00000000-0000-4000-8000-000000000999", name: "상위부서" },
 };
 
 const fakeParentDept = {
@@ -341,7 +341,7 @@ describe("updateHead", () => {
     const repo = makeRepo({
       findById: jest.fn()
         .mockResolvedValueOnce({ ...fakeDept, parentId: PARENT_DEPT_ID })
-        .mockResolvedValueOnce({ ...fakeParentDept, headId: 999 }), // 요청자와 다른 headId
+        .mockResolvedValueOnce({ ...fakeParentDept, headId: "00000000-0000-4000-8000-000000000999" }), // 요청자와 다른 headId
     });
     const svc = new DepartmentService(repo);
     await expect(

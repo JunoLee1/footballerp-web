@@ -40,7 +40,7 @@ describe("TrainingLoadService — allowedActivities in response", () => {
   test("활성 부상 + allowedActivities 있으면 응답에 포함", async () => {
     mockRepo.findActiveInjuryWithReport.mockResolvedValue({
       status: "REHABILITATING",
-      report: { rehabLoadPercentage: 60, allowedActivities: "상체 훈련만 허용" },
+      injuryReport: { rehabLoadPercentage: 60, allowedActivities: "상체 훈련만 허용" },
     });
     const result = await service.upsert(
       { playerId: "p1", sessionId: 1, load: 300 },
@@ -61,7 +61,7 @@ describe("TrainingLoadService — allowedActivities in response", () => {
   test("rehabLoadPercentage 0이면 과부하 알림 없음 (threshold=0 guard)", async () => {
     mockRepo.findActiveInjuryWithReport.mockResolvedValue({
       status: "REHABILITATING",
-      report: { rehabLoadPercentage: 0, allowedActivities: null },
+      injuryReport: { rehabLoadPercentage: 0, allowedActivities: null },
     });
     mockRepo.getWeeklyLoadTotal.mockResolvedValue(100);
     await service.upsert(
@@ -74,7 +74,7 @@ describe("TrainingLoadService — allowedActivities in response", () => {
   test("rehabLoadPercentage 60 → 임계치 300으로 낮아져 500 부하 시 overload 알림", async () => {
     mockRepo.findActiveInjuryWithReport.mockResolvedValue({
       status: "REHABILITATING",
-      report: { rehabLoadPercentage: 60, allowedActivities: null },
+      injuryReport: { rehabLoadPercentage: 60, allowedActivities: null },
     });
     mockRepo.getWeeklyLoadTotal.mockResolvedValue(350);
     await service.upsert(

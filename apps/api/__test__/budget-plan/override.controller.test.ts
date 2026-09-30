@@ -39,9 +39,9 @@ const asFM = {
   frontOfficeRole: "FINANCE_MANAGER",
   coachingRole: null,
 } as any;
-const asGM = { id: 2, role: "GM", frontOfficeRole: null, coachingRole: null } as any;
-const asAdmin = { id: 3, role: "ADMIN", frontOfficeRole: null, coachingRole: null } as any;
-const asSuper = { id: 4, role: "SUPER_ADMIN", frontOfficeRole: null, coachingRole: null } as any;
+const asGM = { id: "00000000-0000-4000-8000-000000000002", role: "GM", frontOfficeRole: null, coachingRole: null } as any;
+const asAdmin = { id: "00000000-0000-4000-8000-000000000003", role: "ADMIN", frontOfficeRole: null, coachingRole: null } as any;
+const asSuper = { id: "00000000-0000-4000-8000-000000000004", role: "SUPER_ADMIN", frontOfficeRole: null, coachingRole: null } as any;
 const asHR = {
   id: 5,
   role: "FRONT_OFFICE",

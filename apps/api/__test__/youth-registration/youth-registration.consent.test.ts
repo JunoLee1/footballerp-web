@@ -23,20 +23,20 @@ describe("YouthRegistrationService — guardian consent log", () => {
   test("guardianApprove writes GUARDIAN_CONSENT_GRANTED audit log", async () => {
     mockRepo.findById.mockResolvedValue({
       id: 1,
-      guardianId: 42,
+      guardianId: "00000000-0000-4000-8000-000000000042",
       status: "PENDING",
       playerName: "김철수",
     });
     mockRepo.updateStatus.mockResolvedValue({ id: 1, status: "GUARDIAN_APPROVED" });
 
-    await service.guardianApprove(1, 42);
+    await service.guardianApprove(1, "00000000-0000-4000-8000-000000000042");
 
     // Fire-and-forget — flush microtask queue
     await Promise.resolve();
 
     expect(mockWriteAuditLog).toHaveBeenCalledWith(
       expect.objectContaining({
-        actorId: 42,
+        actorId: "00000000-0000-4000-8000-000000000042",
         action: "GUARDIAN_CONSENT_GRANTED",
         targetId: 1,
       })

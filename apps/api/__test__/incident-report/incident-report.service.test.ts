@@ -27,14 +27,14 @@ describe("IncidentReportService - submit", () => {
 
   test("SUBMITTED 전환 시 GUARDIAN에게 알림 발송", async () => {
     mockRepo.findById.mockResolvedValue({
-      id: 1, status: "DRAFT", player: { playerName: "홍길동", guardianId: 10 }, teamId: 1,
+      id: 1, status: "DRAFT", player: { playerName: "홍길동", guardianId: "00000000-0000-4000-8000-000000000010" }, teamId: 1,
     });
     mockRepo.submit.mockResolvedValue({ id: 1, status: "SUBMITTED" });
 
     await service.submit(1);
 
     expect(mockNotifRepo.createForGuardian).toHaveBeenCalledWith(
-      10, "INCIDENT_REPORT_SUBMITTED", expect.any(Function), 1,
+      "00000000-0000-4000-8000-000000000010", "INCIDENT_REPORT_SUBMITTED", expect.any(Function), 1,
     );
   });
 

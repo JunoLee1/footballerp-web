@@ -15,7 +15,7 @@ const controller = new TrainingController(mockService);
 
 const mockReq = (overrides: any) =>
   ({
-    user: { id: 1, role: "COACHING_STAFF", coachingRole: "GOALKEEPER_COACH", frontOfficeRole: null },
+    user: { id: "00000000-0000-4000-8000-000000000001", role: "COACHING_STAFF", coachingRole: "GOALKEEPER_COACH", frontOfficeRole: null },
     body: {},
     params: {},
     query: {},
@@ -38,7 +38,7 @@ describe("TrainingController - createSession", () => {
 
   test("GOALKEEPER_COACH can create GOALKEEPER session → 201", async () => {
     const req = mockReq({
-      user: { id: 1, role: "COACHING_STAFF", coachingRole: "GOALKEEPER_COACH", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000001", role: "COACHING_STAFF", coachingRole: "GOALKEEPER_COACH", frontOfficeRole: null },
       body: { sessionType: "GOALKEEPER" },
     });
     const res = mockRes();
@@ -49,7 +49,7 @@ describe("TrainingController - createSession", () => {
 
   test("ADMIN can create GOALKEEPER session → 201", async () => {
     const req = mockReq({
-      user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null },
       body: { sessionType: "GOALKEEPER" },
     });
     const res = mockRes();
@@ -60,7 +60,7 @@ describe("TrainingController - createSession", () => {
 
   test("DEFENSIVE_COACH (non-GK) cannot create GOALKEEPER session → 403", async () => {
     const req = mockReq({
-      user: { id: 2, role: "COACHING_STAFF", coachingRole: "DEFENSIVE_COACH", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000002", role: "COACHING_STAFF", coachingRole: "DEFENSIVE_COACH", frontOfficeRole: null },
       body: { sessionType: "GOALKEEPER" },
     });
     const res = mockRes();
@@ -73,7 +73,7 @@ describe("TrainingController - createSession", () => {
 
   test("COACHING_STAFF can create non-GOALKEEPER session → 201", async () => {
     const req = mockReq({
-      user: { id: 1, role: "COACHING_STAFF", coachingRole: "DEFENSIVE_COACH", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000001", role: "COACHING_STAFF", coachingRole: "DEFENSIVE_COACH", frontOfficeRole: null },
       body: { sessionType: "TACTICAL_DEFENSIVE" },
     });
     const res = mockRes();
@@ -83,7 +83,7 @@ describe("TrainingController - createSession", () => {
 
   test("PLAYER cannot create any session → 403", async () => {
     const req = mockReq({
-      user: { id: 3, role: "PLAYER", coachingRole: null, frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000003", role: "PLAYER", coachingRole: null, frontOfficeRole: null },
       body: { sessionType: "PHYSICAL" },
     });
     const res = mockRes();
@@ -102,7 +102,7 @@ describe("TrainingController - approveSession", () => {
 
   test("ADMIN can approve session → 200", async () => {
     const req = mockReq({
-      user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null },
       params: { id: "1" },
     });
     const res = mockRes();
@@ -113,7 +113,7 @@ describe("TrainingController - approveSession", () => {
 
   test("HEAD_COACH can approve session → 200", async () => {
     const req = mockReq({
-      user: { id: 2, role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000002", role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null },
       params: { id: "1" },
     });
     const res = mockRes();
@@ -124,7 +124,7 @@ describe("TrainingController - approveSession", () => {
 
   test("GOALKEEPER_COACH cannot approve session → 403", async () => {
     const req = mockReq({
-      user: { id: 3, role: "COACHING_STAFF", coachingRole: "GOALKEEPER_COACH", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000003", role: "COACHING_STAFF", coachingRole: "GOALKEEPER_COACH", frontOfficeRole: null },
       params: { id: "1" },
     });
     const res = mockRes();

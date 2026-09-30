@@ -19,7 +19,7 @@ const makeLine = (overrides = {}) => ({
 
 const makeExpense = (overrides = {}) => ({
   id: 1, seasonId: 1, categoryId: CAT_IDS["TRAVEL"]!, amount: 300_000,
-  date: new Date(), note: null, createdById: 10,
+  date: new Date(), note: null, createdById: "00000000-0000-4000-8000-000000000010",
   status: "PENDING" as const, budgetLineId: 1,
   firstApprovedById: null, firstApprovedAt: null,
   approvedById: null, approvedAt: null,
@@ -66,7 +66,7 @@ const makeService = (repo = makeRepo(), notif = makeNotifRepo(), cat = makeCateg
 describe("OperatingExpenseService.create", () => {
   const baseInput = {
     seasonId: 1, category: "TRAVEL", amount: 300_000,
-    date: "2026-08-22", createdById: 10, budgetLineId: 1,
+    date: "2026-08-22", createdById: "00000000-0000-4000-8000-000000000010", budgetLineId: 1,
   };
 
   it("throws 400 when amount <= 0", async () => {
@@ -100,35 +100,35 @@ describe("OperatingExpenseService.create", () => {
 
 describe("OperatingExpenseService.firstApprove", () => {
   it("throws 404 when expense not found", async () => {
-    await expect(makeService().firstApprove(99, 5, "FRONT_OFFICE", "FINANCE_STAFF"))
+    await expect(makeService().firstApprove(99, "00000000-0000-4000-8000-000000000005","FRONT_OFFICE", "FINANCE_STAFF"))
       .rejects.toThrow(new AppError(404, "NOT_FOUND"));
   });
 
   it("throws 400 when status is not PENDING", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ status: "APPROVED" })) });
-    await expect(makeService(repo).firstApprove(1, 5, "FRONT_OFFICE", "FINANCE_STAFF"))
+    await expect(makeService(repo).firstApprove(1, "00000000-0000-4000-8000-000000000005","FRONT_OFFICE", "FINANCE_STAFF"))
       .rejects.toThrow(new AppError(400, "INVALID_STATUS"));
   });
 
   it("throws 400 when amount < threshold", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ amount: 500_000 })) });
-    await expect(makeService(repo).firstApprove(1, 5, "FRONT_OFFICE", "FINANCE_STAFF"))
+    await expect(makeService(repo).firstApprove(1, "00000000-0000-4000-8000-000000000005","FRONT_OFFICE", "FINANCE_STAFF"))
       .rejects.toThrow(new AppError(400, "USE_SINGLE_STAGE_APPROVE"));
   });
 
   it("throws 403 on self-approval", async () => {
-    const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ amount: 2_000_000, createdById: 5 })) });
-    await expect(makeService(repo).firstApprove(1, 5, "FRONT_OFFICE", "FINANCE_STAFF"))
+    const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ amount: 2_000_000, createdById: "00000000-0000-4000-8000-000000000005" })) });
+    await expect(makeService(repo).firstApprove(1, "00000000-0000-4000-8000-000000000005","FRONT_OFFICE", "FINANCE_STAFF"))
       .rejects.toThrow(new AppError(403, "SELF_APPROVAL_FORBIDDEN"));
   });
 
   it("transitions to FIRST_APPROVED and notifies FINANCE_MANAGER", async () => {
     const notif = makeNotifRepo();
     const repo = makeRepo({
-      findById: jest.fn().mockResolvedValue(makeExpense({ amount: 2_000_000, createdById: 10 })),
+      findById: jest.fn().mockResolvedValue(makeExpense({ amount: 2_000_000, createdById: "00000000-0000-4000-8000-000000000010" })),
       updateStatus: jest.fn().mockResolvedValue(makeExpense({ status: "FIRST_APPROVED", amount: 2_000_000 })),
     });
-    const result = await makeService(repo, notif).firstApprove(1, 5, "FRONT_OFFICE", "FINANCE_STAFF");
+    const result = await makeService(repo, notif).firstApprove(1, "00000000-0000-4000-8000-000000000005","FRONT_OFFICE", "FINANCE_STAFF");
     expect(result.status).toBe("FIRST_APPROVED");
     expect(notif.createForFinanceManager).toHaveBeenCalledWith("EXPENSE_FIRST_APPROVED", expect.any(Function), 1);
   });
@@ -137,47 +137,47 @@ describe("OperatingExpenseService.firstApprove", () => {
 describe("OperatingExpenseService.approve", () => {
   it("throws 403 when approver lacks permission", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ amount: 500_000, status: "PENDING" })) });
-    await expect(makeService(repo).approve(1, 5, "PLAYER", null))
+    await expect(makeService(repo).approve(1, "00000000-0000-4000-8000-000000000005","PLAYER", null))
       .rejects.toThrow(new AppError(403, "FORBIDDEN"));
   });
 
   it("1-stage: PENDING → APPROVED for amount < threshold with FINANCE_STAFF", async () => {
     const notif = makeNotifRepo();
     const repo = makeRepo({
-      findById: jest.fn().mockResolvedValue(makeExpense({ amount: 500_000, createdById: 10, status: "PENDING" })),
+      findById: jest.fn().mockResolvedValue(makeExpense({ amount: 500_000, createdById: "00000000-0000-4000-8000-000000000010", status: "PENDING" })),
       updateStatus: jest.fn().mockResolvedValue(makeExpense({ status: "APPROVED", amount: 500_000 })),
     });
-    const result = await makeService(repo, notif).approve(1, 5, "FRONT_OFFICE", "FINANCE_STAFF");
+    const result = await makeService(repo, notif).approve(1, "00000000-0000-4000-8000-000000000005","FRONT_OFFICE", "FINANCE_STAFF");
     expect(result.status).toBe("APPROVED");
-    expect(notif.createForUser).toHaveBeenCalledWith(10, "EXPENSE_APPROVED", expect.any(Function), 1);
+    expect(notif.createForUser).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000010","EXPENSE_APPROVED", expect.any(Function), 1);
   });
 
   it("2-stage: requires FIRST_APPROVED status for amount >= threshold", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ amount: 2_000_000, status: "PENDING" })) });
-    await expect(makeService(repo).approve(1, 5, "FRONT_OFFICE", "FINANCE_MANAGER"))
+    await expect(makeService(repo).approve(1, "00000000-0000-4000-8000-000000000005","FRONT_OFFICE", "FINANCE_MANAGER"))
       .rejects.toThrow(new AppError(400, "REQUIRES_FIRST_APPROVAL"));
   });
 
   it("2-stage: FIRST_APPROVED → APPROVED with FINANCE_MANAGER", async () => {
     const notif = makeNotifRepo();
     const repo = makeRepo({
-      findById: jest.fn().mockResolvedValue(makeExpense({ amount: 2_000_000, createdById: 10, status: "FIRST_APPROVED" })),
+      findById: jest.fn().mockResolvedValue(makeExpense({ amount: 2_000_000, createdById: "00000000-0000-4000-8000-000000000010", status: "FIRST_APPROVED" })),
       updateStatus: jest.fn().mockResolvedValue(makeExpense({ status: "APPROVED", amount: 2_000_000 })),
     });
-    const result = await makeService(repo, notif).approve(1, 5, "FRONT_OFFICE", "FINANCE_MANAGER");
+    const result = await makeService(repo, notif).approve(1, "00000000-0000-4000-8000-000000000005","FRONT_OFFICE", "FINANCE_MANAGER");
     expect(result.status).toBe("APPROVED");
-    expect(notif.createForUser).toHaveBeenCalledWith(10, "EXPENSE_APPROVED", expect.any(Function), 1);
+    expect(notif.createForUser).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000010","EXPENSE_APPROVED", expect.any(Function), 1);
   });
 
   it("2-stage: throws 403 when FINANCE_STAFF tries final approval", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ amount: 2_000_000, status: "FIRST_APPROVED" })) });
-    await expect(makeService(repo).approve(1, 5, "FRONT_OFFICE", "FINANCE_STAFF"))
+    await expect(makeService(repo).approve(1, "00000000-0000-4000-8000-000000000005","FRONT_OFFICE", "FINANCE_STAFF"))
       .rejects.toThrow(new AppError(403, "FORBIDDEN"));
   });
 
   it("throws 403 on self-approval", async () => {
-    const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ amount: 500_000, createdById: 5, status: "PENDING" })) });
-    await expect(makeService(repo).approve(1, 5, "FRONT_OFFICE", "FINANCE_STAFF"))
+    const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ amount: 500_000, createdById: "00000000-0000-4000-8000-000000000005", status: "PENDING" })) });
+    await expect(makeService(repo).approve(1, "00000000-0000-4000-8000-000000000005","FRONT_OFFICE", "FINANCE_STAFF"))
       .rejects.toThrow(new AppError(403, "SELF_APPROVAL_FORBIDDEN"));
   });
 });
@@ -185,59 +185,59 @@ describe("OperatingExpenseService.approve", () => {
 describe("OperatingExpenseService.reject", () => {
   it("throws 400 when status is not PENDING or FIRST_APPROVED", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ status: "APPROVED" })) });
-    await expect(makeService(repo).reject(1, 5, "거부 사유", "FRONT_OFFICE", "FINANCE_STAFF"))
+    await expect(makeService(repo).reject(1, "00000000-0000-4000-8000-000000000005","거부 사유", "FRONT_OFFICE", "FINANCE_STAFF"))
       .rejects.toThrow(new AppError(400, "INVALID_STATUS"));
   });
 
   it("transitions to REJECTED and notifies creator", async () => {
     const notif = makeNotifRepo();
     const repo = makeRepo({
-      findById: jest.fn().mockResolvedValue(makeExpense({ status: "PENDING", createdById: 10 })),
+      findById: jest.fn().mockResolvedValue(makeExpense({ status: "PENDING", createdById: "00000000-0000-4000-8000-000000000010" })),
       updateStatus: jest.fn().mockResolvedValue(makeExpense({ status: "REJECTED" })),
     });
-    await makeService(repo, notif).reject(1, 5, "예산 부족", "FRONT_OFFICE", "FINANCE_STAFF");
-    expect(notif.createForUser).toHaveBeenCalledWith(10, "EXPENSE_REJECTED", expect.any(Function), 1);
+    await makeService(repo, notif).reject(1, "00000000-0000-4000-8000-000000000005","예산 부족", "FRONT_OFFICE", "FINANCE_STAFF");
+    expect(notif.createForUser).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000010","EXPENSE_REJECTED", expect.any(Function), 1);
   });
 });
 
 describe("OperatingExpenseService.cancel", () => {
   it("throws 400 when status is not APPROVED", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ status: "PENDING" })) });
-    await expect(makeService(repo).cancel(1, 10, "취소 사유", "FRONT_OFFICE", "FINANCE_STAFF"))
+    await expect(makeService(repo).cancel(1, "00000000-0000-4000-8000-000000000010","취소 사유", "FRONT_OFFICE", "FINANCE_STAFF"))
       .rejects.toThrow(new AppError(400, "INVALID_STATUS"));
   });
 
   it("throws 403 when not creator and not FINANCE_MANAGER", async () => {
-    const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ status: "APPROVED", createdById: 10 })) });
-    await expect(makeService(repo).cancel(1, 99, "취소", "FRONT_OFFICE", "FINANCE_STAFF"))
+    const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ status: "APPROVED", createdById: "00000000-0000-4000-8000-000000000010" })) });
+    await expect(makeService(repo).cancel(1, "00000000-0000-4000-8000-000000000099","취소", "FRONT_OFFICE", "FINANCE_STAFF"))
       .rejects.toThrow(new AppError(403, "FORBIDDEN"));
   });
 
   it("creator can cancel own APPROVED expense", async () => {
     const notif = makeNotifRepo();
     const repo = makeRepo({
-      findById: jest.fn().mockResolvedValue(makeExpense({ status: "APPROVED", createdById: 10 })),
+      findById: jest.fn().mockResolvedValue(makeExpense({ status: "APPROVED", createdById: "00000000-0000-4000-8000-000000000010" })),
       updateStatus: jest.fn().mockResolvedValue(makeExpense({ status: "CANCELLED" })),
     });
-    await makeService(repo, notif).cancel(1, 10, "취소 사유", "FRONT_OFFICE", "FINANCE_STAFF");
-    expect(notif.createForUser).toHaveBeenCalledWith(10, "EXPENSE_CANCELLED", expect.any(Function), 1);
+    await makeService(repo, notif).cancel(1, "00000000-0000-4000-8000-000000000010","취소 사유", "FRONT_OFFICE", "FINANCE_STAFF");
+    expect(notif.createForUser).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000010","EXPENSE_CANCELLED", expect.any(Function), 1);
   });
 });
 
 describe("OperatingExpenseService.markPaid", () => {
   it("throws 400 when status is not APPROVED", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeExpense({ status: "PENDING" })) });
-    await expect(makeService(repo).markPaid(1, 5))
+    await expect(makeService(repo).markPaid(1, "00000000-0000-4000-8000-000000000005"))
       .rejects.toThrow(new AppError(400, "INVALID_STATUS"));
   });
 
   it("transitions to PAID and notifies creator", async () => {
     const notif = makeNotifRepo();
     const repo = makeRepo({
-      findById: jest.fn().mockResolvedValue(makeExpense({ status: "APPROVED", createdById: 10 })),
+      findById: jest.fn().mockResolvedValue(makeExpense({ status: "APPROVED", createdById: "00000000-0000-4000-8000-000000000010" })),
       updateStatus: jest.fn().mockResolvedValue(makeExpense({ status: "PAID" })),
     });
-    await makeService(repo, notif).markPaid(1, 5);
-    expect(notif.createForUser).toHaveBeenCalledWith(10, "EXPENSE_PAID", expect.any(Function), 1);
+    await makeService(repo, notif).markPaid(1, "00000000-0000-4000-8000-000000000005");
+    expect(notif.createForUser).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000010","EXPENSE_PAID", expect.any(Function), 1);
   });
 });

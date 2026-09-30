@@ -12,8 +12,8 @@ const REVIEW_DAYS = 14;
 const makePrisma = (opts: {
   reportPlanStatus?: string | null;
   reportId?: number;
-  headCoach?: { userId: number; teamId: number };
-  headOfDept?: { headId: number; departmentId: number };
+  headCoach?: { userId: string; teamId: number };
+  headOfDept?: { headId: string; departmentId: number };
   categories?: { id: number; scope: "TEAM" | "DEPARTMENT" }[];
 }) => {
   const reportUpdates: any[] = [];
@@ -78,7 +78,7 @@ describe("BudgetPlanRequestService.openReview", () => {
     const service = new BudgetPlanRequestService(prisma as PrismaClient);
 
     const before = Date.now();
-    await service.openReview(1, 999);
+    await service.openReview(1, "00000000-0000-4000-8000-000000000999");
     const after = Date.now();
 
     const update = prisma.__reportUpdates[0];
@@ -90,14 +90,14 @@ describe("BudgetPlanRequestService.openReview", () => {
     expect(opened).toBeGreaterThanOrEqual(before);
     expect(opened).toBeLessThanOrEqual(after);
     expect(deadline - opened).toBe(REVIEW_DAYS * 24 * 60 * 60 * 1000);
-    expect(update.data.planStatusChangedById).toBe(999);
+    expect(update.data.planStatusChangedById).toBe("00000000-0000-4000-8000-000000000999");
   });
 
   test("planStatus !== DRAFT → 409 INVALID_PLAN_STATUS_TRANSITION", async () => {
     const prisma = makePrisma({ reportPlanStatus: "FINALIZED", reportId: 100 });
     const service = new BudgetPlanRequestService(prisma as PrismaClient);
 
-    await expect(service.openReview(1, 999)).rejects.toMatchObject({
+    await expect(service.openReview(1, "00000000-0000-4000-8000-000000000999")).rejects.toMatchObject({
       statusCode: 409,
       code: "INVALID_PLAN_STATUS_TRANSITION",
     });
@@ -108,7 +108,7 @@ describe("BudgetPlanRequestService.openReview", () => {
     const prisma = makePrisma({ reportPlanStatus: null });
     const service = new BudgetPlanRequestService(prisma as PrismaClient);
 
-    await expect(service.openReview(1, 999)).rejects.toMatchObject({
+    await expect(service.openReview(1, "00000000-0000-4000-8000-000000000999")).rejects.toMatchObject({
       statusCode: 404,
       code: "FINANCIAL_REPORT_NOT_FOUND",
     });
@@ -120,7 +120,7 @@ describe("BudgetPlanRequestService.submit", () => {
     const prisma = makePrisma({
       reportPlanStatus: "AWAITING_REVIEW",
       reportId: 100,
-      headCoach: { userId: 500, teamId: 7 },
+      headCoach: { userId: "00000000-0000-4000-8000-000000000500", teamId: 7 },
       categories: [
         { id: 1, scope: "TEAM" },
         { id: 2, scope: "TEAM" },
@@ -128,14 +128,14 @@ describe("BudgetPlanRequestService.submit", () => {
     });
     const service = new BudgetPlanRequestService(prisma as PrismaClient);
 
-    await service.submit(1, 500, [
+    await service.submit(1, "00000000-0000-4000-8000-000000000500", [
       { categoryId: 1, triggers: ["HOME_MATCH"], standardDelta: 100_000, premiumDelta: 200_000 },
       { categoryId: 2, triggers: ["WEEKEND_OVERTIME"], standardDelta: 50_000, premiumDelta: 0 },
     ]);
 
     const create = prisma.__requestCreates[0];
     expect(create.data.financialReportId).toBe(100);
-    expect(create.data.requestedById).toBe(500);
+    expect(create.data.requestedById).toBe("00000000-0000-4000-8000-000000000500");
     expect(create.data.scope).toBe("TEAM");
     expect(create.data.ownerType).toBe("TEAM");
     expect(create.data.ownerId).toBe(7);
@@ -160,12 +160,12 @@ describe("BudgetPlanRequestService.submit", () => {
     const prisma = makePrisma({
       reportPlanStatus: "AWAITING_REVIEW",
       reportId: 100,
-      headOfDept: { headId: 600, departmentId: 3 },
+      headOfDept: { headId: "00000000-0000-4000-8000-000000000600", departmentId: 3 },
       categories: [{ id: 10, scope: "DEPARTMENT" }],
     });
     const service = new BudgetPlanRequestService(prisma as PrismaClient);
 
-    await service.submit(1, 600, [
+    await service.submit(1, "00000000-0000-4000-8000-000000000600", [
       { categoryId: 10, triggers: ["MULTI_LOCATION"], standardDelta: 500_000, premiumDelta: 0 },
     ]);
 
@@ -178,13 +178,13 @@ describe("BudgetPlanRequestService.submit", () => {
     const prisma = makePrisma({
       reportPlanStatus: "AWAITING_REVIEW",
       reportId: 100,
-      headCoach: { userId: 500, teamId: 7 },
+      headCoach: { userId: "00000000-0000-4000-8000-000000000500", teamId: 7 },
       categories: [{ id: 1, scope: "DEPARTMENT" }],
     });
     const service = new BudgetPlanRequestService(prisma as PrismaClient);
 
     await expect(
-      service.submit(1, 500, [
+      service.submit(1, "00000000-0000-4000-8000-000000000500", [
         { categoryId: 1, triggers: ["HOME_MATCH"], standardDelta: 100, premiumDelta: 0 },
       ]),
     ).rejects.toMatchObject({ statusCode: 403, code: "CATEGORY_SCOPE_MISMATCH" });
@@ -200,7 +200,7 @@ describe("BudgetPlanRequestService.submit", () => {
     const service = new BudgetPlanRequestService(prisma as PrismaClient);
 
     await expect(
-      service.submit(1, 999, [{ categoryId: 1, triggers: [], standardDelta: 0, premiumDelta: 0 }]),
+      service.submit(1, "00000000-0000-4000-8000-000000000999", [{ categoryId: 1, triggers: [], standardDelta: 0, premiumDelta: 0 }]),
     ).rejects.toMatchObject({ statusCode: 403, code: "NOT_BUDGET_PLAN_REQUESTER" });
   });
 
@@ -208,13 +208,13 @@ describe("BudgetPlanRequestService.submit", () => {
     const prisma = makePrisma({
       reportPlanStatus: "DRAFT",
       reportId: 100,
-      headCoach: { userId: 500, teamId: 7 },
+      headCoach: { userId: "00000000-0000-4000-8000-000000000500", teamId: 7 },
       categories: [{ id: 1, scope: "TEAM" }],
     });
     const service = new BudgetPlanRequestService(prisma as PrismaClient);
 
     await expect(
-      service.submit(1, 500, [
+      service.submit(1, "00000000-0000-4000-8000-000000000500", [
         { categoryId: 1, triggers: ["HOME_MATCH"], standardDelta: 100, premiumDelta: 0 },
       ]),
     ).rejects.toMatchObject({ statusCode: 409, code: "INVALID_PLAN_STATUS_TRANSITION" });
@@ -224,13 +224,13 @@ describe("BudgetPlanRequestService.submit", () => {
     const prisma = makePrisma({
       reportPlanStatus: "AWAITING_REVIEW",
       reportId: 100,
-      headCoach: { userId: 500, teamId: 7 },
+      headCoach: { userId: "00000000-0000-4000-8000-000000000500", teamId: 7 },
       categories: [{ id: 1, scope: "TEAM" }],
     });
     const service = new BudgetPlanRequestService(prisma as PrismaClient);
 
     await expect(
-      service.submit(1, 500, [
+      service.submit(1, "00000000-0000-4000-8000-000000000500", [
         { categoryId: 999, triggers: [], standardDelta: 0, premiumDelta: 0 },
       ]),
     ).rejects.toMatchObject({ statusCode: 400, code: "UNKNOWN_CATEGORY" });

@@ -19,7 +19,7 @@ const reviewer = (userId: number, email: string | null = "u@example.com") => ({
   email,
   language: "ko",
   scope: "TEAM" as const,
-  ownerId: 1,
+  ownerId: "00000000-0000-4000-8000-000000000001",
 });
 
 describe("notifyBudgetPlanEvent (ADR 0021 channel routing)", () => {

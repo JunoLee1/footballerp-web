@@ -7,7 +7,7 @@ jest.mock("../../src/lib/auditLog", () => ({
   writeAuditLog: jest.fn().mockResolvedValue(undefined),
 }));
 
-const HR_ID = 100;
+const HR_ID = "00000000-0000-4000-8000-000000000100";
 const APPLICATION_ID = 555;
 const DISPATCH_ID = 777;
 
@@ -16,7 +16,8 @@ const fakeFile = {
   filename: "1735-scan.pdf",
   originalname: "신분증.pdf",
   size: 12345,
-};
+  gcsUrl: "/uploads/hiring-documents/1735-scan.pdf",
+} as any;
 
 const makeDoc = (overrides: Partial<any> = {}) => ({
   id: 1,
@@ -190,11 +191,11 @@ describe("HiringDocumentService.review", () => {
     const repo = makeRepo({
       findById: jest.fn().mockResolvedValue(makeDoc({ status: "PENDING" })),
     });
-    const result = await makeService(repo).review(1, { status: "APPROVED" }, 200);
+    const result = await makeService(repo).review(1, { status: "APPROVED" }, "00000000-0000-4000-8000-000000000200");
     expect(result.status).toBe("APPROVED");
     expect(repo.updateReview).toHaveBeenCalledWith(1, {
       status: "APPROVED",
-      reviewerId: 200,
+      reviewerId: "00000000-0000-4000-8000-000000000200",
       reviewNotes: null,
     });
   });
@@ -204,10 +205,10 @@ describe("HiringDocumentService.review", () => {
       findById: jest.fn().mockResolvedValue(makeDoc({ status: "PENDING" })),
     });
     await expect(
-      makeService(repo).review(1, { status: "REJECTED" }, 200),
+      makeService(repo).review(1, { status: "REJECTED" }, "00000000-0000-4000-8000-000000000200"),
     ).rejects.toThrow(new AppError(400, "REVIEW_NOTES_REQUIRED"));
     await expect(
-      makeService(repo).review(1, { status: "REJECTED", reviewNotes: "   " }, 200),
+      makeService(repo).review(1, { status: "REJECTED", reviewNotes: "   " }, "00000000-0000-4000-8000-000000000200"),
     ).rejects.toThrow(new AppError(400, "REVIEW_NOTES_REQUIRED"));
   });
 
@@ -218,11 +219,11 @@ describe("HiringDocumentService.review", () => {
     await makeService(repo).review(
       1,
       { status: "REJECTED", reviewNotes: "  잘못된 문서  " },
-      200,
+      "00000000-0000-4000-8000-000000000200",
     );
     expect(repo.updateReview).toHaveBeenCalledWith(1, {
       status: "REJECTED",
-      reviewerId: 200,
+      reviewerId: "00000000-0000-4000-8000-000000000200",
       reviewNotes: "잘못된 문서",
     });
   });
@@ -230,7 +231,7 @@ describe("HiringDocumentService.review", () => {
   it("throws DOCUMENT_NOT_FOUND when doc missing", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
     await expect(
-      makeService(repo).review(999, { status: "APPROVED" }, 200),
+      makeService(repo).review(999, { status: "APPROVED" }, "00000000-0000-4000-8000-000000000200"),
     ).rejects.toThrow(new AppError(404, "DOCUMENT_NOT_FOUND"));
   });
 
@@ -239,19 +240,19 @@ describe("HiringDocumentService.review", () => {
       findById: jest.fn().mockResolvedValue(makeDoc({ status: "APPROVED" })),
     });
     await expect(
-      makeService(repo).review(1, { status: "REJECTED", reviewNotes: "재검토" }, 200),
+      makeService(repo).review(1, { status: "REJECTED", reviewNotes: "재검토" }, "00000000-0000-4000-8000-000000000200"),
     ).rejects.toThrow(new AppError(409, "DOCUMENT_NOT_PENDING"));
   });
 
   it("throws INVALID_REVIEW_STATUS when status is neither APPROVED nor REJECTED", async () => {
     await expect(
-      makeService().review(1, { status: "PENDING" as any }, 200),
+      makeService().review(1, { status: "PENDING" as any }, "00000000-0000-4000-8000-000000000200"),
     ).rejects.toThrow(new AppError(400, "INVALID_REVIEW_STATUS"));
   });
 
   it("throws REVIEW_NOTES_TOO_LONG when notes exceed 2000 chars", async () => {
     await expect(
-      makeService().review(1, { status: "APPROVED", reviewNotes: "x".repeat(2001) }, 200),
+      makeService().review(1, { status: "APPROVED", reviewNotes: "x".repeat(2001) }, "00000000-0000-4000-8000-000000000200"),
     ).rejects.toThrow(new AppError(400, "REVIEW_NOTES_TOO_LONG"));
   });
 });

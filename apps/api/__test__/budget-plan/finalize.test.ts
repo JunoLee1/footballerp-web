@@ -42,7 +42,7 @@ const makePrisma = (opts: {
     },
     budgetPlanRequest: {
       findFirst: jest.fn().mockResolvedValue(
-        opts.fmSelfRequest ? { id: 500, requestedById: 999 } : null,
+        opts.fmSelfRequest ? { id: 500, requestedById: "00000000-0000-4000-8000-000000000999" } : null,
       ),
     },
     season: {

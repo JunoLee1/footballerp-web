@@ -19,13 +19,13 @@ describe('runInspectionDueAlert', () => {
     mockPrisma.equipmentUnit.findMany.mockResolvedValue([
       { id: 10, item: { name: 'Training Vest' }, nextInspectionDue: dueDate },
     ]);
-    mockPrisma.user.findMany.mockResolvedValue([{ id: 1 }]);
+    mockPrisma.user.findMany.mockResolvedValue([{ id: "00000000-0000-4000-8000-000000000001" }]);
 
     await runInspectionDueAlert(mockPrisma);
 
     expect(mockPrisma.notification.create).toHaveBeenCalledTimes(1);
     expect(mockPrisma.notification.create).toHaveBeenCalledWith(
-      expect.objectContaining({ data: expect.objectContaining({ userId: 1 }) })
+      expect.objectContaining({ data: expect.objectContaining({ userId: "00000000-0000-4000-8000-000000000001" }) })
     );
   });
 

@@ -31,6 +31,7 @@ const mockRepo = {
   addNegotiationLog: jest.fn<() => Promise<any>>(),
   getNegotiationLogs: jest.fn<() => Promise<any[]>>(),
   checkDuplicate: jest.fn<() => Promise<any>>().mockResolvedValue({ prospects: [], squadPlayers: [] }),
+  getClubLeagueCountryIds: jest.fn<() => Promise<number[]>>().mockResolvedValue([]),
 } as any;
 
 const service = new ProspectService(mockRepo);
@@ -159,8 +160,8 @@ describe("ProspectService - create", () => {
 // ─── create (club scoping) ───────────────────────────────────────────────────
 
 describe("ProspectService - create (club scoping)", () => {
-  const actorWithClub = { id: 10, role: "ADMIN", clubId: 5 } as any;
-  const actorNoClub = { id: 11, role: "FRONT_OFFICE", clubId: null } as any;
+  const actorWithClub = { id: "00000000-0000-4000-8000-000000000010", role: "ADMIN", clubId: 5 } as any;
+  const actorNoClub = { id: "00000000-0000-4000-8000-000000000011", role: "FRONT_OFFICE", clubId: null } as any;
 
   beforeEach(() => jest.clearAllMocks());
 
@@ -170,7 +171,9 @@ describe("ProspectService - create (club scoping)", () => {
     await service.create({ nationalityId: 1, name: "테스터" } as any, actorWithClub);
     expect(mockRepo.create).toHaveBeenCalledWith(
       expect.objectContaining({ nationalityId: 1 }),
-      5
+      5,
+      actorWithClub.id,
+      undefined,
     );
   });
 
@@ -178,7 +181,7 @@ describe("ProspectService - create (club scoping)", () => {
     mockRepo.checkDuplicate.mockResolvedValue({ prospects: [], squadPlayers: [] });
     mockRepo.create.mockResolvedValue(activeProspect);
     await service.create({ nationalityId: 1, name: "테스터" } as any, actorNoClub);
-    expect(mockRepo.create).toHaveBeenCalledWith(expect.any(Object), null);
+    expect(mockRepo.create).toHaveBeenCalledWith(expect.any(Object), null, actorNoClub.id, undefined);
   });
 });
 
@@ -207,9 +210,11 @@ describe("ProspectService - getById (club scoping)", () => {
 describe("ProspectService.addNegotiationLog", () => {
   beforeEach(() => jest.clearAllMocks());
 
+  const CREATED_BY_UUID = "00000000-0000-4000-8000-000000000010";
+
   test("SIGNED이면 409", async () => {
     mockRepo.findById.mockResolvedValue(signedProspect);
-    await expect(service.addNegotiationLog(1, { type: "CLUB_TO_CLUB", note: "첫 제안" }, 10))
+    await expect(service.addNegotiationLog(1, { type: "CLUB_TO_CLUB", note: "첫 제안" }, CREATED_BY_UUID))
       .rejects.toMatchObject({ statusCode: 409, code: "CANNOT_LOG_NEGOTIATION_ON_NON_ACTIVE" });
   });
 
@@ -218,8 +223,8 @@ describe("ProspectService.addNegotiationLog", () => {
     mockRepo.findById.mockResolvedValue(contractPending);
     const log = { id: 1, type: "PLAYER", note: "연봉 협상" };
     mockRepo.addNegotiationLog.mockResolvedValue(log);
-    const result = await service.addNegotiationLog(1, { type: "PLAYER", note: "연봉 협상" }, 10);
-    expect(mockRepo.addNegotiationLog).toHaveBeenCalledWith(1, { type: "PLAYER", note: "연봉 협상" }, 10);
+    const result = await service.addNegotiationLog(1, { type: "PLAYER", note: "연봉 협상" }, CREATED_BY_UUID);
+    expect(mockRepo.addNegotiationLog).toHaveBeenCalledWith(1, { type: "PLAYER", note: "연봉 협상" }, CREATED_BY_UUID);
     expect(result.id).toBe(1);
   });
 

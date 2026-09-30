@@ -14,7 +14,7 @@ const controller = new TransferController(mockService);
 
 const mockReq = (overrides: any) =>
   ({
-    user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+    user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null },
     body: {},
     params: {},
     query: {},
@@ -37,7 +37,7 @@ describe("TransferController - createTransfer", () => {
 
   test("ADMIN can create Transfer → 201", async () => {
     const req = mockReq({
-      user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null },
       body: { type: "PERMANENT" },
     });
     const res = mockRes();
@@ -48,7 +48,7 @@ describe("TransferController - createTransfer", () => {
 
   test("TD (FRONT_OFFICE) can create Transfer → 201", async () => {
     const req = mockReq({
-      user: { id: 2, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TD" },
+      user: { id: "00000000-0000-4000-8000-000000000002", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TD" },
       body: { type: "LOAN_OUT" },
     });
     const res = mockRes();
@@ -59,7 +59,7 @@ describe("TransferController - createTransfer", () => {
 
   test("CONTRACT_MANAGER can create Transfer → 201", async () => {
     const req = mockReq({
-      user: { id: 3, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "CONTRACT_MANAGER" },
+      user: { id: "00000000-0000-4000-8000-000000000003", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "CONTRACT_MANAGER" },
       body: { type: "FREE" },
     });
     const res = mockRes();
@@ -70,7 +70,7 @@ describe("TransferController - createTransfer", () => {
 
   test("GM can create Transfer → 201", async () => {
     const req = mockReq({
-      user: { id: 4, role: "GM", coachingRole: null, frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000004", role: "GM", coachingRole: null, frontOfficeRole: null },
       body: { type: "PERMANENT" },
     });
     const res = mockRes();
@@ -81,7 +81,7 @@ describe("TransferController - createTransfer", () => {
 
   test("SCOUT (FRONT_OFFICE) cannot create Transfer → 403", async () => {
     const req = mockReq({
-      user: { id: 5, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "SCOUT" },
+      user: { id: "00000000-0000-4000-8000-000000000005", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "SCOUT" },
       body: { type: "PERMANENT" },
     });
     const res = mockRes();
@@ -94,7 +94,7 @@ describe("TransferController - createTransfer", () => {
 
   test("TACTICAL_ANALYST (FRONT_OFFICE) cannot create Transfer → 403", async () => {
     const req = mockReq({
-      user: { id: 6, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
+      user: { id: "00000000-0000-4000-8000-000000000006", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
       body: { type: "PERMANENT" },
     });
     const res = mockRes();
@@ -107,7 +107,7 @@ describe("TransferController - createTransfer", () => {
 
   test("COACHING_STAFF cannot create Transfer → 403", async () => {
     const req = mockReq({
-      user: { id: 7, role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000007", role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null },
       body: { type: "PERMANENT" },
     });
     const res = mockRes();

@@ -39,9 +39,9 @@ describe("TrainingService.approveSession — eval warning", () => {
         { attendance: "ABSENT_AUTHORIZED",  performanceScore: null },
       ],
     });
-    mockRepo.approve.mockResolvedValue({ id: 1, isApproved: true, approvedById: 99 });
+    mockRepo.approve.mockResolvedValue({ id: 1, isApproved: true, approvedById: "00000000-0000-4000-8000-000000000099" });
 
-    const result = await service.approveSession(1, 99) as any;
+    const result = await service.approveSession(1, "00000000-0000-4000-8000-000000000099") as any;
     expect(result.evalWarning).toEqual({ missing: 1, total: 2 });
   });
 
@@ -53,9 +53,9 @@ describe("TrainingService.approveSession — eval warning", () => {
         { attendance: "ABSENT_AUTHORIZED",  performanceScore: null },
       ],
     });
-    mockRepo.approve.mockResolvedValue({ id: 1, isApproved: true, approvedById: 99 });
+    mockRepo.approve.mockResolvedValue({ id: 1, isApproved: true, approvedById: "00000000-0000-4000-8000-000000000099" });
 
-    const result = await service.approveSession(1, 99) as any;
+    const result = await service.approveSession(1, "00000000-0000-4000-8000-000000000099") as any;
     expect(result.evalWarning).toBeUndefined();
   });
 });

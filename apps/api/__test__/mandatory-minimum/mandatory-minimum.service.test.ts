@@ -109,7 +109,7 @@ describe("MandatoryMinimumService.propose", () => {
     const prisma = makePrisma({ planId: 10, planMandatoryMinimum: 100_000 });
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
 
-    const created = await svc.propose(10, validDto(), 42);
+    const created = await svc.propose(10, validDto(), "00000000-0000-4000-8000-000000000042");
 
     expect(prisma.__updatedMany[0]).toEqual({
       where: { categoryPlanId: 10, status: "PENDING" },
@@ -124,7 +124,7 @@ describe("MandatoryMinimumService.propose", () => {
       evidenceType: "CONTRACT",
       evidenceUrl: "https://example.com/contract.pdf",
       status: "PENDING",
-      proposedById: 42,
+      proposedById: "00000000-0000-4000-8000-000000000042",
     });
 
     // Transaction 은 [updateMany, create] 순으로 호출 → create 결과가 두 번째
@@ -134,7 +134,7 @@ describe("MandatoryMinimumService.propose", () => {
   test("categoryPlan 없음 → 404 CATEGORY_PLAN_NOT_FOUND", async () => {
     const prisma = makePrisma({ planId: null });
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
-    await expect(svc.propose(999, validDto(), 42)).rejects.toMatchObject({
+    await expect(svc.propose(999, validDto(), "00000000-0000-4000-8000-000000000042")).rejects.toMatchObject({
       statusCode: 404,
       code: "CATEGORY_PLAN_NOT_FOUND",
     });
@@ -144,7 +144,7 @@ describe("MandatoryMinimumService.propose", () => {
     const prisma = makePrisma();
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
     await expect(
-      svc.propose(10, { ...validDto(), reason: "   " }, 42),
+      svc.propose(10, { ...validDto(), reason: "   " }, "00000000-0000-4000-8000-000000000042"),
     ).rejects.toMatchObject({ statusCode: 400, code: "REASON_REQUIRED" });
   });
 
@@ -152,14 +152,14 @@ describe("MandatoryMinimumService.propose", () => {
     const prisma = makePrisma();
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
     await expect(
-      svc.propose(10, { ...validDto(), newAmount: -1 }, 42),
+      svc.propose(10, { ...validDto(), newAmount: -1 }, "00000000-0000-4000-8000-000000000042"),
     ).rejects.toMatchObject({ statusCode: 400, code: "AMOUNT_MUST_BE_NON_NEGATIVE" });
   });
 
   test("newAmount 0 은 허용", async () => {
     const prisma = makePrisma({ planId: 10 });
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
-    await svc.propose(10, { ...validDto(), newAmount: 0 }, 42);
+    await svc.propose(10, { ...validDto(), newAmount: 0 }, "00000000-0000-4000-8000-000000000042");
     expect(prisma.__created[0].args.data.newAmount).toBe(0);
   });
 
@@ -167,7 +167,7 @@ describe("MandatoryMinimumService.propose", () => {
     const prisma = makePrisma();
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
     await expect(
-      svc.propose(10, { ...validDto(), evidenceType: "CONTRACT", evidenceUrl: null }, 42),
+      svc.propose(10, { ...validDto(), evidenceType: "CONTRACT", evidenceUrl: null }, "00000000-0000-4000-8000-000000000042"),
     ).rejects.toMatchObject({ statusCode: 400, code: "EVIDENCE_URL_REQUIRED" });
   });
 
@@ -175,7 +175,7 @@ describe("MandatoryMinimumService.propose", () => {
     const prisma = makePrisma();
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
     await expect(
-      svc.propose(10, { ...validDto(), evidenceType: "LEGAL", evidenceUrl: "  " }, 42),
+      svc.propose(10, { ...validDto(), evidenceType: "LEGAL", evidenceUrl: "  " }, "00000000-0000-4000-8000-000000000042"),
     ).rejects.toMatchObject({ statusCode: 400, code: "EVIDENCE_URL_REQUIRED" });
   });
 
@@ -185,7 +185,7 @@ describe("MandatoryMinimumService.propose", () => {
     await svc.propose(
       10,
       { ...validDto(), evidenceType: "FIXED_COST", evidenceUrl: null },
-      42,
+      "00000000-0000-4000-8000-000000000042",
     );
     expect(prisma.__created[0].args.data.evidenceType).toBe("FIXED_COST");
     expect(prisma.__created[0].args.data.evidenceUrl).toBeNull();
@@ -195,7 +195,7 @@ describe("MandatoryMinimumService.propose", () => {
     const prisma = makePrisma();
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
     await expect(
-      svc.propose(10, { ...validDto(), evidenceType: "OTHER" as any }, 42),
+      svc.propose(10, { ...validDto(), evidenceType: "OTHER" as any }, "00000000-0000-4000-8000-000000000042"),
     ).rejects.toMatchObject({ statusCode: 400, code: "INVALID_EVIDENCE_TYPE" });
   });
 
@@ -203,7 +203,7 @@ describe("MandatoryMinimumService.propose", () => {
     const prisma = makePrisma();
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
     await expect(
-      svc.propose(10, { ...validDto(), effectiveDate: new Date("invalid") }, 42),
+      svc.propose(10, { ...validDto(), effectiveDate: new Date("invalid") }, "00000000-0000-4000-8000-000000000042"),
     ).rejects.toMatchObject({ statusCode: 400, code: "INVALID_EFFECTIVE_DATE" });
   });
 });
@@ -212,7 +212,7 @@ describe("MandatoryMinimumService.review", () => {
   test("REJECTED without note → 400 REVIEW_NOTE_REQUIRED_FOR_REJECT", async () => {
     const prisma = makePrisma({ logStatus: "PENDING" });
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
-    await expect(svc.review(500, "REJECTED", undefined, 999)).rejects.toMatchObject({
+    await expect(svc.review(500, "REJECTED", undefined, "00000000-0000-4000-8000-000000000999")).rejects.toMatchObject({
       statusCode: 400,
       code: "REVIEW_NOTE_REQUIRED_FOR_REJECT",
     });
@@ -221,7 +221,7 @@ describe("MandatoryMinimumService.review", () => {
   test("decision 잘못됨 → 400 DECISION_MUST_BE_APPROVED_OR_REJECTED", async () => {
     const prisma = makePrisma({ logStatus: "PENDING" });
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
-    await expect(svc.review(500, "MAYBE" as any, "n", 999)).rejects.toMatchObject({
+    await expect(svc.review(500, "MAYBE" as any, "n", "00000000-0000-4000-8000-000000000999")).rejects.toMatchObject({
       statusCode: 400,
       code: "DECISION_MUST_BE_APPROVED_OR_REJECTED",
     });
@@ -230,7 +230,7 @@ describe("MandatoryMinimumService.review", () => {
   test("log 없음 → 404 LOG_NOT_FOUND", async () => {
     const prisma = makePrisma({ logStatus: null });
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
-    await expect(svc.review(500, "APPROVED", undefined, 999)).rejects.toMatchObject({
+    await expect(svc.review(500, "APPROVED", undefined, "00000000-0000-4000-8000-000000000999")).rejects.toMatchObject({
       statusCode: 404,
       code: "LOG_NOT_FOUND",
     });
@@ -239,7 +239,7 @@ describe("MandatoryMinimumService.review", () => {
   test("log.status !== PENDING → 409 ALREADY_REVIEWED", async () => {
     const prisma = makePrisma({ logStatus: "APPROVED" });
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
-    await expect(svc.review(500, "APPROVED", undefined, 999)).rejects.toMatchObject({
+    await expect(svc.review(500, "APPROVED", undefined, "00000000-0000-4000-8000-000000000999")).rejects.toMatchObject({
       statusCode: 409,
       code: "ALREADY_REVIEWED",
     });
@@ -253,13 +253,13 @@ describe("MandatoryMinimumService.review", () => {
     });
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
 
-    await svc.review(500, "APPROVED", "OK", 999);
+    await svc.review(500, "APPROVED", "OK", "00000000-0000-4000-8000-000000000999");
 
     // log update
     const logUpdate = prisma.__updated[0].args;
     expect(logUpdate.where.id).toBe(500);
     expect(logUpdate.data.status).toBe("APPROVED");
-    expect(logUpdate.data.reviewedById).toBe(999);
+    expect(logUpdate.data.reviewedById).toBe("00000000-0000-4000-8000-000000000999");
     expect(logUpdate.data.reviewNote).toBe("OK");
 
     // plan update — mandatoryMinimum = 250_000
@@ -276,7 +276,7 @@ describe("MandatoryMinimumService.review", () => {
     });
     const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
 
-    await svc.review(500, "REJECTED", "근거 부족", 999);
+    await svc.review(500, "REJECTED", "근거 부족", "00000000-0000-4000-8000-000000000999");
 
     const logUpdate = prisma.__updated[0].args;
     expect(logUpdate.data.status).toBe("REJECTED");
@@ -300,7 +300,7 @@ describe("MandatoryMinimumService.review", () => {
         notifier as any,
       );
 
-      await svc.review(500, "APPROVED", "OK", 999);
+      await svc.review(500, "APPROVED", "OK", "00000000-0000-4000-8000-000000000999");
 
       expect(notifier).toHaveBeenCalledTimes(1);
       const [seasonId, categoryPlanId, detection] = notifier.mock.calls[0] as any;
@@ -329,7 +329,7 @@ describe("MandatoryMinimumService.review", () => {
         notifier as any,
       );
 
-      await svc.review(500, "APPROVED", "OK", 999);
+      await svc.review(500, "APPROVED", "OK", "00000000-0000-4000-8000-000000000999");
 
       expect(notifier).toHaveBeenCalledTimes(1);
       const [, , detection] = notifier.mock.calls[0] as any;
@@ -345,7 +345,7 @@ describe("MandatoryMinimumService.review", () => {
       });
       const svc = new MandatoryMinimumService(prisma as unknown as PrismaClient);
       // notifier 없어도 예외 없이 update 반영
-      await svc.review(500, "APPROVED", "OK", 999);
+      await svc.review(500, "APPROVED", "OK", "00000000-0000-4000-8000-000000000999");
       expect(prisma.__updatedPlan[0].args.data.mandatoryMinimum).toBe(250_000);
     });
 
@@ -364,7 +364,7 @@ describe("MandatoryMinimumService.review", () => {
         notifier as any,
       );
 
-      await svc.review(500, "REJECTED", "근거 부족", 999);
+      await svc.review(500, "REJECTED", "근거 부족", "00000000-0000-4000-8000-000000000999");
 
       expect(notifier).not.toHaveBeenCalled();
     });
@@ -387,7 +387,7 @@ describe("MandatoryMinimumService.review", () => {
       const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
       try {
         // review 자체는 정상적으로 updated 를 반환해야 함
-        const result = await svc.review(500, "APPROVED", "OK", 999);
+        const result = await svc.review(500, "APPROVED", "OK", "00000000-0000-4000-8000-000000000999");
         expect(result).toBeDefined();
         expect(consoleErrorSpy).toHaveBeenCalledWith(
           "[mm] post-review violation notify failed",

@@ -8,7 +8,7 @@ const makeService = () => ({
 });
 
 function makeReq(role: string, foRole: string | null = null): any {
-  return { user: { id: 1, role, frontOfficeRole: foRole, departmentCategories: [] }, query: {}, body: {}, params: {} };
+  return { user: { id: "00000000-0000-4000-8000-000000000001", role, frontOfficeRole: foRole, departmentCategories: [] }, query: {}, body: {}, params: {} };
 }
 function makeRes(): any {
   return { json: jest.fn(), status: jest.fn().mockReturnThis() };

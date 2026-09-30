@@ -69,7 +69,7 @@ describe("applyCarryOverToNextSeason", () => {
   it("skips write when next season has a manual override", async () => {
     const p = makePrisma({
       financialReport: {
-        findUnique: jest.fn().mockResolvedValue({ carryOverOverriddenById: 5 }),
+        findUnique: jest.fn().mockResolvedValue({ carryOverOverriddenById: "00000000-0000-4000-8000-000000000005" }),
         upsert: jest.fn(),
       },
     });

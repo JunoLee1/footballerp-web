@@ -8,7 +8,7 @@ const mockService = {
 };
 
 const mockReq = (overrides: Record<string, unknown> = {}) => ({
-  user: { id: 10, role: "PLAYER" },
+  user: { id: "00000000-0000-4000-8000-000000000010", role: "PLAYER" },
   params: { id: "player-uuid-1" },
   body: {},
   ...overrides,
@@ -36,7 +36,7 @@ describe("PlayerController — updateMyInfo (RC18)", () => {
   });
 
   test("PLAYER can update their own emergency contacts", async () => {
-    mockService.getPlayerById.mockResolvedValue({ id: "player-uuid-1", userId: 10 });
+    mockService.getPlayerById.mockResolvedValue({ id: "player-uuid-1", userId: "00000000-0000-4000-8000-000000000010" });
     mockService.updatePlayer.mockResolvedValue({ id: "player-uuid-1", emergencyContactName: "Jane" });
 
     const req = mockReq({ body: { emergencyContactName: "Jane" } }) as any;
@@ -46,12 +46,12 @@ describe("PlayerController — updateMyInfo (RC18)", () => {
 
     expect(mockService.updatePlayer).toHaveBeenCalledWith("player-uuid-1", {
       emergencyContactName: "Jane",
-    });
+    }, undefined);
     expect(res.json).toHaveBeenCalled();
   });
 
   test("returns 403 if player does not own the record", async () => {
-    mockService.getPlayerById.mockResolvedValue({ id: "player-uuid-1", userId: 99 }); // different user
+    mockService.getPlayerById.mockResolvedValue({ id: "player-uuid-1", userId: "00000000-0000-4000-8000-000000000099" }); // different user
 
     const req = mockReq({ body: { emergencyContactName: "Jane" } }) as any;
     const res = mockRes();
@@ -62,7 +62,7 @@ describe("PlayerController — updateMyInfo (RC18)", () => {
   });
 
   test("strips non-allowed fields from body", async () => {
-    mockService.getPlayerById.mockResolvedValue({ id: "player-uuid-1", userId: 10 });
+    mockService.getPlayerById.mockResolvedValue({ id: "player-uuid-1", userId: "00000000-0000-4000-8000-000000000010" });
     mockService.updatePlayer.mockResolvedValue({ id: "player-uuid-1" });
 
     const req = mockReq({

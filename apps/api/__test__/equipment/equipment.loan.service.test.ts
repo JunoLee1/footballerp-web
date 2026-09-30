@@ -16,7 +16,7 @@ const mockEquipmentRepo = {
   findUnreturnedByPlayer: jest.fn(),
   findAssignmentById: jest.fn(),
   markReturned: jest.fn(),
-  findEquipmentManagers: jest.fn<() => Promise<{ id: number }[]>>().mockResolvedValue([{ id: 10 }]),
+  findEquipmentManagers: jest.fn<() => Promise<{ id: string }[]>>().mockResolvedValue([{ id: "00000000-0000-4000-8000-000000000010" }]),
   findLoanById: jest.fn(),
   findAllLoans: jest.fn(),
   findMyLoans: jest.fn(),
@@ -41,40 +41,40 @@ describe("EquipmentService - requestLoan · dueDate", () => {
     jest.clearAllMocks();
     mockEquipmentRepo.findItemById.mockResolvedValue({ id: 1, name: "훈련화", quantity: 5 });
     mockEquipmentRepo.hasActiveOverdueLoan.mockResolvedValue(null);
-    mockEquipmentRepo.findEquipmentManagers.mockResolvedValue([{ id: 10 }]);
+    mockEquipmentRepo.findEquipmentManagers.mockResolvedValue([{ id: "00000000-0000-4000-8000-000000000010" }]);
   });
 
   test("dueDate 지정 → 대여 신청 생성 + EQUIPMENT_MANAGER 알림", async () => {
-    await service.requestLoan(99, { equipmentItemId: 1, dueDate: FUTURE_DUE });
+    await service.requestLoan("00000000-0000-4000-8000-000000000099", { equipmentItemId: 1, dueDate: FUTURE_DUE });
     expect(mockEquipmentRepo.createLoan).toHaveBeenCalledWith(
-      99,
+      "00000000-0000-4000-8000-000000000099",
       expect.objectContaining({ equipmentItemId: 1, dueDate: FUTURE_DUE }),
       undefined,
     );
     expect(mockNotificationRepo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 10, type: "EQUIPMENT_LOAN_REQUESTED" }),
+      expect.objectContaining({ userId: "00000000-0000-4000-8000-000000000010", type: "EQUIPMENT_LOAN_REQUESTED" }),
     );
   });
 
   test("dueDate 누락 → 400 DUE_DATE_REQUIRED", async () => {
-    await expect(service.requestLoan(99, { equipmentItemId: 1 } as any))
+    await expect(service.requestLoan("00000000-0000-4000-8000-000000000099", { equipmentItemId: 1 } as any))
       .rejects.toMatchObject({ code: "DUE_DATE_REQUIRED" });
     expect(mockEquipmentRepo.createLoan).not.toHaveBeenCalled();
   });
 
   test("dueDate 형식 오류 → 400 INVALID_DUE_DATE", async () => {
-    await expect(service.requestLoan(99, { equipmentItemId: 1, dueDate: "not-a-date" }))
+    await expect(service.requestLoan("00000000-0000-4000-8000-000000000099", { equipmentItemId: 1, dueDate: "not-a-date" }))
       .rejects.toMatchObject({ code: "INVALID_DUE_DATE" });
   });
 
   test("과거 dueDate → 400 DUE_DATE_MUST_BE_FUTURE", async () => {
-    await expect(service.requestLoan(99, { equipmentItemId: 1, dueDate: PAST_DUE }))
+    await expect(service.requestLoan("00000000-0000-4000-8000-000000000099", { equipmentItemId: 1, dueDate: PAST_DUE }))
       .rejects.toMatchObject({ code: "DUE_DATE_MUST_BE_FUTURE" });
   });
 
   test("활성 연체 대여 있으면 403 HAS_ACTIVE_OVERDUE_LOAN", async () => {
     mockEquipmentRepo.hasActiveOverdueLoan.mockResolvedValue({ id: 42 });
-    await expect(service.requestLoan(99, { equipmentItemId: 1, dueDate: FUTURE_DUE }))
+    await expect(service.requestLoan("00000000-0000-4000-8000-000000000099", { equipmentItemId: 1, dueDate: FUTURE_DUE }))
       .rejects.toMatchObject({ code: "HAS_ACTIVE_OVERDUE_LOAN" });
     expect(mockEquipmentRepo.createLoan).not.toHaveBeenCalled();
   });
@@ -84,14 +84,14 @@ describe("EquipmentService - approveLoan / rejectLoan", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("REQUESTED 상태의 대여 승인", async () => {
-    mockEquipmentRepo.findLoanById.mockResolvedValue({ id: 1, status: "REQUESTED", requestedBy: { id: 5 }, equipmentItem: { name: "훈련화" } });
-    await service.approveLoan(1, 10);
-    expect(mockEquipmentRepo.updateLoan).toHaveBeenCalledWith(1, expect.objectContaining({ status: "APPROVED", approvedById: 10 }));
+    mockEquipmentRepo.findLoanById.mockResolvedValue({ id: 1, status: "REQUESTED", requestedBy: { id: "00000000-0000-4000-8000-000000000005" }, equipmentItem: { name: "훈련화" } });
+    await service.approveLoan(1, "00000000-0000-4000-8000-000000000010");
+    expect(mockEquipmentRepo.updateLoan).toHaveBeenCalledWith(1, expect.objectContaining({ status: "APPROVED", approvedById: "00000000-0000-4000-8000-000000000010" }));
   });
 
   test("REQUESTED가 아닌 상태에서 approveLoan 시 409", async () => {
-    mockEquipmentRepo.findLoanById.mockResolvedValue({ id: 1, status: "ISSUED", requestedBy: { id: 5 }, equipmentItem: { name: "훈련화" } });
-    await expect(service.approveLoan(1, 10)).rejects.toMatchObject({ code: "INVALID_LOAN_STATUS_TRANSITION" });
+    mockEquipmentRepo.findLoanById.mockResolvedValue({ id: 1, status: "ISSUED", requestedBy: { id: "00000000-0000-4000-8000-000000000005" }, equipmentItem: { name: "훈련화" } });
+    await expect(service.approveLoan(1, "00000000-0000-4000-8000-000000000010")).rejects.toMatchObject({ code: "INVALID_LOAN_STATUS_TRANSITION" });
   });
 });
 
@@ -102,9 +102,9 @@ describe("EquipmentService - returnLoan · latency audit", () => {
     const dueDate = new Date(Date.now() + 7 * 86_400_000);
     mockEquipmentRepo.findLoanById.mockResolvedValue({
       id: 1, status: "ISSUED", dueDate, equipmentUnitId: null,
-      requestedBy: { id: 5 }, equipmentItem: { name: "훈련화" },
+      requestedBy: { id: "00000000-0000-4000-8000-000000000005" }, equipmentItem: { name: "훈련화" },
     });
-    await service.returnLoan(1, 10);
+    await service.returnLoan(1, "00000000-0000-4000-8000-000000000010");
     expect(writeAuditLog).toHaveBeenCalledWith(expect.objectContaining({
       action: "EQUIPMENT_LOAN_RETURNED",
       targetId: 1,
@@ -116,9 +116,9 @@ describe("EquipmentService - returnLoan · latency audit", () => {
     const dueDate = new Date(Date.now() - 3 * 86_400_000);
     mockEquipmentRepo.findLoanById.mockResolvedValue({
       id: 1, status: "ISSUED", dueDate, equipmentUnitId: null,
-      requestedBy: { id: 5 }, equipmentItem: { name: "훈련화" },
+      requestedBy: { id: "00000000-0000-4000-8000-000000000005" }, equipmentItem: { name: "훈련화" },
     });
-    await service.returnLoan(1, 10, "지연 반납");
+    await service.returnLoan(1, "00000000-0000-4000-8000-000000000010", "지연 반납");
     expect(writeAuditLog).toHaveBeenCalledWith(expect.objectContaining({
       detail: expect.objectContaining({
         latencyDays: expect.any(Number),
@@ -132,8 +132,8 @@ describe("EquipmentService - returnLoan · latency audit", () => {
   test("ISSUED가 아닌 상태에서 returnLoan → 409", async () => {
     mockEquipmentRepo.findLoanById.mockResolvedValue({
       id: 1, status: "APPROVED", dueDate: new Date(),
-      requestedBy: { id: 5 }, equipmentItem: { name: "훈련화" },
+      requestedBy: { id: "00000000-0000-4000-8000-000000000005" }, equipmentItem: { name: "훈련화" },
     });
-    await expect(service.returnLoan(1, 10)).rejects.toMatchObject({ code: "INVALID_LOAN_STATUS_TRANSITION" });
+    await expect(service.returnLoan(1, "00000000-0000-4000-8000-000000000010")).rejects.toMatchObject({ code: "INVALID_LOAN_STATUS_TRANSITION" });
   });
 });

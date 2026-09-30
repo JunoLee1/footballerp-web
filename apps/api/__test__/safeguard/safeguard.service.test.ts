@@ -10,8 +10,11 @@ const mockRepo = {
   findAll: jest.fn<() => Promise<any[]>>().mockResolvedValue([]),
   findById: jest.fn(),
   updateStatus: jest.fn(),
-  suspendUser: jest.fn<() => Promise<any>>().mockResolvedValue({ id: 5, isSuspended: true }),
-  findEmergencyRecipients: jest.fn<() => Promise<any[]>>().mockResolvedValue([{ id: 1 }, { id: 2 }]),
+  suspendUser: jest.fn<() => Promise<any>>().mockResolvedValue({ id: "00000000-0000-4000-8000-000000000005", isSuspended: true }),
+  findEmergencyRecipients: jest.fn<() => Promise<any[]>>().mockResolvedValue([
+    { id: "00000000-0000-4000-8000-000000000001" },
+    { id: "00000000-0000-4000-8000-000000000002" },
+  ]),
   createExternalReports: jest.fn<() => Promise<any>>().mockResolvedValue({ count: 3 }),
 } as any
 
@@ -32,10 +35,10 @@ describe('SafeguardService - submit', () => {
   })
 
   test('accusedUserId 있으면 계정 정지 처리', async () => {
-    mockRepo.create.mockResolvedValue({ id: 2, description: '폭행', status: 'RECEIVED', accusedUserId: 5 })
-    await service.submit({ description: '폭행 목격 신고입니다', accusedUserId: 5 })
+    mockRepo.create.mockResolvedValue({ id: 2, description: '폭행', status: 'RECEIVED', accusedUserId: "00000000-0000-4000-8000-000000000005" })
+    await service.submit({ description: '폭행 목격 신고입니다', accusedUserId: "00000000-0000-4000-8000-000000000005" })
     await new Promise(r => setTimeout(r, 10)) // fire-and-forget 대기
-    expect(mockRepo.suspendUser).toHaveBeenCalledWith(5)
+    expect(mockRepo.suspendUser).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000005")
   })
 
   test('accusedUserId 없으면 계정 정지 없음', async () => {
@@ -52,7 +55,7 @@ describe('SafeguardService - submit', () => {
     expect(mockRepo.findEmergencyRecipients).toHaveBeenCalled()
     expect(mockNotifRepo.createForUser).toHaveBeenCalledTimes(2)
     expect(mockNotifRepo.createForUser).toHaveBeenCalledWith(
-      1, 'SAFEGUARD_EMERGENCY', expect.any(Function), 4,
+      "00000000-0000-4000-8000-000000000001", 'SAFEGUARD_EMERGENCY', expect.any(Function), 4,
     )
   })
 

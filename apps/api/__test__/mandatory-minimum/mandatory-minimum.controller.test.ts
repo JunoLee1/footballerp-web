@@ -28,11 +28,11 @@ function buildApp(user: Express.User | null) {
   return app;
 }
 
-const asFM = { id: 1, role: "FRONT_OFFICE", frontOfficeRole: "FINANCE_MANAGER", coachingRole: null } as any;
-const asGM = { id: 2, role: "GM", frontOfficeRole: null, coachingRole: null } as any;
-const asSuper = { id: 3, role: "SUPER_ADMIN", frontOfficeRole: null, coachingRole: null } as any;
-const asHR = { id: 4, role: "FRONT_OFFICE", frontOfficeRole: "HR_MANAGER", coachingRole: null } as any;
-const asCoach = { id: 5, role: "COACHING_STAFF", frontOfficeRole: null, coachingRole: "HEAD_COACH" } as any;
+const asFM = { id: "00000000-0000-4000-8000-000000000001", role: "FRONT_OFFICE", frontOfficeRole: "FINANCE_MANAGER", coachingRole: null } as any;
+const asGM = { id: "00000000-0000-4000-8000-000000000002", role: "GM", frontOfficeRole: null, coachingRole: null } as any;
+const asSuper = { id: "00000000-0000-4000-8000-000000000003", role: "SUPER_ADMIN", frontOfficeRole: null, coachingRole: null } as any;
+const asHR = { id: "00000000-0000-4000-8000-000000000004", role: "FRONT_OFFICE", frontOfficeRole: "HR_MANAGER", coachingRole: null } as any;
+const asCoach = { id: "00000000-0000-4000-8000-000000000005", role: "COACHING_STAFF", frontOfficeRole: null, coachingRole: "HEAD_COACH" } as any;
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -61,7 +61,7 @@ describe("POST /budget-category-plans/:id/mandatory-minimum — propose (FM only
         evidenceUrl: "https://x.com/c.pdf",
         reason: "임대료 인상",
       }),
-      1,
+      "00000000-0000-4000-8000-000000000001",
     );
   });
 
@@ -137,7 +137,7 @@ describe("POST /mandatory-minimum-changes/:id/review — review (GM only)", () =
       .post("/mandatory-minimum-changes/500/review")
       .send({ decision: "APPROVED", note: "OK" });
     expect(res.status).toBe(200);
-    expect(mockService.review).toHaveBeenCalledWith(500, "APPROVED", "OK", 2);
+    expect(mockService.review).toHaveBeenCalledWith(500, "APPROVED", "OK", "00000000-0000-4000-8000-000000000002");
   });
 
   test("FM → 403 (review 는 GM only)", async () => {

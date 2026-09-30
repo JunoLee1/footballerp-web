@@ -4,8 +4,8 @@ import type { PrismaClient } from "../../src/generated/client";
 const makePrisma = (opts: {
   planStatus?: string;
   categoryScope?: "TEAM" | "DEPARTMENT";
-  headCoach?: { userId: number; teamId: number };
-  headOfDept?: { headId: number; departmentId: number };
+  headCoach?: { userId: string; teamId: number };
+  headOfDept?: { headId: string; departmentId: number };
   logStatus?: string;
   logAmount?: number;
   totalOperatingBudget?: number;
@@ -95,24 +95,24 @@ describe("BudgetOverrideService.requestOverride (#407)", () => {
     const prisma = makePrisma({
       planStatus: "FINALIZED",
       categoryScope: "TEAM",
-      headCoach: { userId: 500, teamId: 7 },
+      headCoach: { userId: "00000000-0000-4000-8000-000000000500", teamId: 7 },
     });
     const service = new BudgetOverrideService(prisma as any as PrismaClient);
-    const result = await service.requestOverride(1, 500, {
+    const result = await service.requestOverride(1, "00000000-0000-4000-8000-000000000500", {
       categoryId: 1,
       amount: 150_000,
       reason: "긴급 원정 지원비",
     });
     expect(result.id).toBe(500);
     expect(prisma.__logs[0].status).toBe("PENDING");
-    expect(prisma.__logs[0].createdById).toBe(500);
+    expect(prisma.__logs[0].createdById).toBe("00000000-0000-4000-8000-000000000500");
   });
 
   test("planStatus !== FINALIZED → 409", async () => {
     const prisma = makePrisma({ planStatus: "KNAPSACK_EXECUTED" });
     const service = new BudgetOverrideService(prisma as any as PrismaClient);
     await expect(
-      service.requestOverride(1, 500, { categoryId: 1, amount: 100, reason: "x" }),
+      service.requestOverride(1, "00000000-0000-4000-8000-000000000500", { categoryId: 1, amount: 100, reason: "x" }),
     ).rejects.toMatchObject({ statusCode: 409, code: "INVALID_PLAN_STATUS_TRANSITION" });
   });
 
@@ -120,11 +120,11 @@ describe("BudgetOverrideService.requestOverride (#407)", () => {
     const prisma = makePrisma({
       planStatus: "FINALIZED",
       categoryScope: "DEPARTMENT",
-      headCoach: { userId: 500, teamId: 7 },
+      headCoach: { userId: "00000000-0000-4000-8000-000000000500", teamId: 7 },
     });
     const service = new BudgetOverrideService(prisma as any as PrismaClient);
     await expect(
-      service.requestOverride(1, 500, { categoryId: 1, amount: 100, reason: "x" }),
+      service.requestOverride(1, "00000000-0000-4000-8000-000000000500", { categoryId: 1, amount: 100, reason: "x" }),
     ).rejects.toMatchObject({ statusCode: 403, code: "CATEGORY_SCOPE_MISMATCH" });
   });
 
@@ -132,11 +132,11 @@ describe("BudgetOverrideService.requestOverride (#407)", () => {
     const prisma = makePrisma({
       planStatus: "FINALIZED",
       categoryScope: "TEAM",
-      headCoach: { userId: 500, teamId: 7 },
+      headCoach: { userId: "00000000-0000-4000-8000-000000000500", teamId: 7 },
     });
     const service = new BudgetOverrideService(prisma as any as PrismaClient);
     await expect(
-      service.requestOverride(1, 500, { categoryId: 1, amount: 0, reason: "x" }),
+      service.requestOverride(1, "00000000-0000-4000-8000-000000000500", { categoryId: 1, amount: 0, reason: "x" }),
     ).rejects.toMatchObject({ statusCode: 400, code: "AMOUNT_MUST_BE_POSITIVE" });
   });
 });
@@ -151,7 +151,7 @@ describe("BudgetOverrideService.reviewOverride (#407)", () => {
     });
     const service = new BudgetOverrideService(prisma as any as PrismaClient);
 
-    await service.reviewOverride(500, 999, "APPROVED", "OK");
+    await service.reviewOverride(500, "00000000-0000-4000-8000-000000000999", "APPROVED", "OK");
 
     const logUpdate = prisma.__logUpdates.at(-1);
     expect(logUpdate.data.status).toBe("APPROVED");
@@ -164,7 +164,7 @@ describe("BudgetOverrideService.reviewOverride (#407)", () => {
     const prisma = makePrisma({ logStatus: "PENDING", logAmount: 100_000 });
     const service = new BudgetOverrideService(prisma as any as PrismaClient);
 
-    await service.reviewOverride(500, 999, "REJECTED", "예산 초과");
+    await service.reviewOverride(500, "00000000-0000-4000-8000-000000000999", "REJECTED", "예산 초과");
 
     expect(prisma.__logUpdates.at(-1).data.status).toBe("REJECTED");
     expect(prisma.__planUpdates).toHaveLength(0);
@@ -173,7 +173,7 @@ describe("BudgetOverrideService.reviewOverride (#407)", () => {
   test("logStatus !== PENDING → 409", async () => {
     const prisma = makePrisma({ logStatus: "APPROVED" });
     const service = new BudgetOverrideService(prisma as any as PrismaClient);
-    await expect(service.reviewOverride(500, 999, "APPROVED")).rejects.toMatchObject({
+    await expect(service.reviewOverride(500, "00000000-0000-4000-8000-000000000999", "APPROVED")).rejects.toMatchObject({
       statusCode: 409,
       code: "INVALID_OVERRIDE_STATUS_TRANSITION",
     });
@@ -188,7 +188,7 @@ describe("BudgetOverrideService.reviewOverride (#407)", () => {
       existingAllocations: [200_000, 300_000],
     });
     const service = new BudgetOverrideService(prisma as any as PrismaClient);
-    await expect(service.reviewOverride(500, 999, "APPROVED")).rejects.toMatchObject({
+    await expect(service.reviewOverride(500, "00000000-0000-4000-8000-000000000999", "APPROVED")).rejects.toMatchObject({
       statusCode: 409,
       code: "OVERRIDE_EXCEEDS_TOTAL_BUDGET",
     });

@@ -29,12 +29,12 @@ const mockService = {
 const controller = new DepartmentController(mockService);
 
 const user = {
-  admin:       { id: 1, role: "ADMIN",         coachingRole: null, frontOfficeRole: null },
-  gm:          { id: 2, role: "GM",             coachingRole: null, frontOfficeRole: null },
-  frontOffice: { id: 3, role: "FRONT_OFFICE",   coachingRole: null, frontOfficeRole: null },
-  deptHead:    { id: 4, role: "FRONT_OFFICE",   coachingRole: null, frontOfficeRole: null },
-  coaching:    { id: 5, role: "COACHING_STAFF", coachingRole: null, frontOfficeRole: null },
-  player:      { id: 6, role: "PLAYER",         coachingRole: null, frontOfficeRole: null },
+  admin:       { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN",         coachingRole: null, frontOfficeRole: null },
+  gm:          { id: "00000000-0000-4000-8000-000000000002", role: "GM",             coachingRole: null, frontOfficeRole: null },
+  frontOffice: { id: "00000000-0000-4000-8000-000000000003", role: "FRONT_OFFICE",   coachingRole: null, frontOfficeRole: null },
+  deptHead:    { id: "00000000-0000-4000-8000-000000000004", role: "FRONT_OFFICE",   coachingRole: null, frontOfficeRole: null },
+  coaching:    { id: "00000000-0000-4000-8000-000000000005", role: "COACHING_STAFF", coachingRole: null, frontOfficeRole: null },
+  player:      { id: "00000000-0000-4000-8000-000000000006", role: "PLAYER",         coachingRole: null, frontOfficeRole: null },
 };
 
 const mockReq = (overrides: any) =>

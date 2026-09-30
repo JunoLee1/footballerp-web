@@ -17,10 +17,10 @@ describe("NotificationRepository - createForGuardian", () => {
 
   test("sends notification to specific guardian user", async () => {
     const getMsg = (_lang: string) => ({ title: "입단 승인", body: "승인되었습니다." });
-    await repo.createForGuardian(10, "YOUTH_REGISTRATION_STATUS_CHANGED", getMsg, 5);
+    await repo.createForGuardian("00000000-0000-4000-8000-000000000010", "YOUTH_REGISTRATION_STATUS_CHANGED", getMsg, 5);
     expect(mockPrisma.notification.create).toHaveBeenCalledWith({
       data: expect.objectContaining({
-        userId: 10,
+        userId: "00000000-0000-4000-8000-000000000010",
         type: "YOUTH_REGISTRATION_STATUS_CHANGED",
         title: "입단 승인",
         body: "승인되었습니다.",

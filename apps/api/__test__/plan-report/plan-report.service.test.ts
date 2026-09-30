@@ -47,7 +47,7 @@ function makePlan(overrides: Record<string, unknown> = {}) {
     hasContract: false,
     hasExternalLease: false,
     hasPersonalInfo: false,
-    department: { id: 10, name: '운영팀', headId: 7 },
+    department: { id: 10, name: '운영팀', headId: "00000000-0000-4000-8000-000000000007" },
     ...overrides,
   }
 }
@@ -62,7 +62,7 @@ describe('submit — HR templateType은 항상 ADMIN 승인 레벨이어야 한�
     mockRepo.submit.mockResolvedValue({ id: 1, status: 'REVIEWING' })
 
     // userId 7 matches headId 7
-    await service.submit(1, 7)
+    await service.submit(1, "00000000-0000-4000-8000-000000000007")
 
     expect(mockRepo.submit).toHaveBeenCalledWith(
       1,
@@ -81,7 +81,7 @@ describe('submit — HR templateType 은 재무팀을 reviewer 로 자동 포함
     })
     mockRepo.submit.mockResolvedValue({ id: 1, status: 'REVIEWING' })
 
-    await service.submit(1, 7)
+    await service.submit(1, "00000000-0000-4000-8000-000000000007")
 
     const call = mockRepo.submit.mock.calls[0]
     expect(call[1]).toContain(55)
@@ -95,7 +95,7 @@ describe('submit — HR templateType 은 재무팀을 reviewer 로 자동 포함
     })
     mockRepo.submit.mockResolvedValue({ id: 1, status: 'REVIEWING' })
 
-    await service.submit(1, 7)
+    await service.submit(1, "00000000-0000-4000-8000-000000000007")
 
     const call = mockRepo.submit.mock.calls[0]
     expect(call[1]).not.toContain(55)
@@ -110,7 +110,7 @@ describe('submit — HR templateType 은 재무팀을 reviewer 로 자동 포함
     })
     mockRepo.submit.mockResolvedValue({ id: 1, status: 'REVIEWING' })
 
-    await service.submit(1, 7)
+    await service.submit(1, "00000000-0000-4000-8000-000000000007")
 
     expect(warnSpy).toHaveBeenCalledWith(expect.stringMatching(/finance/i))
     warnSpy.mockRestore()
@@ -128,7 +128,7 @@ describe('submit — GENERAL 예산 초과 시 GM 승인 레벨', () => {
     })
     mockRepo.submit.mockResolvedValue({ id: 1, status: 'REVIEWING' })
 
-    await service.submit(1, 7)
+    await service.submit(1, "00000000-0000-4000-8000-000000000007")
 
     expect(mockRepo.submit).toHaveBeenCalledWith(
       1,
@@ -195,7 +195,7 @@ describe('PlanReportRepository.findApprovedHrReports', () => {
 })
 
 describe('PlanReportService.cancelHiringPlanItem', () => {
-  const ACTOR_ID = 42
+  const ACTOR_ID = "00000000-0000-4000-8000-000000000042"
   const makeCtx = (repoOverrides: any = {}) => {
     const repo = {
       findHiringPlanItemById: jest.fn(),

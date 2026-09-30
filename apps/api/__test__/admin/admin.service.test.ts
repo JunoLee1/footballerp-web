@@ -1,6 +1,11 @@
 import { describe, test, jest, expect, beforeEach } from "@jest/globals";
 import { AdminService } from "../../src/admin/admin.service";
 
+const REQUESTER = "00000000-0000-4000-8000-000000000001";
+const USER_2 = "00000000-0000-4000-8000-000000000002";
+const USER_3 = "00000000-0000-4000-8000-000000000003";
+const USER_99 = "00000000-0000-4000-8000-000000000099";
+
 const mockRepo = {
   listUsers: jest.fn<() => Promise<any[]>>().mockResolvedValue([]),
   findById: jest.fn(),
@@ -20,9 +25,9 @@ describe("AdminService - listUsers", () => {
 
   test("delegates to repo with filters", async () => {
     const filters = { role: "COACHING_STAFF" as const };
-    mockRepo.listUsers.mockResolvedValue([{ id: 1 }]);
+    mockRepo.listUsers.mockResolvedValue([{ id: REQUESTER }]);
     const result = await service.listUsers(filters);
-    expect(mockRepo.listUsers).toHaveBeenCalledWith(filters);
+    expect(mockRepo.listUsers).toHaveBeenCalledWith(filters, undefined);
     expect(result).toHaveLength(1);
   });
 });
@@ -31,14 +36,14 @@ describe("AdminService - getUserById", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("returns user when found", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 1, username: "juno", isDeleted: false });
-    const result = await service.getUserById(1);
-    expect(result.id).toBe(1);
+    mockRepo.findById.mockResolvedValue({ id: REQUESTER, username: "juno", isDeleted: false });
+    const result = await service.getUserById(REQUESTER);
+    expect(result.id).toBe(REQUESTER);
   });
 
   test("throws 404 when not found", async () => {
     mockRepo.findById.mockResolvedValue(null);
-    await expect(service.getUserById(99)).rejects.toMatchObject({
+    await expect(service.getUserById(USER_99)).rejects.toMatchObject({
       statusCode: 404,
       code: "USER_NOT_FOUND",
     });
@@ -49,7 +54,7 @@ describe("AdminService - updateUserRole", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("cannot change own role → 403", async () => {
-    await expect(service.updateUserRole(1, { role: "FRONT_OFFICE" }, 1)).rejects.toMatchObject({
+    await expect(service.updateUserRole(REQUESTER, { role: "FRONT_OFFICE" }, REQUESTER)).rejects.toMatchObject({
       statusCode: 403,
       code: "CANNOT_MODIFY_SELF",
     });
@@ -57,28 +62,28 @@ describe("AdminService - updateUserRole", () => {
 
   test("throws 404 when user not found", async () => {
     mockRepo.findById.mockResolvedValue(null);
-    await expect(service.updateUserRole(2, { role: "FRONT_OFFICE" }, 1)).rejects.toMatchObject({
+    await expect(service.updateUserRole(USER_2, { role: "FRONT_OFFICE" }, REQUESTER)).rejects.toMatchObject({
       statusCode: 404,
       code: "USER_NOT_FOUND",
     });
   });
 
   test("clears coachingRole when switching from COACHING_STAFF to FRONT_OFFICE", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 2, role: "COACHING_STAFF", coachingRole: "HEAD_COACH" });
-    mockRepo.updateRole.mockResolvedValue({ id: 2, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "GM" });
+    mockRepo.findById.mockResolvedValue({ id: USER_2, role: "COACHING_STAFF", coachingRole: "HEAD_COACH" });
+    mockRepo.updateRole.mockResolvedValue({ id: USER_2, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "GM" });
 
-    await service.updateUserRole(2, { role: "FRONT_OFFICE", frontOfficeRole: "GM" }, 1);
+    await service.updateUserRole(USER_2, { role: "FRONT_OFFICE", frontOfficeRole: "GM" }, REQUESTER, "SUPER_ADMIN");
 
-    expect(mockRepo.updateRole).toHaveBeenCalledWith(2, "FRONT_OFFICE", null, "GM", undefined);
+    expect(mockRepo.updateRole).toHaveBeenCalledWith(USER_2, "FRONT_OFFICE", null, "GM", undefined);
   });
 
   test("clears frontOfficeRole when switching to COACHING_STAFF", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 3, role: "FRONT_OFFICE", frontOfficeRole: "SCOUT" });
-    mockRepo.updateRole.mockResolvedValue({ id: 3, role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null });
+    mockRepo.findById.mockResolvedValue({ id: USER_3, role: "FRONT_OFFICE", frontOfficeRole: "SCOUT" });
+    mockRepo.updateRole.mockResolvedValue({ id: USER_3, role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null });
 
-    await service.updateUserRole(3, { role: "COACHING_STAFF", coachingRole: "HEAD_COACH" }, 1);
+    await service.updateUserRole(USER_3, { role: "COACHING_STAFF", coachingRole: "HEAD_COACH" }, REQUESTER);
 
-    expect(mockRepo.updateRole).toHaveBeenCalledWith(3, "COACHING_STAFF", "HEAD_COACH", null, undefined);
+    expect(mockRepo.updateRole).toHaveBeenCalledWith(USER_3, "COACHING_STAFF", "HEAD_COACH", null, undefined);
   });
 });
 
@@ -86,7 +91,7 @@ describe("AdminService - deactivateUser", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("cannot deactivate self → 403", async () => {
-    await expect(service.deactivateUser(1, 1)).rejects.toMatchObject({
+    await expect(service.deactivateUser(REQUESTER, REQUESTER)).rejects.toMatchObject({
       statusCode: 403,
       code: "CANNOT_MODIFY_SELF",
     });
@@ -94,19 +99,19 @@ describe("AdminService - deactivateUser", () => {
 
   test("throws 404 when user not found", async () => {
     mockRepo.findById.mockResolvedValue(null);
-    await expect(service.deactivateUser(2, 1)).rejects.toMatchObject({
+    await expect(service.deactivateUser(USER_2, REQUESTER)).rejects.toMatchObject({
       statusCode: 404,
       code: "USER_NOT_FOUND",
     });
   });
 
   test("sets isDeleted = true", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 2, isDeleted: false });
-    mockRepo.setDeleted.mockResolvedValue({ id: 2, isDeleted: true });
+    mockRepo.findById.mockResolvedValue({ id: USER_2, isDeleted: false });
+    mockRepo.setDeleted.mockResolvedValue({ id: USER_2, isDeleted: true });
 
-    await service.deactivateUser(2, 1);
+    await service.deactivateUser(USER_2, REQUESTER);
 
-    expect(mockRepo.setDeleted).toHaveBeenCalledWith(2, true);
+    expect(mockRepo.setDeleted).toHaveBeenCalledWith(USER_2, true);
   });
 });
 
@@ -115,19 +120,19 @@ describe("AdminService - reactivateUser", () => {
 
   test("throws 404 when not found", async () => {
     mockRepo.findById.mockResolvedValue(null);
-    await expect(service.reactivateUser(2)).rejects.toMatchObject({
+    await expect(service.reactivateUser(USER_2)).rejects.toMatchObject({
       statusCode: 404,
       code: "USER_NOT_FOUND",
     });
   });
 
   test("sets isDeleted = false", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 2, isDeleted: true });
-    mockRepo.setDeleted.mockResolvedValue({ id: 2, isDeleted: false });
+    mockRepo.findById.mockResolvedValue({ id: USER_2, isDeleted: true });
+    mockRepo.setDeleted.mockResolvedValue({ id: USER_2, isDeleted: false });
 
-    await service.reactivateUser(2);
+    await service.reactivateUser(USER_2);
 
-    expect(mockRepo.setDeleted).toHaveBeenCalledWith(2, false);
+    expect(mockRepo.setDeleted).toHaveBeenCalledWith(USER_2, false);
   });
 });
 
@@ -135,7 +140,7 @@ describe("AdminService - deleteUser", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("cannot delete self → 403", async () => {
-    await expect(service.deleteUser(1, 1)).rejects.toMatchObject({
+    await expect(service.deleteUser(REQUESTER, REQUESTER)).rejects.toMatchObject({
       statusCode: 403,
       code: "CANNOT_MODIFY_SELF",
     });
@@ -143,36 +148,36 @@ describe("AdminService - deleteUser", () => {
 
   test("throws 404 when user not found", async () => {
     mockRepo.findById.mockResolvedValue(null);
-    await expect(service.deleteUser(2, 1)).rejects.toMatchObject({
+    await expect(service.deleteUser(USER_2, REQUESTER)).rejects.toMatchObject({
       statusCode: 404,
       code: "USER_NOT_FOUND",
     });
   });
 
   test("throws 409 when user has linked contracts", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 2, isDeleted: false });
+    mockRepo.findById.mockResolvedValue({ id: USER_2, isDeleted: false });
     mockRepo.getLinkedData.mockResolvedValue({
       player: null,
       _count: { managedContracts: 2, createdSessions: 0, approvedSessions: 0, tacticalAnalyses: 0, managedInjuries: 0, agentPlayers: 0, recallRequests: 0, recallApprovals: 0 },
     });
 
-    await expect(service.deleteUser(2, 1)).rejects.toMatchObject({
+    await expect(service.deleteUser(USER_2, REQUESTER)).rejects.toMatchObject({
       statusCode: 409,
       code: "USER_HAS_LINKED_DATA",
     });
   });
 
   test("hard deletes when no linked data", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 2, isDeleted: true });
+    mockRepo.findById.mockResolvedValue({ id: USER_2, isDeleted: true });
     mockRepo.getLinkedData.mockResolvedValue({
       player: null,
       _count: { managedContracts: 0, createdSessions: 0, approvedSessions: 0, tacticalAnalyses: 0, managedInjuries: 0, agentPlayers: 0, recallRequests: 0, recallApprovals: 0 },
     });
     mockRepo.hardDelete.mockResolvedValue(undefined);
 
-    await service.deleteUser(2, 1);
+    await service.deleteUser(USER_2, REQUESTER);
 
-    expect(mockRepo.hardDelete).toHaveBeenCalledWith(2);
+    expect(mockRepo.hardDelete).toHaveBeenCalledWith(USER_2);
   });
 });
 
@@ -181,7 +186,7 @@ describe("AdminService - listUsers (isDemo masking)", () => {
 
   test("isDemo=false이면 email/username 원본 반환", async () => {
     mockRepo.listUsers.mockResolvedValue([
-      { id: 1, email: "hong@kfa.kr", username: "hong_gildong", nickname: "홍길동", role: "ADMIN", isDemo: false },
+      { id: REQUESTER, email: "hong@kfa.kr", username: "hong_gildong", nickname: "홍길동", role: "ADMIN", isDemo: false },
     ]);
     const result = await service.listUsers({}, false);
     expect(result[0]!.email).toBe("hong@kfa.kr");
@@ -190,7 +195,7 @@ describe("AdminService - listUsers (isDemo masking)", () => {
 
   test("isDemo=true이면 email/username 마스킹", async () => {
     mockRepo.listUsers.mockResolvedValue([
-      { id: 1, email: "hong@kfa.kr", username: "hong_gildong", nickname: "홍길동", role: "ADMIN", isDemo: false },
+      { id: REQUESTER, email: "hong@kfa.kr", username: "hong_gildong", nickname: "홍길동", role: "ADMIN", isDemo: false },
     ]);
     const result = await service.listUsers({}, true);
     expect(result[0]!.email).toBe("ho***@kfa.kr");
@@ -202,8 +207,8 @@ describe("AdminService - getUserById (isDemo masking)", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("isDemo=true이면 단건 조회도 마스킹", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 1, email: "abc@test.com", username: "abcdef", nickname: "테스트", role: "ADMIN" });
-    const result = await service.getUserById(1, true);
+    mockRepo.findById.mockResolvedValue({ id: REQUESTER, email: "abc@test.com", username: "abcdef", nickname: "테스트", role: "ADMIN" });
+    const result = await service.getUserById(REQUESTER, true);
     expect(result.email).toBe("a***@test.com");
     expect(result.username).toBe("abc***");
   });
@@ -215,7 +220,7 @@ describe("AdminService - getAuditLogs (isDemo masking)", () => {
   test("isDemo=true이면 actor.username 마스킹", async () => {
     mockRepo.listAuditLogs.mockResolvedValue([
       { id: 1, action: "ROLE_UPDATE", targetId: 2, detail: {}, createdAt: new Date(),
-        actor: { id: 1, username: "hong_gildong", nickname: "홍길동", role: "ADMIN" } },
+        actor: { id: REQUESTER, username: "hong_gildong", nickname: "홍길동", role: "ADMIN" } },
     ]);
     mockRepo.countAuditLogs.mockResolvedValue(1);
     const { logs } = await service.getAuditLogs({}, true);
@@ -225,7 +230,7 @@ describe("AdminService - getAuditLogs (isDemo masking)", () => {
   test("isDemo=false이면 actor.username 원본", async () => {
     mockRepo.listAuditLogs.mockResolvedValue([
       { id: 1, action: "ROLE_UPDATE", targetId: 2, detail: {}, createdAt: new Date(),
-        actor: { id: 1, username: "hong_gildong", nickname: "홍길동", role: "ADMIN" } },
+        actor: { id: REQUESTER, username: "hong_gildong", nickname: "홍길동", role: "ADMIN" } },
     ]);
     mockRepo.countAuditLogs.mockResolvedValue(1);
     const { logs } = await service.getAuditLogs({}, false);
@@ -237,7 +242,7 @@ describe("AdminService - setDemoStatus", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("자기 자신에게는 설정 불가 → 403", async () => {
-    await expect(service.setDemoStatus(1, { isDemo: true }, 1)).rejects.toMatchObject({
+    await expect(service.setDemoStatus(REQUESTER, { isDemo: true }, REQUESTER)).rejects.toMatchObject({
       statusCode: 403,
       code: "CANNOT_MODIFY_SELF",
     });
@@ -245,17 +250,17 @@ describe("AdminService - setDemoStatus", () => {
 
   test("대상 유저 없으면 404", async () => {
     mockRepo.findById.mockResolvedValue(null);
-    await expect(service.setDemoStatus(2, { isDemo: true }, 1)).rejects.toMatchObject({
+    await expect(service.setDemoStatus(USER_2, { isDemo: true }, REQUESTER)).rejects.toMatchObject({
       statusCode: 404,
       code: "USER_NOT_FOUND",
     });
   });
 
   test("isDemo 설정 성공", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 2, isDemo: false });
-    mockRepo.setDemo.mockResolvedValue({ id: 2, isDemo: true });
-    const result = await service.setDemoStatus(2, { isDemo: true }, 1);
-    expect(mockRepo.setDemo).toHaveBeenCalledWith(2, true);
+    mockRepo.findById.mockResolvedValue({ id: USER_2, isDemo: false });
+    mockRepo.setDemo.mockResolvedValue({ id: USER_2, isDemo: true });
+    const result = await service.setDemoStatus(USER_2, { isDemo: true }, REQUESTER);
+    expect(mockRepo.setDemo).toHaveBeenCalledWith(USER_2, true);
     expect(result.isDemo).toBe(true);
   });
 });
