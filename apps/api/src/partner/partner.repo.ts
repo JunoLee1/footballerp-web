@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/client";
+import { PrismaClient, Prisma } from "../generated/client";
 import { PartnerType } from "../generated/enums";
 import { CreatePartnerContractDto, UpdatePartnerContractDto } from "./dto/partner.dto";
 
@@ -46,9 +46,9 @@ export class PartnerRepository {
     });
   }
 
-  // #593 — 서비스에서 암호화 필드로 확장 후 넘어오므로 raw payload 를 그대로 spread.
-  // dto 타입은 CreatePartnerDto 초과 필드 포함 → any 로 완화 (서비스에서 이미 검증).
-  create(data: any) {
+  // #593 — 서비스에서 암호화 필드로 확장 후 넘어오므로 Prisma 의 UncheckedCreateInput
+  // 타입으로 받아 spread. 서비스가 name·type 필수 필드 검증.
+  create(data: Prisma.PartnerUncheckedCreateInput) {
     return this.prisma.partner.create({
       data: {
         type: data.type,
@@ -76,7 +76,7 @@ export class PartnerRepository {
     });
   }
 
-  update(id: number, data: any) {
+  update(id: number, data: Prisma.PartnerUncheckedUpdateInput) {
     return this.prisma.partner.update({
       where: { id },
       data: {

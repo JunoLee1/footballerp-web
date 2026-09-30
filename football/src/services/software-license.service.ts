@@ -27,7 +27,7 @@ export interface SoftwareLicense {
 export interface CreateSoftwareLicenseDto {
   name: string
   vendor: string
-  partnerId?: number  // (PR C 예정: 등록된 Partner FK 강제)
+  partnerId?: string  // (PR C 예정: 등록된 Partner FK 강제)
   totalSeats: number
   expiresAt?: string
   renewalCost?: number
@@ -46,7 +46,7 @@ export interface CreateSoftwareLicenseDto {
 export interface UpdateSoftwareLicenseDto {
   name?: string
   vendor?: string
-  partnerId?: number | null
+  partnerId?: string | null
   totalSeats?: number
   expiresAt?: string
   renewalCost?: number

@@ -3,7 +3,7 @@ import type { LicenseSupplyType } from "../../generated/enums";
 export interface CreateSoftwareLicenseDto {
   name: string;
   vendor: string;
-  partnerId?: number;         // #593 — 등록된 Partner FK (권장)
+  partnerId?: string;         // #593 — 등록된 Partner FK (권장)
   totalSeats: number;
   expiresAt?: string;
   renewalCost?: number;
@@ -22,7 +22,7 @@ export interface CreateSoftwareLicenseDto {
 export interface UpdateSoftwareLicenseDto {
   name?: string;
   vendor?: string;
-  partnerId?: number | null;
+  partnerId?: string | null;
   totalSeats?: number;
   expiresAt?: string;
   renewalCost?: number;
