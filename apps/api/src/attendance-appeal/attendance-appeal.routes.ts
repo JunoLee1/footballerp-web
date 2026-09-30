@@ -18,7 +18,7 @@ router.post("/", auth, async (req, res, next) => {
   try {
     const { id } = requireUser(req);
     const { trainingResultId, requestedStatus, reason } = req.body as {
-      trainingResultId: number;
+      trainingResultId: string;
       requestedStatus: string;
       reason: string;
     };

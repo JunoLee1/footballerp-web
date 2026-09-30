@@ -23,13 +23,13 @@ export class BudgetControlService {
     return cached(key, 30, () => this.repo.findAll(seasonId));
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const header = await this.repo.findById(id);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
     return header;
   }
 
-  async update(id: number, dto: UpdateBudgetHeaderDto) {
+  async update(id: string, dto: UpdateBudgetHeaderDto) {
     const header = await this.repo.findById(id);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
     if (header.status === "APPROVED" || header.status === "LOCKED")
@@ -37,7 +37,7 @@ export class BudgetControlService {
     return this.repo.updateHeader(id, dto);
   }
 
-  async submit(id: number, userId: string) {
+  async submit(id: string, userId: string) {
     const header = await this.repo.findById(id);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
     if (header.status === "APPROVED" || header.status === "LOCKED")
@@ -46,7 +46,7 @@ export class BudgetControlService {
     return this.repo.updateStatus(id, "SUBMITTED");
   }
 
-  async approve(id: number, approverId: string) {
+  async approve(id: string, approverId: string) {
     const header = await this.repo.findById(id);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
     if (header.status !== "SUBMITTED") throw new AppError(400, "BUDGET_NOT_SUBMITTED");
@@ -56,7 +56,7 @@ export class BudgetControlService {
     return result;
   }
 
-  async getAvailableBudget(id: number) {
+  async getAvailableBudget(id: string) {
     const header = await this.repo.findById(id);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
 
@@ -100,7 +100,7 @@ export class BudgetControlService {
     };
   }
 
-  async addLine(headerId: number, dto: CreateBudgetLineDto) {
+  async addLine(headerId: string, dto: CreateBudgetLineDto) {
     const header = await this.repo.findById(headerId);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
     if (header.status === "APPROVED" || header.status === "LOCKED")
@@ -112,7 +112,7 @@ export class BudgetControlService {
     return this.repo.createLine(headerId, { ...dto, categoryId });
   }
 
-  async updateLine(headerId: number, lineId: number, dto: UpdateBudgetLineDto) {
+  async updateLine(headerId: string, lineId: string, dto: UpdateBudgetLineDto) {
     const header = await this.repo.findById(headerId);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
     if (header.status === "APPROVED" || header.status === "LOCKED")
@@ -122,7 +122,7 @@ export class BudgetControlService {
     return this.repo.updateLine(lineId, dto);
   }
 
-  async deleteLine(headerId: number, lineId: number) {
+  async deleteLine(headerId: string, lineId: string) {
     const header = await this.repo.findById(headerId);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
     if (header.status === "APPROVED" || header.status === "LOCKED")
@@ -132,7 +132,7 @@ export class BudgetControlService {
     return this.repo.deleteLine(lineId);
   }
 
-  async requestAdjustment(headerId: number, dto: CreateAdjustmentDto, createdById: string) {
+  async requestAdjustment(headerId: string, dto: CreateAdjustmentDto, createdById: string) {
     const header = await this.repo.findById(headerId);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
     if (header.status !== "APPROVED" && header.status !== "LOCKED")
@@ -141,7 +141,7 @@ export class BudgetControlService {
     return this.repo.createAdjustment(headerId, dto, createdById);
   }
 
-  async approveAdjustment(headerId: number, adjId: number, approverId: string) {
+  async approveAdjustment(headerId: string, adjId: string, approverId: string) {
     const header = await this.repo.findById(headerId);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
     const adj = header.adjustments.find(a => a.id === adjId);
@@ -153,7 +153,7 @@ export class BudgetControlService {
     return result;
   }
 
-  async rejectAdjustment(headerId: number, adjId: number, approverId: string) {
+  async rejectAdjustment(headerId: string, adjId: string, approverId: string) {
     const header = await this.repo.findById(headerId);
     if (!header) throw new AppError(404, "BUDGET_NOT_FOUND");
     const adj = header.adjustments.find(a => a.id === adjId);
