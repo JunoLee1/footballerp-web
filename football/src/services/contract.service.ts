@@ -15,7 +15,7 @@ export const contractApi = {
   byPlayer: (playerId: string) =>
     api.get<ContractSummary[]>(`/contracts/player/${playerId}`),
 
-  get: (id: number) =>
+  get: (id: string) =>
     api.get<ContractDetail>(`/contracts/${id}`),
 
   create: (payload: {
@@ -28,18 +28,18 @@ export const contractApi = {
     signingBonusScheduledAt?: string
   }) => api.post<ContractCreateResult>('/contracts', payload),
 
-  updateStatus: (id: number, status: ContractStatus) =>
+  updateStatus: (id: string, status: ContractStatus) =>
     api.patch<ContractDetail>(`/contracts/${id}/status`, { status }),
 
-  addBuyout: (contractId: number, amount: number) =>
+  addBuyout: (contractId: string, amount: number) =>
     api.post<ContractDetail>(`/contracts/${contractId}/buyout`, { amount }),
 
-  addExtension: (contractId: number, dto: CreateExtensionDto) =>
+  addExtension: (contractId: string, dto: CreateExtensionDto) =>
     api.post<ContractDetail>(`/contracts/${contractId}/extensions`, dto),
 
-  addBonus: (contractId: number, dto: CreateBonusDto) =>
+  addBonus: (contractId: string, dto: CreateBonusDto) =>
     api.post<ContractDetail>(`/contracts/${contractId}/bonuses`, dto),
 
-  markSigningBonusPaid: (id: number, paidAt?: string) =>
+  markSigningBonusPaid: (id: string, paidAt?: string) =>
     api.patch<ContractDetail>(`/contracts/${id}/signing-bonus-paid`, paidAt ? { paidAt } : {}),
 }

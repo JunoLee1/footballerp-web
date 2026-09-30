@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { ContractService } from "./contract.service";
 
 const WRITE_ROLES = ["ADMIN", "FRONT_OFFICE"] as const;
@@ -29,7 +30,7 @@ export class ContractController {
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = requireUser(req);
-      res.status(200).json(await this.service.getContractById(Number(req.params["id"]), {
+      res.status(200).json(await this.service.getContractById(assertCuid(req.params["id"]), {
         userId: user.id,
         role: user.role,
         frontOfficeRole: user.frontOfficeRole ?? null,
@@ -54,7 +55,7 @@ export class ContractController {
     try {
       const user = requireUser(req);
       if (!isAdminLike(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.updateStatus(Number(req.params["id"]), req.body, user.id));
+      res.status(200).json(await this.service.updateStatus(assertCuid(req.params["id"]), req.body, user.id));
     } catch (err) {
       next(err);
     }
@@ -64,7 +65,7 @@ export class ContractController {
     try {
       const user = requireUser(req);
       if (!(WRITE_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.status(201).json(await this.service.addBuyout(Number(req.params["id"]), req.body, user.id));
+      res.status(201).json(await this.service.addBuyout(assertCuid(req.params["id"]), req.body, user.id));
     } catch (err) {
       next(err);
     }
@@ -74,7 +75,7 @@ export class ContractController {
     try {
       const user = requireUser(req);
       if (!(WRITE_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.status(201).json(await this.service.addExtension(Number(req.params["id"]), req.body, user.id));
+      res.status(201).json(await this.service.addExtension(assertCuid(req.params["id"]), req.body, user.id));
     } catch (err) {
       next(err);
     }
@@ -84,7 +85,7 @@ export class ContractController {
     try {
       const user = requireUser(req);
       if (!(WRITE_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.status(201).json(await this.service.addBonus(Number(req.params["id"]), req.body, user.id));
+      res.status(201).json(await this.service.addBonus(assertCuid(req.params["id"]), req.body, user.id));
     } catch (err) {
       next(err);
     }
@@ -100,7 +101,7 @@ export class ContractController {
           (frontOfficeRole === "FINANCE_MANAGER" || frontOfficeRole === "CONTRACT_MANAGER"));
       if (!canMark) throw new AppError(403, "FORBIDDEN");
       res.status(200).json(
-        await this.service.markSigningBonusPaid(Number(req.params["id"]), req.body, user.id)
+        await this.service.markSigningBonusPaid(assertCuid(req.params["id"]), req.body, user.id)
       );
     } catch (err) {
       next(err);

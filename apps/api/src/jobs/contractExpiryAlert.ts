@@ -38,7 +38,7 @@ export function startContractExpiryAlertJob() {
       for (const contract of contracts) {
         // 중복 방지: 이미 발송한 기록이 있으면 skip
         const alreadySent = await prisma.notification.findFirst({
-          where: { type, entityId: contract.id },
+          where: { type, entityIdStr: contract.id },
         });
         if (alreadySent) continue;
 
