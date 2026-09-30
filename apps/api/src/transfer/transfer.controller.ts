@@ -5,7 +5,8 @@ import { requireUser } from "../lib/authMiddleware";
 import { TransferService } from "./transfer.service";
 import { RecallStatus } from "../generated/enums";
 
-const intId = (raw: unknown): number => {
+const intId = (raw: string | string[] | undefined): number => {
+  if (typeof raw !== "string") throw new AppError(400, "INVALID_ID");
   const n = Number(raw);
   if (!Number.isInteger(n) || n <= 0) throw new AppError(400, "INVALID_ID");
   return n;
