@@ -147,7 +147,7 @@ export class InjuryService {
     return result;
   }
 
-  private async checkAndNotifySquadDepth(entityId: number | string) {
+  private async checkAndNotifySquadDepth(entityId: string) {
     const ZONE_MIN = { GK: 2, DEF: 4, MID: 3, FWD: 2 } as const;
     const ZONE_LABEL = { GK: "골키퍼", DEF: "수비", MID: "미드필더", FWD: "공격" } as const;
     const counts = await this.repo.countAvailableByZone();
