@@ -113,11 +113,11 @@ export class SponsorshipRepository {
     });
   }
 
-  findPaymentById(id: number) {
+  findPaymentById(id: string) {
     return this.prisma.sponsorshipPayment.findUnique({ where: { id } });
   }
 
-  updatePayment(id: number, data: { status: "PAID"; paidAt: Date; adjustedAmount?: number; adjustmentReason?: string; appliedClauseId?: number }) {
+  updatePayment(id: string, data: { status: "PAID"; paidAt: Date; adjustedAmount?: number; adjustmentReason?: string; appliedClauseId?: string }) {
     return this.prisma.sponsorshipPayment.update({
       where: { id },
       data: {

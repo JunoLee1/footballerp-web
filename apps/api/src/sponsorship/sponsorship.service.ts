@@ -125,7 +125,7 @@ export class SponsorshipService {
     return this.applyOverdue(payments);
   }
 
-  async markPaid(sponsorshipId: string, paymentId: number, userId: string, dto: MarkPaidDto = {}) {
+  async markPaid(sponsorshipId: string, paymentId: string, userId: string, dto: MarkPaidDto = {}) {
     const sponsorship = await this.get(sponsorshipId);
     const payment = await this.repo.findPaymentById(paymentId);
     if (!payment || payment.sponsorshipId !== sponsorshipId) {

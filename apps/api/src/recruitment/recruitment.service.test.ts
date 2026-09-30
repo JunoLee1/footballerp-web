@@ -561,7 +561,7 @@ describe("RecruitmentService.bulkCreatePostingsFromPlanReport", () => {
   it("PLANNED 상태 item 들만 posting 생성, 나머지는 skip", async () => {
     const { svc, planRepo } = makeSvcWithBulkContext();
 
-    const result = await svc.bulkCreatePostingsFromPlanReport(1, "42");
+    const result = await svc.bulkCreatePostingsFromPlanReport("cmxtestpr01", "42");
 
     // 2개 PLANNED (101, 103) → posting 생성
     expect(result.created).toHaveLength(2);
@@ -577,7 +577,7 @@ describe("RecruitmentService.bulkCreatePostingsFromPlanReport", () => {
   it("생성된 posting 은 default title/description 갖고, hiringPlanItemId 자동 연결", async () => {
     const { svc, repo } = makeSvcWithBulkContext();
 
-    await svc.bulkCreatePostingsFromPlanReport(1, "42");
+    await svc.bulkCreatePostingsFromPlanReport("cmxtestpr01", "42");
 
     const calls = (repo.createPosting as jest.Mock).mock.calls;
     expect(calls).toHaveLength(2);
@@ -602,7 +602,7 @@ describe("RecruitmentService.bulkCreatePostingsFromPlanReport", () => {
     } as any;
     const svcNoReport = new RecruitmentService(makeRepo(), undefined, planRepo);
 
-    await expect(svcNoReport.bulkCreatePostingsFromPlanReport(999, "42"))
+    await expect(svcNoReport.bulkCreatePostingsFromPlanReport("cmxtestprNOTFOUND", "42"))
       .rejects.toMatchObject({ statusCode: 404, message: "PLAN_REPORT_NOT_FOUND" });
   });
 
@@ -613,7 +613,7 @@ describe("RecruitmentService.bulkCreatePostingsFromPlanReport", () => {
     } as any;
     const svc = new RecruitmentService(makeRepo(), undefined, planRepo);
 
-    await expect(svc.bulkCreatePostingsFromPlanReport(1, "42"))
+    await expect(svc.bulkCreatePostingsFromPlanReport("cmxtestpr01", "42"))
       .rejects.toMatchObject({ statusCode: 409, message: "PLAN_REPORT_NOT_HR_TYPE" });
   });
 
@@ -621,7 +621,7 @@ describe("RecruitmentService.bulkCreatePostingsFromPlanReport", () => {
     const allNonPlanned = items.filter(i => i.status !== "PLANNED");
     const { svc } = makeSvcWithBulkContext(allNonPlanned);
 
-    const result = await svc.bulkCreatePostingsFromPlanReport(1, "42");
+    const result = await svc.bulkCreatePostingsFromPlanReport("cmxtestpr01", "42");
 
     expect(result.created).toHaveLength(0);
     expect(result.skipped).toHaveLength(3);
@@ -929,7 +929,7 @@ describe("RecruitmentService.getWaitlistForPosting", () => {
       ]),
     } as any);
     const svc = new RecruitmentService(repo);
-    const result = await svc.getWaitlistForPosting(100);
+    const result = await svc.getWaitlistForPosting("cmxtestposting0000000100");
     expect(result[0].applicationId).toBe(20); // 15 first
     expect(result[1].applicationId).toBe(10); // 12 second
   });
@@ -939,7 +939,7 @@ describe("RecruitmentService.getWaitlistForPosting", () => {
       findPostingById: jest.fn().mockResolvedValue(null),
     } as any);
     const svc = new RecruitmentService(repo);
-    await expect(svc.getWaitlistForPosting(999))
+    await expect(svc.getWaitlistForPosting("cmxtestposting0000000999"))
       .rejects.toMatchObject({ statusCode: 404, message: "JOB_POSTING_NOT_FOUND" });
   });
 });

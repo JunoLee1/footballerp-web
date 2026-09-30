@@ -11,11 +11,11 @@ export class AccountCodeRepository {
     return this.prisma.accountCode.create({ data });
   }
 
-  update(id: number, data: { name?: string; type?: AccountCodeType }) {
+  update(id: string, data: { name?: string; type?: AccountCodeType }) {
     return this.prisma.accountCode.update({ where: { id }, data });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prisma.accountCode.delete({ where: { id } });
   }
 }

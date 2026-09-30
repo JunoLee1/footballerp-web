@@ -13,9 +13,9 @@ import { ClauseController } from "./clause/clause.controller";
 import { ExposureRepository } from "./exposure/exposure.repo";
 import { ExposureService } from "./exposure/exposure.service";
 import { ExposureController } from "./exposure/exposure.controller";
-import { intIdRouter } from "../lib/idParamGuard";
+import { cuidRouter } from "../lib/cuidGuard";
 
-const router = intIdRouter();
+const router = cuidRouter("id", "paymentId", "clauseId", "sourceId");
 
 const repo = new SponsorshipRepository(getPrisma());
 const service = new SponsorshipService(repo, ledgerService);

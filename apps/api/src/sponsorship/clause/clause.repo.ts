@@ -24,11 +24,11 @@ export class ClauseRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.sponsorshipClause.findUnique({ where: { id } });
   }
 
-  updateStatus(id: number, status: ClauseStatus) {
+  updateStatus(id: string, status: ClauseStatus) {
     return this.prisma.sponsorshipClause.update({
       where: { id },
       data: { status: status as any },

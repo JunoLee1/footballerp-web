@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { canReadFinance, canWriteFinance, isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { MonthlySettlementService } from "./monthly-settlement.service";
 import { generateSettlementExcel } from "./monthly-settlement.excel";
 import type { GenerateSettlementDto } from "./dto/monthly-settlement.dto";
@@ -34,7 +35,7 @@ export class MonthlySettlementController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canReadFinance(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const report = await this.service.getById(id);
       if (!report) throw new AppError(404, "SETTLEMENT_NOT_FOUND");
       res.status(200).json(report);
@@ -45,7 +46,7 @@ export class MonthlySettlementController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canReadFinance(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const { note } = req.body as { note: string };
       if (!note) throw new AppError(400, "NOTE_REQUIRED");
       const report = await this.service.updateNote(id, note);
@@ -57,7 +58,7 @@ export class MonthlySettlementController {
     try {
       const { role, frontOfficeRole, departmentCategories, id: userId } = requireUser(req);
       if (!canReadFinance(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const report = await this.service.submitFirst(id, userId);
       res.status(200).json(report);
     } catch (err) { next(err); }
@@ -67,7 +68,7 @@ export class MonthlySettlementController {
     try {
       const { role, frontOfficeRole, departmentCategories, id: userId } = requireUser(req);
       if (!canWriteFinance(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const report = await this.service.approveFirst(id, userId);
       res.status(200).json(report);
     } catch (err) { next(err); }
@@ -77,7 +78,7 @@ export class MonthlySettlementController {
     try {
       const { role, id: userId } = requireUser(req);
       if (!isAdminLike(role)) throw new AppError(403, "FORBIDDEN");
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const report = await this.service.approve(id, userId);
       res.status(200).json(report);
     } catch (err) { next(err); }
@@ -87,7 +88,7 @@ export class MonthlySettlementController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canWriteFinance(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const { reason } = req.body as { reason: string };
       if (!reason) throw new AppError(400, "REASON_REQUIRED");
       const report = await this.service.reject(id, reason);
@@ -99,7 +100,7 @@ export class MonthlySettlementController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canReadFinance(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const report = await this.service.getForExport(Number(req.params["id"]));
+      const report = await this.service.getForExport(assertCuid(req.params["id"]));
       if (!report) throw new AppError(404, "SETTLEMENT_NOT_FOUND");
       const buf = await generateSettlementExcel(report);
       const year = report.year; const month = report.month;

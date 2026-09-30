@@ -11,7 +11,7 @@ export class RevenueAdjustmentService {
 
   async create(data: {
     financialReportId?: string;
-    monthlyReportId?: number;
+    monthlyReportId?: string;
     field: RevenueField;
     delta: number;
     memo?: string;
@@ -30,7 +30,7 @@ export class RevenueAdjustmentService {
     });
   }
 
-  async list(params: { financialReportId?: string; monthlyReportId?: number }) {
+  async list(params: { financialReportId?: string; monthlyReportId?: string }) {
     if (params.financialReportId !== undefined) {
       return this.repo.findByFinancialReport(params.financialReportId);
     }
@@ -43,7 +43,7 @@ export class RevenueAdjustmentService {
   async drilldown(params: {
     field: RevenueField;
     financialReportId?: string;
-    monthlyReportId?: number;
+    monthlyReportId?: string;
     year: number;
     month?: number;
   }) {
@@ -79,7 +79,7 @@ export class RevenueAdjustmentService {
     return { type: "ledger" as const, items: entries, adjustments };
   }
 
-  sumByField(target: { financialReportId?: string; monthlyReportId?: number }) {
+  sumByField(target: { financialReportId?: string; monthlyReportId?: string }) {
     return this.repo.sumByField(target);
   }
 }

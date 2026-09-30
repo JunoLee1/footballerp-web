@@ -31,7 +31,7 @@ describe("LedgerService", () => {
 
   it("throws 404 when original entry not found in createRefund", async () => {
     const service = new LedgerService(makeRepo({ findById: jest.fn().mockResolvedValue(null) }));
-    await expect(service.createRefund(999, "11111111-1111-1111-1111-111111111111"))
+    await expect(service.createRefund("le-999-x-x-x-x-x-x-x-x-x", "11111111-1111-1111-1111-111111111111"))
       .rejects.toThrow(new AppError(404, "LEDGER_ENTRY_NOT_FOUND"));
   });
 
@@ -47,11 +47,11 @@ describe("LedgerService", () => {
       create,
       markReversed,
     }));
-    await service.createRefund(1, "42424242-4242-4242-4242-424242424242");
+    await service.createRefund("cle1x11111111111111111", "42424242-4242-4242-4242-424242424242");
     expect(create).toHaveBeenCalledWith(expect.objectContaining({
       amount: -100, amountKrw: -100, isRefund: true, category: "REFUND",
     }));
-    expect(markReversed).toHaveBeenCalledWith(1, 2);
+    expect(markReversed).toHaveBeenCalledWith("cle1x11111111111111111", "cle2x11111111111111111");
   });
 
   it("throws 400 when trying to refund an already-reversed entry", async () => {
@@ -62,7 +62,7 @@ describe("LedgerService", () => {
         relatedModule: null, relatedId: null, reversedById: 5,
       }),
     }));
-    await expect(service.createRefund(1, "42424242-4242-4242-4242-424242424242"))
+    await expect(service.createRefund("cle1x11111111111111111", "42424242-4242-4242-4242-424242424242"))
       .rejects.toThrow(new AppError(400, "ALREADY_REVERSED"));
   });
 
@@ -242,7 +242,7 @@ describe("LedgerService period lock - createRefund", () => {
       isPeriodLocked: jest.fn().mockResolvedValue(true),
     });
     const service = new LedgerService(repo);
-    await expect(service.createRefund(1, "42424242-4242-4242-4242-424242424242")).rejects.toThrow(new AppError(409, "PERIOD_LOCKED"));
+    await expect(service.createRefund("cle1x11111111111111111", "42424242-4242-4242-4242-424242424242")).rejects.toThrow(new AppError(409, "PERIOD_LOCKED"));
   });
 
   it("allows refund when period is not locked", async () => {
@@ -255,7 +255,7 @@ describe("LedgerService period lock - createRefund", () => {
       markReversed,
     });
     const service = new LedgerService(repo);
-    await service.createRefund(1, "42424242-4242-4242-4242-424242424242");
+    await service.createRefund("cle1x11111111111111111", "42424242-4242-4242-4242-424242424242");
     expect(create).toHaveBeenCalled();
   });
 });

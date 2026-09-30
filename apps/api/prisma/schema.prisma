@@ -911,7 +911,7 @@ model Country {
 }
 
 model PhoneNumber {
-  id                String           @id @default(uuid())
+  id        String  @id @default(uuid())
   iv        String
   encrypted String
   phoneHash String? @unique
@@ -920,25 +920,25 @@ model PhoneNumber {
 }
 
 model User {
-  id                String           @id @default(uuid())
-  email             String           @unique
-  password          String
-  username          String
-  nickname          String           @unique
-  role              Role
-  coachingRole      CoachingRole?
-  frontOfficeRole   FrontOfficeRole?
-  isDeleted         Boolean          @default(false)
-  isOutOfOffice     Boolean          @default(false)
-  isDemo            Boolean          @default(false)
-  language          String           @default("ko")
-  dateOfBirth       DateTime
-  phoneNumberId     String              @unique
-  nationalityId     Int
-  teamId            Int?
-  clubId            String?
-  homeAddress       String?
-  passwordChangedAt DateTime?
+  id                         String                            @id @default(uuid())
+  email                      String                            @unique
+  password                   String
+  username                   String
+  nickname                   String                            @unique
+  role                       Role
+  coachingRole               CoachingRole?
+  frontOfficeRole            FrontOfficeRole?
+  isDeleted                  Boolean                           @default(false)
+  isOutOfOffice              Boolean                           @default(false)
+  isDemo                     Boolean                           @default(false)
+  language                   String                            @default("ko")
+  dateOfBirth                DateTime
+  phoneNumberId              String                            @unique
+  nationalityId              Int
+  teamId                     Int?
+  clubId                     String?
+  homeAddress                String?
+  passwordChangedAt          DateTime?
   phoneNumber                PhoneNumber                       @relation(fields: [phoneNumberId], references: [id])
   nationality                Country                           @relation(fields: [nationalityId], references: [id])
   player                     Player?
@@ -1397,16 +1397,16 @@ model Partner {
   tierReason String?
 
   // #593 — 업체 등록 확장 필드
-  sla                            String? @db.Text
-  contactName                    String?
-  contactPhone                   String?
-  contactEmail                   String?
-  paymentBankName                String?
-  paymentAccountNumberEncrypted  String?
-  paymentAccountNumberIv         String?
-  paymentTerms                   String? @db.Text
-  businessRegNumberEncrypted     String?
-  businessRegNumberIv            String?
+  sla                           String? @db.Text
+  contactName                   String?
+  contactPhone                  String?
+  contactEmail                  String?
+  paymentBankName               String?
+  paymentAccountNumberEncrypted String?
+  paymentAccountNumberIv        String?
+  paymentTerms                  String? @db.Text
+  businessRegNumberEncrypted    String?
+  businessRegNumberIv           String?
 
   injuries                    Injury[]
   equipmentItems              EquipmentItem[]
@@ -1813,7 +1813,7 @@ model TrainingParticipant {
 }
 
 model TrainingResult {
-  id                         String                      @id @default(cuid())
+  id               String           @id @default(cuid())
   attendance       AttendanceStatus
   feedback         String?
   performanceScore Int?
@@ -1898,15 +1898,15 @@ model FormationSnapshot {
 }
 
 model Notification {
-  id           Int              @id @default(autoincrement())
-  type         NotificationType
-  title        String
-  body         String
-  entityId     Int?
-  entityIdStr  String?
-  readAt       DateTime?
-  createdAt    DateTime         @default(now())
-  userId       String
+  id          Int              @id @default(autoincrement())
+  type        NotificationType
+  title       String
+  body        String
+  entityId    Int?
+  entityIdStr String?
+  readAt      DateTime?
+  createdAt   DateTime         @default(now())
+  userId      String
 
   user User @relation(fields: [userId], references: [id])
 }
@@ -2870,7 +2870,7 @@ model ProbationReview {
 }
 
 model FinancialReport {
-  id             String         @id @default(cuid())
+  id                          String                      @id @default(cuid())
   seasonId                    Int                         @unique
   totalRevenue                Float
   // Planned revenue breakdown (계획값). Actuals are always computed live from
@@ -3130,7 +3130,7 @@ enum AdjustmentStatus {
 }
 
 model BudgetCategoryPlan {
-  id                         String                      @id @default(cuid())
+  id                String                      @id @default(cuid())
   financialReportId String
   categoryId        Int
   mandatoryMinimum  Int                         @default(0)
@@ -3147,7 +3147,7 @@ model BudgetCategoryPlan {
 }
 
 model BudgetTier {
-  id                         String                      @id @default(cuid())
+  id             String             @id @default(cuid())
   categoryPlanId String
   name           String
   cost           Int
@@ -3160,7 +3160,7 @@ model BudgetTier {
 }
 
 model BudgetOverrideLog {
-  id                         String                      @id @default(cuid())
+  id                String          @id @default(cuid())
   financialReportId String
   categoryId        Int
   amount            Int
@@ -3192,7 +3192,7 @@ enum MinimumChangeStatus {
 }
 
 model MandatoryMinimumChangeLog {
-  id                         String                      @id @default(cuid())
+  id             String              @id @default(cuid())
   categoryPlanId String
   previousAmount Int
   newAmount      Int
@@ -3235,7 +3235,7 @@ model OperatingExpense {
   updatedAt                  DateTime                    @updatedAt
   deletedAt                  DateTime?
   deletionReason             String?
-  accountCodeId              Int?
+  accountCodeId              String?
   status                     ExpenseStatus               @default(PENDING)
   budgetLineId               String
   firstApprovedById          String?
@@ -3271,7 +3271,7 @@ model OperatingExpense {
 // ─────────────────────────────────────────────
 
 model BudgetHeader {
-  id                         String                      @id @default(cuid())
+  id           String             @id @default(cuid())
   seasonId     Int
   version      Int                @default(1)
   status       BudgetStatus       @default(DRAFT)
@@ -3293,7 +3293,7 @@ model BudgetHeader {
 }
 
 model BudgetLine {
-  id                         String                      @id @default(cuid())
+  id                          String                       @id @default(cuid())
   budgetHeaderId              String
   departmentId                Int?
   categoryId                  Int
@@ -3311,7 +3311,7 @@ model BudgetLine {
 }
 
 model BudgetAdjustment {
-  id                         String                      @id @default(cuid())
+  id             String           @id @default(cuid())
   budgetHeaderId String
   type           AdjustmentType
   amount         Int
@@ -3392,7 +3392,7 @@ enum ReferenceCheckResult {
 }
 
 model JobPosting {
-  id                Int              @id @default(autoincrement())
+  id                String           @id @default(cuid())
   title             String
   departmentId      Int?
   headcount         Int              @default(1)
@@ -3422,7 +3422,7 @@ model JobPosting {
 
 model JobApplication {
   id                  Int                   @id @default(autoincrement())
-  postingId           Int
+  postingId           String
   applicantName       String
   email               String
   phone               String?
@@ -3827,7 +3827,7 @@ model Sponsorship {
 }
 
 model SponsorshipPayment {
-  id               Int                      @id @default(autoincrement())
+  id               String                   @id @default(cuid())
   sponsorshipId    String
   dueDate          DateTime
   amount           Decimal                  @db.Decimal(14, 2)
@@ -3947,22 +3947,22 @@ model SoftwareLicense {
   updatedAt   DateTime  @updatedAt
 
   // #593 — 라이선스 등록 확장 필드
-  version                String?
-  ipRegistrationNumber   String?
-  licenseCertificateUrl  String?
-  contractDocumentUrl    String?
-  supplyType             LicenseSupplyType?
-  territory              String?            @db.Text
-  deviceLimit            Int?
-  serverSpec             String?
-  siteLimit              Int?
+  version               String?
+  ipRegistrationNumber  String?
+  licenseCertificateUrl String?
+  contractDocumentUrl   String?
+  supplyType            LicenseSupplyType?
+  territory             String?            @db.Text
+  deviceLimit           Int?
+  serverSpec            String?
+  siteLimit             Int?
 
   createdBy     User           @relation("SoftwareLicenseCreator", fields: [createdById], references: [id])
   assetRequests AssetRequest[]
 }
 
 model LedgerEntry {
-  id            Int                 @id @default(autoincrement())
+  id            String              @id @default(cuid())
   type          LedgerEntryType
   category      LedgerEntryCategory
   amount        Decimal             @db.Decimal(14, 2)
@@ -3971,12 +3971,12 @@ model LedgerEntry {
   amountKrw     Decimal             @db.Decimal(14, 2)
   description   String?
   relatedModule String?
-  relatedId     Int?
+  relatedId     String?
   isRefund      Boolean             @default(false)
   isAdjustment  Boolean             @default(false)
-  accountCodeId Int?
+  accountCodeId String?
   periodLocked  Boolean             @default(false)
-  reversedById  Int?                @unique
+  reversedById  String?             @unique
   createdById   String
   createdAt     DateTime            @default(now())
 
@@ -4170,7 +4170,7 @@ model MonthlyOperationsSnapshot {
 }
 
 model SquadPlan {
-  id                         String                      @id @default(cuid())
+  id          String   @id @default(cuid())
   seasonId    Int      @unique
   formation   String
   slots       Json
@@ -4188,7 +4188,7 @@ enum AppealStatus {
 }
 
 model AttendanceAppeal {
-  id                         String                      @id @default(cuid())
+  id               String           @id @default(cuid())
   trainingResultId String
   originalStatus   AttendanceStatus
   requestedStatus  AttendanceStatus
@@ -4244,7 +4244,7 @@ enum HiringPlanItemStatus {
 }
 
 model PlanReport {
-  id                         String                      @id @default(cuid())
+  id                    String           @id @default(cuid())
   title                 String
   purpose               String
   departmentId          Int
@@ -4271,7 +4271,7 @@ model PlanReport {
   approvedAt            DateTime?
   rejectedAt            DateTime?
   vaultPath             String?
-  surveyId              String?             @unique
+  surveyId              String?          @unique
   createdById           String
   approvedById          String?
   createdAt             DateTime         @default(now())
@@ -4287,7 +4287,7 @@ model PlanReport {
 }
 
 model HiringNeedsSurvey {
-    id                         String                      @id @default(cuid())
+  id          String       @id @default(cuid())
   title       String
   deadlineAt  DateTime
   status      SurveyStatus @default(OPEN)
@@ -4312,7 +4312,7 @@ model SurveyTargetDept {
 }
 
 model SurveyResponse {
-   id                         String                      @id @default(cuid())
+  id              String               @id @default(cuid())
   surveyId        String
   departmentId    Int
   roleTitle       String
@@ -4341,9 +4341,9 @@ model SurveyResponse {
 }
 
 model HiringPlanItem {
-  id                         String                      @id @default(cuid())
+  id               String               @id @default(cuid())
   planReportId     String
-  surveyResponseId String?                 @unique
+  surveyResponseId String?              @unique
   roleTitle        String
   headcount        Int
   quarter          Int?
@@ -4441,7 +4441,7 @@ model DepartmentReviewerConfig {
 }
 
 model PlanReview {
-  id                         String                      @id @default(cuid())
+  id             String       @id @default(cuid())
   planId         String
   reviewerDeptId Int
   status         ReviewStatus @default(PENDING)
@@ -4501,7 +4501,7 @@ model PreventiveSchedule {
 }
 
 model FacilityAccessLog {
-  id             String         @id @default(cuid())
+  id        String       @id @default(cuid())
   userId    String
   zone      FacilityZone
   action    String
@@ -4512,7 +4512,7 @@ model FacilityAccessLog {
 }
 
 model EquipmentDisposalVerification {
-  id             String         @id @default(cuid())
+  id            String                     @id @default(cuid())
   equipmentId   String                     @unique
   requestedById String
   verifiedById  String?
@@ -4529,7 +4529,7 @@ model EquipmentDisposalVerification {
 }
 
 model SponsorshipClause {
-  id             String         @id @default(cuid())
+  id            String       @id @default(cuid())
   sponsorshipId String
   type          ClauseType
   condition     String       @db.Text
@@ -4583,7 +4583,7 @@ model PartnerContactLog {
 }
 
 model MonthlySettlementReport {
-  id             String         @id @default(cuid())
+  id       String @id @default(cuid())
   seasonId Int
   year     Int
   month    Int
@@ -4625,7 +4625,7 @@ model MonthlySettlementReport {
 // ─────────────────────────────────────────────
 
 model AccountCode {
-  id        Int             @id @default(autoincrement())
+  id        String          @id @default(cuid())
   code      String          @unique
   name      String
   type      AccountCodeType
@@ -4636,7 +4636,7 @@ model AccountCode {
 }
 
 model RevenueAdjustment {
-  id                Int          @id @default(autoincrement())
+  id                String       @id @default(cuid())
   financialReportId String?
   monthlyReportId   String?
   field             RevenueField
@@ -4644,7 +4644,7 @@ model RevenueAdjustment {
   memo              String?
   createdById       String
   createdAt         DateTime     @default(now())
-  ledgerEntryId     Int?         @unique
+  ledgerEntryId     String?      @unique
 
   financialReport FinancialReport?         @relation("SeasonAdj", fields: [financialReportId], references: [id])
   monthlyReport   MonthlySettlementReport? @relation("MonthlyAdj", fields: [monthlyReportId], references: [id])
@@ -4659,7 +4659,7 @@ enum OverrideStatus {
 }
 
 model FinancialReportRevenueLog {
-  id             String         @id @default(cuid())
+  id                String          @id @default(cuid())
   financialReportId String
   field             String
   oldValue          Float
@@ -4748,7 +4748,7 @@ model AssetRequest {
 }
 
 model AssetRequestApproval {
-  id             String         @id @default(cuid())
+  id             String                     @id @default(cuid())
   assetRequestId String
   stage          AssetRequestApprovalStage
   action         AssetRequestApprovalAction
@@ -4782,7 +4782,7 @@ model AssetRequestApproval {
  * 후속 이슈.
  */
 model DepartmentDefaultAssetKit {
-  id             String         @id @default(cuid())
+  id                       String   @id @default(cuid())
   departmentId             Int      @unique
   assetItems               Json // [{equipmentItemId, quantity, note?}]
   defaultExpenseCategoryId Int
@@ -4888,7 +4888,7 @@ model HiringDispatch {
 }
 
 model HiringDispatchApproval {
-  id             String         @id @default(cuid())
+  id         String               @id @default(cuid())
   dispatchId Int
   stage      HiringDispatchStage
   action     HiringDispatchAction
@@ -4915,7 +4915,7 @@ model HiringDispatchApproval {
  * latest-row APPROVED status.
  */
 model HiringDocument {
-  id               String                  @id @default(cuid())
+  id               String                @id @default(cuid())
   applicationId    Int?
   hiringDispatchId Int?
   docType          String
@@ -4954,7 +4954,7 @@ enum EmployeeContractStatus {
 }
 
 model EmployeeContract {
-  id             String         @id @default(cuid())
+  id               String                 @id @default(cuid())
   hiringDispatchId Int
   status           EmployeeContractStatus @default(DRAFT)
 
@@ -4987,7 +4987,7 @@ model EmployeeContract {
 
 // ─── 선수 영입 수요조사 (#494) ─────────────────────────────────────────────────
 model PlayerAcquisitionSurvey {
-  id             String         @id @default(cuid())
+  id          String       @id @default(cuid())
   title       String
   status      SurveyStatus @default(OPEN)
   dueDate     DateTime?
@@ -5003,7 +5003,7 @@ model PlayerAcquisitionSurvey {
 }
 
 model PlayerAcquisitionSurveyResponse {
-  id             String         @id @default(cuid())
+  id           String    @id @default(cuid())
   surveyId     String
   respondentId String
   submittedAt  DateTime?
@@ -5018,7 +5018,7 @@ model PlayerAcquisitionSurveyResponse {
 }
 
 model PlayerAcquisitionSurveyResponseItem {
-  id             String         @id @default(cuid())
+  id         String         @id @default(cuid())
   responseId String
   position   Position
   priority   SurveyPriority

@@ -20,49 +20,49 @@ const makeService = (repo: ClauseRepository) => new ClauseService(repo);
 
 describe("ClauseService.applyClause", () => {
   it("throws 404 when clause not found", async () => {
-    await expect(makeService(makeRepo()).applyClause(99, "cmxtestspons0000000000001")).rejects.toThrow(new AppError(404, "CLAUSE_NOT_FOUND"));
+    await expect(makeService(makeRepo()).applyClause("cmxtestclauseNOTEXIST0001", "cmxtestspons0000000000001")).rejects.toThrow(new AppError(404, "CLAUSE_NOT_FOUND"));
   });
   it("throws 404 when clause belongs to different sponsorship", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeClause({ sponsorshipId: "cmxtestspons0000000000001" })) });
-    await expect(makeService(repo).applyClause(1, "cmxtestspons0000000000001")).rejects.toThrow(new AppError(404, "CLAUSE_NOT_FOUND"));
+    await expect(makeService(repo).applyClause("cmxtestclause0000000000001", "cmxtestspons0000000000001")).rejects.toThrow(new AppError(404, "CLAUSE_NOT_FOUND"));
   });
   it("throws 400 when already APPLIED", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeClause({ status: "APPLIED" })) });
-    await expect(makeService(repo).applyClause(1, "cmxtestspons0000000000001")).rejects.toThrow(new AppError(400, "CLAUSE_ALREADY_APPLIED"));
+    await expect(makeService(repo).applyClause("cmxtestclause0000000000001", "cmxtestspons0000000000001")).rejects.toThrow(new AppError(400, "CLAUSE_ALREADY_APPLIED"));
   });
   it("throws 400 when WAIVED", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeClause({ status: "WAIVED" })) });
-    await expect(makeService(repo).applyClause(1, "cmxtestspons0000000000001")).rejects.toThrow(new AppError(400, "CLAUSE_ALREADY_APPLIED"));
+    await expect(makeService(repo).applyClause("cmxtestclause0000000000001", "cmxtestspons0000000000001")).rejects.toThrow(new AppError(400, "CLAUSE_ALREADY_APPLIED"));
   });
   it("calls updateStatus to APPLIED when valid", async () => {
     const repo = makeRepo({
       findById: jest.fn().mockResolvedValue(makeClause({ status: "PENDING" })),
       updateStatus: jest.fn().mockResolvedValue(makeClause({ status: "APPLIED" })),
     });
-    await makeService(repo).applyClause(1, "cmxtestspons0000000000001");
-    expect(repo.updateStatus).toHaveBeenCalledWith(1, "APPLIED");
+    await makeService(repo).applyClause("cmxtestclause0000000000001", "cmxtestspons0000000000001");
+    expect(repo.updateStatus).toHaveBeenCalledWith("cmxtestclause0000000000001", "APPLIED");
   });
 });
 
 describe("ClauseService.waiveClause", () => {
   it("throws 404 when clause not found", async () => {
-    await expect(makeService(makeRepo()).waiveClause(99, "cmxtestspons0000000000001")).rejects.toThrow(new AppError(404, "CLAUSE_NOT_FOUND"));
+    await expect(makeService(makeRepo()).waiveClause("cmxtestclauseNOTEXIST0001", "cmxtestspons0000000000001")).rejects.toThrow(new AppError(404, "CLAUSE_NOT_FOUND"));
   });
   it("throws 404 when clause belongs to different sponsorship", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeClause({ sponsorshipId: "cmxtestspons0000000000001" })) });
-    await expect(makeService(repo).waiveClause(1, "cmxtestspons0000000000001")).rejects.toThrow(new AppError(404, "CLAUSE_NOT_FOUND"));
+    await expect(makeService(repo).waiveClause("cmxtestclause0000000000001", "cmxtestspons0000000000001")).rejects.toThrow(new AppError(404, "CLAUSE_NOT_FOUND"));
   });
   it("throws 400 when not PENDING", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeClause({ status: "APPLIED" })) });
-    await expect(makeService(repo).waiveClause(1, "cmxtestspons0000000000001")).rejects.toThrow(new AppError(400, "CLAUSE_NOT_PENDING"));
+    await expect(makeService(repo).waiveClause("cmxtestclause0000000000001", "cmxtestspons0000000000001")).rejects.toThrow(new AppError(400, "CLAUSE_NOT_PENDING"));
   });
   it("calls updateStatus to WAIVED when valid", async () => {
     const repo = makeRepo({
       findById: jest.fn().mockResolvedValue(makeClause({ status: "PENDING" })),
       updateStatus: jest.fn().mockResolvedValue(makeClause({ status: "WAIVED" })),
     });
-    await makeService(repo).waiveClause(1, "cmxtestspons0000000000001");
-    expect(repo.updateStatus).toHaveBeenCalledWith(1, "WAIVED");
+    await makeService(repo).waiveClause("cmxtestclause0000000000001", "cmxtestspons0000000000001");
+    expect(repo.updateStatus).toHaveBeenCalledWith("cmxtestclause0000000000001", "WAIVED");
   });
 });
 

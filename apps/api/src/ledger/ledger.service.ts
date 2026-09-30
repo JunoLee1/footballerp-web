@@ -11,7 +11,7 @@ export class LedgerService {
   constructor(private repo: LedgerRepository) {}
 
   findAll(query: LedgerListQuery) { return this.repo.findAll(query); }
-  findById(id: number) { return this.repo.findById(id); }
+  findById(id: string) { return this.repo.findById(id); }
 
   private validateExchangeRate(provided: number | undefined): void {
     if (provided !== undefined && (provided <= 0 || provided > MAX_EXCHANGE_RATE)) {
@@ -32,7 +32,7 @@ export class LedgerService {
     if (dto.relatedModule !== undefined && !ALLOWED_MODULES.includes(dto.relatedModule as any)) {
       throw new AppError(400, "INVALID_RELATED_MODULE");
     }
-    if (dto.relatedId !== undefined && (!Number.isInteger(dto.relatedId) || dto.relatedId <= 0)) {
+    if (dto.relatedId !== undefined && (typeof dto.relatedId !== "string" || dto.relatedId.length === 0)) {
       throw new AppError(400, "INVALID_RELATED_ID");
     }
 
@@ -45,7 +45,7 @@ export class LedgerService {
     return entry;
   }
 
-  async createRefund(originalId: number, createdById: string) {
+  async createRefund(originalId: string, createdById: string) {
     const original = await this.repo.findById(originalId);
     if (!original) throw new AppError(404, "LEDGER_ENTRY_NOT_FOUND");
     if (original.reversedById != null) throw new AppError(400, "ALREADY_REVERSED");
@@ -72,7 +72,10 @@ export class LedgerService {
 
     // BS2: mark the source SalesRecord as refunded
     if (original.relatedModule === "SalesRecord" && original.relatedId) {
-      await this.repo.markSalesRecordRefunded(original.relatedId);
+      const salesRecordId = Number(original.relatedId);
+      if (Number.isInteger(salesRecordId) && salesRecordId > 0) {
+        await this.repo.markSalesRecordRefunded(salesRecordId);
+      }
     }
 
     await writeAuditLog({ actorId: createdById, action: "LEDGER_REFUND_CREATED", targetId: refund.id, detail: { originalId } });

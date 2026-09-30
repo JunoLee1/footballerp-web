@@ -76,7 +76,7 @@ export class SponsorshipController {
       res.json(
         await this.service.markPaid(
           assertCuid(req.params["id"]),
-          Number(req.params["paymentId"]),
+          assertCuid(req.params["paymentId"]),
           userId,
           req.body as MarkPaidDto,
         ),

@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { requireUser } from "../lib/authMiddleware";
 import type { LedgerService } from "./ledger.service";
+import { assertCuid } from "../lib/cuidGuard";
 
 export class LedgerController {
   constructor(private service: LedgerService) {}
@@ -9,13 +10,13 @@ export class LedgerController {
     try { res.json(await this.service.findAll(req.query as any)); } catch (e) { next(e); }
   };
   get = async (req: Request, res: Response, next: NextFunction) => {
-    try { res.json(await this.service.findById(Number(req.params.id))); } catch (e) { next(e); }
+    try { res.json(await this.service.findById(assertCuid(req.params.id))); } catch (e) { next(e); }
   };
   create = async (req: Request, res: Response, next: NextFunction) => {
     try { res.status(201).json(await this.service.create(req.body, requireUser(req).id)); } catch (e) { next(e); }
   };
   refund = async (req: Request, res: Response, next: NextFunction) => {
-    try { res.status(201).json(await this.service.createRefund(Number(req.params.id), requireUser(req).id)); } catch (e) { next(e); }
+    try { res.status(201).json(await this.service.createRefund(assertCuid(req.params.id), requireUser(req).id)); } catch (e) { next(e); }
   };
 
   lockPeriod = async (req: Request, res: Response, next: NextFunction): Promise<void> => {

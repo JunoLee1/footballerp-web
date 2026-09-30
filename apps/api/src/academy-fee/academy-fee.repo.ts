@@ -83,11 +83,11 @@ export class AcademyFeeRepository {
   confirmTossPayment(id: number, pgTransactionId: string) {
     const now = new Date()
     return this.prisma.academyFee.update({
-      where: { id, status: { not: 'PAID' as any } },
+      where: { id, status: { not: 'PAID'} },
       data: {
-        status: 'PAID' as any,
+        status: 'PAID' ,
         paidAt: now,
-        paymentMethod: 'PG' as any,
+        paymentMethod: 'PG',
         pgTransactionId,
         receiptIssuedAt: now,
       },
@@ -117,8 +117,8 @@ export class AcademyFeeRepository {
     return this.prisma.academyFee.update({
       where: { id },
       data: {
-        status: 'SUBMITTED' as any,
-        paymentMethod: 'BANK_TRANSFER' as any,
+        status: 'SUBMITTED',
+        paymentMethod: 'BANK_TRANSFER',
         paymentSubmittedAt: new Date(),
         ...(paymentProofUrl && { paymentProofUrl }),
       },
@@ -129,7 +129,7 @@ export class AcademyFeeRepository {
   lockPlayer(playerId: string) {
     return this.prisma.player.update({
       where: { id: playerId },
-      data: { status: 'SUSPENDED' as any },
+      data: { status: 'SUSPENDED'},
     })
   }
 
@@ -144,8 +144,8 @@ export class AcademyFeeRepository {
     return this.prisma.academyFee.create({
       data: {
         ...data,
-        status: 'SUBMITTED' as any,
-        paymentMethod: 'BANK_TRANSFER' as any,
+        status: 'SUBMITTED',
+        paymentMethod: 'BANK_TRANSFER',
         paymentSubmittedAt: new Date(),
       },
       include: INCLUDE,
@@ -156,7 +156,7 @@ export class AcademyFeeRepository {
     return this.prisma.player.findMany({
       where: {
         playerName: { contains: name, mode: 'insensitive' as const },
-        team: { type: 'YOUTH' as any, isLite: false },
+        team: { type: 'YOUTH', isLite: false },
       },
       select: {
         id: true,

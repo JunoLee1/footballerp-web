@@ -14,14 +14,14 @@ export class ClauseService {
     return this.repo.create(sponsorshipId, dto);
   }
 
-  async applyClause(id: number, sponsorshipId: string) {
+  async applyClause(id: string, sponsorshipId: string) {
     const clause = await this.repo.findById(id);
     if (!clause || clause.sponsorshipId !== sponsorshipId) throw new AppError(404, "CLAUSE_NOT_FOUND");
     if (clause.status !== "PENDING") throw new AppError(400, "CLAUSE_ALREADY_APPLIED");
     return this.repo.updateStatus(id, "APPLIED");
   }
 
-  async waiveClause(id: number, sponsorshipId: string) {
+  async waiveClause(id: string, sponsorshipId: string) {
     const clause = await this.repo.findById(id);
     if (!clause || clause.sponsorshipId !== sponsorshipId) throw new AppError(404, "CLAUSE_NOT_FOUND");
     if (clause.status !== "PENDING") throw new AppError(400, "CLAUSE_NOT_PENDING");

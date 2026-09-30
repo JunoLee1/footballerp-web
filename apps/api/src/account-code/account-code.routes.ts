@@ -1,13 +1,13 @@
-import { Router, Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { auth } from "../lib/authMiddleware";
 import { canReadFinance, isAdminLike } from "../lib/permissions";
 import { getPrisma } from "../lib/prisma";
 import { AppError } from "../lib/appError";
 import { AccountCodeRepository } from "./account-code.repo";
 import type { AccountCodeType } from "../generated/client";
-import { intIdRouter } from "../lib/idParamGuard";
+import { assertCuid, cuidRouter } from "../lib/cuidGuard";
 
-const router = intIdRouter();
+const router = cuidRouter();
 const repo = new AccountCodeRepository(getPrisma());
 
 const checkReadFinance = (req: Request, res: Response, next: NextFunction) => {
@@ -47,7 +47,7 @@ router.post("/", auth, checkAdminOnly, async (req: Request, res: Response, next:
 // PUT /account-codes/:id — ADMIN/SUPER_ADMIN only
 router.put("/:id", auth, checkAdminOnly, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = Number(req.params["id"]);
+    const id = assertCuid(req.params["id"]);
     const { name, type } = req.body;
     const item = await repo.update(id, {
       ...(name !== undefined && { name }),
@@ -62,7 +62,7 @@ router.put("/:id", auth, checkAdminOnly, async (req: Request, res: Response, nex
 // DELETE /account-codes/:id — ADMIN/SUPER_ADMIN only
 router.delete("/:id", auth, checkAdminOnly, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = Number(req.params["id"]);
+    const id = assertCuid(req.params["id"]);
     await repo.delete(id);
     res.status(204).send();
   } catch (err) {

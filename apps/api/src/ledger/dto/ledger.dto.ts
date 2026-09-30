@@ -11,7 +11,7 @@ export interface CreateLedgerEntryDto {
   isRefund?: boolean;
   description?: string;
   relatedModule?: string;
-  relatedId?: number;
+  relatedId?: string;
 }
 
 export interface LedgerListQuery {

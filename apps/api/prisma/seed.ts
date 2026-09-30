@@ -2992,7 +2992,7 @@ async function seedAcademyFees2025(adminId: string) {
       // PAID → LedgerEntry 생성 (autoFillRevenue 집계 대상)
       if (isPaid) {
         const existing = await prisma.ledgerEntry.findFirst({
-          where: { relatedModule: "AcademyFee", relatedId: fee.id },
+          where: { relatedModule: "AcademyFee", relatedId: String(fee.id) },
           select: { id: true },
         });
         if (!existing) {
@@ -3007,7 +3007,7 @@ async function seedAcademyFees2025(adminId: string) {
               isRefund: false,
               description: `[아카데미 회비] ${player.playerName} 2025년 ${month}월`,
               relatedModule: "AcademyFee",
-              relatedId: fee.id,
+              relatedId: String(fee.id),
               createdById: adminId,
               createdAt: paidAt,
             } as any,
