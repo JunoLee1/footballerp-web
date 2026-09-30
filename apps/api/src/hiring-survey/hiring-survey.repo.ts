@@ -37,7 +37,7 @@ export class HiringSurveyRepository {
     })
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.hiringNeedsSurvey.findUnique({ where: { id }, include: SURVEY_INCLUDE })
   }
 
@@ -55,7 +55,7 @@ export class HiringSurveyRepository {
     })
   }
 
-  close(id: number) {
+  close(id: string) {
     return this.prisma.hiringNeedsSurvey.update({
       where: { id },
       data: { status: 'CLOSED' },
@@ -81,7 +81,7 @@ export class HiringSurveyRepository {
   }
 
   upsertResponse(
-    surveyId: number,
+    surveyId: string,
     departmentId: number,
     submittedById: string,
     dto: CreateSurveyResponseDto,
@@ -104,14 +104,14 @@ export class HiringSurveyRepository {
     })
   }
 
-  findResponseById(id: number) {
+  findResponseById(id: string) {
     return this.prisma.surveyResponse.findUnique({
       where: { id },
       include: RESPONSE_INCLUDE,
     })
   }
 
-  updateResponse(id: number, dto: UpdateSurveyResponseDto) {
+  updateResponse(id: string, dto: UpdateSurveyResponseDto) {
     // Only whitelisted content fields — status transitions go through
     // setResponseStatus so this method can't accidentally elevate state.
     const data: Record<string, unknown> = {}
@@ -129,7 +129,7 @@ export class HiringSurveyRepository {
   }
 
   setResponseStatus(
-    id: number,
+    id: string,
     patch: {
       status: SurveyResponseStatus
       rejectionReason?: string | null
@@ -173,7 +173,7 @@ export class HiringSurveyRepository {
     return Array.from(new Set(rows.map((r) => r.userId)))
   }
 
-  findResponsesBySurvey(surveyId: number) {
+  findResponsesBySurvey(surveyId: string) {
     return this.prisma.surveyResponse.findMany({ where: { surveyId } })
   }
 
@@ -192,7 +192,7 @@ export class HiringSurveyRepository {
     })
   }
 
-  updateDraft(id: number, data: { title?: string; deadlineAt?: Date; targetDeptIds?: number[] }) {
+  updateDraft(id: string, data: { title?: string; deadlineAt?: Date; targetDeptIds?: number[] }) {
     return this.prisma.$transaction(async (tx) => {
       if (data.targetDeptIds !== undefined) {
         await tx.surveyTargetDept.deleteMany({ where: { surveyId: id } })
@@ -211,7 +211,7 @@ export class HiringSurveyRepository {
     })
   }
 
-  openDraft(id: number) {
+  openDraft(id: string) {
     return this.prisma.hiringNeedsSurvey.update({
       where: { id },
       data: { status: 'OPEN' },
@@ -219,7 +219,7 @@ export class HiringSurveyRepository {
     })
   }
 
-  deleteDraft(id: number) {
+  deleteDraft(id: string) {
     return this.prisma.hiringNeedsSurvey.delete({
       where: { id },
     })

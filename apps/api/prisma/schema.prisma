@@ -1500,7 +1500,7 @@ model MedicalEquipmentLoanLedger {
   overrideReason String? @db.Text
 
   // 예산 연결
-  budgetLineId       Int?
+  budgetLineId       String?
   budgetLine         BudgetLine?       @relation(fields: [budgetLineId], references: [id])
   operatingExpenseId String?           @unique
   operatingExpense   OperatingExpense? @relation(fields: [operatingExpenseId], references: [id])
@@ -1813,7 +1813,7 @@ model TrainingParticipant {
 }
 
 model TrainingResult {
-  id               Int              @id @default(autoincrement())
+  id                         String                      @id @default(cuid())
   attendance       AttendanceStatus
   feedback         String?
   performanceScore Int?
@@ -3130,7 +3130,7 @@ enum AdjustmentStatus {
 }
 
 model BudgetCategoryPlan {
-  id                Int                         @id @default(autoincrement())
+  id                         String                      @id @default(cuid())
   financialReportId String
   categoryId        Int
   mandatoryMinimum  Int                         @default(0)
@@ -3147,8 +3147,8 @@ model BudgetCategoryPlan {
 }
 
 model BudgetTier {
-  id             Int                @id @default(autoincrement())
-  categoryPlanId Int
+  id                         String                      @id @default(cuid())
+  categoryPlanId String
   name           String
   cost           Int
   value          Int
@@ -3160,7 +3160,7 @@ model BudgetTier {
 }
 
 model BudgetOverrideLog {
-  id                Int             @id @default(autoincrement())
+  id                         String                      @id @default(cuid())
   financialReportId String
   categoryId        Int
   amount            Int
@@ -3192,8 +3192,8 @@ enum MinimumChangeStatus {
 }
 
 model MandatoryMinimumChangeLog {
-  id             Int                 @id @default(autoincrement())
-  categoryPlanId Int
+  id                         String                      @id @default(cuid())
+  categoryPlanId String
   previousAmount Int
   newAmount      Int
   evidenceType   MinimumEvidenceType
@@ -3237,7 +3237,7 @@ model OperatingExpense {
   deletionReason             String?
   accountCodeId              Int?
   status                     ExpenseStatus               @default(PENDING)
-  budgetLineId               Int
+  budgetLineId               String
   firstApprovedById          String?
   firstApprovedAt            DateTime?
   approvedById               String?
@@ -3271,7 +3271,7 @@ model OperatingExpense {
 // ─────────────────────────────────────────────
 
 model BudgetHeader {
-  id           Int                @id @default(autoincrement())
+  id                         String                      @id @default(cuid())
   seasonId     Int
   version      Int                @default(1)
   status       BudgetStatus       @default(DRAFT)
@@ -3293,8 +3293,8 @@ model BudgetHeader {
 }
 
 model BudgetLine {
-  id                          Int                          @id @default(autoincrement())
-  budgetHeaderId              Int
+  id                         String                      @id @default(cuid())
+  budgetHeaderId              String
   departmentId                Int?
   categoryId                  Int
   year                        Int
@@ -3311,8 +3311,8 @@ model BudgetLine {
 }
 
 model BudgetAdjustment {
-  id             Int              @id @default(autoincrement())
-  budgetHeaderId Int
+  id                         String                      @id @default(cuid())
+  budgetHeaderId String
   type           AdjustmentType
   amount         Int
   fromLineId     Int?
@@ -3406,8 +3406,8 @@ model JobPosting {
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   budget            Int?
-  planReportId      Int?
-  hiringPlanItemId  Int?
+  planReportId      String?
+  hiringPlanItemId  String?
   // Free-form list of document types HR must collect + approve before the
   // resulting HiringDispatch can execute. Empty array = no gate (Q3, Q10).
   requiredDocuments String[]         @default([])
@@ -4170,7 +4170,7 @@ model MonthlyOperationsSnapshot {
 }
 
 model SquadPlan {
-  id          Int      @id @default(autoincrement())
+  id                         String                      @id @default(cuid())
   seasonId    Int      @unique
   formation   String
   slots       Json
@@ -4188,8 +4188,8 @@ enum AppealStatus {
 }
 
 model AttendanceAppeal {
-  id               Int              @id @default(autoincrement())
-  trainingResultId Int
+  id                         String                      @id @default(cuid())
+  trainingResultId String
   originalStatus   AttendanceStatus
   requestedStatus  AttendanceStatus
   reason           String           @db.Text
@@ -4244,7 +4244,7 @@ enum HiringPlanItemStatus {
 }
 
 model PlanReport {
-  id                    Int              @id @default(autoincrement())
+  id                         String                      @id @default(cuid())
   title                 String
   purpose               String
   departmentId          Int
@@ -4271,7 +4271,7 @@ model PlanReport {
   approvedAt            DateTime?
   rejectedAt            DateTime?
   vaultPath             String?
-  surveyId              Int?             @unique
+  surveyId              String?             @unique
   createdById           String
   approvedById          String?
   createdAt             DateTime         @default(now())
@@ -4287,7 +4287,7 @@ model PlanReport {
 }
 
 model HiringNeedsSurvey {
-  id          Int          @id @default(autoincrement())
+    id                         String                      @id @default(cuid())
   title       String
   deadlineAt  DateTime
   status      SurveyStatus @default(OPEN)
@@ -4302,7 +4302,7 @@ model HiringNeedsSurvey {
 }
 
 model SurveyTargetDept {
-  surveyId     Int
+  surveyId     String
   departmentId Int
 
   survey     HiringNeedsSurvey @relation(fields: [surveyId], references: [id], onDelete: Cascade)
@@ -4312,8 +4312,8 @@ model SurveyTargetDept {
 }
 
 model SurveyResponse {
-  id              Int                  @id @default(autoincrement())
-  surveyId        Int
+   id                         String                      @id @default(cuid())
+  surveyId        String
   departmentId    Int
   roleTitle       String
   headcount       Int
@@ -4341,9 +4341,9 @@ model SurveyResponse {
 }
 
 model HiringPlanItem {
-  id               Int                  @id @default(autoincrement())
-  planReportId     Int
-  surveyResponseId Int?                 @unique
+  id                         String                      @id @default(cuid())
+  planReportId     String
+  surveyResponseId String?                 @unique
   roleTitle        String
   headcount        Int
   quarter          Int?
@@ -4441,8 +4441,8 @@ model DepartmentReviewerConfig {
 }
 
 model PlanReview {
-  id             Int          @id @default(autoincrement())
-  planId         Int
+  id                         String                      @id @default(cuid())
+  planId         String
   reviewerDeptId Int
   status         ReviewStatus @default(PENDING)
   comment        String?

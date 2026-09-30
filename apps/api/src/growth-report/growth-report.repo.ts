@@ -43,7 +43,7 @@ export class GrowthReportRepository {
     });
   }
 
-  createEvaluation(dto: CreateGrowthEvaluationDto, coachId: string, planId?: number) {
+  createEvaluation(dto: CreateGrowthEvaluationDto, coachId: string, planId?: string) {
     return this.prisma.growthEvaluation.create({
       data: { ...dto, coachId, ...(planId !== undefined && { planId }) },
       include: EVAL_INCLUDE,

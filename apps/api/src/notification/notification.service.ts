@@ -228,7 +228,7 @@ export class NotificationService {
     });
   }
 
-  async notifyAcquisitionSurveyPublished(surveyId: number, title: string) {
+  async notifyAcquisitionSurveyPublished(surveyId: string, title: string) {
     const getMsg = () => ({
       title: "영입 수요조사 요청",
       body: `"${title}" 수요조사가 등록되었습니다. 의견을 작성해주세요.`,
@@ -246,7 +246,7 @@ export class NotificationService {
     });
   }
 
-  async notifyAcquisitionSurveyClosed(surveyId: number, title: string) {
+  async notifyAcquisitionSurveyClosed(surveyId: string, title: string) {
     const getMsg = () => ({
       title: "영입 수요조사 마감",
       body: `"${title}" 수요조사가 마감됐습니다. 롱리스트 조사를 시작해주세요.`,

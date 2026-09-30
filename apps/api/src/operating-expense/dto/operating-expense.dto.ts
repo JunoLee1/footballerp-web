@@ -6,8 +6,8 @@ export interface CreateOperatingExpenseDto {
   date: string;
   note?: string;
   createdById: string;
-  budgetLineId?: number;
-  actorClubId?: number | null | undefined;
+  budgetLineId?: string;
+  actorClubId?: string | null | undefined;
 }
 
 export interface UpdateOperatingExpenseDto {

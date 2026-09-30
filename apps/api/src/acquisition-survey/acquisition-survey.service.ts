@@ -17,7 +17,7 @@ export class AcquisitionSurveyService {
     return this.repo.findAll();
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const survey = await this.repo.findById(id);
     if (!survey) throw new AppError(404, "SURVEY_NOT_FOUND");
     return survey;
@@ -29,7 +29,7 @@ export class AcquisitionSurveyService {
     return survey;
   }
 
-  async close(id: number) {
+  async close(id: string) {
     const survey = await this.getById(id);
     if (survey.status === "CLOSED") throw new AppError(409, "SURVEY_ALREADY_CLOSED");
     const closed = await this.repo.close(id);
@@ -37,7 +37,7 @@ export class AcquisitionSurveyService {
     return closed;
   }
 
-  async submitResponse(surveyId: number, respondentId: string, items: SubmitAcquisitionSurveyResponseItemDto[]) {
+  async submitResponse(surveyId: string, respondentId: string, items: SubmitAcquisitionSurveyResponseItemDto[]) {
     const survey = await this.getById(surveyId);
     if (survey.status === "CLOSED") throw new AppError(409, "SURVEY_CLOSED");
     const existing = await this.repo.findResponse(surveyId, respondentId);
@@ -45,7 +45,7 @@ export class AcquisitionSurveyService {
     return this.repo.submitResponse(surveyId, respondentId, items);
   }
 
-  async getResponses(surveyId: number) {
+  async getResponses(surveyId: string) {
     await this.getById(surveyId);
     return this.repo.getResponses(surveyId);
   }

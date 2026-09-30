@@ -44,7 +44,6 @@ const INT_ID_PARAM_NAMES = [
   "hiringDispatchId",
   "eventId",
   "contractId",
-  "clubId",
   "assignmentId",
   "reviewerDeptId",
   "onboardingId",

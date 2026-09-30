@@ -41,7 +41,7 @@ export class LeagueRepository {
     });
   }
 
-  findClubLeague(leagueId: number, clubId: number) {
+  findClubLeague(leagueId: number, clubId: string) {
     return this.prisma.clubLeague.findUnique({
       where: { clubId_leagueId: { clubId, leagueId } },
       select: { clubId: true },
@@ -65,11 +65,11 @@ export class LeagueRepository {
     return this.prisma.league.update({ where: { id }, data: dto, select: LEAGUE_SELECT });
   }
 
-  addClub(leagueId: number, clubId: number) {
+  addClub(leagueId: number, clubId: string) {
     return this.prisma.clubLeague.create({ data: { leagueId, clubId } });
   }
 
-  removeClub(leagueId: number, clubId: number) {
+  removeClub(leagueId: number, clubId: string) {
     return this.prisma.clubLeague.delete({
       where: { clubId_leagueId: { clubId, leagueId } },
     });

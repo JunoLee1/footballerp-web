@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { ClubService } from "./club.service";
 
 export class ClubController {
@@ -15,7 +16,7 @@ export class ClubController {
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.getById(Number(req.params["id"])));
+      res.json(await this.service.getById(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -51,7 +52,7 @@ export class ClubController {
       const user = requireUser(req);
       const role = user.role;
       if (role !== "SUPER_ADMIN" && role !== "ADMIN") throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.update(Number(req.params["id"]), req.body));
+      res.json(await this.service.update(assertCuid(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 }

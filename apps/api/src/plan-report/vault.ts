@@ -4,7 +4,7 @@ import * as path from 'path'
 const VAULT_BASE = '/Users/juno/ObsidianVault/plans'
 
 export interface VaultPlanData {
-  id: number
+  id: string
   title: string
   templateType: string
   departmentName: string

@@ -34,7 +34,7 @@ export class BudgetControlRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.budgetHeader.findUnique({
       where: { id },
       include: {
@@ -52,7 +52,7 @@ export class BudgetControlRepository {
     });
   }
 
-  updateStatus(id: number, status: "SUBMITTED" | "APPROVED" | "LOCKED", approverId?: string) {
+  updateStatus(id: string, status: "SUBMITTED" | "APPROVED" | "LOCKED", approverId?: string) {
     return this.prisma.budgetHeader.update({
       where: { id },
       data: {
@@ -64,11 +64,11 @@ export class BudgetControlRepository {
     });
   }
 
-  updateHeader(id: number, data: UpdateBudgetHeaderDto) {
+  updateHeader(id: string, data: UpdateBudgetHeaderDto) {
     return this.prisma.budgetHeader.update({ where: { id }, data });
   }
 
-  createLine(budgetHeaderId: number, dto: CreateBudgetLineDto & { categoryId: number }) {
+  createLine(budgetHeaderId: string, dto: CreateBudgetLineDto & { categoryId: number }) {
     const { category: _category, ...rest } = dto;
     return this.prisma.budgetLine.create({
       data: {
@@ -78,15 +78,15 @@ export class BudgetControlRepository {
     });
   }
 
-  updateLine(lineId: number, data: UpdateBudgetLineDto) {
+  updateLine(lineId: string, data: UpdateBudgetLineDto) {
     return this.prisma.budgetLine.update({ where: { id: lineId }, data });
   }
 
-  deleteLine(lineId: number) {
+  deleteLine(lineId: string) {
     return this.prisma.budgetLine.delete({ where: { id: lineId } });
   }
 
-  createAdjustment(budgetHeaderId: number, dto: CreateAdjustmentDto, createdById: string) {
+  createAdjustment(budgetHeaderId: string, dto: CreateAdjustmentDto, createdById: string) {
     return this.prisma.budgetAdjustment.create({
       data: { budgetHeaderId, ...dto, createdById },
       include: {
@@ -96,7 +96,7 @@ export class BudgetControlRepository {
     });
   }
 
-  updateAdjustmentStatus(id: number, status: "APPROVED" | "REJECTED", approverId: string) {
+  updateAdjustmentStatus(id: string, status: "APPROVED" | "REJECTED", approverId: string) {
     return this.prisma.budgetAdjustment.update({
       where: { id },
       data: {
@@ -111,7 +111,7 @@ export class BudgetControlRepository {
     });
   }
 
-  sumApprovedAdjustments(budgetHeaderId: number) {
+  sumApprovedAdjustments(budgetHeaderId: string) {
     return this.prisma.budgetAdjustment.groupBy({
       by: ["type"],
       where: { budgetHeaderId, status: "APPROVED" },

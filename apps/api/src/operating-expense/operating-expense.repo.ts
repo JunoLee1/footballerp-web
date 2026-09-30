@@ -5,7 +5,7 @@ type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction"
 export class OperatingExpenseRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findBySeasonId(seasonId: number, clubId?: number | null) {
+  findBySeasonId(seasonId: number, clubId?: string | null) {
     return this.prisma.operatingExpense.findMany({
       where: { seasonId, deletedAt: null, ...(clubId != null && { clubId }) },
       include: {
@@ -17,7 +17,7 @@ export class OperatingExpenseRepository {
     });
   }
 
-  findById(id: string, clubId?: number | null) {
+  findById(id: string, clubId?: string | null) {
     return this.prisma.operatingExpense.findFirst({
       where: { id, ...(clubId != null && { clubId }) },
       include: {
@@ -28,7 +28,7 @@ export class OperatingExpenseRepository {
     });
   }
 
-  findBudgetLine(budgetLineId: number) {
+  findBudgetLine(budgetLineId: string) {
     return this.prisma.budgetLine.findUnique({ where: { id: budgetLineId } });
   }
 
@@ -90,8 +90,8 @@ export class OperatingExpenseRepository {
       date: Date;
       note?: string | null;
       createdById: string;
-      budgetLineId: number;
-      clubId?: number | null;
+      budgetLineId: string;
+      clubId?: string | null;
     },
     tx?: Tx,
   ) {

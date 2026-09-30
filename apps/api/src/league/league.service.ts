@@ -42,7 +42,7 @@ export class LeagueService {
     return this.repo.update(id, dto);
   }
 
-  async registerClub(leagueId: number, clubId: number) {
+  async registerClub(leagueId: number, clubId: string) {
     await this.get(leagueId);
     await this.clubService.getById(clubId);
     const existing = await this.repo.findClubLeague(leagueId, clubId);
@@ -51,7 +51,7 @@ export class LeagueService {
     return this.get(leagueId);
   }
 
-  async removeClub(leagueId: number, clubId: number) {
+  async removeClub(leagueId: number, clubId: string) {
     await this.get(leagueId);
     await this.repo.removeClub(leagueId, clubId);
     return this.get(leagueId);

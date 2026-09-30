@@ -4,7 +4,7 @@ import { AppError } from "../lib/appError";
 export class TeamService {
   constructor(private repo: TeamRepository) {}
 
-  getAll(clubId?: number | null) {
+  getAll(clubId?: string | null) {
     return this.repo.findAll(clubId);
   }
 

@@ -37,7 +37,7 @@ const LINKED_COUNT_SELECT = {
 export class AdminRepository {
   constructor(private prisma: PrismaClient) {}
 
-  listUsers(filters: ListUsersQuery, clubId?: number | null) {
+  listUsers(filters: ListUsersQuery, clubId?: string | null) {
     return this.prisma.user.findMany({
       where: {
         ...(clubId != null && { clubId }),
@@ -63,7 +63,7 @@ export class AdminRepository {
     role: Role,
     coachingRole: CoachingRole | null,
     frontOfficeRole: FrontOfficeRole | null,
-    clubId?: number | null,
+    clubId?: string | null,
   ) {
     return this.prisma.user.update({
       where: { id },

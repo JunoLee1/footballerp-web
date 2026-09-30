@@ -63,8 +63,8 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      const result = await service.getById("cmxtestassreq0000000000001", 1);
-      expect(repo.findById).toHaveBeenCalledWith(1, 1);
+      const result = await service.getById("cmxtestassreq0000000000001", "cmxtestclub00000000000001");
+      expect(repo.findById).toHaveBeenCalledWith("cmxtestclub00000000000001", "cmxtestclub00000000000001");
       expect(result.id).toBe(1);
     });
 
@@ -75,7 +75,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.getById("cmxtestassreq0000000000001", 99))
+      await expect(service.getById("cmxtestassreq0000000000001", "cmxtestclub0000000000099"))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
 
@@ -100,8 +100,8 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await service.list("user-5", "PLAYER", "me", undefined, 1);
-      expect(repo.findByRequester).toHaveBeenCalledWith("user-5", undefined, 1);
+      await service.list("user-5", "PLAYER", "me", undefined, "cmxtestclub00000000000001");
+      expect(repo.findByRequester).toHaveBeenCalledWith("user-5", undefined, "cmxtestclub00000000000001");
     });
 
     it("pending-leader + clubId → repo.findPendingForLeader 로 전달", async () => {
@@ -111,8 +111,8 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await service.list("user-7", "COACHING_STAFF", "pending-leader", undefined, 1);
-      expect(repo.findPendingForLeader).toHaveBeenCalledWith("user-7", 1);
+      await service.list("user-7", "COACHING_STAFF", "pending-leader", undefined, "cmxtestclub00000000000001");
+      expect(repo.findPendingForLeader).toHaveBeenCalledWith("user-7", "cmxtestclub00000000000001");
     });
 
     it("all 필터 + non-admin → 403 FORBIDDEN", async () => {
@@ -120,7 +120,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.list("user-5", "PLAYER", "all", undefined, 1))
+      await expect(service.list("user-5", "PLAYER", "all", undefined, "cmxtestclub00000000000001"))
         .rejects.toThrow(new AppError(403, "FORBIDDEN"));
     });
 
@@ -131,8 +131,8 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await service.list("user-1", "ADMIN", "all", undefined, 1);
-      expect(repo.findAll).toHaveBeenCalledWith(undefined, 1);
+      await service.list("user-1", "ADMIN", "all", undefined, "cmxtestclub00000000000001");
+      expect(repo.findAll).toHaveBeenCalledWith(undefined, "cmxtestclub00000000000001");
     });
   });
 
@@ -151,7 +151,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
         expectedAmount: 10000,
         justification: "필요",
       };
-      await service.create(dto, "user-5", 1);
+      await service.create(dto, "user-5", "cmxtestclub00000000000001");
       expect(repo.create).toHaveBeenCalledWith(dto, "user-5", 3, 1);
     });
   });
@@ -164,7 +164,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.submit("cmxtestassreq0000000000001", "user-5", 99))
+      await expect(service.submit("cmxtestassreq0000000000001", "user-5", "cmxtestclub0000000000099"))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
 
@@ -175,8 +175,8 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      const result = await service.submit("cmxtestassreq0000000000001", "user-5", 1);
-      expect(findById).toHaveBeenCalledWith(1, 1);
+      const result = await service.submit("cmxtestassreq0000000000001", "user-5", "cmxtestclub00000000000001");
+      expect(findById).toHaveBeenCalledWith("cmxtestclub00000000000001", "cmxtestclub00000000000001");
       expect(updateStatus).toHaveBeenCalledWith(1, { status: "SUBMITTED" });
       expect((result as any).status).toBe("SUBMITTED");
     });
@@ -190,7 +190,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.cancel("cmxtestassreq0000000000001", "user-5", 99))
+      await expect(service.cancel("cmxtestassreq0000000000001", "user-5", "cmxtestclub0000000000099"))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
   });
@@ -203,7 +203,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.leaderApprove("cmxtestassreq0000000000001", "user-7", 99))
+      await expect(service.leaderApprove("cmxtestassreq0000000000001", "user-7", "cmxtestclub0000000000099"))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
   });

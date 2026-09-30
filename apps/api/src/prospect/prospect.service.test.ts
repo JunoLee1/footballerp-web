@@ -203,7 +203,7 @@ describe('ProspectService — 비자 게이트', () => {
 // ─── clubId 스코핑 — mutation 경로 ──────────────────────────────────────────
 
 describe('ProspectService mutation — clubId 스코핑', () => {
-  const OTHER_CLUB_ID = 99;
+  const OTHER_CLUB_ID = "cmxtestclub0000000000099";
 
   it('update: 다른 clubId면 PROSPECT_NOT_FOUND 404', async () => {
     const service = new ProspectService(makeRepo({

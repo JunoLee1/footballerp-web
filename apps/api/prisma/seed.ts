@@ -963,11 +963,10 @@ async function main() {
   console.log("🌱 Seeding...");
 
   // ── Club ──────────────────────────────────────────────
-  const fcSeoulClub = await prisma.club.upsert({
-    where: { id: 1 },
-    update: {},
-    create: { name: "FC Seoul", isActive: true, isLite: false },
-  });
+  const fcSeoulClub = await prisma.club.findFirst({ where: { name: "FC Seoul" } })
+    ?? await prisma.club.create({
+      data: { name: "FC Seoul", isActive: true, isLite: false },
+    });
 
   // ── Team ─────────────────────────────────────────────
   const firstTeam = await prisma.team.upsert({

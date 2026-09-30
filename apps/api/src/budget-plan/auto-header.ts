@@ -28,7 +28,7 @@ export async function autoGenBudgetHeaderFromPlan(
   seasonId: number,
   actorUserId: string,
   tx: Prisma.TransactionClient,
-): Promise<{ headerId: number; lineCount: number }> {
+): Promise<{ headerId: string; lineCount: number }> {
   // 1) FinancialReport + BudgetCategoryPlan[] fetch (categoryId, planned amounts).
   const report = await tx.financialReport.findUnique({
     where: { seasonId },

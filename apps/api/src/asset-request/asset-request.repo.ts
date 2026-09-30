@@ -41,7 +41,7 @@ const listInclude = {
 export class AssetRequestRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(dto: CreateAssetRequestDto, requesterId: string, departmentId: number, actorClubId?: number) {
+  create(dto: CreateAssetRequestDto, requesterId: string, departmentId: number, actorClubId?: string) {
     return this.prisma.assetRequest.create({
       data: {
         requesterId,
@@ -62,14 +62,14 @@ export class AssetRequestRepository {
     });
   }
 
-  findById(id: string, actorClubId?: number) {
+  findById(id: string, actorClubId?: string) {
     return this.prisma.assetRequest.findFirst({
       where: { id, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       include: detailInclude,
     });
   }
 
-  findByRequester(requesterId: string, status?: AssetRequestStatus, actorClubId?: number) {
+  findByRequester(requesterId: string, status?: AssetRequestStatus, actorClubId?: string) {
     return this.prisma.assetRequest.findMany({
       where: {
         requesterId,
@@ -81,7 +81,7 @@ export class AssetRequestRepository {
     });
   }
 
-  findByDepartment(departmentId: number, status?: AssetRequestStatus, actorClubId?: number) {
+  findByDepartment(departmentId: number, status?: AssetRequestStatus, actorClubId?: string) {
     return this.prisma.assetRequest.findMany({
       where: {
         departmentId,
@@ -96,7 +96,7 @@ export class AssetRequestRepository {
   /**
    * SUBMITTED requests where the user is the leaf department's head (팀장).
    */
-  findPendingForLeader(userId: string, actorClubId?: number) {
+  findPendingForLeader(userId: string, actorClubId?: string) {
     return this.prisma.assetRequest.findMany({
       where: {
         status: "SUBMITTED",
@@ -111,7 +111,7 @@ export class AssetRequestRepository {
   /**
    * LEADER_APPROVED requests where the user is the parent department's head (부서장).
    */
-  findPendingForDeptHead(userId: string, actorClubId?: number) {
+  findPendingForDeptHead(userId: string, actorClubId?: string) {
     return this.prisma.assetRequest.findMany({
       where: {
         status: "LEADER_APPROVED",
@@ -123,7 +123,7 @@ export class AssetRequestRepository {
     });
   }
 
-  findAll(status?: AssetRequestStatus, actorClubId?: number) {
+  findAll(status?: AssetRequestStatus, actorClubId?: string) {
     return this.prisma.assetRequest.findMany({
       where: {
         ...(status !== undefined && { status }),

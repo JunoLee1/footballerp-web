@@ -193,8 +193,8 @@ export class FinancialReportRepository {
   }
 
   async saveOptimizeResult(
-    reportId: number,
-    selections: { tierId: number; categoryPlanId: number; allocated: number }[]
+    reportId: string,
+    selections: { tierId: number; categoryPlanId: string; allocated: number }[]
   ) {
     await this.prisma.budgetTier.updateMany({
       where: { categoryPlan: { financialReportId: reportId } },
@@ -213,7 +213,7 @@ export class FinancialReportRepository {
   }
 
   async addOverrideLog(
-    reportId: number,
+    reportId: string,
     categoryId: number,
     amount: number,
     reason: string,

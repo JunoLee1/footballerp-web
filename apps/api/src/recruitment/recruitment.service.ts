@@ -94,7 +94,7 @@ export class RecruitmentService {
     return posting;
   }
 
-  async bulkCreatePostingsFromPlanReport(planReportId: number, createdById: string) {
+  async bulkCreatePostingsFromPlanReport(planReportId: string, createdById: string) {
     if (!this.planReportRepo) throw new AppError(500, "INTERNAL_ERROR");
 
     const planReport = await this.planReportRepo.findByIdLight(planReportId);

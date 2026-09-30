@@ -21,7 +21,7 @@ export class HiringSurveyService {
     return cached('hiring-surveys:list', 30, () => this.repo.findAll())
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const survey = await this.repo.findById(id)
     if (!survey) throw new AppError(404, 'SURVEY_NOT_FOUND')
     return survey
@@ -45,7 +45,7 @@ export class HiringSurveyService {
    * head and a LEADER row doesn't get two notifications.
    */
   private async notifyTargetHeadsAndLeaders(
-    survey: { id: number; title: string; targetDepartments: Array<{ departmentId?: number; department: { id?: number; headId: string | null } }> },
+    survey: { id: string; title: string; targetDepartments: Array<{ departmentId?: number; department: { id?: string; headId: string | null } }> },
     deadlineAt: Date,
   ) {
     const headIds = survey.targetDepartments
@@ -81,7 +81,7 @@ export class HiringSurveyService {
    * — actual submission goes through `submitResponse` (issues #367/#368).
    */
   async createResponse(
-    surveyId: number,
+    surveyId: string,
     departmentId: number,
     userId: string,
     dto: CreateSurveyResponseDto,
@@ -105,7 +105,7 @@ export class HiringSurveyService {
    * are locked — SUBMITTED belongs to the dept head's queue, APPROVED is
    * terminal (grill Q3 d2).
    */
-  async updateResponse(id: number, userId: string, dto: UpdateSurveyResponseDto) {
+  async updateResponse(id: string, userId: string, dto: UpdateSurveyResponseDto) {
     const response = await this.repo.findResponseById(id)
     if (!response) throw new AppError(404, 'RESPONSE_NOT_FOUND')
     if (response.survey.status !== 'OPEN') throw new AppError(409, 'SURVEY_NOT_OPEN')
@@ -139,7 +139,7 @@ export class HiringSurveyService {
    * 팀장 transitions DRAFT|REJECTED → SUBMITTED. On success fires
    * `SURVEY_RESPONSE_SUBMITTED` to the department head (부서장).
    */
-  async submitResponse(id: number, userId: string) {
+  async submitResponse(id: string, userId: string) {
     const response = await this.repo.findResponseById(id)
     if (!response) throw new AppError(404, 'RESPONSE_NOT_FOUND')
     if (response.survey.status !== 'OPEN') throw new AppError(409, 'SURVEY_NOT_OPEN')
@@ -183,7 +183,7 @@ export class HiringSurveyService {
    * 부서장 (Department.headId) approves a SUBMITTED response.
    * Fires `SURVEY_RESPONSE_APPROVED` back to the leader who submitted.
    */
-  async approveResponse(id: number, reviewerId: string) {
+  async approveResponse(id: string, reviewerId: string) {
     const response = await this.repo.findResponseById(id)
     if (!response) throw new AppError(404, 'RESPONSE_NOT_FOUND')
     if (response.department.headId !== reviewerId) throw new AppError(403, 'NOT_DEPT_HEAD')
@@ -222,7 +222,7 @@ export class HiringSurveyService {
     return updated
   }
 
-  private async checkAndNotifyAllApproved(surveyId: number) {
+  private async checkAndNotifyAllApproved(surveyId: string) {
     const survey = await this.repo.findById(surveyId)
     if (!survey) return
     const approvedDeptIds = new Set(
@@ -253,7 +253,7 @@ export class HiringSurveyService {
    * Fires `SURVEY_RESPONSE_REJECTED` back to the leader with the reason.
    * The response returns to REJECTED status; leader can edit and resubmit.
    */
-  async rejectResponse(id: number, reviewerId: string, rejectionReason: string) {
+  async rejectResponse(id: string, reviewerId: string, rejectionReason: string) {
     const trimmed = rejectionReason?.trim()
     if (!trimmed) throw new AppError(400, 'REJECTION_REASON_REQUIRED')
 
@@ -299,7 +299,7 @@ export class HiringSurveyService {
     if (!dto.reason?.trim()) throw new AppError(400, 'REASON_REQUIRED')
   }
 
-  async close(surveyId: number, closedByUserId: string) {
+  async close(surveyId: string, closedByUserId: string) {
     const survey = await this.getById(surveyId)
     if (survey.status !== 'OPEN') throw new AppError(409, 'SURVEY_NOT_OPEN')
 
@@ -344,8 +344,8 @@ export class HiringSurveyService {
       await this.planReportRepo.createHiringPlanItems(
         responses.map((r) => {
           const item: {
-            planReportId: number
-            surveyResponseId: number
+            planReportId: string
+            surveyResponseId: string
             roleTitle: string
             headcount: number
             quarter?: number
@@ -377,7 +377,7 @@ export class HiringSurveyService {
     return planReport
   }
 
-  async updateDraft(id: number, dto: UpdateHiringSurveyDraftDto) {
+  async updateDraft(id: string, dto: UpdateHiringSurveyDraftDto) {
     const survey = await this.getById(id)
     if (survey.status !== 'DRAFT') throw new AppError(409, 'SURVEY_NOT_DRAFT')
 
@@ -397,7 +397,7 @@ export class HiringSurveyService {
     return this.repo.updateDraft(id, data)
   }
 
-  async open(id: number) {
+  async open(id: string) {
     const survey = await this.getById(id)
     if (survey.status !== 'DRAFT') throw new AppError(409, 'SURVEY_NOT_DRAFT')
     if (survey.targetDepartments.length === 0) throw new AppError(409, 'TARGET_DEPTS_REQUIRED')
@@ -411,7 +411,7 @@ export class HiringSurveyService {
     return opened
   }
 
-  async deleteDraft(id: number) {
+  async deleteDraft(id: string) {
     const survey = await this.getById(id)
     if (survey.status !== 'DRAFT') throw new AppError(409, 'SURVEY_NOT_DRAFT')
     await this.repo.deleteDraft(id)
@@ -450,7 +450,7 @@ export class HiringSurveyService {
     return draft
   }
 
-  async getParticipationRate(surveyId: number) {
+  async getParticipationRate(surveyId: string) {
     const survey = await this.getById(surveyId);
     const targetCount = survey.targetDepartments.length;
     const respondedIds = new Set(survey.responses.map((r) => r.departmentId));

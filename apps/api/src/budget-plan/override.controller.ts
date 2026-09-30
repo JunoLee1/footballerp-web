@@ -2,6 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { canWriteFinance, isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import type {
   BudgetOverrideService,
   ListOverrideLogsQuery,
@@ -41,7 +42,7 @@ export class BudgetOverrideController {
     try {
       const { role, frontOfficeRole, id: userId } = requireUser(req);
       if (!canWriteFinance(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      const logId = Number(req.params["id"]);
+      const logId = assertCuid(req.params["id"]);
       const body = req.body as { decision?: "APPROVED" | "REJECTED"; note?: string };
       if (body.decision !== "APPROVED" && body.decision !== "REJECTED") {
         throw new AppError(400, "DECISION_MUST_BE_APPROVED_OR_REJECTED");

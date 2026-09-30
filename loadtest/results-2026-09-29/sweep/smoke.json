@@ -1,0 +1,358 @@
+{
+    "metrics": {
+        "sweep_errors": {
+            "count": 20,
+            "rate": 0.9360426839208038,
+            "thresholds": {
+                "count<200": false
+            }
+        },
+        "vus": {
+            "min": 2,
+            "max": 2,
+            "value": 2
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 1245.403,
+            "p(90)": 56.952600000000004,
+            "p(95)": 69.46619999999999,
+            "avg": 36.25900967741941,
+            "min": 1.139,
+            "med": 2.8019999999999996
+        },
+        "checks": {
+            "passes": 600,
+            "fails": 20,
+            "value": 0.967741935483871
+        },
+        "http_req_duration": {
+            "max": 1245.403,
+            "p(90)": 56.648199999999996,
+            "p(95)": 67.56565,
+            "avg": 32.249721428571476,
+            "min": 0.125,
+            "med": 2.525,
+            "thresholds": {
+                "p(95)<2500": false
+            }
+        },
+        "http_req_connecting": {
+            "med": 0,
+            "max": 0.316,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.0008785714285714285,
+            "min": 0
+        },
+        "data_sent": {
+            "count": 797880,
+            "rate": 37342.48683233655
+        },
+        "iterations": {
+            "count": 20,
+            "rate": 0.9360426839208038
+        },
+        "http_req_tls_handshaking": {
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0
+        },
+        "http_req_sending": {
+            "avg": 0.007302857142857067,
+            "min": 0.002,
+            "med": 0.005,
+            "max": 0.323,
+            "p(90)": 0.011,
+            "p(95)": 0.014
+        },
+        "iteration_duration": {
+            "min": 2000.039542,
+            "med": 2075.540458,
+            "max": 2688.823708,
+            "p(90)": 2208.0562584,
+            "p(95)": 2648.72444645,
+            "avg": 2132.4413687
+        },
+        "http_req_receiving": {
+            "min": 0.006,
+            "med": 0.015,
+            "max": 0.325,
+            "p(90)": 0.043,
+            "p(95)": 0.05409999999999994,
+            "avg": 0.02234428571428566
+        },
+        "vus_max": {
+            "value": 2,
+            "min": 2,
+            "max": 2
+        },
+        "data_received": {
+            "rate": 207055.44981133356,
+            "count": 4424060
+        },
+        "http_req_failed": {
+            "passes": 80,
+            "fails": 620,
+            "thresholds": {
+                "rate<0.40": false
+            },
+            "value": 0.11428571428571428
+        },
+        "http_req_waiting": {
+            "max": 1245.358,
+            "p(90)": 56.611799999999995,
+            "p(95)": 67.49665,
+            "avg": 32.22007428571425,
+            "min": 0.114,
+            "med": 2.51
+        },
+        "http_reqs": {
+            "count": 700,
+            "rate": 32.76149393722813
+        },
+        "sweep_read_latency": {
+            "min": 0,
+            "med": 2,
+            "max": 1245,
+            "p(90)": 6,
+            "p(95)": 8,
+            "avg": 28.638709677419357
+        },
+        "http_req_blocked": {
+            "avg": 0.007652857142857328,
+            "min": 0,
+            "med": 0.001,
+            "max": 2.19,
+            "p(90)": 0.002,
+            "p(95)": 0.004
+        }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "admin/transfers/recalls<500": {
+                    "name": "admin/transfers/recalls<500",
+                    "path": "::admin/transfers/recalls<500",
+                    "id": "f982f14ae2d7a33237c953a33c85797c",
+                    "passes": 0,
+                    "fails": 20
+                },
+                "admin/transfers/player/player-001<500": {
+                    "name": "admin/transfers/player/player-001<500",
+                    "path": "::admin/transfers/player/player-001<500",
+                    "id": "b68b823ed4280f72068a075fd0d4edab",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "finance/sponsorships<500": {
+                    "id": "35ce7798b4a8238e361336323eb06fd0",
+                    "passes": 20,
+                    "fails": 0,
+                    "name": "finance/sponsorships<500",
+                    "path": "::finance/sponsorships<500"
+                },
+                "finance/sponsorships/roi<500": {
+                    "name": "finance/sponsorships/roi<500",
+                    "path": "::finance/sponsorships/roi<500",
+                    "id": "f899765e77ed9f0352c1e4cc0ada1ba8",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "finance/sponsorships/expiring<500": {
+                    "name": "finance/sponsorships/expiring<500",
+                    "path": "::finance/sponsorships/expiring<500",
+                    "id": "fa2071cadae77cc5453d19d8591b3b66",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "finance/budget-control<500": {
+                    "fails": 0,
+                    "name": "finance/budget-control<500",
+                    "path": "::finance/budget-control<500",
+                    "id": "da72c333781d45310881c06da4f0f122",
+                    "passes": 20
+                },
+                "finance/sales/summary?seasonId=1<500": {
+                    "fails": 0,
+                    "name": "finance/sales/summary?seasonId=1<500",
+                    "path": "::finance/sales/summary?seasonId=1<500",
+                    "id": "9be590325aa51c45e5ad7c334b4da2d6",
+                    "passes": 20
+                },
+                "finance/sales/ticket-summary?seasonId=1<500": {
+                    "name": "finance/sales/ticket-summary?seasonId=1<500",
+                    "path": "::finance/sales/ticket-summary?seasonId=1<500",
+                    "id": "03827aaaf6827586ff459ff938e05614",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "finance/sales/ticket-season-total?seasonId=1<500": {
+                    "fails": 0,
+                    "name": "finance/sales/ticket-season-total?seasonId=1<500",
+                    "path": "::finance/sales/ticket-season-total?seasonId=1<500",
+                    "id": "8c1c2901bf38fede07ca94fe6144af11",
+                    "passes": 20
+                },
+                "finance/monthly-settlement<500": {
+                    "name": "finance/monthly-settlement<500",
+                    "path": "::finance/monthly-settlement<500",
+                    "id": "7ad89b7405687ffe01e32005406a7f9c",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "finance/account-codes<500": {
+                    "passes": 20,
+                    "fails": 0,
+                    "name": "finance/account-codes<500",
+                    "path": "::finance/account-codes<500",
+                    "id": "ecad749939b26c1b17c451ed1257ff5f"
+                },
+                "finance/operating-expenses?seasonId=1<500": {
+                    "id": "648105672f44ba1c1da1d6335efd3bb1",
+                    "passes": 20,
+                    "fails": 0,
+                    "name": "finance/operating-expenses?seasonId=1<500",
+                    "path": "::finance/operating-expenses?seasonId=1<500"
+                },
+                "coach/training<500": {
+                    "path": "::coach/training<500",
+                    "id": "9eb3034df26e9a0e763f72828365fbba",
+                    "passes": 20,
+                    "fails": 0,
+                    "name": "coach/training<500"
+                },
+                "coach/tactical<500": {
+                    "name": "coach/tactical<500",
+                    "path": "::coach/tactical<500",
+                    "id": "35b9ddc34ef7fa6767736b62da14ee66",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "coach/development-plans<500": {
+                    "passes": 20,
+                    "fails": 0,
+                    "name": "coach/development-plans<500",
+                    "path": "::coach/development-plans<500",
+                    "id": "adfb45d3428434d6fc37206dd77e8d48"
+                },
+                "coach/coach-availabilities<500": {
+                    "name": "coach/coach-availabilities<500",
+                    "path": "::coach/coach-availabilities<500",
+                    "id": "76c0d79279b3b55ecafe47de1581cb37",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "coach/training-references<500": {
+                    "name": "coach/training-references<500",
+                    "path": "::coach/training-references<500",
+                    "id": "4a41dd0fb1a89763a50aaeced65a5dad",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "admin/plan-reports<500": {
+                    "name": "admin/plan-reports<500",
+                    "path": "::admin/plan-reports<500",
+                    "id": "5dc6b62c45c1834089b2fd5e4503a3a6",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "admin/reports<500": {
+                    "name": "admin/reports<500",
+                    "path": "::admin/reports<500",
+                    "id": "519595995ed09afd2307562896d49228",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "admin/hiring-dispatches<500": {
+                    "fails": 0,
+                    "name": "admin/hiring-dispatches<500",
+                    "path": "::admin/hiring-dispatches<500",
+                    "id": "ab04038a2b628942517f1ec4ad170b5c",
+                    "passes": 20
+                },
+                "admin/financial-reports/1<500": {
+                    "name": "admin/financial-reports/1<500",
+                    "path": "::admin/financial-reports/1<500",
+                    "id": "3e6c7bd3b3e97441c0f6bd39b9f72e1d",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "admin/youth-registrations<500": {
+                    "name": "admin/youth-registrations<500",
+                    "path": "::admin/youth-registrations<500",
+                    "id": "cc795de263c63a2ee3c8bfd5f0043054",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "admin/incident-reports<500": {
+                    "passes": 20,
+                    "fails": 0,
+                    "name": "admin/incident-reports<500",
+                    "path": "::admin/incident-reports<500",
+                    "id": "584e46c4f99ff60c93e84000b6456056"
+                },
+                "admin/safeguard-reports<500": {
+                    "name": "admin/safeguard-reports<500",
+                    "path": "::admin/safeguard-reports<500",
+                    "id": "99176e992e06cdee82e4e4a867e66574",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "admin/departments<500": {
+                    "name": "admin/departments<500",
+                    "path": "::admin/departments<500",
+                    "id": "30df35b4a733eb915dd510ca0d6941a4",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "admin/department-review-configs<500": {
+                    "passes": 20,
+                    "fails": 0,
+                    "name": "admin/department-review-configs<500",
+                    "path": "::admin/department-review-configs<500",
+                    "id": "7eb8b81af69892660d394366cfdc45f5"
+                },
+                "admin/review-rule-sets<500": {
+                    "path": "::admin/review-rule-sets<500",
+                    "id": "73972d7b48d3b548a14cc46c07c988fb",
+                    "passes": 20,
+                    "fails": 0,
+                    "name": "admin/review-rule-sets<500"
+                },
+                "admin/notifications/my<500": {
+                    "fails": 0,
+                    "name": "admin/notifications/my<500",
+                    "path": "::admin/notifications/my<500",
+                    "id": "28a7b56226df41138a4287d0e42fd9c3",
+                    "passes": 20
+                },
+                "admin/audit-logs<500": {
+                    "fails": 0,
+                    "name": "admin/audit-logs<500",
+                    "path": "::admin/audit-logs<500",
+                    "id": "c75b3be1e3d240a06cd41f1fc146bded",
+                    "passes": 20
+                },
+                "admin/countries<500": {
+                    "name": "admin/countries<500",
+                    "path": "::admin/countries<500",
+                    "id": "7567a7f39cf7173f84f3c892e00db43d",
+                    "passes": 20,
+                    "fails": 0
+                },
+                "admin/clubs<500": {
+                    "name": "admin/clubs<500",
+                    "path": "::admin/clubs<500",
+                    "id": "10d2daaa21cb2bd31098aec05ca1050c",
+                    "passes": 20,
+                    "fails": 0
+                }
+            }
+    }
+}

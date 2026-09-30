@@ -3,7 +3,7 @@ import type { PrismaClient, RevenueField } from "../generated/client";
 export class RevenueAdjustmentRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findByFinancialReport(financialReportId: number) {
+  findByFinancialReport(financialReportId: string) {
     return this.prisma.revenueAdjustment.findMany({
       where: { financialReportId },
       include: { createdBy: { select: { username: true } }, ledgerEntry: true },
@@ -20,7 +20,7 @@ export class RevenueAdjustmentRepository {
   }
 
   findByField(params: {
-    financialReportId?: number;
+    financialReportId?: string;
     monthlyReportId?: number;
     field: RevenueField;
   }) {
@@ -35,7 +35,7 @@ export class RevenueAdjustmentRepository {
     });
   }
 
-  sumByField(target: { financialReportId?: number; monthlyReportId?: number }) {
+  sumByField(target: { financialReportId?: string; monthlyReportId?: number }) {
     return this.prisma.revenueAdjustment.groupBy({
       by: ["field"],
       where: {
@@ -47,7 +47,7 @@ export class RevenueAdjustmentRepository {
   }
 
   async create(data: {
-    financialReportId?: number;
+    financialReportId?: string;
     monthlyReportId?: number;
     field: RevenueField;
     delta: number;

@@ -10,7 +10,7 @@ type Actor = { id: string; role: string; frontOfficeRole?: string | null; deptCa
 export class DepartmentService {
   constructor(private repo: DepartmentRepository) {}
 
-  list(clubId?: number | null) {
+  list(clubId?: string | null) {
     return cached(`departments:list:${clubId ?? "null"}`, 60, () => this.repo.findAll(clubId));
   }
 
@@ -20,7 +20,7 @@ export class DepartmentService {
     return dept;
   }
 
-  async create(data: { name: string; parentId?: number; category?: DepartmentCategory | null; clubId?: number | null }) {
+  async create(data: { name: string; parentId?: number; category?: DepartmentCategory | null; clubId?: string | null }) {
     const existing = await this.repo.findByName(data.name, data.clubId);
     if (existing) throw new AppError(409, "DEPARTMENT_NAME_CONFLICT");
     if (data.parentId !== undefined) {
@@ -30,7 +30,7 @@ export class DepartmentService {
     return this.repo.create(data);
   }
 
-  async update(id: number, data: { name?: string; isActive?: boolean; parentId?: number | null; category?: DepartmentCategory | null }, actorId?: string, clubId?: number | null) {
+  async update(id: number, data: { name?: string; isActive?: boolean; parentId?: number | null; category?: DepartmentCategory | null }, actorId?: string, clubId?: string | null) {
     const dept = await this.get(id);
     if (data.name !== undefined) {
       const existing = await this.repo.findByName(data.name, dept.clubId);

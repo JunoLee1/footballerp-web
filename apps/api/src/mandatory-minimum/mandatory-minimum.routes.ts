@@ -13,7 +13,7 @@ const prisma = getPrisma();
 const notificationRepo = new NotificationRepository(prisma);
 const violationNotifier = (
   seasonId: number,
-  categoryPlanId: number,
+  categoryPlanId: string,
   detection: Parameters<typeof notifyMinimumViolation>[2],
 ) => notifyMinimumViolation(seasonId, categoryPlanId, detection, { prisma, notificationRepo });
 

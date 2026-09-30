@@ -12,7 +12,7 @@ export interface UpdateUserRoleDto {
   role: Role;
   coachingRole?: CoachingRole | null;
   frontOfficeRole?: FrontOfficeRole | null;
-  clubId?: number | null;
+  clubId?: string | null;
 }
 
 export interface PlayerWithoutAccountDto {

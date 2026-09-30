@@ -28,13 +28,13 @@ export class ClubService {
     private countryRepo: Repository,
   ) {}
 
-  async getAll(requesterRole: string, requesterClubId?: number | null) {
+  async getAll(requesterRole: string, requesterClubId?: string | null) {
     if (requesterRole === "SUPER_ADMIN") return this.repo.findAll();
     if (requesterClubId) return this.repo.findByIds([requesterClubId]);
     return [];
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const club = await this.repo.findById(id);
     if (!club) throw new AppError(404, "CLUB_NOT_FOUND");
     return club;
@@ -89,7 +89,7 @@ export class ClubService {
     return this.repo.create({ ...dto, name: trimmed });
   }
 
-  async update(id: number, dto: UpdateClubDto) {
+  async update(id: string, dto: UpdateClubDto) {
     await this.getById(id);
     if (dto.name !== undefined) {
       if (typeof dto.name !== "string" || !dto.name.trim()) {

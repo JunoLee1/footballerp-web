@@ -58,7 +58,7 @@ export class ProspectRepository {
     return { prospects, squadPlayers };
   }
 
-  findAll(status?: ProspectStatus, clubId?: number | null) {
+  findAll(status?: ProspectStatus, clubId?: string | null) {
     return this.prisma.prospect.findMany({
       where: {
         ...(status !== undefined && { status }),
@@ -69,14 +69,14 @@ export class ProspectRepository {
     });
   }
 
-  findById(id: number, clubId?: number | null) {
+  findById(id: number, clubId?: string | null) {
     return this.prisma.prospect.findFirst({
       where: { id, ...(clubId != null && { clubId }) }, //TODO: 전사 관리자 외 타구단 사람들도 조회 가능 하다면 수정
       select: PROSPECT_SELECT,
     });
   }
 
-  async getClubLeagueCountryIds(clubId: number): Promise<number[]> {
+  async getClubLeagueCountryIds(clubId: string): Promise<number[]> {
     const links = await this.prisma.clubLeague.findMany({
       where: { clubId, league: { isActive: true } },
       select: { league: { select: { countryId: true } } },
@@ -84,7 +84,7 @@ export class ProspectRepository {
     return links.map(l => l.league.countryId).filter((id): id is number => id != null);
   }
 
-  create(dto: CreateProspectDto, clubId?: number | null, createdById?: string, visaRequired?: boolean) {
+  create(dto: CreateProspectDto, clubId?: string | null, createdById?: string, visaRequired?: boolean) {
     return this.prisma.prospect.create({
       data: {
         name: dto.name,

@@ -34,7 +34,7 @@ export class AssetRequestService {
   // Read
   // ────────────────────────────────────────────
 
-  async getById(id: string, actorClubId?: number) {
+  async getById(id: string, actorClubId?: string) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     return request;
@@ -45,7 +45,7 @@ export class AssetRequestService {
     role: string,
     filter?: "me" | "pending-leader" | "pending-dept-head" | "all",
     status?: string,
-    actorClubId?: number,
+    actorClubId?: string,
   ) {
     const asStatus = status as any;
     const cacheKey = `asset-requests:list:${userId}:${role}:${filter ?? ""}:${status ?? ""}:${actorClubId ?? "all"}`;
@@ -68,7 +68,7 @@ export class AssetRequestService {
   // Create
   // ────────────────────────────────────────────
 
-  async create(dto: CreateAssetRequestDto, requesterId: string, actorClubId?: number) {
+  async create(dto: CreateAssetRequestDto, requesterId: string, actorClubId?: string) {
     // Payload alignment first — the hybrid rule (Q2-i c): exactly one of
     // equipmentItemId / softwareLicenseId / customName.
     const payloadKeys = [
@@ -112,7 +112,7 @@ export class AssetRequestService {
   // Requester actions
   // ────────────────────────────────────────────
 
-  async submit(id: string, userId: string, actorClubId?: number) {
+  async submit(id: string, userId: string, actorClubId?: string) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.requesterId !== userId) throw new AppError(403, "NOT_YOUR_REQUEST");
@@ -149,7 +149,7 @@ export class AssetRequestService {
     return updated;
   }
 
-  async cancel(id: string, userId: string, actorClubId?: number) {
+  async cancel(id: string, userId: string, actorClubId?: string) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.requesterId !== userId) throw new AppError(403, "NOT_YOUR_REQUEST");
@@ -175,7 +175,7 @@ export class AssetRequestService {
   // Leader (leaf dept.head) approvals
   // ────────────────────────────────────────────
 
-  async leaderApprove(id: string, reviewerId: string, actorClubId?: number) {
+  async leaderApprove(id: string, reviewerId: string, actorClubId?: string) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.status !== "SUBMITTED") throw new AppError(400, "INVALID_STATUS");
@@ -220,7 +220,7 @@ export class AssetRequestService {
     return updated;
   }
 
-  async leaderReject(id: string, reviewerId: string, reason: string, actorClubId?: number) {
+  async leaderReject(id: string, reviewerId: string, reason: string, actorClubId?: string) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -266,7 +266,7 @@ export class AssetRequestService {
   // Dept-head (parent dept.head) approvals
   // ────────────────────────────────────────────
 
-  async approve(id: string, reviewerId: string, actorClubId?: number) {
+  async approve(id: string, reviewerId: string, actorClubId?: string) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");
     if (request.status !== "LEADER_APPROVED") throw new AppError(400, "INVALID_STATUS");
@@ -381,7 +381,7 @@ export class AssetRequestService {
     return updated;
   }
 
-  async reject(id: string, reviewerId: string, reason: string, actorClubId?: number) {
+  async reject(id: string, reviewerId: string, reason: string, actorClubId?: string) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -446,7 +446,7 @@ export class AssetRequestService {
     userId: string,
     role: string,
     foRole: string | null | undefined,
-    actorClubId?: number,
+    actorClubId?: string,
   ) {
     const request = await this.repo.findById(id, actorClubId);
     if (!request) throw new AppError(404, "NOT_FOUND");

@@ -6,7 +6,7 @@ type TxClient = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transa
 export class DepartmentRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findAll(clubId?: number | null) {
+  findAll(clubId?: string | null) {
     return this.prisma.department.findMany({
       where: {
         parentId: null,
@@ -26,13 +26,13 @@ export class DepartmentRepository {
     });
   }
 
-  findByName(name: string, clubId?: number | null) {
+  findByName(name: string, clubId?: string | null) {
     return this.prisma.department.findUnique({
       where: { name_clubId: { name, clubId: clubId ?? (null as unknown as number) } },
     });
   }
 
-  create(data: { name: string; parentId?: number; category?: DepartmentCategory | null; clubId?: number | null }) {
+  create(data: { name: string; parentId?: number; category?: DepartmentCategory | null; clubId?: string | null }) {
     return this.prisma.department.create({
       data,
       include: { children: { orderBy: { name: "asc" } }, parent: true },

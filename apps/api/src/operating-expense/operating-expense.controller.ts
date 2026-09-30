@@ -41,7 +41,7 @@ export class OperatingExpenseController {
         amount: number;
         date: string;
         note?: string;
-        budgetLineId?: number;
+        budgetLineId?: string;
       };
       const expense = await this.service.create({
         seasonId, category, amount, date,

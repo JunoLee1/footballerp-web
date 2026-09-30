@@ -98,7 +98,7 @@ export const isHeadCoach = (role: string, coachingRole?: string | null): boolean
  * SUPER_ADMIN은 클럽 무관 전체 접근.
  * targetClubId가 null이면 클럽 미배정 리소스 — ADMIN 접근 불가.
  */
-export function assertClubAccess(req: Request, targetClubId: number | null | undefined): void {
+export function assertClubAccess(req: Request, targetClubId: string | null | undefined): void {
   const user = req.user;
   if (!user) throw new AppError(401, 'UNAUTHORIZED');
   if (user.role === 'SUPER_ADMIN') return;
@@ -114,7 +114,7 @@ export function assertClubAccess(req: Request, targetClubId: number | null | und
  * - clubId 있음: 그 값
  * - 그 외 (clubId=null 인 일반 유저): 403 throw
  */
-export function requireClubScope(user: Express.User): number | undefined {
+export function requireClubScope(user: Express.User): string | undefined {
   if (user.role === 'SUPER_ADMIN') return user.clubId ?? undefined;
   if (user.clubId != null) return user.clubId;
   throw new AppError(403, 'CLUB_SCOPE_REQUIRED');
