@@ -47,6 +47,7 @@ export class PlayerRepository {
         ...PLAYER_SELECT,
         userId: true,
         agentId: true,
+        guardianId: true,
         agencyId: true,
         ...(includePrivate && {
           emergencyContactNameEncrypted: true,
