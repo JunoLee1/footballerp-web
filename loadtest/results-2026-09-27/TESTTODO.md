@@ -194,8 +194,8 @@
 |---|---|---|
 | Smoke | ✅ `smoke-MEDICAL_DIRECTOR.json` 49/49 PASS, p(95) 195ms  · VU 2|
 | Stress | ✅ `stress-MEDICAL_DIRECTOR.json` p(95) 1,827ms · threshold 근접 · RPS 98 · VU peak 200 |
-| 보안 — Cross-role 접근 차단 | ✅ **부분 LEAK** — `/injuries/active` 는 403 정상, `/medical-equipment-loan`·`/medical-expenses` 는 PLAYER · HR · ASSET 모두 200. **의료 개인정보 노출** (GDPR 관점 심각) |
-| 보안 — GDPR 개인정보 스코프 검증 | 🔲 guardian 계정 접근 범위 미검증 |
+| 보안 — Cross-role 접근 차단 | ✅ **FIXED** — `fix/medical_domain` (02615396 · 2026-09-27) 로 `lib/medicalGuards.ts` 신설 · `requireReadMedical` guard 도입. 통과 role: `isAdminLike` · COACHING_STAFF+MEDICAL/MEDICAL_DIRECTOR · FRONT_OFFICE+FINANCE_MANAGER/STAFF · PERFORMANCE 부서. `medical-expense.routes` GET `/`·`/:id`·POST `/` + `medical-equipment-loan.routes` GET `/`·`/:id` 에 적용. 재프로브 MEDICAL 6 LEAK → 0 |
+| 보안 — GDPR 개인정보 스코프 검증 | ✅ **완전 차단 정책 확립** — GUARDIAN role 은 `canReadMedical` 에서 통과 조건 미포함 → 자녀 medical-expense/medical-equipment-loan 접근 불가 (403). 자녀 의료 정보 조회 필요시 별도 self-scope 라우트 개설 필요 (정책 판단) — 현재는 GDPR 최대 안전 |
 
 ---
 
@@ -207,11 +207,11 @@
 |---|---|---|
 | Smoke | ➖ (persona endpoint set 에 미포함) |
 | Stress | ➖ |
-| 보안 — IDOR (Player → 타 선수 계약 조회) | ✅ **LEAK** — PLAYER 세션 임의 ID 1~20 전부 200 응답 (`pentest.json` verdict LEAK) |
-| 보안 — IDOR (HR → 타 계약 조회) | ✅ **LEAK** — HR_MANAGER 세션도 20/20 건 200 |
-| 보안 — owner-scope guard 추가 | 🔲 `contract.routes.ts` `GET /:id` 미들웨어 삽입 필요 (`playerId === req.user.id` OR role∈[GM,FINANCE_MANAGER,HR_MANAGER]) |
-| Regression — `apps/api/__test__/contract/contract.access.test.ts` | 🔲 |
-| Sub-actions `/contracts/:id/clauses`·`/extensions`·`/bonuses` 프로브 | 🔲 미커버 |
+| 보안 — IDOR (Player → 타 선수 계약 조회) | ✅ **FIXED** — `fix/idor-owner-scope-guards` (639b4469 · #560/#561) 로 `getContractById` service layer 에 owner-scope 추가. PLAYER 는 본인 계약만 조회 (`playerId → Player.userId === actor.userId` 검증), 위반 시 403. 추가로 Contract CUID (#598) 로 enumerable IDOR 자체 실질 불가 |
+| 보안 — IDOR (HR → 타 계약 조회) | ✅ **정책 유지 (privileged)** — `canReadHR(HR_MANAGER)` 통과 조건 → 200 허용. HR 은 인사·급여 실무 담당이라 계약 열람 정책상 의도. 이 방침은 `contract.service.ts:44` `isPrivileged` 분기에 명시 |
+| 보안 — owner-scope guard 추가 | ✅ **FIXED** — service layer (`getContractById`) 에서 isPrivileged 분기 → `findPlayerOwnerUserId` 로 self-scope 검증. controller 는 `assertCuid` 로 CUID 강제 |
+| Regression — `apps/api/__test__/contract/contract.access.test.ts` | ✅ 파일 존재 (131 lines · `fix/idor-owner-scope-guards` 커밋에 포함) |
+| Sub-actions `/contracts/:id/clauses`·`/extensions`·`/bonuses` 프로브 | 🔲 미커버 (라우트는 존재 · Contract CUID 로 enumerable 방어됨 · 실 record ID 프로브는 별도 실행 필요) |
 | 보안 — enumerable IDOR (Contract) | ✅ **CUID 전환 완료** (#598 tracer 6 · `refactor/contract-cuid-598`) — `Contract.id Int → String @default(cuid())` + 3개 FK 컬럼 String 이동 (BuyoutClause.contractId · ExtensionOption.contractId · PerformanceBonus.contractId). `jobs/contractExpiryAlert` 는 `entityIdStr` 컬럼으로 라우팅. 임의 ID 1~20 열거 방식 IDOR 은 실질 불가 (CUID 랜덤). 회귀 0 (전체 26 fail = main 25 pre-existing + 1 이전 incident-report 테스트 잔여 fix) |
 
 ---
