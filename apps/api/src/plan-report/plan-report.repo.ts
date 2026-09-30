@@ -47,7 +47,7 @@ export class PlanReportRepository {
     return this.prisma.planReport.findUnique({ where: { id }, include: PLAN_INCLUDE })
   }
 
-  create(dto: CreatePlanReportDto, createdById: number) {
+  create(dto: CreatePlanReportDto, createdById: string) {
     return this.prisma.planReport.create({
       data: {
         title: dto.title,
@@ -126,7 +126,7 @@ export class PlanReportRepository {
     return total === confirmed
   }
 
-  approve(id: number, approvedById: number, vaultPath: string) {
+  approve(id: number, approvedById: string, vaultPath: string) {
     return this.prisma.planReport.update({
       where: { id },
       data: { status: 'APPROVED', approvedById, approvedAt: new Date(), vaultPath },
@@ -134,7 +134,7 @@ export class PlanReportRepository {
     })
   }
 
-  reject(id: number, approvedById: number, reason: string) {
+  reject(id: number, approvedById: string, reason: string) {
     return this.prisma.planReport.update({
       where: { id },
       data: { status: 'DRAFT', approvedById, rejectedAt: new Date(), rejectionReason: reason },
@@ -218,7 +218,7 @@ export class PlanReportRepository {
 
   async createDraftForSurvey(data: {
     surveyId: number
-    createdById: number
+    createdById: string
     title: string
   }) {
     // Find HR department — look for a dept with name containing 'HR' or use the first dept as fallback

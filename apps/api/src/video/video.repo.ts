@@ -4,7 +4,7 @@ import { CreateVideoDto, CreateAssignmentDto, VideoListQuery } from "./dto/video
 export class VideoRepository {
   constructor(private prisma: PrismaClient) {}
 
-  createVideo(dto: CreateVideoDto & { uploadedById: number }) {
+  createVideo(dto: CreateVideoDto & { uploadedById: string }) {
     return this.prisma.trainingVideo.create({
       data: {
         title: dto.title,

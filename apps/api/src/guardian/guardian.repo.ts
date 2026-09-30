@@ -29,25 +29,25 @@ export class GuardianRepository {
     });
   }
 
-  createInviteCode(data: { code: string; playerId: string; issuedById: number; expiresAt: Date }) {
+  createInviteCode(data: { code: string; playerId: string; issuedById: string; expiresAt: Date }) {
     return this.prisma.guardianInviteCode.create({ data });
   }
 
-  linkGuardianToPlayer(playerId: string, guardianId: number) {
+  linkGuardianToPlayer(playerId: string, guardianId: string) {
     return this.prisma.player.update({
       where: { id: playerId },
       data: { guardianId },
     });
   }
 
-  markCodeUsed(id: number, usedById: number) {
+  markCodeUsed(id: number, usedById: string) {
     return this.prisma.guardianInviteCode.update({
       where: { id },
       data: { usedById, usedAt: new Date() },
     });
   }
 
-  findChildByIdAndGuardian(playerId: string, guardianId: number) {
+  findChildByIdAndGuardian(playerId: string, guardianId: string) {
     return this.prisma.player.findFirst({
       where: { id: playerId, guardianId },
       select: { id: true },
@@ -70,7 +70,7 @@ export class GuardianRepository {
     });
   }
 
-  findChildrenByGuardian(guardianId: number) {
+  findChildrenByGuardian(guardianId: string) {
     return this.prisma.player.findMany({
       where: { guardianId },
       select: {

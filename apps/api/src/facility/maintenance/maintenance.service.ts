@@ -27,7 +27,7 @@ export class MaintenanceService {
     return record;
   }
 
-  async create(dto: CreateMaintenanceDto, createdById: number) {
+  async create(dto: CreateMaintenanceDto, createdById: string) {
     const record = await this.repo.create({ ...dto, createdById });
     if (record.priority === "EMERGENCY") {
       void this.notifications.notifyFacilityEmergency(record.title, record.id).catch(console.error);
@@ -35,7 +35,7 @@ export class MaintenanceService {
     return record;
   }
 
-  async update(id: number, dto: UpdateMaintenanceDto, updatedById: number) {
+  async update(id: number, dto: UpdateMaintenanceDto, updatedById: string) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new AppError(404, "MAINTENANCE_NOT_FOUND");
     if (existing.isLocked) throw new AppError(400, "MAINTENANCE_LOCKED");
@@ -64,7 +64,7 @@ export class MaintenanceService {
     return this.repo.updateStatus(id, status);
   }
 
-  async approve(id: number, approverId: number) {
+  async approve(id: number, approverId: string) {
     const existing = await this.get(id);
     if (existing.status !== "PENDING_APPROVAL") throw new AppError(400, "INVALID_STATUS_TRANSITION");
     const record = await this.repo.approve(id, approverId);
@@ -72,7 +72,7 @@ export class MaintenanceService {
     return record;
   }
 
-  async gmApprove(id: number, gmId: number) {
+  async gmApprove(id: number, gmId: string) {
     const existing = await this.get(id);
     if (existing.status !== "APPROVED") throw new AppError(400, "INVALID_STATUS_TRANSITION");
     const record = await this.repo.gmApprove(id, gmId);
@@ -93,7 +93,7 @@ export class MaintenanceService {
     return record;
   }
 
-  async reject(id: number, reason: string | undefined, actorId?: number) {
+  async reject(id: number, reason: string | undefined, actorId?: string) {
     if (!reason) throw new AppError(400, "REJECTION_REASON_REQUIRED");
     const existing = await this.get(id);
     const REJECTABLE = ["PENDING_APPROVAL", "APPROVED"];
@@ -101,7 +101,7 @@ export class MaintenanceService {
     const result = await this.repo.reject(id, reason);
     void this.notifications.notifyMaintenanceRejected(existing.title, id, existing.createdBy.id, reason).catch(console.error);
     void writeAuditLog({
-      actorId: actorId ?? 0,
+      actorId: actorId ?? "",
       action: "MAINTENANCE_REJECTED",
       targetId: id,
       detail: { reason, previousStatus: existing.status },
@@ -117,7 +117,7 @@ export class MaintenanceService {
     return this.repo.lock(id);
   }
 
-  async submitToFinance(id: number, userId: number) {
+  async submitToFinance(id: number, userId: string) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new AppError(404, "MAINTENANCE_NOT_FOUND");
 

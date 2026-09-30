@@ -51,7 +51,7 @@ export class SponsorshipRepository {
     });
   }
 
-  create(data: CreateSponsorshipDto & { createdById: number }) {
+  create(data: CreateSponsorshipDto & { createdById: string }) {
     return this.prisma.sponsorship.create({
       data: {
         sponsorName: data.sponsorName,

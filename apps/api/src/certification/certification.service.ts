@@ -54,7 +54,7 @@ export class CertificationService {
     return record;
   }
 
-  create(dto: CreateCertificationDto, ownerId: number) {
+  create(dto: CreateCertificationDto, ownerId: string) {
     return this.repo.create({ ...dto, ownerId });
   }
 
@@ -78,14 +78,14 @@ export class CertificationService {
     return this.repo.submit(id);
   }
 
-  async approve(id: number, approverId: number) {
+  async approve(id: number, approverId: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "CERTIFICATION_NOT_FOUND");
     if (record.status !== "PENDING_REVIEW") throw new AppError(409, "CERTIFICATION_NOT_PENDING");
     return this.repo.approve(id, approverId);
   }
 
-  async gmApprove(id: number, approverId: number) {
+  async gmApprove(id: number, approverId: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "CERTIFICATION_NOT_FOUND");
     if (record.status !== "FM_APPROVED") throw new AppError(409, "CERTIFICATION_NOT_FM_APPROVED");

@@ -10,7 +10,7 @@ export interface CreateHiringRoundDto {
   deadline?: string;
   budget?: number;
   notes?: string;
-  createdById: number;
+  createdById: string;
 }
 
 export interface UpdateHiringRoundStatusDto {
@@ -91,7 +91,7 @@ export interface UpsertTier2EvalDto {
 // ─── TutorAssignment ────────────────────────────────────────────────────────
 export interface CreateTutorAssignmentDto {
   type: TutorType;
-  internalTutorId?: number;
+  internalTutorId?: string;
   externalName?: string;
   externalContact?: string;
   sessionCount?: number;

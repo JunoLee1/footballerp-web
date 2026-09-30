@@ -69,7 +69,7 @@ export class RecruitmentRepository {
     return this.prisma.jobPosting.findUnique({ where: { id }, include: POSTING_INCLUDE });
   }
 
-  createPosting(data: CreateJobPostingDto & { createdById: number }) {
+  createPosting(data: CreateJobPostingDto & { createdById: string }) {
     return this.prisma.jobPosting.create({ data, include: POSTING_INCLUDE });
   }
 
@@ -77,7 +77,7 @@ export class RecruitmentRepository {
     return this.prisma.jobPosting.update({ where: { id }, data, include: POSTING_INCLUDE });
   }
 
-  approvePosting(id: number, approvedById: number) {
+  approvePosting(id: number, approvedById: string) {
     return this.prisma.jobPosting.update({
       where: { id },
       data: { status: "OPEN", approvedById, approvedAt: new Date() },
@@ -128,7 +128,7 @@ export class RecruitmentRepository {
     });
   }
 
-  async rejectApplication(id: number, actorId: number) {
+  async rejectApplication(id: number, actorId: string) {
     const current = await this.prisma.jobApplication.findUnique({
       where: { id },
       select: { status: true },
@@ -156,7 +156,7 @@ export class RecruitmentRepository {
     return result;
   }
 
-  async reinstateApplication(id: number, actorId: number) {
+  async reinstateApplication(id: number, actorId: string) {
     const app = await this.prisma.jobApplication.findUnique({
       where: { id },
       select: { previousStatus: true },
@@ -191,7 +191,7 @@ export class RecruitmentRepository {
     data: {
       screeningResult: "PENDING" | "PASS" | "FAIL";
       screeningNotes: string | null;
-      screenedById: number;
+      screenedById: string;
       screenedAt: Date;
     },
   ) {
@@ -209,7 +209,7 @@ export class RecruitmentRepository {
     return result;
   }
 
-  async offerApplication(id: number, offeredById: number, actorId: number) {
+  async offerApplication(id: number, offeredById: string, actorId: string) {
     const result = await this.prisma.jobApplication.update({
       where: { id },
       data: { status: "OFFERED", offeredAt: new Date(), offeredById },
@@ -224,7 +224,7 @@ export class RecruitmentRepository {
     return result;
   }
 
-  async completeOnboarding(id: number, actorId: number) {
+  async completeOnboarding(id: number, actorId: string) {
     const result = await this.prisma.jobApplication.update({
       where: { id },
       data: { status: "ONBOARDED" },
@@ -239,7 +239,7 @@ export class RecruitmentRepository {
     return result;
   }
 
-  async setApplicationStatus(id: number, status: JobApplicationStatus, actorId?: number) {
+  async setApplicationStatus(id: number, status: JobApplicationStatus, actorId?: string) {
     const result = await this.prisma.jobApplication.update({
       where: { id },
       data: { status },
@@ -305,7 +305,7 @@ export class RecruitmentRepository {
 
   // --- Onboarding ---
 
-  createOnboarding(applicationId: number, userId: number, otpCode: string, otpExpiresAt: Date) {
+  createOnboarding(applicationId: number, userId: string, otpCode: string, otpExpiresAt: Date) {
     return this.prisma.onboarding.create({
       data: { applicationId, userId, otpCode, otpExpiresAt },
     });
@@ -388,7 +388,7 @@ export class RecruitmentRepository {
 
   // --- InterviewerScore ---
 
-  async addInterviewerScore(data: { interviewId: number; interviewerId: number; scoreSkill?: number; scoreComm?: number; scoreCulture?: number; comment?: string }, actorId: number) {
+  async addInterviewerScore(data: { interviewId: number; interviewerId: string; scoreSkill?: number; scoreComm?: number; scoreCulture?: number; comment?: string }, actorId: string) {
     const result = await this.prisma.interviewerScore.create({ data });
     void writeAuditLog({
       actorId,
@@ -511,7 +511,7 @@ export class RecruitmentRepository {
     data: {
       stage: JobApplicationOfferApprovalStage;
       action: JobApplicationOfferApprovalAction;
-      reviewerId: number;
+      reviewerId: string;
       reason?: string;
     },
     tx?: Tx,
@@ -544,7 +544,7 @@ export class RecruitmentRepository {
   /**
    * OFFER_PENDING_LEADER — user is the LEADER of the posting's department.
    */
-  findApplicationsPendingLeader(userId: number) {
+  findApplicationsPendingLeader(userId: string) {
     return this.prisma.jobApplication.findMany({
       where: {
         status: "OFFER_PENDING_LEADER",
@@ -562,7 +562,7 @@ export class RecruitmentRepository {
   /**
    * OFFER_PENDING_DEPT_HEAD — user is the head of the posting's department.
    */
-  findApplicationsPendingDeptHead(userId: number) {
+  findApplicationsPendingDeptHead(userId: string) {
     return this.prisma.jobApplication.findMany({
       where: {
         status: "OFFER_PENDING_DEPT_HEAD",

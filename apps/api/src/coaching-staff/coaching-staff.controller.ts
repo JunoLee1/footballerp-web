@@ -46,7 +46,7 @@ export class CoachingStaffController {
       const { role, departmentCategories } = requireUser(req);
       if (!isAdminLike(role) && role !== "COACHING_STAFF" && !(departmentCategories?.includes('PERFORMANCE') ?? false))
         throw new AppError(403, "FORBIDDEN");
-      const staffUserId = parseInt(String(req.params["staffUserId"]));
+      const staffUserId = String(req.params["staffUserId"] ?? "");
       res.json(await this.evalRepo!.listForStaff(staffUserId));
     } catch (err) { next(err); }
   };
@@ -56,7 +56,7 @@ export class CoachingStaffController {
       const { role, coachingRole } = requireUser(req);  // HEAD_COACH 전용, deptCategories 불필요
       if (!isAdminLike(role) && !(role === "COACHING_STAFF" && coachingRole === "HEAD_COACH"))
         throw new AppError(403, "FORBIDDEN");
-      const staffUserId = parseInt(String(req.params["staffUserId"]));
+      const staffUserId = String(req.params["staffUserId"] ?? "");
       const { score, comment } = req.body as { score: number; comment?: string };
       const user = requireUser(req);
       const row = await this.evalRepo!.create(staffUserId, user.id, score, comment);

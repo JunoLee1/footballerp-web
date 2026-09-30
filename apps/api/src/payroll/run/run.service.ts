@@ -64,7 +64,7 @@ export class RunService {
     return this.runRepo.create({ staffSalaryId: salaryId, month, grossPay, totalDeductions, netPay });
   }
 
-  async secondApproveRun(salaryId: number, runId: number, userId: number) {
+  async secondApproveRun(salaryId: number, runId: number, userId: string) {
     const run = await this.runRepo.findById(runId);
     if (!run || run.staffSalaryId !== salaryId) {
       throw new AppError(404, "PAYROLL_RUN_NOT_FOUND");
@@ -103,7 +103,7 @@ export class RunService {
     });
   }
 
-  async confirmRun(salaryId: number, runId: number, userId: number) {
+  async confirmRun(salaryId: number, runId: number, userId: string) {
     const salary = await this.salaryRepo.findById(salaryId);
     if (!salary) throw new AppError(404, "SALARY_NOT_FOUND");
 

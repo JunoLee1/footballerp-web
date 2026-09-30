@@ -39,7 +39,7 @@ export class DevelopmentPlanRepository {
     });
   }
 
-  create(dto: CreatePlanDto & { coachId: number }) {
+  create(dto: CreatePlanDto & { coachId: string }) {
     return this.prisma.playerDevelopmentPlan.create({
       data: {
         playerId: dto.playerId,

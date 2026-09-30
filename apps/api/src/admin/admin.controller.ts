@@ -44,7 +44,7 @@ export class AdminController {
   getUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireAdmin(req);
-      res.status(200).json(await this.service.getUserById(Number(req.params["id"])));
+      res.status(200).json(await this.service.getUserById(String(req.params["id"] ?? "")));
     } catch (err) {
       next(err);
     }
@@ -54,7 +54,7 @@ export class AdminController {
   getUserProfile = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const viewer = requireUser(req);
-      const targetId = Number(req.params["id"]);
+      const targetId = String(req.params["id"] ?? "");
       const prisma = getPrisma();
 
       const target = await prisma.user.findUnique({
@@ -65,7 +65,7 @@ export class AdminController {
           email: true, homeAddress: true,
           phoneNumber: { select: { encrypted: true, iv: true } },
           team: { select: { id: true, type: true } },
-          departments: { select: { role: true, department: { select: { id: true, name: true } } } },
+          departmentMemberships: { select: { role: true, department: { select: { id: true, name: true } } } },
         },
       });
       if (!target) throw new AppError(404, "USER_NOT_FOUND");
@@ -84,7 +84,7 @@ export class AdminController {
         coachingRole: target.coachingRole,
         frontOfficeRole: target.frontOfficeRole,
         team: target.team,
-        departments: target.departments,
+        departments: target.departmentMemberships,
         email:       allowed ? target.email       : maskEmail(target.email),
         phone:       allowed ? phone               : maskPhone(phone),
         homeAddress: allowed ? target.homeAddress  : maskAddress(target.homeAddress),
@@ -96,7 +96,7 @@ export class AdminController {
   updateRole = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireAdmin(req);
-      const targetId = Number(req.params["id"]);
+      const targetId = String(req.params["id"] ?? "");
       const user = requireUser(req);
       const result = await this.service.updateUserRole(targetId, req.body, user.id, user.role as Role);
       await writeAuditLog({
@@ -114,7 +114,7 @@ export class AdminController {
   deactivateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireAdmin(req);
-      const targetId = Number(req.params["id"]);
+      const targetId = String(req.params["id"] ?? "");
       const user = requireUser(req);
       const result = await this.service.deactivateUser(targetId, user.id);
       await writeAuditLog({
@@ -131,7 +131,7 @@ export class AdminController {
   reactivateUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireAdmin(req);
-      const targetId = Number(req.params["id"]);
+      const targetId = String(req.params["id"] ?? "");
       const result = await this.service.reactivateUser(targetId);
       const user = requireUser(req);
       await writeAuditLog({
@@ -149,7 +149,7 @@ export class AdminController {
     try {
       requireSuperAdmin(req);
       const user = requireUser(req);
-      await this.service.deleteUser(Number(req.params["id"]), user.id);
+      await this.service.deleteUser(String(req.params["id"] ?? ""), user.id);
       res.status(204).send();
     } catch (err) {
       next(err);
@@ -160,7 +160,7 @@ export class AdminController {
     try {
       requireSuperAdmin(req);
       const user = requireUser(req);
-      const targetId = Number(req.params["id"]);
+      const targetId = String(req.params["id"] ?? "");
       const dto: SetDemoDto = { isDemo: req.body.isDemo === true };
       const result = await this.service.setDemoStatus(targetId, dto, user.id);
       await writeAuditLog({
@@ -189,7 +189,7 @@ export class AdminController {
     try {
       requireAdmin(req);
       const filters: Parameters<typeof this.service.getAuditLogs>[0] = {};
-      if (req.query["actorId"]) filters.actorId = Number(req.query["actorId"]);
+      if (req.query["actorId"]) filters.actorId = String(req.query["actorId"]);
       if (req.query["action"]) filters.action = req.query["action"] as string;
       const targetId = (req.query["targetId"] as string | undefined)?.trim()
       if (targetId) filters.targetId = targetId

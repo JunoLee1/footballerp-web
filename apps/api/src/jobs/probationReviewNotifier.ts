@@ -28,14 +28,14 @@ export interface ProbationCandidateStaff {
   name?: string | null;
   probationStartedAt: Date | null;
   departmentId: number | null;
-  department: { id: number; name: string; headId: number | null } | null;
+  department: { id: number; name: string; headId: string | null } | null;
 }
 
 export interface NotifyDeptHeadArgs {
   staffId: number;
   staffName: string | null;
   reviewType: ProbationReviewType;
-  deptHeadId: number;
+  deptHeadId: string;
   checkpointDate: Date;
 }
 

@@ -24,8 +24,9 @@ export class AuthController {
     const user = req.user;
     if (!user || typeof user !== "object") throw new AppError(401, "UNAUTHORIZED");
 
-    const userId = Number((user as { id?: unknown }).id);
-    if (!Number.isFinite(userId)) throw new AppError(401, "UNAUTHORIZED");
+    const rawId = (user as { id?: unknown }).id;
+    if (typeof rawId !== "string" || rawId.length === 0) throw new AppError(401, "UNAUTHORIZED");
+    const userId = rawId;
 
     const role = (user as { role?: unknown }).role;
     if (typeof role !== "string") throw new AppError(401, "UNAUTHORIZED");
@@ -218,8 +219,8 @@ export class AuthController {
     try {
       const userInfo = this.getAuthenticatedUser(req);
       if (!isAdminLike(userInfo.role)) throw new AppError(403, "FORBIDDEN");
-      const userId = req.params["userId"] ? Number(req.params["userId"]) : undefined;
-      const history = userId
+      const userId = req.params["userId"];
+      const history = typeof userId === "string" && userId.length > 0
         ? await this.repo.listLoginHistory(userId)
         : await this.repo.listAllLoginHistory();
       res.status(200).json(history);
@@ -233,8 +234,8 @@ export class AuthController {
       const user = this.getAuthenticatedUser(req);
       if (!isAdminLike(user.role)) throw new AppError(403, "FORBIDDEN");
 
-      const targetId = Number(req.params["id"]);
-      if (!Number.isFinite(targetId)) throw new AppError(400, "INVALID_ID");
+      const targetId = req.params["id"];
+      if (typeof targetId !== "string" || targetId.length === 0) throw new AppError(400, "INVALID_ID");
 
       const result = await this.service.gdprErasure(targetId, user.id);
       res.json(result);
@@ -247,8 +248,8 @@ export class AuthController {
     try {
       const user = this.getAuthenticatedUser(req);
 
-      const targetId = Number(req.params["id"]);
-      if (!Number.isFinite(targetId)) throw new AppError(400, "INVALID_ID");
+      const targetId = req.params["id"];
+      if (typeof targetId !== "string" || targetId.length === 0) throw new AppError(400, "INVALID_ID");
 
       // #577: 본인 GDPR 데이터만 export 가능 (또는 관리자 · GM).
       // 타인 GDPR export 는 개인정보보호법 · GDPR 위반.

@@ -96,13 +96,13 @@ export class DepartmentRepository {
     });
   }
 
-  findMember(deptId: number, userId: number) {
+  findMember(deptId: number, userId: string) {
     return this.prisma.userDepartment.findUnique({
       where: { userId_departmentId: { userId, departmentId: deptId } },
     });
   }
 
-  isHead(deptId: number, userId: number): Promise<boolean> {
+  isHead(deptId: number, userId: string): Promise<boolean> {
     return this.prisma.userDepartment.findFirst({
       where: { departmentId: deptId, userId, role: { in: ['DEPT_HEAD', 'LEADER'] } },
     }).then(m => m !== null);
@@ -114,7 +114,7 @@ export class DepartmentRepository {
     });
   }
 
-  async setHead(deptId: number, newUserId: number | null, targetRole: DeptRole): Promise<void> {
+  async setHead(deptId: number, newUserId: string | null, targetRole: DeptRole): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
       await tx.userDepartment.updateMany({
         where: { departmentId: deptId, role: targetRole },
@@ -129,18 +129,18 @@ export class DepartmentRepository {
     });
   }
 
-  findUserById(userId: number) {
+  findUserById(userId: string) {
     return this.prisma.user.findUnique({ where: { id: userId } });
   }
 
-  addMember(deptId: number, userId: number, role: DeptRole, jobTitleId?: number | null, tx?: TxClient) {
+  addMember(deptId: number, userId: string, role: DeptRole, jobTitleId?: number | null, tx?: TxClient) {
     const client = tx ?? this.prisma;
     return client.userDepartment.create({
       data: { departmentId: deptId, userId, role, ...(jobTitleId != null && { jobTitleId }) },
     });
   }
 
-  updateMemberRole(deptId: number, userId: number, role: DeptRole, tx?: TxClient) {
+  updateMemberRole(deptId: number, userId: string, role: DeptRole, tx?: TxClient) {
     const client = tx ?? this.prisma;
     return client.userDepartment.update({
       where: { userId_departmentId: { userId, departmentId: deptId } },
@@ -148,14 +148,14 @@ export class DepartmentRepository {
     });
   }
 
-  removeMember(deptId: number, userId: number, tx?: TxClient) {
+  removeMember(deptId: number, userId: string, tx?: TxClient) {
     const client = tx ?? this.prisma;
     return client.userDepartment.delete({
       where: { userId_departmentId: { userId, departmentId: deptId } },
     });
   }
 
-  transferMember(fromDeptId: number, toDeptId: number, userId: number, toRole: DeptRole) {
+  transferMember(fromDeptId: number, toDeptId: number, userId: string, toRole: DeptRole) {
     return this.prisma.$transaction(async (tx) => {
       await tx.userDepartment.delete({
         where: { userId_departmentId: { userId, departmentId: fromDeptId } },
@@ -166,11 +166,11 @@ export class DepartmentRepository {
     });
   }
 
-  countUserDepartments(userId: number) {
+  countUserDepartments(userId: string) {
     return this.prisma.userDepartment.count({ where: { userId } });
   }
 
-  updateHead(deptId: number, newHeadId: number | null, tx?: TxClient) {
+  updateHead(deptId: number, newHeadId: string | null, tx?: TxClient) {
     const client = tx ?? this.prisma;
     return client.department.update({
       where: { id: deptId },
@@ -205,7 +205,7 @@ export class DepartmentRepository {
     return this.prisma.deptJobTitle.update({ where: { id }, data: { isActive: false } });
   }
 
-  updateMemberJobTitle(deptId: number, userId: number, jobTitleId: number | null) {
+  updateMemberJobTitle(deptId: number, userId: string, jobTitleId: number | null) {
     return this.prisma.userDepartment.update({
       where: { userId_departmentId: { userId, departmentId: deptId } },
       data: { jobTitleId },

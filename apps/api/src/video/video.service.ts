@@ -21,18 +21,18 @@ export class VideoService {
     return video;
   }
 
-  createVideo(dto: CreateVideoDto, uploadedById: number) {
+  createVideo(dto: CreateVideoDto, uploadedById: string) {
     return this.repo.createVideo({ ...dto, uploadedById });
   }
 
-  async deleteVideo(id: number, userId: number, isAdmin: boolean) {
+  async deleteVideo(id: number, userId: string, isAdmin: boolean) {
     const video = await this.repo.findVideoById(id);
     if (!video) throw new AppError(404, "VIDEO_NOT_FOUND");
     if (!isAdmin && video.uploadedById !== userId) throw new AppError(403, "FORBIDDEN");
     return this.repo.deleteVideo(id);
   }
 
-  async getMyAssignments(userId: number) {
+  async getMyAssignments(userId: string) {
     const player = await getPrisma().player.findUnique({
       where: { userId },
       select: { id: true },
@@ -65,7 +65,7 @@ export class VideoService {
     return assignment;
   }
 
-  async updateProgress(videoId: number, playerId: string, progressRate: number, requesterId: number) {
+  async updateProgress(videoId: number, playerId: string, progressRate: number, requesterId: string) {
     if (progressRate < 0 || progressRate > 100) throw new AppError(400, "INVALID_PROGRESS_RATE");
     const player = await getPrisma().player.findUnique({
       where: { userId: requesterId },

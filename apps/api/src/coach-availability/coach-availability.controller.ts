@@ -11,7 +11,7 @@ export class CoachAvailabilityController {
     try {
       const { userId, from, to } = req.query;
       const query: Parameters<CoachAvailabilityService["getAll"]>[0] = {};
-      if (userId) query.userId = Number(userId);
+      if (userId) query.userId = String(userId);
       if (from) query.from = from as string;
       if (to) query.to = to as string;
       res.json(await this.service.getAll(query));

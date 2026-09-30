@@ -3,7 +3,7 @@ import { DashboardRepository } from "./dashboard.repo";
 import { AppError } from "../lib/appError";
 
 type UserCtx = {
-  id: number;
+  id: string;
   role: Role;
   coachingRole: CoachingRole | null | undefined;
   frontOfficeRole: FrontOfficeRole | null | undefined;

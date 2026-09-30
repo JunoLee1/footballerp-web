@@ -9,6 +9,7 @@ const makeRepo = (overrides: Partial<DepartmentRepository> = {}): DepartmentRepo
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
+    countActiveStaff: jest.fn().mockResolvedValue(0),
     ...overrides,
   } as unknown as DepartmentRepository);
 

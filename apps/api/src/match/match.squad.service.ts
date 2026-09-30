@@ -31,7 +31,7 @@ export class MatchSquadService {
     return this.repo.removePlayer(matchId, playerId);
   }
 
-  confirmSquad(matchId: number, confirmedById: number) {
+  confirmSquad(matchId: number, confirmedById: string) {
     return this.repo.confirmSquad(matchId, confirmedById);
   }
 }

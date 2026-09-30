@@ -13,7 +13,7 @@ const makeUnit = (overrides: Record<string, unknown> = {}) => ({
 const makeVerification = (overrides: Record<string, unknown> = {}) => ({
   id: 1,
   equipmentId: 1,
-  requestedById: 10,
+  requestedById: "11111111-1111-1111-1111-111111111111",
   verifiedById: null,
   verifiedAt: null,
   photoUrl: null,
@@ -40,13 +40,13 @@ const makeService = (repo: DisposalRepository) => new DisposalService(repo);
 
 describe("DisposalService.requestDisposal", () => {
   it("throws 404 when unit not found", async () => {
-    await expect(makeService(makeRepo()).requestDisposal(99, 10))
+    await expect(makeService(makeRepo()).requestDisposal(99, "11111111-1111-1111-1111-111111111111"))
       .rejects.toThrow(new AppError(404, "EQUIPMENT_UNIT_NOT_FOUND"));
   });
 
   it("throws 409 when already RETIRED", async () => {
     const repo = makeRepo({ findUnitById: jest.fn().mockResolvedValue(makeUnit({ status: "RETIRED" })) });
-    await expect(makeService(repo).requestDisposal(1, 10))
+    await expect(makeService(repo).requestDisposal(1, "11111111-1111-1111-1111-111111111111"))
       .rejects.toThrow(new AppError(409, "UNIT_ALREADY_RETIRED"));
   });
 
@@ -55,7 +55,7 @@ describe("DisposalService.requestDisposal", () => {
       findUnitById:     jest.fn().mockResolvedValue(makeUnit()),
       findVerification: jest.fn().mockResolvedValue(makeVerification({ status: "PENDING" })),
     });
-    await expect(makeService(repo).requestDisposal(1, 10))
+    await expect(makeService(repo).requestDisposal(1, "11111111-1111-1111-1111-111111111111"))
       .rejects.toThrow(new AppError(409, "DISPOSAL_VERIFICATION_PENDING"));
   });
 
@@ -65,20 +65,20 @@ describe("DisposalService.requestDisposal", () => {
       findVerification:   jest.fn().mockResolvedValue(null),
       createVerification: jest.fn().mockResolvedValue(makeVerification()),
     });
-    await makeService(repo).requestDisposal(1, 10);
-    expect(repo.createVerification).toHaveBeenCalledWith(1, 10);
+    await makeService(repo).requestDisposal(1, "11111111-1111-1111-1111-111111111111");
+    expect(repo.createVerification).toHaveBeenCalledWith(1, "11111111-1111-1111-1111-111111111111");
   });
 });
 
 describe("DisposalService.fmVerify", () => {
   it("throws 404 when verification not found", async () => {
-    await expect(makeService(makeRepo()).fmVerify(99, 5, {}))
+    await expect(makeService(makeRepo()).fmVerify(99, "22222222-2222-2222-2222-222222222222", {}))
       .rejects.toThrow(new AppError(404, "DISPOSAL_VERIFICATION_NOT_FOUND"));
   });
 
   it("throws 400 when not PENDING", async () => {
     const repo = makeRepo({ findVerification: jest.fn().mockResolvedValue(makeVerification({ status: "FM_VERIFIED" })) });
-    await expect(makeService(repo).fmVerify(1, 5, {}))
+    await expect(makeService(repo).fmVerify(1, "22222222-2222-2222-2222-222222222222", {}))
       .rejects.toThrow(new AppError(400, "INVALID_VERIFICATION_STATUS"));
   });
 
@@ -88,7 +88,7 @@ describe("DisposalService.fmVerify", () => {
         makeVerification({ status: "PENDING", equipment: makeUnit({ isHighValue: true }) })
       ),
     });
-    await expect(makeService(repo).fmVerify(1, 5, {}))
+    await expect(makeService(repo).fmVerify(1, "22222222-2222-2222-2222-222222222222", {}))
       .rejects.toThrow(new AppError(400, "PHOTO_REQUIRED_FOR_HIGH_VALUE"));
   });
 
@@ -100,9 +100,9 @@ describe("DisposalService.fmVerify", () => {
       fmVerify:           jest.fn().mockResolvedValue(makeVerification({ status: "FM_VERIFIED" })),
       updateUnitDisposed: jest.fn(),
     });
-    await makeService(repo).fmVerify(1, 5, { checklistOk: true });
+    await makeService(repo).fmVerify(1, "22222222-2222-2222-2222-222222222222", { checklistOk: true });
     expect(repo.fmVerify).toHaveBeenCalled();
-    expect(repo.updateUnitDisposed).toHaveBeenCalledWith(1, 5);
+    expect(repo.updateUnitDisposed).toHaveBeenCalledWith(1, "22222222-2222-2222-2222-222222222222");
   });
 
   it("does NOT call updateUnitDisposed for high-value equipment (awaits GM)", async () => {
@@ -113,7 +113,7 @@ describe("DisposalService.fmVerify", () => {
       fmVerify:           jest.fn().mockResolvedValue(makeVerification({ status: "FM_VERIFIED" })),
       updateUnitDisposed: jest.fn(),
     });
-    await makeService(repo).fmVerify(1, 5, { photoUrl: "https://example.com/photo.jpg" });
+    await makeService(repo).fmVerify(1, "22222222-2222-2222-2222-222222222222", { photoUrl: "https://example.com/photo.jpg" });
     expect(repo.fmVerify).toHaveBeenCalled();
     expect(repo.updateUnitDisposed).not.toHaveBeenCalled();
   });

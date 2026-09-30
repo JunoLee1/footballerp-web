@@ -9,7 +9,7 @@ export interface RequesterScope {
 }
 
 export async function resolveRequesterScope(
-  userId: number,
+  userId: string,
   prisma: Pick<PrismaClient, "coach" | "department">,
 ): Promise<RequesterScope> {
   const [headCoach, headOfDepartment] = await Promise.all([

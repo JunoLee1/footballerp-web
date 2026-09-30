@@ -47,7 +47,7 @@ export class BudgetAutomationRepository {
       name: string;
       totalBudget: number;
       note?: string;
-      createdById: number;
+      createdById: string;
     },
     lines: Array<{ categoryId: number; originalAmount: number; year: number }>
   ) {

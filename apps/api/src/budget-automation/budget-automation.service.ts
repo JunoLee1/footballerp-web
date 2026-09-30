@@ -156,7 +156,7 @@ export class BudgetAutomationService {
     };
   }
 
-  async apply(dto: BudgetApplyRequestDto, createdById: number) {
+  async apply(dto: BudgetApplyRequestDto, createdById: string) {
     const previewResult = await this.preview(dto);
     // 과거 데이터 없으면 preview 는 empty predictions 로 200 응답하지만, apply 는 실측 기반 예산 확정이므로
     // 수동 입력 없이는 의미 없는 0-line BudgetHeader 가 생성됨. 명시적 400 으로 차단.

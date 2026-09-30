@@ -126,7 +126,7 @@ export class DashboardRepository {
     return { lowStockEquipmentCount, totalEquipmentItemCount };
   }
 
-  async getTacticalAnalystStats(userId: number) {
+  async getTacticalAnalystStats(userId: string) {
     const [myDraftAnalysisCount, thisMonthMatchCount] = await Promise.all([
       this.prisma.tacticalAnalysis.count({
         where: { createdById: userId, status: "DRAFT" },
@@ -170,7 +170,7 @@ export class DashboardRepository {
     return total === 0 ? 0 : Math.round((scored / total) * 100);
   }
 
-  async getSpecialistCoachStats(coachingRole: CoachingRole, userId: number) {
+  async getSpecialistCoachStats(coachingRole: CoachingRole, userId: string) {
     const positionFilter: Position[] | undefined =
       coachingRole === CoachingRole.DEFENSIVE_COACH
         ? DEFENSIVE_POSITIONS
@@ -204,7 +204,7 @@ export class DashboardRepository {
     return { assignedPlayerCount, myThisMonthSessionCount };
   }
 
-  async getPhysicalCoachStats(userId: number) {
+  async getPhysicalCoachStats(userId: string) {
     const [assignedPlayerCount, myThisMonthSessionCount] = await Promise.all([
       this.prisma.player.count({ where: { status: "ACTIVE" } }),
       this.prisma.trainingSession.count({
@@ -218,7 +218,7 @@ export class DashboardRepository {
     return { assignedPlayerCount, myThisMonthSessionCount };
   }
 
-  async getMedicalStats(userId: number) {
+  async getMedicalStats(userId: string) {
     const [myActiveInjuryCaseCount, thisMonthReturnReadyCount] = await Promise.all([
       this.prisma.injury.count({
         where: { medicalStaffId: userId, status: { notIn: ["RETURNED"] } },
@@ -234,7 +234,7 @@ export class DashboardRepository {
     return { myActiveInjuryCaseCount, thisMonthReturnReadyCount };
   }
 
-  async getMedicalDirectorStats(userId: number) {
+  async getMedicalDirectorStats(userId: string) {
     const [myActiveInjuryCaseCount, thisMonthReturnReadyCount, totalInjuredPlayerCount] =
       await Promise.all([
         this.prisma.injury.count({
@@ -254,7 +254,7 @@ export class DashboardRepository {
     return { myActiveInjuryCaseCount, thisMonthReturnReadyCount, totalInjuredPlayerCount };
   }
 
-  async getPlayerStats(userId: number) {
+  async getPlayerStats(userId: string) {
     const player = await this.prisma.player.findUnique({ where: { userId } });
     if (!player) return { thisSeasonMatchCount: 0, thisMonthAttendanceRate: 0 };
 
@@ -272,7 +272,7 @@ export class DashboardRepository {
     return { thisSeasonMatchCount, thisMonthAttendanceRate };
   }
 
-  async getAgentStats(userId: number) {
+  async getAgentStats(userId: string) {
     const [managedPlayerCount, injuredManagedPlayerCount, expiringManagedContractCount] =
       await Promise.all([
         this.prisma.player.count({ where: { agentId: userId, status: "ACTIVE" } }),

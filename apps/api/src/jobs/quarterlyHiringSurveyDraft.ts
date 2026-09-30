@@ -13,7 +13,7 @@ const DEFAULT_TOP_N = 3
 interface RunDeps {
   findActiveSeason: () => Promise<{ id: number; leagueLevel: LeagueLevel } | null>
   findClubSettings: () => Promise<{ ibiBeta: number; autoSurveyTopN: number | null } | null>
-  findSystemUser: () => Promise<{ id: number } | null>
+  findSystemUser: () => Promise<{ id: string } | null>
   findHrManagerExists: () => Promise<boolean>
   computePriorityQueue: (
     season: { id: number; leagueLevel: LeagueLevel },
@@ -23,7 +23,7 @@ interface RunDeps {
     title: string
     deadlineAt: Date
     targetDeptIds: number[]
-    systemUserId: number
+    systemUserId: string
   }) => Promise<{ id: number }>
   now: () => Date
   warn?: (msg: string) => void

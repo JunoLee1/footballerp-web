@@ -41,7 +41,7 @@ export class MonthlySettlementRepository {
   upsertDraft(data: {
     seasonId: number; year: number; month: number;
     totalRevenue: number; totalExpense: number; netIncome: number;
-    snapshotJson: object; createdById: number;
+    snapshotJson: object; createdById: string;
   }) {
     return this.prisma.monthlySettlementReport.upsert({
       where: { seasonId_year_month: { seasonId: data.seasonId, year: data.year, month: data.month } },
@@ -63,11 +63,11 @@ export class MonthlySettlementRepository {
 
   updateStatus(id: number, data: {
     status: "PENDING_FIRST" | "FIRST_APPROVED" | "APPROVED" | "REJECTED" | "DRAFT";
-    firstSubmittedById?: number | null;
+    firstSubmittedById?: string | null;
     firstSubmittedAt?: Date | null;
-    firstApproverId?: number | null;
+    firstApproverId?: string | null;
     firstApprovedAt?: Date | null;
-    approverId?: number | null;
+    approverId?: string | null;
     approvedAt?: Date | null;
     rejectionReason?: string | null;
   }) {
@@ -81,7 +81,7 @@ export class MonthlySettlementRepository {
     });
   }
 
-  createPeriodLock(year: number, month: number, lockedById: number) {
+  createPeriodLock(year: number, month: number, lockedById: string) {
     return this.prisma.ledgerPeriodLock.upsert({
       where: { year_month: { year, month } },
       create: { year, month, lockedById },

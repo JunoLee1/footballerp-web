@@ -51,13 +51,13 @@ export class TransferRepository {
     return this.prisma.recall.findUnique({ where: { id } });
   }
 
-  createRecall(dto: CreateRecallDto, requestedById: number) {
+  createRecall(dto: CreateRecallDto, requestedById: string) {
     return this.prisma.recall.create({
       data: { transferId: dto.transferId, requestedById },
     });
   }
 
-  updateRecallStatus(id: number, status: RecallStatus, approvedById: number) {
+  updateRecallStatus(id: number, status: RecallStatus, approvedById: string) {
     return this.prisma.recall.update({
       where: { id },
       data: {

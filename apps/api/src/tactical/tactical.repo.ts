@@ -74,7 +74,7 @@ export class TacticalRepository {
     });
   }
 
-  create(dto: CreateAnalysisDto, createdById: number) {
+  create(dto: CreateAnalysisDto, createdById: string) {
     return this.prisma.tacticalAnalysis.create({
       data: {
         matchId: dto.matchId,

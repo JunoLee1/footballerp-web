@@ -1,6 +1,6 @@
 export interface CreateAcademyFeeDto {
   playerId: string
-  guardianId: number
+  guardianId: string
   amount: number
   dueDate: Date
   year: number

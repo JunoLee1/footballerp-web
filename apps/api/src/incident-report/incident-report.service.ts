@@ -31,7 +31,7 @@ export class IncidentReportService {
     return report;
   }
 
-  create(dto: CreateIncidentReportDto, reportedById: number) {
+  create(dto: CreateIncidentReportDto, reportedById: string) {
     return this.repo.create({ ...dto, reportedById });
   }
 

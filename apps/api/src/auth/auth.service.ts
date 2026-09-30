@@ -55,7 +55,7 @@ export class AuthService {
     });
   }
 
-  async createInvite(dto: { email: string; role: Role; coachingRole?: CoachingRole | null; frontOfficeRole?: FrontOfficeRole | null; createdById: number }) {
+  async createInvite(dto: { email: string; role: Role; coachingRole?: CoachingRole | null; frontOfficeRole?: FrontOfficeRole | null; createdById: string }) {
     if (await this.repo.isEmailTaken(dto.email)) throw new AppError(409, "EMAIL_TAKEN");
     const invite = await this.repo.createInvite(dto);
     void writeAuditLog({
@@ -113,7 +113,7 @@ export class AuthService {
     return user;
   }
 
-  async updateProfile(userId: number, dto: { email?: string; homeAddress?: string | null; phoneNumber?: string }) {
+  async updateProfile(userId: string, dto: { email?: string; homeAddress?: string | null; phoneNumber?: string }) {
     if (dto.email !== undefined) {
       if (await this.repo.isEmailTakenByOther(dto.email, userId)) throw new AppError(409, "EMAIL_TAKEN");
     }
@@ -131,7 +131,7 @@ export class AuthService {
     return this.repo.updateProfile(userId, { email: dto.email, homeAddress: dto.homeAddress, phoneNumber: phoneData });
   }
 
-  async updatePassword(userId: number, dto: { currentPassword: string; newPassword: string; confirmedPassword: string }) {
+  async updatePassword(userId: string, dto: { currentPassword: string; newPassword: string; confirmedPassword: string }) {
     if (dto.newPassword !== dto.confirmedPassword) throw new AppError(400, "PASSWORD_MISMATCH");
 
     // 복잡도: 8자 이상, 대문자, 소문자, 숫자, 특수문자 각 1개 이상
@@ -178,7 +178,7 @@ export class AuthService {
     return this.repo.listInvites();
   }
 
-  async me(id: number) {
+  async me(id: string) {
     const user = await this.repo.findById(id);
     if (!user) throw new AppError(404, "USER_NOT_FOUND");
     const phoneRaw = await this.repo.findPhoneNumber(id);
@@ -186,7 +186,7 @@ export class AuthService {
     return { ...user, phone };
   }
 
-  async gdprErasure(targetUserId: number, actorId: number) {
+  async gdprErasure(targetUserId: string, actorId: string) {
     const user = await this.repo.findById(targetUserId);
     if (!user) throw new AppError(404, "USER_NOT_FOUND");
     if (user.isDeleted) throw new AppError(409, "USER_ALREADY_ERASED");
@@ -202,7 +202,7 @@ export class AuthService {
     return result;
   }
 
-  async gdprExport(targetUserId: number, actorId: number, actorRole: string) {
+  async gdprExport(targetUserId: string, actorId: string, actorRole: string) {
     if (actorId !== targetUserId && !isAdminLike(actorRole)) {
       throw new AppError(403, "FORBIDDEN");
     }

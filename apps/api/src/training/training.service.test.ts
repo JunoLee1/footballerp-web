@@ -27,6 +27,7 @@ jest.mock("../notification/notification.repo", () => ({
   })),
 }));
 
+const USER_10 = "11111111-1111-1111-1111-11111111a010";
 const SESSION_FIXTURE = {
   id: 1,
   date: new Date("2026-01-01"),
@@ -34,7 +35,7 @@ const SESSION_FIXTURE = {
   sessionType: "TECHNICAL",
   isApproved: false,
   seasonId: 1,
-  createdById: 10,
+  createdById: USER_10,
   approvedById: null,
   contents: [],
   participants: [],
@@ -117,23 +118,23 @@ describe("TrainingService — clubId 스코핑", () => {
         sessionType: "TECHNICAL" as any,
         seasonId: 1,
       };
-      await service.createSession(dto, 10, 5);
-      expect(repo.create).toHaveBeenCalledWith(dto, 10, 5);
+      await service.createSession(dto, USER_10, 5);
+      expect(repo.create).toHaveBeenCalledWith(dto, USER_10, 5);
     });
   });
 
   describe("approveSession", () => {
     it("다른 clubId → 404 SESSION_NOT_FOUND", async () => {
       repo.findById.mockResolvedValue(null);
-      await expect(service.approveSession(1, 10, 99)).rejects.toMatchObject({ code: "SESSION_NOT_FOUND" });
+      await expect(service.approveSession(1, USER_10, 99)).rejects.toMatchObject({ code: "SESSION_NOT_FOUND" });
     });
 
     it("일치하는 clubId + 미승인 세션 → 승인 처리", async () => {
       repo.findById.mockResolvedValue(SESSION_FIXTURE as any);
-      repo.approve.mockResolvedValue({ id: 1, isApproved: true, approvedById: 10 } as any);
-      const result = await service.approveSession(1, 10, 5);
+      repo.approve.mockResolvedValue({ id: 1, isApproved: true, approvedById: USER_10 } as any);
+      const result = await service.approveSession(1, USER_10, 5);
       expect(repo.findById).toHaveBeenCalledWith(1, 5);
-      expect(repo.approve).toHaveBeenCalledWith(1, 10);
+      expect(repo.approve).toHaveBeenCalledWith(1, USER_10);
     });
   });
 });

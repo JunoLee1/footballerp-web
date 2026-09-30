@@ -11,11 +11,14 @@ const makeRepo = (overrides: Partial<RunRepository> = {}): RunRepository => ({
 const makePrisma = (overrides: Partial<PrismaClient> = {}): PrismaClient =>
   overrides as unknown as PrismaClient;
 
+const APPROVER_ID = "99999999-9999-9999-9999-999999999999";
+const OTHER_ID = "55555555-5555-5555-5555-555555555555";
+
 describe("RunService.secondApproveRun", () => {
   it("throws 404 when run is not found", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
     const service = new RunService(repo, undefined as any, undefined as any, undefined as any);
-    await expect(service.secondApproveRun(10, 1, 99))
+    await expect(service.secondApproveRun(10, 1, APPROVER_ID))
       .rejects.toThrow(new AppError(404, "PAYROLL_RUN_NOT_FOUND"));
   });
 
@@ -24,7 +27,7 @@ describe("RunService.secondApproveRun", () => {
       findById: jest.fn().mockResolvedValue({ id: 1, staffSalaryId: 10, status: "CONFIRMED", isLocked: true }),
     });
     const service = new RunService(repo, undefined as any, undefined as any, undefined as any);
-    await expect(service.secondApproveRun(10, 1, 99))
+    await expect(service.secondApproveRun(10, 1, APPROVER_ID))
       .rejects.toThrow(new AppError(400, "PAYROLL_RUN_ALREADY_LOCKED"));
   });
 
@@ -33,24 +36,24 @@ describe("RunService.secondApproveRun", () => {
       findById: jest.fn().mockResolvedValue({ id: 1, staffSalaryId: 10, status: "DRAFT", isLocked: false }),
     });
     const service = new RunService(repo, undefined as any, undefined as any, undefined as any);
-    await expect(service.secondApproveRun(10, 1, 99))
+    await expect(service.secondApproveRun(10, 1, APPROVER_ID))
       .rejects.toThrow(new AppError(400, "PAYROLL_RUN_NOT_CONFIRMED"));
   });
 
   it("throws 403 when approver is the same as confirmer", async () => {
     const repo = makeRepo({
       findById: jest.fn().mockResolvedValue({
-        id: 1, staffSalaryId: 10, status: "CONFIRMED", isLocked: false, confirmedById: 99,
+        id: 1, staffSalaryId: 10, status: "CONFIRMED", isLocked: false, confirmedById: APPROVER_ID,
       }),
     });
     const service = new RunService(repo, undefined as any, undefined as any, undefined as any);
-    await expect(service.secondApproveRun(10, 1, 99))
+    await expect(service.secondApproveRun(10, 1, APPROVER_ID))
       .rejects.toThrow(new AppError(403, "CANNOT_SECOND_APPROVE_OWN_CONFIRMATION"));
   });
 
   it("atomically locks the run and creates a SALARY ledger entry with grossPay", async () => {
     const payrollUpdate = jest.fn().mockResolvedValue({
-      id: 1, isLocked: true, secondApprovedById: 99, grossPay: 5_000_000,
+      id: 1, isLocked: true, secondApprovedById: APPROVER_ID, grossPay: 5_000_000,
     });
     const ledgerCreate = jest.fn().mockResolvedValue({ id: 10 });
     const mockTx = {
@@ -63,15 +66,15 @@ describe("RunService.secondApproveRun", () => {
     const repo = makeRepo({
       findById: jest.fn().mockResolvedValue({
         id: 1, staffSalaryId: 10, status: "CONFIRMED", isLocked: false,
-        confirmedById: 5, grossPay: 5_000_000,
+        confirmedById: OTHER_ID, grossPay: 5_000_000,
       }),
     });
     const service = new RunService(repo, undefined as any, undefined as any, prisma);
-    const result = await service.secondApproveRun(10, 1, 99);
+    const result = await service.secondApproveRun(10, 1, APPROVER_ID);
 
     expect(payrollUpdate).toHaveBeenCalledWith(expect.objectContaining({
       where: { id: 1 },
-      data: expect.objectContaining({ isLocked: true, secondApprovedById: 99 }),
+      data: expect.objectContaining({ isLocked: true, secondApprovedById: APPROVER_ID }),
     }));
     expect(ledgerCreate).toHaveBeenCalledWith(expect.objectContaining({
       data: expect.objectContaining({

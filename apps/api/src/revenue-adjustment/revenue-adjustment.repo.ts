@@ -52,7 +52,7 @@ export class RevenueAdjustmentRepository {
     field: RevenueField;
     delta: number;
     memo?: string;
-    createdById: number;
+    createdById: string;
     category?: import("../generated/client").LedgerEntryCategory;
   }) {
     return this.prisma.$transaction(async (tx) => {

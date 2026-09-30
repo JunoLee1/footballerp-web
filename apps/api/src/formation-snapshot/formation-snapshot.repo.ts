@@ -14,7 +14,7 @@ const SNAPSHOT_SELECT = {
 export class FormationSnapshotRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(dto: CreateFormationSnapshotDto, createdById: number) {
+  create(dto: CreateFormationSnapshotDto, createdById: string) {
     return this.prisma.formationSnapshot.create({
       data: {
         matchId: dto.matchId,

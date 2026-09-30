@@ -48,7 +48,7 @@ export class OnboardingTaskService {
   // selfReport — trainee marks task done
   // ────────────────────────────────────────────
 
-  async selfReport(taskId: number, actorId: number) {
+  async selfReport(taskId: number, actorId: string) {
     const task = await this.repo.findById(taskId);
     if (!task) throw new AppError(404, "TASK_NOT_FOUND");
 
@@ -93,7 +93,7 @@ export class OnboardingTaskService {
   async verify(
     taskId: number,
     dto: VerifyOnboardingTaskDto,
-    actorId: number,
+    actorId: string,
     actorRole: string,
     actorFoRole: string | null | undefined,
     actorDeptCategories?: string[],
@@ -161,7 +161,7 @@ export class OnboardingTaskService {
   async skip(
     taskId: number,
     dto: SkipOnboardingTaskDto,
-    actorId: number,
+    actorId: string,
     actorRole: string,
     actorFoRole: string | null | undefined,
     actorDeptCategories?: string[],
@@ -227,10 +227,10 @@ export class OnboardingTaskService {
   // Notification helpers (Q7-B — 4 notif types)
   // ────────────────────────────────────────────
 
-  private async notifyVerifyRequested(task: { id: number; title: string; onboardingId: number; onboarding: { hiringDispatch: { id: number; departmentId: number; department: { headId: number | null } } | null } }): Promise<void> {
+  private async notifyVerifyRequested(task: { id: number; title: string; onboardingId: number; onboarding: { hiringDispatch: { id: number; departmentId: number; department: { headId: string | null } } | null } }): Promise<void> {
     const dispatchId = task.onboarding.hiringDispatch?.id ?? task.onboardingId;
     const deptHeadId = task.onboarding.hiringDispatch?.department?.headId ?? null;
-    const msg = (lang: string) => ({
+    const msg = (lang?: string) => ({
       title:
         lang === "en"
           ? "Onboarding Task Awaiting Verification"
@@ -258,7 +258,7 @@ export class OnboardingTaskService {
   }
 
   private async notifyVerifyResult(
-    task: { id: number; title: string; onboardingId: number; onboarding: { userId: number | null; hiringDispatch: { id: number } | null } },
+    task: { id: number; title: string; onboardingId: number; onboarding: { userId: string | null; hiringDispatch: { id: number } | null } },
     action: "APPROVE" | "REJECT",
     notes: string | null,
   ): Promise<void> {
@@ -293,11 +293,11 @@ export class OnboardingTaskService {
 
   private async notifyContentCompleted(onboarding: {
     id: number;
-    userId: number | null;
-    hiringDispatch: { id: number; department: { headId: number | null } | null } | null;
+    userId: string | null;
+    hiringDispatch: { id: number; department: { headId: string | null } | null } | null;
   }): Promise<void> {
     const dispatchId = onboarding.hiringDispatch?.id ?? onboarding.id;
-    const msg = (lang: string) => ({
+    const msg = (lang?: string) => ({
       title:
         lang === "en"
           ? "Onboarding Content Completed"

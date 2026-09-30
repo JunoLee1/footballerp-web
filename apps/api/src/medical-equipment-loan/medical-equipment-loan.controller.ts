@@ -23,7 +23,7 @@ export async function listLoans(req: Request, res: Response, next: NextFunction)
     const result = await cached(key, 30, () =>
       medicalEquipmentLoanRepo.findAll({
         ...(status && { status }),
-        ...(requestedById && { requestedById: parseInt(requestedById) }),
+        ...(requestedById && { requestedById }),
       }),
     );
     res.json(result);

@@ -124,7 +124,7 @@ export class DepartmentController {
       const user = requireUser(req);
       const deptId = Number(req.params["deptId"]);
       const { userId, role: memberRole, jobTitleId } = req.body as { userId?: unknown; role?: unknown; jobTitleId?: unknown };
-      if (typeof userId !== "number" || !Number.isInteger(userId)) throw new AppError(400, "INVALID_BODY");
+      if (typeof userId !== "string" || !userId) throw new AppError(400, "INVALID_BODY");
       const resolvedRole: DeptRole = (typeof memberRole === "string" && memberRole in DeptRole)
         ? (memberRole as DeptRole)
         : DeptRole.MEMBER;
@@ -140,7 +140,7 @@ export class DepartmentController {
     try {
       const user = requireUser(req);
       const deptId = Number(req.params["deptId"]);
-      const userId = Number(req.params["userId"]);
+      const userId = String(req.params["userId"]);
       const { role: newRole } = req.body as { role?: unknown };
       if (typeof newRole !== "string" || !(newRole in DeptRole)) throw new AppError(400, "INVALID_BODY");
       const actor = { id: user.id, role: user.role, frontOfficeRole: user.frontOfficeRole, deptCategories: user.departmentCategories };
@@ -154,7 +154,7 @@ export class DepartmentController {
     try {
       const user = requireUser(req);
       const deptId = Number(req.params["deptId"]);
-      const userId = Number(req.params["userId"]);
+      const userId = String(req.params["userId"]);
       const actor = { id: user.id, role: user.role, frontOfficeRole: user.frontOfficeRole, deptCategories: user.departmentCategories };
       await this.service.removeMember(deptId, userId, actor);
       res.status(204).send();
@@ -167,7 +167,7 @@ export class DepartmentController {
     try {
       const user = requireUser(req);
       const fromDeptId = Number(req.params["deptId"]);
-      const userId = Number(req.params["userId"]);
+      const userId = String(req.params["userId"]);
       const { toDeptId, role: toRole } = req.body as { toDeptId?: unknown; role?: unknown };
       if (typeof toDeptId !== "number" || !Number.isInteger(toDeptId)) throw new AppError(400, "INVALID_BODY");
       const resolvedToRole: DeptRole = (typeof toRole === "string" && toRole in DeptRole)
@@ -185,11 +185,11 @@ export class DepartmentController {
       const user = requireUser(req);
       const deptId = Number(req.params["deptId"]);
       const { newHeadId } = req.body as { newHeadId?: unknown };
-      if (newHeadId !== null && (typeof newHeadId !== "number" || !Number.isInteger(newHeadId))) {
+      if (newHeadId !== null && typeof newHeadId !== "string") {
         throw new AppError(400, "INVALID_BODY");
       }
       const actor = { id: user.id, role: user.role, frontOfficeRole: user.frontOfficeRole, deptCategories: user.departmentCategories };
-      res.json(await this.service.updateHead(deptId, newHeadId as number | null, actor));
+      res.json(await this.service.updateHead(deptId, newHeadId as string | null, actor));
     } catch (err) {
       next(err);
     }
@@ -248,7 +248,7 @@ export class DepartmentController {
       const resolved = jobTitleId === null ? null : (typeof jobTitleId === 'number' ? jobTitleId : null);
       const actor = { id: user.id, role: user.role, frontOfficeRole: user.frontOfficeRole, deptCategories: user.departmentCategories };
       res.json(
-        await this.service.updateMemberJobTitle(Number(req.params['deptId']), Number(req.params['userId']), resolved, actor)
+        await this.service.updateMemberJobTitle(Number(req.params['deptId']), String(req.params['userId']), resolved, actor)
       );
     } catch (err) { next(err); }
   };

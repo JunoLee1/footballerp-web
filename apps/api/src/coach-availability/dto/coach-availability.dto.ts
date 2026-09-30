@@ -1,12 +1,12 @@
 export interface CreateCoachAvailabilityDto {
-  userId: number;
+  userId: string;
   startDate: string;
   endDate: string;
   reason?: string;
 }
 
 export interface CoachAvailabilityQuery {
-  userId?: number;
+  userId?: string;
   from?: string;
   to?: string;
 }

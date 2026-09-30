@@ -43,7 +43,7 @@ export class GrowthReportRepository {
     });
   }
 
-  createEvaluation(dto: CreateGrowthEvaluationDto, coachId: number, planId?: number) {
+  createEvaluation(dto: CreateGrowthEvaluationDto, coachId: string, planId?: number) {
     return this.prisma.growthEvaluation.create({
       data: { ...dto, coachId, ...(planId !== undefined && { planId }) },
       include: EVAL_INCLUDE,
@@ -74,7 +74,7 @@ export class GrowthReportRepository {
     });
   }
 
-  awardBadge(dto: AwardBadgeDto, coachId: number) {
+  awardBadge(dto: AwardBadgeDto, coachId: string) {
     return this.prisma.playerBadge.create({
       data: { ...dto, coachId },
       include: BADGE_INCLUDE,

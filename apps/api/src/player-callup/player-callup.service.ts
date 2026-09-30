@@ -20,7 +20,7 @@ export class PlayerCallupService {
     return callup;
   }
 
-  async create(dto: CreateCallupDto, requestedById: number) {
+  async create(dto: CreateCallupDto, requestedById: string) {
     const existing = await this.repo.findActiveByPlayerId(dto.playerId);
     if (existing) throw new AppError(409, "CALLUP_ALREADY_ACTIVE");
 
@@ -67,7 +67,7 @@ export class PlayerCallupService {
     return callup;
   }
 
-  async approve(id: number, approvedById: number, isGM: boolean) {
+  async approve(id: number, approvedById: string, isGM: boolean) {
     const callup = await this.repo.findById(id);
     if (!callup) throw new AppError(404, "CALLUP_NOT_FOUND");
 
@@ -142,7 +142,7 @@ export class PlayerCallupService {
     return updated;
   }
 
-  async reject(id: number, approvedById: number, dto: RejectCallupDto) {
+  async reject(id: number, approvedById: string, dto: RejectCallupDto) {
     const callup = await this.repo.findById(id);
     if (!callup) throw new AppError(404, "CALLUP_NOT_FOUND");
     if (callup.status !== "DOCS_SUBMITTED") throw new AppError(409, "INVALID_STATUS");
@@ -203,7 +203,7 @@ export class PlayerCallupService {
     return updated;
   }
 
-  async complete(id: number, actorId: number) {
+  async complete(id: number, actorId: string) {
     const callup = await this.repo.findById(id);
     if (!callup) throw new AppError(404, "CALLUP_NOT_FOUND");
     if (callup.status !== "APPROVED") throw new AppError(409, "INVALID_STATUS");

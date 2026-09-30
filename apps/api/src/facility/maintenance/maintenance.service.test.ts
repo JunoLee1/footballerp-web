@@ -74,7 +74,7 @@ describe("MaintenanceService.submitToFinance", () => {
   it("throws 404 when maintenance request is not found", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
     const service = new MaintenanceService(repo, undefined as any, undefined as any, makePrisma(1000000));
-    await expect(service.submitToFinance(1, 99)).rejects.toThrow(new AppError(404, "MAINTENANCE_NOT_FOUND"));
+    await expect(service.submitToFinance(1, "55555555-5555-5555-5555-555555555555")).rejects.toThrow(new AppError(404, "MAINTENANCE_NOT_FOUND"));
   });
 
   it("throws 400 when submit-finance called with cost below threshold from ClubSettings", async () => {
@@ -82,7 +82,7 @@ describe("MaintenanceService.submitToFinance", () => {
       findById: jest.fn().mockResolvedValue(makeRecord({ estimatedCost: 500000, financeSubmittedAt: null })),
     });
     const service = new MaintenanceService(repo, undefined as any, undefined as any, makePrisma(1000000));
-    await expect(service.submitToFinance(1, 99)).rejects.toThrow(new AppError(400, "COST_BELOW_THRESHOLD"));
+    await expect(service.submitToFinance(1, "55555555-5555-5555-5555-555555555555")).rejects.toThrow(new AppError(400, "COST_BELOW_THRESHOLD"));
   });
 
   it("uses 1,000,000 as fallback limit when ClubSettings not found", async () => {
@@ -90,7 +90,7 @@ describe("MaintenanceService.submitToFinance", () => {
       findById: jest.fn().mockResolvedValue(makeRecord({ estimatedCost: 500000, financeSubmittedAt: null })),
     });
     const service = new MaintenanceService(repo, undefined as any, undefined as any, makePrisma());
-    await expect(service.submitToFinance(1, 99)).rejects.toThrow(new AppError(400, "COST_BELOW_THRESHOLD"));
+    await expect(service.submitToFinance(1, "55555555-5555-5555-5555-555555555555")).rejects.toThrow(new AppError(400, "COST_BELOW_THRESHOLD"));
   });
 
   it("throws 400 when already submitted to finance", async () => {
@@ -98,7 +98,7 @@ describe("MaintenanceService.submitToFinance", () => {
       findById: jest.fn().mockResolvedValue(makeRecord({ estimatedCost: 2000000, financeSubmittedAt: new Date() })),
     });
     const service = new MaintenanceService(repo, undefined as any, undefined as any, makePrisma(1000000));
-    await expect(service.submitToFinance(1, 99)).rejects.toThrow(new AppError(400, "ALREADY_SUBMITTED_TO_FINANCE"));
+    await expect(service.submitToFinance(1, "55555555-5555-5555-5555-555555555555")).rejects.toThrow(new AppError(400, "ALREADY_SUBMITTED_TO_FINANCE"));
   });
 
   it("submits to finance and sends notification", async () => {
@@ -110,7 +110,7 @@ describe("MaintenanceService.submitToFinance", () => {
     });
     const notifications = { notifyFacilityFinanceSubmit: notifyFn } as any;
     const service = new MaintenanceService(repo, notifications, undefined as any, makePrisma(1000000));
-    const result = await service.submitToFinance(1, 99);
+    const result = await service.submitToFinance(1, "55555555-5555-5555-5555-555555555555");
     expect(submitFn).toHaveBeenCalledWith(1);
     expect(result.financeSubmittedAt).toBeDefined();
   });

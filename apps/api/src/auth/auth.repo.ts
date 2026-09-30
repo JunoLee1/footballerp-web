@@ -38,7 +38,7 @@ export class AuthRepository {
     return this.prisma.phoneNumber.findUnique({ where: { phoneHash }, select: { id: true } });
   }
 
-  async findPhoneNumber(userId: number) {
+  async findPhoneNumber(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { phoneNumber: { select: { encrypted: true, iv: true } } },
@@ -46,7 +46,7 @@ export class AuthRepository {
     return user?.phoneNumber ?? null;
   }
 
-  isEmailTakenByOther(email: string, excludeUserId: number) {
+  isEmailTakenByOther(email: string, excludeUserId: string) {
     return this.prisma.user.findFirst({ where: { email, id: { not: excludeUserId } }, select: { id: true } });
   }
 
@@ -54,11 +54,11 @@ export class AuthRepository {
     return this.prisma.phoneNumber.findFirst({ where: { phoneHash, id: { not: excludePhoneNumberId } }, select: { id: true } });
   }
 
-  findPasswordHash(userId: number) {
+  findPasswordHash(userId: string) {
     return this.prisma.user.findUnique({ where: { id: userId }, select: { password: true, passwordChangedAt: true, phoneNumberId: true } });
   }
 
-  async updateProfile(userId: number, data: { email?: string; homeAddress?: string | null; phoneNumber?: { encrypted: string; iv: string; phoneHash: string } }) {
+  async updateProfile(userId: string, data: { email?: string; homeAddress?: string | null; phoneNumber?: { encrypted: string; iv: string; phoneHash: string } }) {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { phoneNumberId: true } });
     if (data.phoneNumber) {
       await this.prisma.phoneNumber.update({
@@ -76,7 +76,7 @@ export class AuthRepository {
     });
   }
 
-  updatePassword(userId: number, hashedPassword: string) {
+  updatePassword(userId: string, hashedPassword: string) {
     return this.prisma.user.update({
       where: { id: userId },
       data: { password: hashedPassword, passwordChangedAt: new Date() },
@@ -85,14 +85,14 @@ export class AuthRepository {
   }
 
   // 이전 비번 hash 를 이력에 기록 (변경 성공 후 호출).
-  savePasswordHistory(userId: number, passwordHash: string) {
+  savePasswordHistory(userId: string, passwordHash: string) {
     return this.prisma.passwordHistory.create({
       data: { userId, passwordHash },
     });
   }
 
   // 지정 시점 이후 (기본 6개월) 사용된 이력 조회. bcrypt.compare 로 재사용 판정.
-  findRecentPasswordHashes(userId: number, since: Date) {
+  findRecentPasswordHashes(userId: string, since: Date) {
     return this.prisma.passwordHistory.findMany({
       where: { userId, createdAt: { gte: since } },
       select: { passwordHash: true, createdAt: true },
@@ -100,7 +100,7 @@ export class AuthRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
       select: {
@@ -120,7 +120,7 @@ export class AuthRepository {
     });
   }
 
-  updateLanguage(id: number, language: string) {
+  updateLanguage(id: string, language: string) {
     return this.prisma.user.update({
       where: { id },
       data: { language },
@@ -128,7 +128,7 @@ export class AuthRepository {
     });
   }
 
-  createLoginHistory(data: { userId?: number; email: string; ip: string; userAgent: string; success: boolean }) {
+  createLoginHistory(data: { userId?: string; email: string; ip: string; userAgent: string; success: boolean }) {
     const userAgentHash = crypto.createHash('sha256').update(data.userAgent).digest('hex');
     return this.prisma.loginHistory.create({
       data: {
@@ -141,7 +141,7 @@ export class AuthRepository {
     });
   }
 
-  listLoginHistory(userId: number, limit = 50) {
+  listLoginHistory(userId: string, limit = 50) {
     return this.prisma.loginHistory.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
@@ -161,7 +161,7 @@ export class AuthRepository {
     });
   }
 
-  createInvite(data: { email: string; role: Role; coachingRole?: CoachingRole | null; frontOfficeRole?: FrontOfficeRole | null; createdById: number }) {
+  createInvite(data: { email: string; role: Role; coachingRole?: CoachingRole | null; frontOfficeRole?: FrontOfficeRole | null; createdById: string }) {
     const token = crypto.randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
     return this.prisma.userInvite.create({
@@ -200,7 +200,7 @@ export class AuthRepository {
     return this.prisma.refreshTokenBlacklist.deleteMany({ where: { expiresAt: { lt: new Date() } } });
   }
 
-  async getDepartmentCategories(userId: number): Promise<string[]> {
+  async getDepartmentCategories(userId: string): Promise<string[]> {
     const rows = await this.prisma.userDepartment.findMany({
       where: { userId },
       select: { department: { select: { category: true } } },
@@ -248,7 +248,7 @@ export class AuthRepository {
     });
   }
 
-  anonymizeUser(id: number) {
+  anonymizeUser(id: string) {
     return this.prisma.user.update({
       where: { id },
       data: {
@@ -262,7 +262,7 @@ export class AuthRepository {
     });
   }
 
-  async exportUserData(id: number) {
+  async exportUserData(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id },
       select: {

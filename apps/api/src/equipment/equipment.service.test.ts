@@ -125,16 +125,16 @@ describe("EquipmentService — clubId 스코핑 (Phase 2.5)", () => {
       const repo = makeRepo({ findItemById, createLoan, findEquipmentManagers });
       const notifRepo = { create: jest.fn().mockResolvedValue({}) };
       const service = new EquipmentService(repo, notifRepo as any, undefined as any);
-      await service.requestLoan(5, { equipmentItemId: 1 } as any, 1);
+      await service.requestLoan("33333333-3333-3333-3333-333333333333", { equipmentItemId: 1 } as any, 1);
       expect(findItemById).toHaveBeenCalledWith(1, 1);
-      expect(createLoan).toHaveBeenCalledWith(5, { equipmentItemId: 1 }, 1);
+      expect(createLoan).toHaveBeenCalledWith("33333333-3333-3333-3333-333333333333", { equipmentItemId: 1 }, 1);
     });
 
     it("다른 클럽 item → findItemById null → 404 EQUIPMENT_ITEM_NOT_FOUND", async () => {
       const findItemById = jest.fn().mockResolvedValue(null);
       const repo = makeRepo({ findItemById });
       const service = new EquipmentService(repo, undefined as any, undefined as any);
-      await expect(service.requestLoan(5, { equipmentItemId: 1 } as any, 99))
+      await expect(service.requestLoan("33333333-3333-3333-3333-333333333333", { equipmentItemId: 1 } as any, 99))
         .rejects.toThrow(new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND"));
     });
   });
@@ -144,7 +144,7 @@ describe("EquipmentService — clubId 스코핑 (Phase 2.5)", () => {
       const findLoanById = jest.fn().mockResolvedValue(null);
       const repo = makeRepo({ findLoanById });
       const service = new EquipmentService(repo, undefined as any, undefined as any);
-      await expect(service.approveLoan(1, 10, 99))
+      await expect(service.approveLoan(1, "44444444-4444-4444-4444-444444444444", 99))
         .rejects.toThrow(new AppError(404, "LOAN_NOT_FOUND"));
     });
   });

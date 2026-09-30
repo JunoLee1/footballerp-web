@@ -12,7 +12,7 @@ export class SoftwareLicenseRepository {
     return this.prisma.softwareLicense.findUnique({ where: { id } });
   }
 
-  create(data: CreateSoftwareLicenseDto & { createdById: number }) {
+  create(data: CreateSoftwareLicenseDto & { createdById: string }) {
     return this.prisma.softwareLicense.create({
       data: {
         name: data.name,

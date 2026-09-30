@@ -39,14 +39,14 @@ export class SafeguardRepository {
     })
   }
 
-  suspendUser(userId: number) {
+  suspendUser(userId: string) {
     return this.prisma.user.update({
       where: { id: userId },
       data: { isSuspended: true, suspendedAt: new Date() },
     })
   }
 
-  unsuspendUser(userId: number) {
+  unsuspendUser(userId: string) {
     return this.prisma.user.update({
       where: { id: userId },
       data: { isSuspended: false, suspendedAt: null },

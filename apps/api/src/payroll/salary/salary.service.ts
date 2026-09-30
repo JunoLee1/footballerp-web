@@ -16,7 +16,7 @@ export class SalaryService {
     return record;
   }
 
-  async create(dto: CreateSalaryDto, actorId: number) {
+  async create(dto: CreateSalaryDto, actorId: string) {
     const effectiveFrom = dto.effectiveFrom ? new Date(dto.effectiveFrom) : new Date();
     const closeAt = new Date(effectiveFrom.getTime() - 1);
     await this.repo.closeActive(dto.userId ?? null, dto.staffRecordId ?? null, closeAt);
@@ -25,7 +25,7 @@ export class SalaryService {
     return record;
   }
 
-  async update(id: number, dto: UpdateSalaryDto, actorId: number) {
+  async update(id: number, dto: UpdateSalaryDto, actorId: string) {
     await this.get(id);
     const record = await this.repo.update(id, dto);
     await writeAuditLog({ actorId, action: "SALARY_UPDATED", targetId: id });

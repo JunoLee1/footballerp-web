@@ -18,7 +18,7 @@ const expenseInclude = {
 export class MedicalExpenseRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findAll(submittedById: number | null) {
+  findAll(submittedById: string | null) {
     const where = submittedById !== null ? { submittedById } : {};
     return this.prisma.medicalExpense.findMany({
       where,
@@ -41,7 +41,7 @@ export class MedicalExpenseRepository {
   }
 
   create(data: {
-    submittedById: number;
+    submittedById: string;
     receiptDate: Date;
     costCategory: string;
     totalAmount: number;
@@ -84,7 +84,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  leaderApprove(id: number, leaderReviewerId: number) {
+  leaderApprove(id: number, leaderReviewerId: string) {
     return this.prisma.medicalExpense.update({
       where: { id },
       data: { status: "LEADER_APPROVED", leaderReviewerId, leaderReviewedAt: new Date() },
@@ -92,7 +92,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  leaderReject(id: number, leaderReviewerId: number, rejectionReason: string) {
+  leaderReject(id: number, leaderReviewerId: string, rejectionReason: string) {
     return this.prisma.medicalExpense.update({
       where: { id },
       data: { status: "REJECTED", leaderReviewerId, rejectionReason, leaderReviewedAt: new Date() },
@@ -100,7 +100,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  approve(id: number, adminReviewerId: number) {
+  approve(id: number, adminReviewerId: string) {
     return this.prisma.medicalExpense.update({
       where: { id },
       data: { status: "APPROVED", adminReviewerId, adminReviewedAt: new Date() },
@@ -108,7 +108,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  reject(id: number, adminReviewerId: number, rejectionReason: string) {
+  reject(id: number, adminReviewerId: string, rejectionReason: string) {
     return this.prisma.medicalExpense.update({
       where: { id },
       data: { status: "REJECTED", adminReviewerId, rejectionReason, adminReviewedAt: new Date() },

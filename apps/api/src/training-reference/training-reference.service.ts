@@ -10,11 +10,11 @@ export class TrainingReferenceService {
     return this.repo.findAll(query);
   }
 
-  create(dto: CreateTrainingReferenceDto, addedById: number) {
+  create(dto: CreateTrainingReferenceDto, addedById: string) {
     return this.repo.create(dto, addedById);
   }
 
-  async delete(id: number, requesterId: number, isAdmin: boolean) {
+  async delete(id: number, requesterId: string, isAdmin: boolean) {
     const ref = await this.repo.findById(id);
     if (!ref) throw new AppError(404, "TRAINING_REFERENCE_NOT_FOUND");
     if (!isAdmin && ref.addedById !== requesterId) throw new AppError(403, "FORBIDDEN");

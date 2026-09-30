@@ -25,29 +25,29 @@ describe("GuardianService.linkBySearch", () => {
   it("존재하지 않는 자녀 → 404", async () => {
     const svc = makeSvc();
     await expect(
-      svc.linkBySearch({ studentCode: "SC001", playerName: "김유소", dateOfBirth: "2015-01-01" }, 1)
+      svc.linkBySearch({ studentCode: "SC001", playerName: "김유소", dateOfBirth: "2015-01-01" }, "11111111-1111-1111-1111-111111111111")
     ).rejects.toMatchObject({ statusCode: 404, message: "PLAYER_NOT_FOUND" });
   });
 
   it("이미 다른 guardian에 연동된 자녀 → 409", async () => {
-    const svc = makeSvc({ findPlayerBySearch: jest.fn().mockResolvedValue({ ...fakePlayer, guardianId: 99 }) });
+    const svc = makeSvc({ findPlayerBySearch: jest.fn().mockResolvedValue({ ...fakePlayer, guardianId: "99999999-9999-9999-9999-999999999999" }) });
     await expect(
-      svc.linkBySearch({ studentCode: "SC001", playerName: "김유소", dateOfBirth: "2015-01-01" }, 1)
+      svc.linkBySearch({ studentCode: "SC001", playerName: "김유소", dateOfBirth: "2015-01-01" }, "11111111-1111-1111-1111-111111111111")
     ).rejects.toMatchObject({ statusCode: 409, message: "ALREADY_LINKED" });
   });
 
   it("성공 → linkGuardianToPlayer 호출", async () => {
     const repo = makeRepo({ findPlayerBySearch: jest.fn().mockResolvedValue(fakePlayer) });
     const svc = new GuardianService(repo, {} as any, {} as any, {} as any);
-    await svc.linkBySearch({ studentCode: "SC001", playerName: "김유소", dateOfBirth: "2015-01-01" }, 1);
-    expect(repo.linkGuardianToPlayer).toHaveBeenCalledWith("player-1", 1);
+    await svc.linkBySearch({ studentCode: "SC001", playerName: "김유소", dateOfBirth: "2015-01-01" }, "11111111-1111-1111-1111-111111111111");
+    expect(repo.linkGuardianToPlayer).toHaveBeenCalledWith("player-1", "11111111-1111-1111-1111-111111111111");
   });
 });
 
 describe("GuardianService.linkByCode", () => {
   it("존재하지 않는 코드 → 404", async () => {
     const svc = makeSvc();
-    await expect(svc.linkByCode({ code: "ABCD1234" }, 1)).rejects.toMatchObject({ statusCode: 404, message: "INVALID_CODE" });
+    await expect(svc.linkByCode({ code: "ABCD1234" }, "11111111-1111-1111-1111-111111111111")).rejects.toMatchObject({ statusCode: 404, message: "INVALID_CODE" });
   });
 
   it("이미 사용된 코드 → 409", async () => {
@@ -57,7 +57,7 @@ describe("GuardianService.linkByCode", () => {
       }),
     });
     const svc = new GuardianService(repo, {} as any, {} as any, {} as any);
-    await expect(svc.linkByCode({ code: "ABCD1234" }, 1)).rejects.toMatchObject({ statusCode: 409, message: "CODE_ALREADY_USED" });
+    await expect(svc.linkByCode({ code: "ABCD1234" }, "11111111-1111-1111-1111-111111111111")).rejects.toMatchObject({ statusCode: 409, message: "CODE_ALREADY_USED" });
   });
 
   it("만료된 코드 → 410", async () => {
@@ -67,7 +67,7 @@ describe("GuardianService.linkByCode", () => {
       }),
     });
     const svc = new GuardianService(repo, {} as any, {} as any, {} as any);
-    await expect(svc.linkByCode({ code: "ABCD1234" }, 1)).rejects.toMatchObject({ statusCode: 410, message: "CODE_EXPIRED" });
+    await expect(svc.linkByCode({ code: "ABCD1234" }, "11111111-1111-1111-1111-111111111111")).rejects.toMatchObject({ statusCode: 410, message: "CODE_EXPIRED" });
   });
 
   it("성공 → linkGuardianToPlayer + markCodeUsed 호출", async () => {
@@ -77,18 +77,18 @@ describe("GuardianService.linkByCode", () => {
       }),
     });
     const svc = new GuardianService(repo, {} as any, {} as any, {} as any);
-    await svc.linkByCode({ code: "ABCD1234" }, 1);
-    expect(repo.linkGuardianToPlayer).toHaveBeenCalledWith("player-1", 1);
-    expect(repo.markCodeUsed).toHaveBeenCalledWith(1, 1);
+    await svc.linkByCode({ code: "ABCD1234" }, "11111111-1111-1111-1111-111111111111");
+    expect(repo.linkGuardianToPlayer).toHaveBeenCalledWith("player-1", "11111111-1111-1111-1111-111111111111");
+    expect(repo.markCodeUsed).toHaveBeenCalledWith(1, "11111111-1111-1111-1111-111111111111");
   });
 });
 
 describe("GuardianService.issueInviteCode", () => {
   it("미사용·미만료 코드가 있으면 기존 코드 반환", async () => {
-    const existing = { id: 1, code: "EXIST123", playerId: "player-1", usedAt: null, expiresAt: new Date(Date.now() + 1000), issuedById: 2 };
+    const existing = { id: 1, code: "EXIST123", playerId: "player-1", usedAt: null, expiresAt: new Date(Date.now() + 1000), issuedById: "22222222-2222-2222-2222-222222222222" };
     const repo = makeRepo({ findActiveInviteCode: jest.fn().mockResolvedValue(existing) });
     const svc = new GuardianService(repo, {} as any, {} as any, {} as any);
-    const result = await svc.issueInviteCode({ playerId: "player-1" }, 2);
+    const result = await svc.issueInviteCode({ playerId: "player-1" }, "22222222-2222-2222-2222-222222222222");
     expect(result).toBe(existing);
     expect(repo.createInviteCode).not.toHaveBeenCalled();
   });
@@ -96,7 +96,7 @@ describe("GuardianService.issueInviteCode", () => {
   it("없으면 새 코드 생성", async () => {
     const repo = makeRepo({ createInviteCode: jest.fn().mockResolvedValue({ code: "NEW12345" }) });
     const svc = new GuardianService(repo, {} as any, {} as any, {} as any);
-    await svc.issueInviteCode({ playerId: "player-1" }, 2);
+    await svc.issueInviteCode({ playerId: "player-1" }, "22222222-2222-2222-2222-222222222222");
     expect(repo.createInviteCode).toHaveBeenCalled();
   });
 });
@@ -104,7 +104,7 @@ describe("GuardianService.issueInviteCode", () => {
 describe("GuardianService.getChildren", () => {
   it("자녀가 없으면 빈 배열 반환", async () => {
     const svc = makeSvc();
-    const result = await svc.getChildren(1);
+    const result = await svc.getChildren("11111111-1111-1111-1111-111111111111");
     expect(result).toEqual([]);
   });
 
@@ -115,7 +115,7 @@ describe("GuardianService.getChildren", () => {
     ];
     const repo = makeRepo({ findChildrenByGuardian: jest.fn().mockResolvedValue(children) });
     const svc = new GuardianService(repo, {} as any, {} as any, {} as any);
-    const result = await svc.getChildren(1);
+    const result = await svc.getChildren("11111111-1111-1111-1111-111111111111");
     expect(result).toHaveLength(2);
   });
 });

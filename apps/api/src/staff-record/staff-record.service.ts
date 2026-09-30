@@ -30,7 +30,7 @@ export class StaffRecordService {
 
   async create(
     data: { name: string; role: string; departmentId?: number; phone?: string; notes?: string; email?: string; employeeId?: string },
-    createdById: number
+    createdById: string
   ) {
     if (data.email) {
       const existing = await this.repo.findByEmail(data.email);
@@ -47,7 +47,7 @@ export class StaffRecordService {
   async update(
     id: number,
     data: { name?: string; role?: string; departmentId?: number | null; phone?: string; isActive?: boolean; notes?: string },
-    actorId: number,
+    actorId: string,
   ) {
     await this.get(id);
     const updateData: typeof data & { employmentEndDate?: Date } = { ...data };
@@ -59,7 +59,7 @@ export class StaffRecordService {
     return result;
   }
 
-  async delete(id: number, actorId: number) {
+  async delete(id: number, actorId: string) {
     await this.get(id);
     const linkedSalaryCount = await this.repo.countLinkedSalaries(id);
     if (linkedSalaryCount > 0) throw new AppError(409, "STAFF_RECORD_HAS_SALARY_HISTORY");
@@ -67,7 +67,7 @@ export class StaffRecordService {
     return this.repo.delete(id);
   }
 
-  async terminate(id: number, actorId: number) {
+  async terminate(id: number, actorId: string) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new AppError(404, "STAFF_RECORD_NOT_FOUND");
     const result = await this.repo.terminate(id, new Date());

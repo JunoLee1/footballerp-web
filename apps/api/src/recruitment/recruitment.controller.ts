@@ -320,7 +320,7 @@ export class RecruitmentController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canWrite(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const { userId } = req.body as { userId: number };
+      const { userId } = req.body as { userId: string };
       res.status(201).json(await this.service.startOnboarding(Number(req.params["id"]), userId));
     } catch (err) {
       next(err);
@@ -380,7 +380,7 @@ export class RecruitmentController {
       if (!canWrite(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
       const interviewId = Number(req.params["id"]);
       const { interviewerId, scoreSkill, scoreComm, scoreCulture, comment } = req.body as {
-        interviewerId: number; scoreSkill?: number; scoreComm?: number; scoreCulture?: number; comment?: string;
+        interviewerId: string; scoreSkill?: number; scoreComm?: number; scoreCulture?: number; comment?: string;
       };
       res.status(201).json(await this.service.addInterviewerScore(interviewId, {
         interviewerId,

@@ -46,7 +46,7 @@ export interface UpsertBudgetPlanDto {
 export class FinancialReportRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async upsert(seasonId: number, totalRevenue: number, note?: string, breakdown?: RevenueBreakdownDto, changedById?: number) {
+  async upsert(seasonId: number, totalRevenue: number, note?: string, breakdown?: RevenueBreakdownDto, changedById?: string) {
     const noteVal = note ?? null;
     const breakdownData = breakdown
       ? {
@@ -103,7 +103,7 @@ export class FinancialReportRepository {
 
   async upsertFinancialReportCarryOver(
     seasonId: number,
-    data: { amount: number; overriddenById: number; reason: string },
+    data: { amount: number; overriddenById: string; reason: string },
   ) {
     return this.prisma.financialReport.upsert({
       where: { seasonId },
@@ -217,7 +217,7 @@ export class FinancialReportRepository {
     categoryId: number,
     amount: number,
     reason: string,
-    createdById: number
+    createdById: string
   ) {
     return this.prisma.budgetOverrideLog.create({
       data: { financialReportId: reportId, categoryId, amount, reason, createdById },
@@ -264,14 +264,14 @@ export class FinancialReportRepository {
     return this.prisma.budgetOverrideLog.findUnique({ where: { id } });
   }
 
-  async approveOverrideLog(id: number, reviewerId: number) {
+  async approveOverrideLog(id: number, reviewerId: string) {
     return this.prisma.budgetOverrideLog.update({
       where: { id },
       data: { status: "APPROVED", reviewedById: reviewerId, reviewedAt: new Date() },
     });
   }
 
-  async rejectOverrideLog(id: number, reviewerId: number, reviewNote: string) {
+  async rejectOverrideLog(id: number, reviewerId: string, reviewNote: string) {
     return this.prisma.budgetOverrideLog.update({
       where: { id },
       data: { status: "REJECTED", reviewedById: reviewerId, reviewedAt: new Date(), reviewNote },

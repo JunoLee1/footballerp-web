@@ -17,25 +17,25 @@ const EC_INCLUDE = {
 
 export interface CreateDraftData {
   hiringDispatchId: number;
-  createdById: number;
+  createdById: string;
 }
 
 export interface IssueData {
   fileUrl: string;
   fileName: string;
-  issuedById: number;
+  issuedById: string;
 }
 
 export interface SignData {
   signedFileUrl: string;
   signedFileName: string;
   signedAt: Date;
-  signedConfirmedById: number;
+  signedConfirmedById: string;
 }
 
 export interface CancelData {
   cancelReason: string;
-  cancelledById: number;
+  cancelledById: string;
 }
 
 /**

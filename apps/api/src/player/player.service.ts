@@ -78,7 +78,7 @@ export class PlayerService {
     return this.repo.update(id, dto);
   }
 
-  async updatePlayerStatus(id: string, { status }: UpdatePlayerStatusDto, actorId: number, actorClubId?: number | null) {
+  async updatePlayerStatus(id: string, { status }: UpdatePlayerStatusDto, actorId: string, actorClubId?: number | null) {
     const player = await this.repo.findById(id, actorClubId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
     const result = await this.repo.updateStatus(id, status);
@@ -106,7 +106,7 @@ export class PlayerService {
     return result;
   }
 
-  async promotePlayer(id: string, targetTeamId: number, actorId: number, actorClubId?: number | null) {
+  async promotePlayer(id: string, targetTeamId: number, actorId: string, actorClubId?: number | null) {
     const player = await this.repo.findById(id, actorClubId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
     if (!player.team || player.team.type !== "YOUTH") {
@@ -135,7 +135,7 @@ export class PlayerService {
     });
   }
 
-  async deletePlayer(id: string, actorId: number, actorClubId?: number | null) {
+  async deletePlayer(id: string, actorId: string, actorClubId?: number | null) {
     const player = await this.repo.findById(id, actorClubId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
     await this.repo.delete(id);
@@ -149,7 +149,7 @@ export class PlayerService {
     return this.mvRepo.getHistory(playerId);
   }
 
-  async updateMarketValue(playerId: string, dto: UpdateMarketValueDto, recordedById: number, actorClubId?: number | null) {
+  async updateMarketValue(playerId: string, dto: UpdateMarketValueDto, recordedById: string, actorClubId?: number | null) {
     const player = await this.repo.findById(playerId, actorClubId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
     if (!this.mvRepo) throw new AppError(500, "MARKET_VALUE_REPO_NOT_CONFIGURED");

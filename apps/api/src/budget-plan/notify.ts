@@ -13,7 +13,7 @@ export type BudgetPlanEvent =
   | "FINALIZED";
 
 interface Reviewer {
-  userId: number;
+  userId: string;
   email: string | null;
   language: string | null;
   scope: "TEAM" | "DEPARTMENT";

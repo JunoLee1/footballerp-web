@@ -6,7 +6,7 @@ const GRANT_HOURS = 24;
 export class PiiAccessService {
   constructor(private repo: PiiAccessRepository) {}
 
-  async requestAccess(requesterId: number, targetUserId: number, reason: string) {
+  async requestAccess(requesterId: string, targetUserId: string, reason: string) {
     if (requesterId === targetUserId) throw new AppError(400, "CANNOT_REQUEST_SELF");
     if (!reason.trim()) throw new AppError(400, "REASON_REQUIRED");
 
@@ -20,11 +20,11 @@ export class PiiAccessService {
     return this.repo.findPending();
   }
 
-  myRequests(requesterId: number) {
+  myRequests(requesterId: string) {
     return this.repo.findByRequester(requesterId);
   }
 
-  async approve(id: number, reviewerId: number) {
+  async approve(id: number, reviewerId: string) {
     const req = await this.repo.findById(id);
     if (!req) throw new AppError(404, "REQUEST_NOT_FOUND");
     if (req.status !== "PENDING") throw new AppError(409, "ALREADY_REVIEWED");
@@ -35,7 +35,7 @@ export class PiiAccessService {
     return this.repo.review(id, "APPROVED", reviewerId, grantedUntil);
   }
 
-  async deny(id: number, reviewerId: number) {
+  async deny(id: number, reviewerId: string) {
     const req = await this.repo.findById(id);
     if (!req) throw new AppError(404, "REQUEST_NOT_FOUND");
     if (req.status !== "PENDING") throw new AppError(409, "ALREADY_REVIEWED");

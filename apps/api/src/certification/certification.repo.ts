@@ -37,7 +37,7 @@ export class CertificationRepository {
     return this.prisma.certification.findUnique({ where: { id }, include: INCLUDE });
   }
 
-  create(dto: CreateCertificationDto & { ownerId: number }) {
+  create(dto: CreateCertificationDto & { ownerId: string }) {
     return this.prisma.certification.create({
       data: {
         certType:     dto.certType,
@@ -89,7 +89,7 @@ export class CertificationRepository {
     });
   }
 
-  approve(id: number, approverId: number) {
+  approve(id: number, approverId: string) {
     return this.prisma.certification.update({
       where: { id },
       data: { status: "FM_APPROVED", approvedById: approverId, approvedAt: new Date() },
@@ -97,7 +97,7 @@ export class CertificationRepository {
     });
   }
 
-  gmApprove(id: number, approverId: number) {
+  gmApprove(id: number, approverId: string) {
     return this.prisma.certification.update({
       where: { id },
       data: {

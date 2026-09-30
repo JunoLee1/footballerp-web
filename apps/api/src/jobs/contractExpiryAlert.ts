@@ -45,7 +45,7 @@ export function startContractExpiryAlertJob() {
         const { playerName } = contract.player;
         const endDate = contract.endDate;
 
-        const getMsg = (locale: string) => ({
+        const getMsg = (locale?: string) => ({
           title: locale === "ko" ? "계약 만료 임박" : "Contract Expiring Soon",
           body:
             locale === "ko"

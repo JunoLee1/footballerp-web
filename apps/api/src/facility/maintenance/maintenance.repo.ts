@@ -27,7 +27,7 @@ export class MaintenanceRepository {
     return this.prisma.maintenanceRequest.findUnique({ where: { id }, include: INCLUDE });
   }
 
-  create(data: CreateMaintenanceDto & { createdById: number }) {
+  create(data: CreateMaintenanceDto & { createdById: string }) {
     return this.prisma.maintenanceRequest.create({
       data: {
         title: data.title,
@@ -65,7 +65,7 @@ export class MaintenanceRepository {
     });
   }
 
-  approve(id: number, approverId: number) {
+  approve(id: number, approverId: string) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
       data: { status: "APPROVED", approvedById: approverId, approvedAt: new Date() },
@@ -73,7 +73,7 @@ export class MaintenanceRepository {
     });
   }
 
-  gmApprove(id: number, gmId: number) {
+  gmApprove(id: number, gmId: string) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
       data: { status: "RESOLVED", gmApprovedById: gmId, gmApprovedAt: new Date(), resolvedAt: new Date() },

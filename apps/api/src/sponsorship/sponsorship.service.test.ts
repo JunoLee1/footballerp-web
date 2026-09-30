@@ -49,7 +49,7 @@ describe("SponsorshipService.create — region fields", () => {
         address: "서울 강남구 테헤란로 427",
         addressDetail: "10층",
       },
-      1,
+      "11111111-1111-1111-1111-111111111111",
     );
     expect(repo.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -77,7 +77,7 @@ describe("SponsorshipService.create — region fields", () => {
         taxId: "GB123456789",
         overseasAddress: "10 Downing Street, London",
       },
-      1,
+      "22222222-2222-2222-2222-222222222222",
     );
     expect(repo.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -92,7 +92,7 @@ describe("SponsorshipService.create — region fields", () => {
 describe("SponsorshipService.markPaid — PA4/PA6 paths", () => {
   const SPONSORSHIP_ID = 10;
   const PAYMENT_ID = 20;
-  const USER_ID = 1;
+  const USER_ID = "33333333-3333-3333-3333-333333333333";
 
   const makeKrwSponsorship = () => ({
     id: SPONSORSHIP_ID,

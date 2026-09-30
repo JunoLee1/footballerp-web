@@ -1,7 +1,7 @@
 export interface CreateSafeguardReportDto {
   description: string
   contactInfo?: string
-  accusedUserId?: number
+  accusedUserId?: string
 }
 
 export interface UpdateSafeguardStatusDto {
@@ -16,7 +16,7 @@ export function validateCreateSafeguardReport(body: unknown): CreateSafeguardRep
   }
   const dto: CreateSafeguardReportDto = { description: b.description.trim() }
   if (typeof b.contactInfo === 'string') dto.contactInfo = b.contactInfo
-  if (typeof b.accusedUserId === 'number') dto.accusedUserId = b.accusedUserId
+  if (typeof b.accusedUserId === 'string') dto.accusedUserId = b.accusedUserId
   return dto
 }
 

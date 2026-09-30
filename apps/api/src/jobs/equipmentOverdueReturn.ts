@@ -26,7 +26,7 @@ export async function runEquipmentOverdueReturnJob(now: Date = new Date(), deps?
   const managerIds = managers.map((m) => m.id);
 
   for (const loan of loans) {
-    const recipients = new Set<number>([loan.requestedById, ...managerIds]);
+    const recipients = new Set<string>([loan.requestedById, ...managerIds]);
     if (loan.approvedById) recipients.add(loan.approvedById);
 
     const overdueDays = Math.max(1, Math.floor((now.getTime() - new Date(loan.dueDate).getTime()) / 86_400_000));

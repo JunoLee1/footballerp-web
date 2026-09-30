@@ -41,7 +41,7 @@ export class HiringSurveyRepository {
     return this.prisma.hiringNeedsSurvey.findUnique({ where: { id }, include: SURVEY_INCLUDE })
   }
 
-  create(dto: CreateHiringSurveyDto, createdById: number) {
+  create(dto: CreateHiringSurveyDto, createdById: string) {
     return this.prisma.hiringNeedsSurvey.create({
       data: {
         title: dto.title,
@@ -83,7 +83,7 @@ export class HiringSurveyRepository {
   upsertResponse(
     surveyId: number,
     departmentId: number,
-    submittedById: number,
+    submittedById: string,
     dto: CreateSurveyResponseDto,
   ) {
     // On upsert we treat the row as a fresh DRAFT — clears any prior rejection
@@ -133,7 +133,7 @@ export class HiringSurveyRepository {
     patch: {
       status: SurveyResponseStatus
       rejectionReason?: string | null
-      approvedById?: number | null
+      approvedById?: string | null
       approvedAt?: Date | null
     },
   ) {
@@ -152,7 +152,7 @@ export class HiringSurveyRepository {
    * Whether the given user holds the `LEADER` role in `UserDepartment` for the
    * given department. Membership-based check for the "팀장" gate.
    */
-  async isUserLeaderOfDepartment(userId: number, departmentId: number): Promise<boolean> {
+  async isUserLeaderOfDepartment(userId: string, departmentId: number): Promise<boolean> {
     const membership = await this.prisma.userDepartment.findFirst({
       where: { userId, departmentId, role: 'LEADER' },
       select: { userId: true },
@@ -164,7 +164,7 @@ export class HiringSurveyRepository {
    * Every user ID that has the `LEADER` role in any of the given departments.
    * Used to fan out HIRING_SURVEY_OPEN alongside the dept head.
    */
-  async findLeaderUserIdsForDepartments(departmentIds: number[]): Promise<number[]> {
+  async findLeaderUserIdsForDepartments(departmentIds: number[]): Promise<string[]> {
     if (departmentIds.length === 0) return []
     const rows = await this.prisma.userDepartment.findMany({
       where: { departmentId: { in: departmentIds }, role: 'LEADER' },
@@ -177,7 +177,7 @@ export class HiringSurveyRepository {
     return this.prisma.surveyResponse.findMany({ where: { surveyId } })
   }
 
-  createDraft(data: { title: string; deadlineAt: Date; targetDeptIds: number[]; createdById: number }) {
+  createDraft(data: { title: string; deadlineAt: Date; targetDeptIds: number[]; createdById: string }) {
     return this.prisma.hiringNeedsSurvey.create({
       data: {
         title: data.title,

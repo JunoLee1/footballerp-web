@@ -41,7 +41,7 @@ const listInclude = {
 export class AssetRequestRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(dto: CreateAssetRequestDto, requesterId: number, departmentId: number, actorClubId?: number) {
+  create(dto: CreateAssetRequestDto, requesterId: string, departmentId: number, actorClubId?: number) {
     return this.prisma.assetRequest.create({
       data: {
         requesterId,
@@ -69,7 +69,7 @@ export class AssetRequestRepository {
     });
   }
 
-  findByRequester(requesterId: number, status?: AssetRequestStatus, actorClubId?: number) {
+  findByRequester(requesterId: string, status?: AssetRequestStatus, actorClubId?: number) {
     return this.prisma.assetRequest.findMany({
       where: {
         requesterId,
@@ -96,7 +96,7 @@ export class AssetRequestRepository {
   /**
    * SUBMITTED requests where the user is the leaf department's head (팀장).
    */
-  findPendingForLeader(userId: number, actorClubId?: number) {
+  findPendingForLeader(userId: string, actorClubId?: number) {
     return this.prisma.assetRequest.findMany({
       where: {
         status: "SUBMITTED",
@@ -111,7 +111,7 @@ export class AssetRequestRepository {
   /**
    * LEADER_APPROVED requests where the user is the parent department's head (부서장).
    */
-  findPendingForDeptHead(userId: number, actorClubId?: number) {
+  findPendingForDeptHead(userId: string, actorClubId?: number) {
     return this.prisma.assetRequest.findMany({
       where: {
         status: "LEADER_APPROVED",
@@ -157,7 +157,7 @@ export class AssetRequestRepository {
     data: {
       stage: AssetRequestApprovalStage;
       action: AssetRequestApprovalAction;
-      reviewerId: number;
+      reviewerId: string;
       reason?: string;
     },
     tx?: Tx,

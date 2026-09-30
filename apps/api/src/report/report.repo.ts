@@ -31,7 +31,7 @@ export class ReportRepository {
   constructor(private prisma: PrismaClient) {}
 
   findAll(
-    userId: number,
+    userId: string,
     isGM: boolean,
     isHeadCoach: boolean = false,
     filters: { type?: string; status?: string } = {},
@@ -80,7 +80,7 @@ export class ReportRepository {
     });
   }
 
-  create(data: { authorId: number; type: string; title: string; content: string; fileUrl?: string; fileName?: string; departmentId?: number }) {
+  create(data: { authorId: string; type: string; title: string; content: string; fileUrl?: string; fileName?: string; departmentId?: number }) {
     return this.prisma.report.create({
       data: data as any,
       include: reportInclude,
@@ -124,7 +124,7 @@ export class ReportRepository {
     });
   }
 
-  async confirmReview(reportId: number, reviewerDeptId: number, userId: number, comment?: string) {
+  async confirmReview(reportId: number, reviewerDeptId: number, userId: string, comment?: string) {
     return this.prisma.$transaction(async (tx) => {
       await tx.reportReview.update({
         where: { reportId_reviewerDeptId: { reportId, reviewerDeptId } },
@@ -145,7 +145,7 @@ export class ReportRepository {
     });
   }
 
-  async rejectReview(reportId: number, reviewerDeptId: number, userId: number, reason: string) {
+  async rejectReview(reportId: number, reviewerDeptId: number, userId: string, reason: string) {
     return this.prisma.$transaction(async (tx) => {
       await tx.reportReview.update({
         where: { reportId_reviewerDeptId: { reportId, reviewerDeptId } },
@@ -160,7 +160,7 @@ export class ReportRepository {
     });
   }
 
-  approve(id: number, reviewerId: number, nextStatus: "FIRST_APPROVED" | "SECOND_APPROVED" | "APPROVED") {
+  approve(id: number, reviewerId: string, nextStatus: "FIRST_APPROVED" | "SECOND_APPROVED" | "APPROVED") {
     const now = new Date();
     const data =
       nextStatus === "FIRST_APPROVED"
@@ -176,7 +176,7 @@ export class ReportRepository {
     });
   }
 
-  rejectDirect(id: number, reviewerId: number, reason: string) {
+  rejectDirect(id: number, reviewerId: string, reason: string) {
     return this.prisma.report.update({
       where: { id },
       data: { status: "REJECTED", rejectionReason: reason, reviewerId, reviewedAt: new Date() },

@@ -79,7 +79,7 @@ export class OnboardingTemplateController {
    * skip the department lookup when possible.
    */
   private async assertWritePermission(
-    userId: number,
+    userId: string,
     role: string,
     foRole: string | null | undefined,
     departmentId: number,

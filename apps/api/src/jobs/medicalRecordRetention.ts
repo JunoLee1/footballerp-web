@@ -26,7 +26,7 @@ export function startMedicalRecordRetentionJob() {
       if (flagged.count > 0) {
         console.log(`[MedicalRecordRetention] Flagged ${flagged.count} injury records past ${RETENTION_YEARS}-year retention`);
         void writeAuditLog({
-          actorId: 0,
+          actorId: "",
           action: "MEDICAL_RECORDS_RETENTION_FLAGGED",
           detail: { count: flagged.count, cutoffDate: cutoffDate.toISOString(), retentionYears: RETENTION_YEARS },
         }).catch(console.error);

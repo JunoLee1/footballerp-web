@@ -24,7 +24,7 @@ export class InspectionRepository {
     return this.prisma.facilityInspection.findUnique({ where: { id }, include: INCLUDE });
   }
 
-  create(data: CreateInspectionDto & { inspectedById: number }) {
+  create(data: CreateInspectionDto & { inspectedById: string }) {
     return this.prisma.facilityInspection.create({
       data: {
         type: data.type,

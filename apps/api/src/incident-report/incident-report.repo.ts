@@ -28,7 +28,7 @@ export class IncidentReportRepository {
     return this.prisma.incidentReport.findUnique({ where: { id }, include: INCLUDE });
   }
 
-  create(data: CreateIncidentReportDto & { reportedById: number }) {
+  create(data: CreateIncidentReportDto & { reportedById: string }) {
     return this.prisma.incidentReport.create({
       data: { ...data, status: "DRAFT" },
       include: INCLUDE,

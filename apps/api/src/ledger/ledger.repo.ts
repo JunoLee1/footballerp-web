@@ -42,13 +42,13 @@ export class LedgerRepository {
       .then((r) => r !== null);
   }
 
-  lockPeriod(year: number, month: number, lockedById: number) {
+  lockPeriod(year: number, month: number, lockedById: string) {
     return this.prisma.ledgerPeriodLock.create({
       data: { year, month, lockedById },
     });
   }
 
-  create(data: CreateLedgerEntryDto & { createdById: number; amountKrw: number }) {
+  create(data: CreateLedgerEntryDto & { createdById: string; amountKrw: number }) {
     return this.prisma.ledgerEntry.create({
       data: {
         type: data.type,

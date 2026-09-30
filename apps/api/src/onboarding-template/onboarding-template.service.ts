@@ -47,7 +47,7 @@ export class OnboardingTemplateService {
   async upsert(
     departmentId: number,
     dto: UpsertOnboardingTemplateDto,
-    actorId: number,
+    actorId: string,
   ) {
     // Cheap existence check — keeps orphaned templates out even though the FK
     // would catch it. Same pattern as hiring-document.upload().
@@ -81,7 +81,7 @@ export class OnboardingTemplateService {
     return created;
   }
 
-  async remove(departmentId: number, actorId: number) {
+  async remove(departmentId: number, actorId: string) {
     const existing = await this.repo.findByDepartmentId(departmentId);
     if (!existing) throw new AppError(404, "TEMPLATE_NOT_FOUND");
     const deleted = await this.repo.remove(departmentId);

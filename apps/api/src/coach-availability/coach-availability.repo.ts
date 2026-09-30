@@ -26,7 +26,7 @@ export class CoachAvailabilityRepository {
     return this.prisma.coachAvailability.findUnique({ where: { id } });
   }
 
-  create(dto: CreateCoachAvailabilityDto, createdById: number) {
+  create(dto: CreateCoachAvailabilityDto, createdById: string) {
     return this.prisma.coachAvailability.create({
       data: {
         userId: dto.userId,

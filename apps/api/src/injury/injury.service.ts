@@ -175,7 +175,7 @@ export class InjuryService {
   async saveReport(
     injuryId: number,
     dto: UpsertInjuryReportDto,
-    userId: number,
+    userId: string,
     requester: { role: string; coachingRole: string | null },
   ) {
     const injury = await this.repo.findById(injuryId);
@@ -215,7 +215,7 @@ export class InjuryService {
     return warning ? { ...report, _warning: warning } : report;
   }
 
-  async signReport(injuryId: number, role: 'COACH' | 'TRAINER' | 'MEDICAL', userId: number, signerTeamId?: number | null) {
+  async signReport(injuryId: number, role: 'COACH' | 'TRAINER' | 'MEDICAL', userId: string, signerTeamId?: number | null) {
     const report = await this.repo.findReport(injuryId);
     if (!report) throw new AppError(404, "INJURY_REPORT_NOT_FOUND");
     // SH20: 부상 선수의 팀 == 서명자의 팀 검증 (SUPER_ADMIN은 signerTeamId가 undefined로 전달되어 스킵)
@@ -249,7 +249,7 @@ export class InjuryService {
     return this.repo.getAssessment(injuryId);
   }
 
-  async processAssessment(injuryId: number, dto: UpsertAssessmentDto, assessedById: number) {
+  async processAssessment(injuryId: number, dto: UpsertAssessmentDto, assessedById: string) {
     const scores = calculateTotalScore(dto);
 
     const assessment = await this.repo.upsertAssessment(injuryId, { ...dto, ...scores }, assessedById);

@@ -4,7 +4,7 @@ import type { CreateFormationSnapshotDto } from "./dto/formation-snapshot.dto";
 export class FormationSnapshotService {
   constructor(private repo: FormationSnapshotRepository) {}
 
-  create(dto: CreateFormationSnapshotDto, createdById: number) {
+  create(dto: CreateFormationSnapshotDto, createdById: string) {
     return this.repo.create(dto, createdById);
   }
 

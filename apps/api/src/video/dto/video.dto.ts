@@ -10,7 +10,7 @@ export interface CreateVideoDto {
 export interface CreateAssignmentDto {
   videoId: number;
   playerId: string;
-  assignedById: number;
+  assignedById: string;
   dueDate?: Date;
   note?: string;
 }

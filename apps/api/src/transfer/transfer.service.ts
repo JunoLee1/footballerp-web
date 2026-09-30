@@ -21,7 +21,7 @@ export class TransferService {
     return transfer;
   }
 
-  async createTransfer(dto: CreateTransferDto, actorId: number) {
+  async createTransfer(dto: CreateTransferDto, actorId: string) {
     const transfer = await this.repo.createTransfer(dto);
     await writeAuditLog({ actorId, action: "TRANSFER_CREATED", targetId: transfer.id, detail: { playerId: dto.playerId, type: dto.type } });
 
@@ -46,14 +46,14 @@ export class TransferService {
     return this.repo.findRecallsByStatus(status);
   }
 
-  async createRecall(dto: CreateRecallDto, requestedById: number) {
+  async createRecall(dto: CreateRecallDto, requestedById: string) {
     const transfer = await this.repo.findById(dto.transferId);
     if (!transfer) throw new AppError(404, "TRANSFER_NOT_FOUND");
     if (transfer.recall) throw new AppError(409, "RECALL_ALREADY_EXISTS");
     return this.repo.createRecall(dto, requestedById);
   }
 
-  async updateRecallStatus(id: number, dto: UpdateRecallStatusDto, approvedById: number) {
+  async updateRecallStatus(id: number, dto: UpdateRecallStatusDto, approvedById: string) {
     const recall = await this.repo.findRecallById(id);
     if (!recall) throw new AppError(404, "RECALL_NOT_FOUND");
     if (recall.status !== RecallStatus.PENDING) throw new AppError(409, "RECALL_ALREADY_PROCESSED");

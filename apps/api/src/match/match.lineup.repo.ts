@@ -98,7 +98,7 @@ export class MatchLineupRepository {
     });
   }
 
-  confirmLineup(matchId: number, confirmedById: number) {
+  confirmLineup(matchId: number, confirmedById: string) {
     return this.prisma.matchLineup.update({
       where: { matchId },
       data: { isConfirmed: true, confirmedAt: new Date(), confirmedById },

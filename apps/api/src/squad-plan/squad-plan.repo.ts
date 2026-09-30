@@ -18,7 +18,7 @@ export class SquadPlanRepository {
     });
   }
 
-  upsert(dto: SaveSquadPlanDto, updatedById: number) {
+  upsert(dto: SaveSquadPlanDto, updatedById: string) {
     return this.prisma.squadPlan.upsert({
       where: { seasonId: dto.seasonId },
       create: {

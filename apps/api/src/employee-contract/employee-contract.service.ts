@@ -42,7 +42,7 @@ export class EmployeeContractService {
   // create — new DRAFT row for a dispatch
   // ────────────────────────────────────────────
 
-  async createDraft(hiringDispatchId: number, actorId: number) {
+  async createDraft(hiringDispatchId: number, actorId: string) {
     if (!Number.isInteger(hiringDispatchId) || hiringDispatchId <= 0) {
       throw new AppError(400, "INVALID_DISPATCH_ID");
     }
@@ -72,7 +72,7 @@ export class EmployeeContractService {
   // issue — DRAFT → ISSUED with contract file
   // ────────────────────────────────────────────
 
-  async issue(id: number, file: UploadedFileInfo, actorId: number) {
+  async issue(id: number, file: UploadedFileInfo, actorId: string) {
     const ec = await this.repo.findById(id);
     if (!ec) throw new AppError(404, "CONTRACT_NOT_FOUND");
     if (ec.status !== "DRAFT") {
@@ -109,7 +109,7 @@ export class EmployeeContractService {
     id: number,
     file: UploadedFileInfo,
     dto: SignEmployeeContractDto,
-    actorId: number,
+    actorId: string,
   ) {
     const signedAtRaw = dto?.signedAt?.trim();
     if (!signedAtRaw) throw new AppError(400, "SIGNED_AT_REQUIRED");
@@ -147,7 +147,7 @@ export class EmployeeContractService {
   // cancel — any non-CANCELLED → CANCELLED with reason
   // ────────────────────────────────────────────
 
-  async cancel(id: number, dto: CancelEmployeeContractDto, actorId: number) {
+  async cancel(id: number, dto: CancelEmployeeContractDto, actorId: string) {
     const reason = dto?.cancelReason?.trim();
     if (!reason) throw new AppError(400, "CANCEL_REASON_REQUIRED");
     if (reason.length > 2000) throw new AppError(400, "CANCEL_REASON_TOO_LONG");

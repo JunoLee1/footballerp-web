@@ -8,7 +8,7 @@ import { autoGenBudgetHeaderFromPlan } from "./auto-header";
 import { cached } from "../lib/cache";
 
 interface Reviewer {
-  userId: number;
+  userId: string;
   email: string | null;
   language: string | null;
   scope: "TEAM" | "DEPARTMENT";
@@ -36,7 +36,7 @@ export class BudgetPlanRequestService {
     private reviewersFn?: BudgetPlanReviewersFn,
   ) {}
 
-  async openReview(seasonId: number, actorUserId: number): Promise<void> {
+  async openReview(seasonId: number, actorUserId: string): Promise<void> {
     const report = await this.prisma.financialReport.findUnique({
       where: { seasonId },
       select: { id: true, planStatus: true },
@@ -66,7 +66,7 @@ export class BudgetPlanRequestService {
     }
   }
 
-  async submit(seasonId: number, actorUserId: number, lines: SubmitLineDto[]) {
+  async submit(seasonId: number, actorUserId: string, lines: SubmitLineDto[]) {
     const report = await this.prisma.financialReport.findUnique({
       where: { seasonId },
       select: { id: true, planStatus: true },
@@ -183,7 +183,7 @@ export class BudgetPlanRequestService {
     });
   }
 
-  async finalize(seasonId: number, actorUserId: number): Promise<void> {
+  async finalize(seasonId: number, actorUserId: string): Promise<void> {
     const report = await this.prisma.financialReport.findUnique({
       where: { seasonId },
       select: { id: true, planStatus: true },
@@ -233,7 +233,7 @@ export class BudgetPlanRequestService {
     }
   }
 
-  async gmApprove(seasonId: number, actorUserId: number): Promise<void> {
+  async gmApprove(seasonId: number, actorUserId: string): Promise<void> {
     const report = await this.prisma.financialReport.findUnique({
       where: { seasonId },
       select: { id: true, planStatus: true },
@@ -262,7 +262,7 @@ export class BudgetPlanRequestService {
     }
   }
 
-  async rePlan(seasonId: number, actorUserId: number, reason: string): Promise<void> {
+  async rePlan(seasonId: number, actorUserId: string, reason: string): Promise<void> {
     if (!reason || reason.trim().length === 0) {
       throw new AppError(400, "REASON_REQUIRED");
     }
@@ -301,7 +301,7 @@ export class BudgetPlanRequestService {
     }
   }
 
-  async executeKnapsack(seasonId: number, actorUserId: number): Promise<void> {
+  async executeKnapsack(seasonId: number, actorUserId: string): Promise<void> {
     if (!this.knapsackService) throw new AppError(500, "KNAPSACK_SERVICE_NOT_INJECTED");
 
     const report = await this.prisma.financialReport.findUnique({

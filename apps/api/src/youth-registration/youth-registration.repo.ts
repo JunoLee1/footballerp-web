@@ -30,7 +30,7 @@ export class YouthRegistrationRepository {
     });
   }
 
-  create(data: CreateYouthRegistrationDto & { requestedById: number; guardianId?: number }) {
+  create(data: CreateYouthRegistrationDto & { requestedById: string; guardianId?: string }) {
     return this.prisma.youthRegistration.create({
       data: {
         playerName: data.playerName,
@@ -58,7 +58,7 @@ export class YouthRegistrationRepository {
 
   contractAndCreatePlayer(
     id: number,
-    registration: { playerName: string; birthDate: Date; teamId: number; guardianId: number | null; preferredJerseyNumber: number | null },
+    registration: { playerName: string; birthDate: Date; teamId: number; guardianId: string | null; preferredJerseyNumber: number | null },
     nationalityId: number,
   ) {
     return this.prisma.$transaction(async (tx) => {

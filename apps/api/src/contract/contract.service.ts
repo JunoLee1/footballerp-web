@@ -32,7 +32,7 @@ export class ContractService {
   // Issue #560: /contracts/:id owner-scope guard.
   // Actor 컨텍스트가 없으면 하위 호환 위해 그대로 리턴(내부 호출용). 컨트롤러는 반드시 actor 를 넘겨야 함.
   async getContractById(id: number, actor?: {
-    userId: number
+    userId: string
     role: string
     frontOfficeRole?: string | null
     departmentCategories?: string[]
@@ -57,7 +57,7 @@ export class ContractService {
     return contract;
   }
 
-  async createContract(dto: CreateContractDto, actorId: number) {
+  async createContract(dto: CreateContractDto, actorId: string) {
     if (dto.salary <= 0) throw new AppError(400, "INVALID_SALARY");
     // SH17: salary 최대값 10억 KRW
     if (!Number.isInteger(dto.salary) || dto.salary > 1_000_000_000) {
@@ -108,7 +108,7 @@ export class ContractService {
     return contract;
   }
 
-  async updateStatus(id: number, dto: UpdateContractStatusDto, actorId: number) {
+  async updateStatus(id: number, dto: UpdateContractStatusDto, actorId: string) {
     const contract = await this.repo.findById(id);
     if (!contract) throw new AppError(404, "CONTRACT_NOT_FOUND");
     const updated = await this.repo.updateStatus(id, dto.status);
@@ -143,7 +143,7 @@ export class ContractService {
     return this.repo.findActiveBuyout(contractId);
   }
 
-  async addBuyout(contractId: number, dto: CreateBuyoutDto, actorId: number) {
+  async addBuyout(contractId: number, dto: CreateBuyoutDto, actorId: string) {
     const contract = await this.repo.findById(contractId);
     if (!contract) throw new AppError(404, "CONTRACT_NOT_FOUND");
     const existing = await this.repo.hasBuyout(contractId);
@@ -166,7 +166,7 @@ export class ContractService {
     return buyout;
   }
 
-  async addExtension(contractId: number, dto: CreateExtensionDto, actorId: number) {
+  async addExtension(contractId: number, dto: CreateExtensionDto, actorId: string) {
     const contract = await this.repo.findById(contractId);
     if (!contract) throw new AppError(404, "CONTRACT_NOT_FOUND");
     const extension = await this.repo.createExtension(contractId, dto);
@@ -187,7 +187,7 @@ export class ContractService {
     return extension;
   }
 
-  async addBonus(contractId: number, dto: CreateBonusDto, actorId: number) {
+  async addBonus(contractId: number, dto: CreateBonusDto, actorId: string) {
     const contract = await this.repo.findById(contractId);
     if (!contract) throw new AppError(404, "CONTRACT_NOT_FOUND");
     const bonus = await this.repo.createBonus(contractId, dto);
@@ -208,7 +208,7 @@ export class ContractService {
     return bonus;
   }
 
-  async markSigningBonusPaid(id: number, dto: MarkSigningBonusPaidDto, actorId: number) {
+  async markSigningBonusPaid(id: number, dto: MarkSigningBonusPaidDto, actorId: string) {
     const contract = await this.repo.findById(id);
     if (!contract) throw new AppError(404, "CONTRACT_NOT_FOUND");
     if (contract.signingBonus == null || contract.signingBonus === 0n) {

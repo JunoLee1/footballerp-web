@@ -27,11 +27,11 @@ const makePlanRepo = (activePlanId?: number): DevelopmentPlanRepository =>
     findActiveByPlayer: jest.fn().mockResolvedValue(activePlanId ? { id: activePlanId } : null),
   } as unknown as DevelopmentPlanRepository);
 
-const fakePlayer = { id: "player-uuid-1", playerName: "김철수", guardianId: 99 };
+const fakePlayer = { id: "player-uuid-1", playerName: "김철수", guardianId: "99999999-9999-9999-9999-999999999999" };
 const fakeEval = {
   id: 1,
   playerId: "player-uuid-1",
-  coachId: 10,
+  coachId: "10101010-1010-1010-1010-101010101010",
   year: 2026,
   month: 7,
   isPublished: false,
@@ -45,7 +45,7 @@ const fakeEval = {
   physicalScore: 9,
   physicalComment: "체력 우수",
   player: fakePlayer,
-  coach: { id: 10, username: "coach1", nickname: "감독" },
+  coach: { id: "10101010-1010-1010-1010-101010101010", username: "coach1", nickname: "감독" },
 };
 
 describe("GrowthReportService", () => {
@@ -68,7 +68,7 @@ describe("GrowthReportService", () => {
             physicalScore: 9,
             physicalComment: "great",
           },
-          10,
+          "10101010-1010-1010-1010-101010101010",
         ),
       ).rejects.toMatchObject({ statusCode: 409 });
     });
@@ -94,7 +94,7 @@ describe("GrowthReportService", () => {
           physicalScore: 9,
           physicalComment: "great",
         },
-        10,
+        "10101010-1010-1010-1010-101010101010",
       );
       expect(result).toBe(created);
     });
@@ -150,20 +150,20 @@ describe("GrowthReportService", () => {
       const badge = {
         id: 1,
         playerId: "player-uuid-1",
-        coachId: 10,
+        coachId: "10101010-1010-1010-1010-101010101010",
         badgeType: "PASSION_KING",
         awardedAt: new Date(),
         note: null,
         sessionId: null,
         player: fakePlayer,
-        coach: { id: 10, username: "coach1", nickname: "감독" },
+        coach: { id: "10101010-1010-1010-1010-101010101010", username: "coach1", nickname: "감독" },
         session: null,
       };
       const repo = makeRepo({ awardBadge: jest.fn().mockResolvedValue(badge) });
       const svc = new GrowthReportService(repo, makeNotifRepo(), makePlanRepo(), undefined as any);
       const result = await svc.awardBadge(
         { playerId: "player-uuid-1", badgeType: "PASSION_KING" as const },
-        10,
+        "10101010-1010-1010-1010-101010101010",
       );
       expect(result).toBe(badge);
     });
@@ -183,7 +183,7 @@ describe("GrowthReportService.getEvaluationsByPlayerForGuardian — IDOR 방지"
       makePlanRepo(),
       guardianRepo as any,
     );
-    await expect(service.getEvaluationsByPlayerForGuardian("player-uuid-1", 99))
+    await expect(service.getEvaluationsByPlayerForGuardian("player-uuid-1", "99999999-9999-9999-9999-999999999999"))
       .rejects.toMatchObject({ statusCode: 403, message: "FORBIDDEN" });
   });
 
@@ -192,7 +192,7 @@ describe("GrowthReportService.getEvaluationsByPlayerForGuardian — IDOR 방지"
     const evals = [{ id: 1, playerId: "player-uuid-1", isPublished: true }];
     const repo = makeRepo({ findPublishedEvaluationsByPlayer: jest.fn().mockResolvedValue(evals) });
     const service = new GrowthReportService(repo, makeNotifRepo(), makePlanRepo(), guardianRepo as any);
-    const result = await service.getEvaluationsByPlayerForGuardian("player-uuid-1", 99);
+    const result = await service.getEvaluationsByPlayerForGuardian("player-uuid-1", "99999999-9999-9999-9999-999999999999");
     expect(result).toBe(evals);
   });
 });
