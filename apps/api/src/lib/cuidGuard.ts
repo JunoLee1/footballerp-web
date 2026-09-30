@@ -6,6 +6,12 @@ const CUID_RE = /^c[a-z0-9]{15,30}$/;
 
 export function assertCuid(value: string | string[] | undefined): string {
   if (typeof value !== "string") throw new AppError(400, "INVALID_ID");
+  // 정수로 변환 가능한 값 명시 차단 — enumerable IDOR 방어 (#598).
+  // cuid 는 'c' 로 시작하므로 실질 중복이지만, 리뷰 요청 반영 후 명시적 의도로 유지.
+  // 빈 문자열(Number("") === 0) 도 차단.
+  if (value === "" || !Number.isNaN(Number(value))) {
+    throw new AppError(400, "INVALID_ID");
+  }
   if (!CUID_RE.test(value)) throw new AppError(400, "INVALID_ID");
   return value;
 }
