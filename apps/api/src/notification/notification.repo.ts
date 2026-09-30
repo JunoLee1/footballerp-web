@@ -2,6 +2,12 @@ import { PrismaClient, Prisma, $Enums } from "../generated/client";
 
 type MsgFactory = (locale?: string) => { title: string; body: string };
 type UserWhere = Prisma.UserWhereInput;
+type EntityId = number | string | undefined;
+
+function entityIdField(entityId: EntityId): Pick<Prisma.NotificationUncheckedCreateInput, "entityId" | "entityIdStr"> {
+  if (entityId == null) return {};
+  return typeof entityId === "string" ? { entityIdStr: entityId } : { entityId };
+}
 
 export class NotificationRepository {
   constructor(private prisma: PrismaClient) {}
@@ -20,57 +26,64 @@ export class NotificationRepository {
     });
   }
 
-  create(data: { userId: string; type: string; title: string; body: string; entityId?: number }) {
-    return this.prisma.notification.create({ data: data as any });
+  create(data: { userId: string; type: string; title: string; body: string; entityId?: number | string }) {
+    const { entityId, type, ...rest } = data;
+    const payload: Prisma.NotificationUncheckedCreateInput = {
+      ...rest,
+      type: type as $Enums.NotificationType,
+      ...entityIdField(entityId),
+    };
+    return this.prisma.notification.create({ data: payload });
   }
 
-  private createForWhere(where: UserWhere, type: string, getMsg: MsgFactory, entityId?: number) {
+  private createForWhere(where: UserWhere, type: string, getMsg: MsgFactory, entityId?: EntityId) {
     return this.prisma.$transaction(async (tx) => {
       const users = await tx.user.findMany({ where, select: { id: true, language: true } });
       if (users.length === 0) return;
+      const eid = entityIdField(entityId);
       await tx.notification.createMany({
         data: users.map((u) => {
           const { title, body } = getMsg(u.language);
-          return { userId: u.id, type, title, body, entityId };
-        }) as any
+          return { userId: u.id, type: type as $Enums.NotificationType, title, body, ...eid };
+        }),
       });
     });
   }
 
-  createForStaff(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForStaff(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: { in: ["ADMIN", "FRONT_OFFICE"] } }, type, getMsg, entityId);
   }
 
-  createForAllStaff(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForAllStaff(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: { notIn: ["PLAYER", "AGENT"] } }, type, getMsg, entityId);
   }
 
-  createForAdmin(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForAdmin(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "ADMIN" }, type, getMsg, entityId);
   }
 
   // #574: 보안 이벤트 (로그인 브루트포스 등) 수신 담당. FrontOfficeRole = SECURITY_LEAD.
-  createForSecurityLead(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForSecurityLead(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "FRONT_OFFICE", frontOfficeRole: "SECURITY_LEAD", isDeleted: false }, type, getMsg, entityId);
   }
 
-  createForGM(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForGM(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "GM" }, type, getMsg, entityId);
   }
 
-  createForTD(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForTD(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "FRONT_OFFICE", frontOfficeRole: "TD" }, type, getMsg, entityId);
   }
 
-  createForContractManager(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForContractManager(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "FRONT_OFFICE", frontOfficeRole: "CONTRACT_MANAGER" }, type, getMsg, entityId);
   }
 
-  createForHrManager(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForHrManager(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "FRONT_OFFICE", frontOfficeRole: "HR_MANAGER", isDeleted: false }, type, getMsg, entityId);
   }
 
-  createForFinanceManager(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForFinanceManager(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "FRONT_OFFICE", frontOfficeRole: "FINANCE_MANAGER", isDeleted: false }, type, getMsg, entityId);
   }
 
@@ -79,51 +92,52 @@ export class NotificationRepository {
    * 프로비저닝의 재고 부족 경보(`PROVISIONING_LOW_STOCK`)에서 사용.
    * asset-request 조달 큐 대시보드 도입 전까지는 인앱 알림이 유일 통로.
    */
-  createForAssetManager(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForAssetManager(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "FRONT_OFFICE", frontOfficeRole: "ASSET_MANAGER", isDeleted: false }, type, getMsg, entityId);
   }
 
-  createForHeadCoach(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForHeadCoach(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "COACHING_STAFF", coachingRole: "HEAD_COACH" }, type, getMsg, entityId);
   }
 
-  createForYouthHeadCoach(fromTeamId: number, type: string, getMsg: MsgFactory, entityId?: number) {
+  createForYouthHeadCoach(fromTeamId: number, type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "COACHING_STAFF", coachingRole: "HEAD_COACH", teamId: fromTeamId }, type, getMsg, entityId);
   }
 
-  createForMedicalDirector(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForMedicalDirector(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "COACHING_STAFF", coachingRole: "MEDICAL_DIRECTOR" }, type, getMsg, entityId);
   }
 
-  createForMedicalStaff(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForMedicalStaff(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "COACHING_STAFF", coachingRole: "MEDICAL" }, type, getMsg, entityId);
   }
 
-  createForCoachingStaff(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForCoachingStaff(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "COACHING_STAFF" }, type, getMsg, entityId);
   }
 
-  createForFinanceStaff(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForFinanceStaff(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.prisma.$transaction(async (tx) => {
       const users = await tx.user.findMany({
         where: { role: "FRONT_OFFICE", frontOfficeRole: { in: ["FINANCE_STAFF", "FINANCE_MANAGER"] }, isDeleted: false },
         select: { id: true, language: true },
       });
       if (users.length === 0) return;
+      const eid = entityIdField(entityId);
       await tx.notification.createMany({
         data: users.map((u) => {
           const { title, body } = getMsg(u.language);
-          return { userId: u.id, type, title, body, entityId };
-        }) as any,
+          return { userId: u.id, type: type as $Enums.NotificationType, title, body, ...eid };
+        }),
       });
     });
   }
 
-  createForPhysicalCoach(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForPhysicalCoach(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "COACHING_STAFF", coachingRole: "PHYSICAL_COACH" }, type, getMsg, entityId);
   }
 
-  createForScout(type: string, getMsg: MsgFactory, entityId?: number) {
+  createForScout(type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "FRONT_OFFICE", frontOfficeRole: "SCOUT" }, type, getMsg, entityId);
   }
 
@@ -136,7 +150,7 @@ export class NotificationRepository {
     deptId: number,
     type: string,
     getMsg: MsgFactory,
-    entityId?: number
+    entityId?: number | string
   ) {
     const dept = await this.prisma.department.findUnique({
       where: { id: deptId },
@@ -152,23 +166,17 @@ export class NotificationRepository {
       select: { language: true },
     });
     const { title, body } = getMsg(userRecord?.language ?? "ko");
-    const entityField: Pick<Prisma.NotificationUncheckedCreateInput, "entityId" | "entityIdStr"> =
-      entityId == null
-        ? {}
-        : typeof entityId === "string"
-          ? { entityIdStr: entityId }
-          : { entityId };
     const data: Prisma.NotificationUncheckedCreateInput = {
       userId,
       type: type as $Enums.NotificationType,
       title,
       body,
-      ...entityField,
+      ...entityIdField(entityId),
     };
     return this.prisma.notification.create({ data });
   }
 
-  createForGuardian(guardianUserId: string, type: string, getMsg: MsgFactory, entityId?: number) {
+  createForGuardian(guardianUserId: string, type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForUser(guardianUserId, type, getMsg, entityId);
   }
 
@@ -176,13 +184,14 @@ export class NotificationRepository {
     userIds: string[],
     type: string,
     getMsg: MsgFactory,
-    entityId?: number,
+    entityId?: number | string,
   ) {
     if (userIds.length === 0) return;
+    const eid = entityIdField(entityId);
     return this.prisma.notification.createMany({
       data: userIds.map((userId) => {
         const { title, body } = getMsg();
-        return { userId, type, title, body, ...(entityId !== undefined && { entityId }) } as any;
+        return { userId, type: type as $Enums.NotificationType, title, body, ...eid };
       }),
     });
   }

@@ -192,6 +192,7 @@
 | 보안 — /players/:id/training-results LEAK 파치 | ✅ **FIXED** PLAYER 만 self-scope, HR/ASSET/FACILITY/GUARDIAN 무제한 통과 → allow-list 재설계 (#590/PR #592). 회귀 테스트 13/13 pass |
 | 보안 — /contracts/:id HR_MANAGER 접근 | ✅ 정책상 정상 (HR 이 급여 실무 담당) — 오탐 확정 |
 | 후속 — MedicalExpense·EmployeeContract seed 추가 후 재프로브 | 🔲 record 부재로 이번 매트릭스 커버 못 함 |
+| 보안 — enumerable IDOR (MedicalExpense) | ✅ **CUID 전환 완료** (#598 tracer 3 · `refactor/medical-expense-cuid-598`) — `MedicalExpense.id Int → String @default(cuid())`. `notification.repo` 전체 method 를 `entityId?: number | string` 유니온으로 리팩터 (`entityIdField` 헬퍼 도입, 남은 `as any` 제거). curl 검증: cuid 200 · int 400 · ABC 400 · list 200 |
 
 ---
 

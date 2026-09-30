@@ -27,7 +27,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.medicalExpense.findUnique({
       where: { id },
       include: expenseInclude,
@@ -58,7 +58,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  update(id: number, data: {
+  update(id: string, data: {
     receiptDate?: Date;
     costCategory?: string;
     totalAmount?: number;
@@ -76,7 +76,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  submit(id: number) {
+  submit(id: string) {
     return this.prisma.medicalExpense.update({
       where: { id },
       data: { status: "SUBMITTED", submittedAt: new Date(), rejectionReason: null },
@@ -84,7 +84,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  leaderApprove(id: number, leaderReviewerId: string) {
+  leaderApprove(id: string, leaderReviewerId: string) {
     return this.prisma.medicalExpense.update({
       where: { id },
       data: { status: "LEADER_APPROVED", leaderReviewerId, leaderReviewedAt: new Date() },
@@ -92,7 +92,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  leaderReject(id: number, leaderReviewerId: string, rejectionReason: string) {
+  leaderReject(id: string, leaderReviewerId: string, rejectionReason: string) {
     return this.prisma.medicalExpense.update({
       where: { id },
       data: { status: "REJECTED", leaderReviewerId, rejectionReason, leaderReviewedAt: new Date() },
@@ -100,7 +100,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  approve(id: number, adminReviewerId: string) {
+  approve(id: string, adminReviewerId: string) {
     return this.prisma.medicalExpense.update({
       where: { id },
       data: { status: "APPROVED", adminReviewerId, adminReviewedAt: new Date() },
@@ -108,7 +108,7 @@ export class MedicalExpenseRepository {
     });
   }
 
-  reject(id: number, adminReviewerId: string, rejectionReason: string) {
+  reject(id: string, adminReviewerId: string, rejectionReason: string) {
     return this.prisma.medicalExpense.update({
       where: { id },
       data: { status: "REJECTED", adminReviewerId, rejectionReason, adminReviewedAt: new Date() },

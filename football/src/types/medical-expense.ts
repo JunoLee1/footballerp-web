@@ -3,7 +3,7 @@ export type ExpensePayerType = 'CLUB' | 'ASSOCIATION' | 'INDIVIDUAL'
 export type MedicalExpenseStatus = 'DRAFT' | 'SUBMITTED' | 'LEADER_APPROVED' | 'APPROVED' | 'REJECTED'
 
 export interface ExpenseUser {
-  id: number
+  id: string
   nickname: string
   role: string
   coachingRole: string | null
@@ -23,7 +23,7 @@ export interface ExpensePlayer {
 }
 
 export interface MedicalExpense {
-  id: number
+  id: string
   status: MedicalExpenseStatus
   injuryId: number | null
   injury: ExpenseInjury | null
