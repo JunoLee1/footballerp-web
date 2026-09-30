@@ -23,7 +23,7 @@ export interface PerformanceBonus {
 }
 
 export interface ContractSummary {
-  id: number
+  id: string
   startDate: string
   endDate: string
   salary: number

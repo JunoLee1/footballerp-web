@@ -132,6 +132,7 @@
 | 보안 — owner-scope guard 추가 | 🔲 `contract.routes.ts` `GET /:id` 미들웨어 삽입 필요 (`playerId === req.user.id` OR role∈[GM,FINANCE_MANAGER,HR_MANAGER]) |
 | Regression — `apps/api/__test__/contract/contract.access.test.ts` | 🔲 |
 | Sub-actions `/contracts/:id/clauses`·`/extensions`·`/bonuses` 프로브 | 🔲 미커버 |
+| 보안 — enumerable IDOR (Contract) | ✅ **CUID 전환 완료** (#598 tracer 6 · `refactor/contract-cuid-598`) — `Contract.id Int → String @default(cuid())` + 3개 FK 컬럼 String 이동 (BuyoutClause.contractId · ExtensionOption.contractId · PerformanceBonus.contractId). `jobs/contractExpiryAlert` 는 `entityIdStr` 컬럼으로 라우팅. 임의 ID 1~20 열거 방식 IDOR 은 실질 불가 (CUID 랜덤). 회귀 0 (전체 26 fail = main 25 pre-existing + 1 이전 incident-report 테스트 잔여 fix) |
 
 ---
 

@@ -7,9 +7,9 @@ import { WageCapService } from "./wage-cap.service";
 import { NotificationRepository } from "../notification/notification.repo";
 import { getPrisma } from "../lib/prisma";
 import { Request, Response, NextFunction} from 'express'
-import { intIdRouter } from "../lib/idParamGuard";
+import { cuidRouter } from "../lib/cuidGuard";
 
-const router = intIdRouter();
+const router = cuidRouter();
 const repo = new ContractRepository(getPrisma());
 const wageCapService = new WageCapService(getPrisma());
 const notificationRepo = new NotificationRepository(getPrisma());

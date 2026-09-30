@@ -1240,7 +1240,7 @@ model Player {
 }
 
 model Contract {
-  id                      Int            @id @default(autoincrement())
+  id                      String         @id @default(cuid())
   startDate               DateTime
   endDate                 DateTime
   salary                  Int
@@ -1266,7 +1266,7 @@ model BuyoutClause {
   id         Int       @id @default(autoincrement())
   amount     BigInt
   validUntil DateTime?
-  contractId Int       @unique
+  contractId String    @unique
 
   contract Contract @relation(fields: [contractId], references: [id])
 }
@@ -1277,7 +1277,7 @@ model ExtensionOption {
   durationMonths Int
   conditionText  String?
   minAppearances Int?
-  contractId     Int
+  contractId     String
 
   contract Contract @relation(fields: [contractId], references: [id])
 }
@@ -1286,7 +1286,7 @@ model PerformanceBonus {
   id          Int    @id @default(autoincrement())
   amount      BigInt
   description String
-  contractId  Int
+  contractId  String
 
   contract    Contract       @relation(fields: [contractId], references: [id])
   triggers    BonusTrigger[]

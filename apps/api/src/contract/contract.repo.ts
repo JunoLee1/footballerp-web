@@ -60,7 +60,7 @@ export class ContractRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.contract.findUnique({
       where: { id },
       select: CONTRACT_DETAIL,
@@ -91,7 +91,7 @@ export class ContractRepository {
     });
   }
 
-  updateStatus(id: number, status: ContractStatus) {
+  updateStatus(id: string, status: ContractStatus) {
     return this.prisma.contract.update({
       where: { id },
       data: { status },
@@ -99,7 +99,7 @@ export class ContractRepository {
     });
   }
 
-  createBuyout(contractId: number, dto: CreateBuyoutDto) {
+  createBuyout(contractId: string, dto: CreateBuyoutDto) {
     return this.prisma.buyoutClause.create({
       data: {
         contractId,
@@ -109,7 +109,7 @@ export class ContractRepository {
     });
   }
 
-  createExtension(contractId: number, dto: CreateExtensionDto) {
+  createExtension(contractId: string, dto: CreateExtensionDto) {
     return this.prisma.extensionOption.create({
       data: {
         contractId,
@@ -121,7 +121,7 @@ export class ContractRepository {
     });
   }
 
-  findActiveBuyout(contractId: number) {
+  findActiveBuyout(contractId: string) {
     const now = new Date();
     return this.prisma.buyoutClause.findFirst({
       where: {
@@ -131,7 +131,7 @@ export class ContractRepository {
     });
   }
 
-  createBonus(contractId: number, dto: CreateBonusDto) {
+  createBonus(contractId: string, dto: CreateBonusDto) {
     return this.prisma.performanceBonus.create({
       data: {
         contractId,
@@ -150,14 +150,14 @@ export class ContractRepository {
     });
   }
 
-  hasBuyout(contractId: number) {
+  hasBuyout(contractId: string) {
     return this.prisma.buyoutClause.findUnique({
       where: { contractId },
       select: { id: true },
     });
   }
 
-  markSigningBonusPaid(id: number, paidAt: Date) {
+  markSigningBonusPaid(id: string, paidAt: Date) {
     return this.prisma.contract.update({
       where: { id },
       data: { signingBonusPaidAt: paidAt },
