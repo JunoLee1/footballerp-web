@@ -5,6 +5,12 @@ import { requireUser } from "../lib/authMiddleware";
 import { TransferService } from "./transfer.service";
 import { RecallStatus } from "../generated/enums";
 
+const intId = (raw: unknown): number => {
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n <= 0) throw new AppError(400, "INVALID_ID");
+  return n;
+};
+
 export class TransferController {
   constructor(private service: TransferService) {}
 
@@ -16,7 +22,7 @@ export class TransferController {
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.status(200).json(await this.service.getById(Number(req.params["id"])));
+      res.status(200).json(await this.service.getById(intId(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -35,7 +41,16 @@ export class TransferController {
 
   getRecalls = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const status = req.query["status"] as RecallStatus | undefined;
+      const { role } = requireUser(req);
+      if (!isAdminLike(role) && role !== "GM") throw new AppError(403, "FORBIDDEN");
+      const raw = req.query["status"];
+      let status: RecallStatus | undefined;
+      if (raw !== undefined) {
+        if (typeof raw !== "string" || !(Object.values(RecallStatus) as string[]).includes(raw)) {
+          throw new AppError(400, "INVALID_STATUS");
+        }
+        status = raw as RecallStatus;
+      }
       res.status(200).json(await this.service.getRecalls(status));
     } catch (err) { next(err); }
   };
@@ -51,7 +66,7 @@ export class TransferController {
     try {
       const user = requireUser(req);
       if (user.role !== "GM") throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.updateRecallStatus(Number(req.params["id"]), req.body, user.id));
+      res.status(200).json(await this.service.updateRecallStatus(intId(req.params["id"]), req.body, user.id));
     } catch (err) { next(err); }
   };
 
@@ -62,7 +77,7 @@ export class TransferController {
       const isGMRole = role === "GM";
       const isFrontOffice = role === "FRONT_OFFICE" && ["TD"].includes(frontOfficeRole ?? "");
       if (!isAdmin && !isGMRole && !isFrontOffice) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.exportLoanIn(Number(req.params["id"])));
+      res.status(200).json(await this.service.exportLoanIn(intId(req.params["id"])));
     } catch (err) { next(err); }
   };
 }
