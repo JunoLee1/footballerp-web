@@ -4,6 +4,7 @@ import { DepartmentRepository } from "./department.repo";
 import { DepartmentService } from "./department.service";
 import { DepartmentController } from "./department.controller";
 import { getPrisma } from "../lib/prisma";
+import { requireUuidParam } from "../lib/uuidGuard";
 
 const router = Router();
 const repo = new DepartmentRepository(getPrisma());
@@ -19,15 +20,15 @@ router.delete("/:id", auth, controller.delete);
 
 router.get("/:deptId/members", auth, controller.listMembers);
 router.post("/:deptId/members", auth, controller.addMember);
-router.patch("/:deptId/members/:userId", auth, controller.updateMemberRole);
-router.delete("/:deptId/members/:userId", auth, controller.removeMember);
-router.post("/:deptId/members/:userId/transfer", auth, controller.transferMember);
+router.patch("/:deptId/members/:userId", auth, requireUuidParam("userId"), controller.updateMemberRole);
+router.delete("/:deptId/members/:userId", auth, requireUuidParam("userId"), controller.removeMember);
+router.post("/:deptId/members/:userId/transfer", auth, requireUuidParam("userId"), controller.transferMember);
 router.patch("/:deptId/head", auth, controller.updateHead);
 
 router.get("/:deptId/job-titles", auth, controller.listJobTitles);
 router.post("/:deptId/job-titles", auth, controller.createJobTitle);
 router.patch("/:deptId/job-titles/:titleId", auth, controller.updateJobTitle);
 router.delete("/:deptId/job-titles/:titleId", auth, controller.deleteJobTitle);
-router.patch("/:deptId/members/:userId/job-title", auth, controller.updateMemberJobTitle);
+router.patch("/:deptId/members/:userId/job-title", auth, requireUuidParam("userId"), controller.updateMemberJobTitle);
 
 export default router;
