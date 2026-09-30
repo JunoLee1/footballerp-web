@@ -22,7 +22,7 @@ export interface Sponsorship {
   contractEnd: string
   paymentSchedule: PaymentSchedule
   attachedContractId: number | null
-  createdById: number
+  createdById: string
   createdAt: string
   updatedAt: string
   createdBy: { id: number; username: string }

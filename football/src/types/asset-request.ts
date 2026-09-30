@@ -25,7 +25,7 @@ export interface AssetRequestApproval {
   id: number
   stage: AssetRequestApprovalStage
   action: AssetRequestApprovalAction
-  reviewerId: number
+  reviewerId: string
   reason: string | null
   createdAt: string
   reviewer: { id: number; username: string; nickname: string }
@@ -37,7 +37,7 @@ export interface AssetRequestApproval {
  */
 export interface AssetRequest {
   id: number
-  requesterId: number
+  requesterId: string
   departmentId: number
   type: AssetRequestType
   status: AssetRequestStatus
@@ -67,8 +67,8 @@ export interface AssetRequest {
   department: {
     id: number
     name: string
-    headId: number | null
-    parent: { id: number; name: string; headId: number | null } | null
+    headId: string | null
+    parent: { id: number; name: string; headId: string | null } | null
   }
   expenseCategory: { id: number; code: string; label: string }
   equipmentItem: { id: number; name: string; category: string } | null
@@ -89,7 +89,7 @@ export interface AssetRequest {
  */
 export interface AssetRequestListItem {
   id: number
-  requesterId: number
+  requesterId: string
   departmentId: number
   type: AssetRequestType
   status: AssetRequestStatus
@@ -114,7 +114,7 @@ export interface AssetRequestListItem {
   updatedAt: string
 
   requester: { id: number; username: string; nickname: string }
-  department: { id: number; name: string; headId: number | null; parentId: number | null }
+  department: { id: number; name: string; headId: string | null; parentId: number | null }
   expenseCategory: { id: number; code: string; label: string }
 }
 

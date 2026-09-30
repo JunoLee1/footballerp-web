@@ -66,7 +66,7 @@ export const FRONT_OFFICE_ROLE_LABEL: Record<FrontOfficeRole, string> = {
 }
 
 export interface UserDto {
-  id: number
+  id: string
   email: string
   username: string
   nickname: string

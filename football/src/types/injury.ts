@@ -39,7 +39,7 @@ export interface Injury {
   occurredAt: string
   expectedReturnDate: string | null
   playerId: string
-  medicalStaffId: number
+  medicalStaffId: string
   hospitalType: HospitalType | null
   hospitalId: number | null
   customHospitalName: string | null
@@ -96,20 +96,20 @@ export interface InjuryReport {
   rehabLoadPercentage: number | null
   allowedActivities: string | null
   securityLevel: SecurityLevel
-  createdById: number
-  updatedById: number | null
+  createdById: string
+  updatedById: string | null
   createdAt: string
   updatedAt: string
   createdBy: { id: number; nickname: string }
   updatedBy: { id: number; nickname: string } | null
   coachSignedAt: string | null
-  coachSignedById: number | null
+  coachSignedById: string | null
   coachSigner: { id: number; nickname: string } | null
   trainerSignedAt: string | null
-  trainerSignedById: number | null
+  trainerSignedById: string | null
   trainerSigner: { id: number; nickname: string } | null
   medicalSignedAt: string | null
-  medicalSignedById: number | null
+  medicalSignedById: string | null
   medicalSigner: { id: number; nickname: string } | null
 }
 

@@ -15,7 +15,7 @@ import {
 interface Props {
   open: boolean
   onClose: () => void
-  staffUserId: number
+  staffUserId: string
   staffNickname: string
   canCreate: boolean
 }

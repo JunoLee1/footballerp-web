@@ -7,10 +7,10 @@ export interface YouthRegistration {
   preferredJerseyNumber: number | null
   teamId: number
   team: { id: number; name: string }
-  guardianId: number | null
+  guardianId: string | null
   guardian: { id: number; username: string; email: string } | null
   status: YouthRegistrationStatus
-  requestedById: number
+  requestedById: string
   rejectionReason: string | null
   createdAt: string
 }

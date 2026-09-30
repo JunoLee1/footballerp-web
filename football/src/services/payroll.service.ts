@@ -22,7 +22,7 @@ export interface StaffSalary {
   country: string
   effectiveFrom: string
   effectiveTo: string | null
-  userId: number | null
+  userId: string | null
   staffRecordId: number | null
   allowances: StaffAllowance[]
 }
@@ -35,9 +35,9 @@ export interface PayrollRun {
   totalDeductions: number
   netPay: number
   status: 'PENDING' | 'CONFIRMED' | 'LOCKED'
-  confirmedById: number | null
+  confirmedById: string | null
   confirmedAt: string | null
-  secondApprovedById: number | null
+  secondApprovedById: string | null
   secondApprovedAt: string | null
   isLocked: boolean
 }
@@ -53,7 +53,7 @@ export const payrollApi = {
   // Salary
   listSalaries: () => api.get<StaffSalary[]>('/payroll/salaries'),
   getSalary: (id: number) => api.get<StaffSalary>(`/payroll/salaries/${id}`),
-  createSalary: (payload: { baseSalary: number; country: string; effectiveFrom: string; userId?: number; staffRecordId?: number }) =>
+  createSalary: (payload: { baseSalary: number; country: string; effectiveFrom: string; userId?: string; staffRecordId?: number }) =>
     api.post<StaffSalary>('/payroll/salaries', payload),
   updateSalary: (id: number, payload: { baseSalary?: number; effectiveTo?: string }) =>
     api.patch<StaffSalary>(`/payroll/salaries/${id}`, payload),

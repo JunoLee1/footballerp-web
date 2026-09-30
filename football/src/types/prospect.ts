@@ -47,7 +47,7 @@ export interface SignProspectDto {
   contractStartDate: string
   contractEndDate: string
   salary: number
-  managedById?: number
+  managedById?: string
   workPermitStatus?: WorkPermitStatus
   workPermitExpiry?: string
 }

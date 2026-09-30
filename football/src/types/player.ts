@@ -119,8 +119,8 @@ export interface PlayerTransfer {
 
 
 export interface PlayerDetail extends Player {
-  userId: number | null
-  agentId: number | null
+  userId: string | null
+  agentId: string | null
   teamId: number | null
   playStyle: string | null
   allergies: string[]

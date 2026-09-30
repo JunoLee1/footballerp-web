@@ -15,7 +15,7 @@ export interface SalesRecord {
   seatZoneId: number | null
   status: SalesRecordStatus
   channel: SalesChannel | null
-  createdById: number
+  createdById: string
   createdAt: string
   match: {
     id: number

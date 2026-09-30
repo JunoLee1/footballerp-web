@@ -63,7 +63,7 @@ interface ResponseItem {
 
 interface SurveyResponse {
   id: number
-  respondentId: number
+  respondentId: string
   submittedAt: string | null
   respondent: { id: number; nickname: string; role: string }
   items: ResponseItem[]

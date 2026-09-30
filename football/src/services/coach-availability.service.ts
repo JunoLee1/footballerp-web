@@ -2,7 +2,7 @@ import { api } from './api'
 import type { CoachAvailability, CreateCoachAvailabilityPayload } from '@/types/coach-availability'
 
 export const coachAvailabilityApi = {
-  list: (params?: { userId?: number; from?: string; to?: string }) => {
+  list: (params?: { userId?: string; from?: string; to?: string }) => {
     const q = new URLSearchParams()
     if (params?.userId) q.set('userId', String(params.userId))
     if (params?.from) q.set('from', params.from)

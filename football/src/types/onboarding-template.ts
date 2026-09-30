@@ -17,8 +17,8 @@ export interface OnboardingTemplate {
   departmentId: number
   name: string
   tasks: OnboardingTemplateTask[]
-  createdById: number
-  updatedById: number | null
+  createdById: string
+  updatedById: string | null
   createdAt: string
   updatedAt: string
   createdBy: OnboardingTemplateAuditUser | null

@@ -20,7 +20,7 @@ export interface AuditLogListResponse {
 }
 
 export interface AuditLogFilters {
-  actorId?: number
+  actorId?: string
   action?: string
   targetId?: number
   from?: string

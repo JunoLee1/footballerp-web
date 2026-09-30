@@ -20,8 +20,8 @@ export const BADGE_LABEL: Record<BadgeType, string> = {
 export interface GrowthEvaluation {
   id: number
   playerId: string
-  player: { id: string; playerName: string; guardianId: number | null }
-  coachId: number
+  player: { id: string; playerName: string; guardianId: string | null }
+  coachId: string
   coach: { id: number; username: string; nickname: string }
   planId: number | null
   plan: { id: number; goals: string; seasonId: number } | null
@@ -45,7 +45,7 @@ export interface PlayerBadge {
   id: number
   playerId: string
   player: { id: string; playerName: string }
-  coachId: number
+  coachId: string
   coach: { id: number; username: string; nickname: string }
   sessionId: number | null
   session: { id: number; date: string } | null

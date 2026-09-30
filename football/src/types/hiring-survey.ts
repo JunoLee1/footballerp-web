@@ -27,7 +27,7 @@ export const RESPONSE_STATUS_BADGE_CLASSES: Record<SurveyResponseStatus, string>
 export interface SurveyTargetDept {
   surveyId: number
   departmentId: number
-  department: { id: number; name: string; headId: number | null }
+  department: { id: number; name: string; headId: string | null }
 }
 
 export interface SurveyResponse {

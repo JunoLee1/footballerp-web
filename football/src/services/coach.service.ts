@@ -27,13 +27,13 @@ export const coachApi = {
     api.patch<Coach>(`/coaches/${id}/status`, { status, ...(shortlistSource && { shortlistSource }) }),
 
   // Evaluation (generic — dto shape depends on role)
-  upsertEvaluation: (coachId: number, dto: Record<string, unknown>) =>
+  upsertEvaluation: (coachId: string, dto: Record<string, unknown>) =>
     api.put<unknown>(`/coaches/${coachId}/evaluation`, dto),
 
   // TutorAssignment
-  listTutors: (coachId: number) => api.get<TutorAssignment[]>(`/coaches/${coachId}/tutors`),
-  createTutor: (coachId: number, dto: CreateTutorDto) =>
+  listTutors: (coachId: string) => api.get<TutorAssignment[]>(`/coaches/${coachId}/tutors`),
+  createTutor: (coachId: string, dto: CreateTutorDto) =>
     api.post<TutorAssignment>(`/coaches/${coachId}/tutors`, dto),
-  updateTutor: (coachId: number, tutorId: number, dto: Record<string, unknown>) =>
+  updateTutor: (coachId: string, tutorId: number, dto: Record<string, unknown>) =>
     api.patch<TutorAssignment>(`/coaches/${coachId}/tutors/${tutorId}`, dto),
 }

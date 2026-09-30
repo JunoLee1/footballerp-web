@@ -16,7 +16,7 @@ export interface ReportReview {
   reviewerDeptId: number
   status: ReviewStatus
   comment: string | null
-  confirmedById: number | null
+  confirmedById: string | null
   confirmedBy: ReportUser | null
   confirmedAt: string | null
   createdAt: string
@@ -36,14 +36,14 @@ export interface Report {
   fileUrl: string | null
   fileName: string | null
   rejectionReason: string | null
-  authorId: number
+  authorId: string
   author: ReportUser
-  reviewerId: number | null
+  reviewerId: string | null
   reviewer: ReportUser | null
-  firstReviewerId: number | null
+  firstReviewerId: string | null
   firstReviewer: ReportUser | null
   firstReviewedAt: string | null
-  secondReviewerId: number | null
+  secondReviewerId: string | null
   secondReviewer: ReportUser | null
   secondReviewedAt: string | null
   departmentId: number | null

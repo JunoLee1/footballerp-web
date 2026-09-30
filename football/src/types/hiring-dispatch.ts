@@ -51,7 +51,7 @@ export interface HiringDispatchApproval {
   id: number
   stage: HiringDispatchStage
   action: HiringDispatchAction
-  reviewerId: number
+  reviewerId: string
   reason: string | null
   createdAt: string
   reviewer: { id: number; username: string; nickname: string }
@@ -71,7 +71,7 @@ export interface HiringDispatch {
   jobGrade: JobGrade
   employmentType: EmploymentType
   departmentId: number
-  reportsToUserId: number | null
+  reportsToUserId: string | null
   monthlySalary: string
   startDate: string
   targetRole: string
@@ -79,8 +79,8 @@ export interface HiringDispatch {
   targetCoachingRole: string | null
   permissionNotes: string | null
   status: HiringDispatchStatus
-  createdById: number
-  createdUserId: number | null
+  createdById: string
+  createdUserId: string | null
   createdAt: string
   updatedAt: string
   // #372 — application-free path uses this list; when applicationId is set,
@@ -106,13 +106,13 @@ export interface HiringDispatch {
   department: {
     id: number
     name: string
-    headId: number | null
+    headId: string | null
     parentId: number | null
-    parent: { id: number; name: string; headId: number | null } | null
+    parent: { id: number; name: string; headId: string | null } | null
   }
-  createdBy: { id: number; username: string; nickname: string }
-  createdUser: { id: number; username: string; nickname: string; email: string } | null
-  reportsToUser: { id: number; username: string; nickname: string } | null
+  createdBy: { id: string; username: string; nickname: string }
+  createdUser: { id: string; username: string; nickname: string; email: string } | null
+  reportsToUser: { id: string; username: string; nickname: string } | null
   approvals: HiringDispatchApproval[]
   onboarding: {
     id: number
@@ -137,12 +137,12 @@ export interface HiringDispatchListItem {
   targetFrontOfficeRole: string | null
   targetCoachingRole: string | null
   status: HiringDispatchStatus
-  createdById: number
+  createdById: string
   createdAt: string
   updatedAt: string
 
   application: { id: number; applicantName: string; email: string } | null
-  department: { id: number; name: string; headId: number | null }
+  department: { id: number; name: string; headId: string | null }
   createdBy: { id: number; username: string; nickname: string }
 }
 
@@ -154,7 +154,7 @@ export interface CreateHiringDispatchPayload {
   jobGrade: JobGrade
   employmentType: EmploymentType
   departmentId: number
-  reportsToUserId?: number
+  reportsToUserId?: string
   monthlySalary: number
   startDate: string
   targetRole: string

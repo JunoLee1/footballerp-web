@@ -1,7 +1,7 @@
 import { api } from './api'
 
 export interface UserProfileDto {
-  id: number
+  id: string
   username: string
   nickname: string
   role: string
@@ -22,16 +22,16 @@ export interface PiiAccessRequestDto {
   grantedUntil: string | null
   createdAt: string
   reviewedAt: string | null
-  targetUser: { id: number; username: string; nickname: string }
-  requester: { id: number; username: string; nickname: string }
-  reviewedBy: { id: number; username: string; nickname: string } | null
+  targetUser: { id: string; username: string; nickname: string }
+  requester: { id: string; username: string; nickname: string }
+  reviewedBy: { id: string; username: string; nickname: string } | null
 }
 
 export const piiAccessApi = {
-  getUserProfile: (userId: number): Promise<UserProfileDto> =>
+  getUserProfile: (userId: string): Promise<UserProfileDto> =>
     api.get(`/admin/users/${userId}/profile`),
 
-  request: (targetUserId: number, reason: string): Promise<PiiAccessRequestDto> =>
+  request: (targetUserId: string, reason: string): Promise<PiiAccessRequestDto> =>
     api.post('/pii-access/requests', { targetUserId, reason }),
 
   listPending: (): Promise<PiiAccessRequestDto[]> =>

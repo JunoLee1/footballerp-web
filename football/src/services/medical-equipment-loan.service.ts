@@ -6,7 +6,7 @@ import type {
 } from '@/types/medical-equipment-loan';
 
 export const medicalEquipmentLoanApi = {
-  list(params?: { status?: string; requestedById?: number }) {
+  list(params?: { status?: string; requestedById?: string }) {
     const qs = new URLSearchParams();
     if (params?.status) qs.set('status', params.status);
     if (params?.requestedById) qs.set('requestedById', String(params.requestedById));

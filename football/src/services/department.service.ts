@@ -4,7 +4,7 @@ export interface Department {
   id: number;
   name: string;
   parentId: number | null;
-  headId: number | null;
+  headId: string | null;
   parent: Pick<Department, 'id' | 'name'> | null;
   children: Pick<Department, 'id' | 'name' | 'isActive'>[];
   isActive: boolean;
@@ -27,7 +27,7 @@ export const departmentApi = {
 export type DeptRole = "DEPT_HEAD" | "LEADER" | "MEMBER" | "INTERN";
 
 export interface Member {
-  userId: number;
+  userId: string;
   departmentId: number;
   role: DeptRole;
   jobTitleId: number | null;
@@ -48,17 +48,17 @@ export interface DeptJobTitle {
 
 export const departmentMemberApi = {
   list: (deptId: number): Promise<Member[]> => api.get(`/departments/${deptId}/members`),
-  add: (deptId: number, userId: number, role?: DeptRole, jobTitleId?: number | null): Promise<void> =>
+  add: (deptId: number, userId: string, role?: DeptRole, jobTitleId?: number | null): Promise<void> =>
     api.post(`/departments/${deptId}/members`, { userId, ...(role && { role }), ...(jobTitleId != null && { jobTitleId }) }),
-  updateRole: (deptId: number, userId: number, role: DeptRole): Promise<void> =>
+  updateRole: (deptId: number, userId: string, role: DeptRole): Promise<void> =>
     api.patch(`/departments/${deptId}/members/${userId}`, { role }),
-  remove: (deptId: number, userId: number): Promise<void> =>
+  remove: (deptId: number, userId: string): Promise<void> =>
     api.delete(`/departments/${deptId}/members/${userId}`),
-  transfer: (deptId: number, userId: number, toDeptId: number, toRole?: DeptRole): Promise<void> =>
+  transfer: (deptId: number, userId: string, toDeptId: number, toRole?: DeptRole): Promise<void> =>
     api.post(`/departments/${deptId}/members/${userId}/transfer`, { toDeptId, ...(toRole && { toRole }) }),
   updateHead: (deptId: number, newHeadId: number | null): Promise<void> =>
     api.patch(`/departments/${deptId}/head`, { newHeadId }),
-  updateJobTitle: (deptId: number, userId: number, jobTitleId: number | null): Promise<void> =>
+  updateJobTitle: (deptId: number, userId: string, jobTitleId: number | null): Promise<void> =>
     api.patch(`/departments/${deptId}/members/${userId}/job-title`, { jobTitleId }),
 };
 

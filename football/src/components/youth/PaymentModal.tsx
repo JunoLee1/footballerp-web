@@ -8,7 +8,7 @@ import type { AcademyFee } from '@/types/academy-fee'
 
 interface Props {
   fee: AcademyFee
-  userId: number
+  userId: string
   open: boolean
   onClose: () => void
   onPaid: (updated: AcademyFee) => void

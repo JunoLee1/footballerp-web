@@ -16,7 +16,7 @@ export interface TacticalAnalysis {
   status: TacticalStatus
   formation: string | null
   opponentAnalysis: string | null
-  createdById: number
+  createdById: string
   createdAt: string
   // PRE_MATCH
   opponentFormation: string | null

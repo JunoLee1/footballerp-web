@@ -27,7 +27,7 @@ export interface AnnualOpsEntry {
 }
 
 export interface NoticeUnreadDrillItem {
-  userId: number
+  userId: string
   name: string
   unreadCount: number
 }

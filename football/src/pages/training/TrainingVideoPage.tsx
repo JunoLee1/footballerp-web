@@ -119,7 +119,7 @@ export function TrainingVideoPage() {
   const [filterTag, setFilterTag] = useState('')
 
   const canWrite = user?.role === 'ADMIN' || user?.role === 'COACHING_STAFF'
-  const canDelete = (uploadedById: number) =>
+  const canDelete = (uploadedById: string) =>
     user?.role === 'ADMIN' || user?.id === uploadedById
   const [generatingSummaryId, setGeneratingSummaryId] = useState<number | null>(null)
 

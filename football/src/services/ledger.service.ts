@@ -12,7 +12,7 @@ export interface LedgerEntry {
   relatedModule?: string
   relatedId?: number
   isRefund: boolean
-  createdById: number
+  createdById: string
   createdAt: string
 }
 

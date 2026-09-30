@@ -12,7 +12,7 @@ export interface StaffAbsence {
   startDate: string
   endDate: string
   reason: string | null
-  createdById: number
+  createdById: string
 }
 
 export interface CoachingStaffMember {
