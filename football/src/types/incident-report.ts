@@ -2,7 +2,7 @@ export type IncidentReportStatus = 'DRAFT' | 'SUBMITTED' | 'SIGNED'
 export type IncidentType = 'MATCH' | 'TRAINING'
 
 export interface IncidentReport {
-  id: number
+  id: string
   playerId: string
   player: { id: string; playerName: string; guardianId: string | null }
   teamId: number
@@ -12,7 +12,7 @@ export interface IncidentReport {
   sessionId: number | null
   description: string
   reportedById: string
-  reportedBy: { id: number; username: string }
+  reportedBy: { id: string; username: string }
   supervisorSigned: boolean
   medicalSigned: boolean
   injuryId: number | null

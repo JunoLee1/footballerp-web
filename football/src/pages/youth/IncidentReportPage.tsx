@@ -45,12 +45,12 @@ export default function IncidentReportPage() {
       .catch(() => {})
   }, [])
 
-  const handleSign = async (id: number, role: 'SUPERVISOR' | 'MEDICAL') => {
+  const handleSign = async (id: string, role: 'SUPERVISOR' | 'MEDICAL') => {
     await incidentReportApi.sign(id, role)
     load()
   }
 
-  const handleSubmitReport = async (id: number) => {
+  const handleSubmitReport = async (id: string) => {
     await incidentReportApi.submit(id)
     load()
   }

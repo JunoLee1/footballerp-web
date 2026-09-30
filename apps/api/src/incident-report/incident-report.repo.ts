@@ -1,6 +1,7 @@
 import type { PrismaClient } from "../generated/client";
 import type { CreateIncidentReportDto, IncidentReportListQuery } from "./dto/incident-report.dto";
 import { ExternalReportTarget } from "../generated/enums";
+import { assertCuid } from "../lib/cuidGuard";
 
 const INCLUDE = {
   player: { select: { id: true, playerName: true, guardianId: true } },
@@ -24,7 +25,7 @@ export class IncidentReportRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.incidentReport.findUnique({ where: { id }, include: INCLUDE });
   }
 
@@ -35,7 +36,7 @@ export class IncidentReportRepository {
     });
   }
 
-  submit(id: number) {
+  submit(id: string) {
     return this.prisma.incidentReport.update({
       where: { id },
       data: { status: "SUBMITTED" },
@@ -43,7 +44,7 @@ export class IncidentReportRepository {
     });
   }
 
-  sign(id: number, isSupervisor: boolean, isMedical: boolean) {
+  sign(id: string, isSupervisor: boolean, isMedical: boolean) {
     return this.prisma.incidentReport.update({
       where: { id },
       data: {
@@ -54,15 +55,16 @@ export class IncidentReportRepository {
     });
   }
 
-  markSigned(id: number) {
+  markSigned(id: string) {
     return this.prisma.incidentReport.update({ where: { id }, data: { status: "SIGNED" } });
   }
 
   createExternalReports(
-    incidentReportId: number,
+    incidentReportId: string,
     targets: { target: ExternalReportTarget; dueDate: Date }[],
     reportData: object,
   ) {
+    assertCuid(incidentReportId);
     return this.prisma.externalReport.createMany({
       data: targets.map((t) => ({
         incidentReportId,

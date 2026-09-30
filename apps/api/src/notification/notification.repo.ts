@@ -168,7 +168,7 @@ export class NotificationRepository {
     return this.prisma.notification.create({ data });
   }
 
-  createForGuardian(guardianUserId: string, type: string, getMsg: MsgFactory, entityId?: number) {
+  createForGuardian(guardianUserId: string, type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForUser(guardianUserId, type, getMsg, entityId);
   }
 

@@ -820,6 +820,7 @@
 | 보안 — Cross-role IDOR 프로브 | ⚠️ **LEAK · 이슈 #589 등록** — ASSET_MANAGER · FACILITY_MANAGER · FINANCE_MANAGER 200 (사고 보고서 열람) |
 | 보안 — Write endpoint 권한 경계 | ⚠️ 위와 동일 원인 (`ALLOWED_ROLES` 에 FRONT_OFFICE 전체 통과) — #589 파치 대상 |
 | 보안 — Fix `incident-report.controller.ts` ALLOWED_ROLES 축소 | 🔲 #589 파치 대기 (#580 probation-review 와 동일 패턴) |
+| 보안 — enumerable IDOR (int id 열거) | ✅ **CUID 전환 완료** (#598 tracer 2 · `refactor/incident-report-cuid-598`) — `IncidentReport.id Int → String @default(cuid())`. `ExternalReport.incidentReportId Int? → String?`. `notification.repo.createForGuardian` 시그니처 `number | string` 확장. curl 검증: cuid 200 · int 400 · ABC 400 · list 200 |
 
 ---
 
