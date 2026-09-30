@@ -1,7 +1,7 @@
 export type SafeguardReportStatus = 'RECEIVED' | 'UNDER_REVIEW' | 'RESOLVED'
 
 export interface SafeguardReport {
-  id: number
+  id: string
   description: string
   contactInfo: string | null
   accusedUserId: string | null

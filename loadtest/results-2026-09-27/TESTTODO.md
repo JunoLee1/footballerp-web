@@ -214,7 +214,7 @@
 | `/staff-records/:id/*` (2) IDOR 프로브 | 🔲 · #580 파치로 probation-review 만 확인 (2 route 중 1) |
 | `/pii-access/:id/*` (2) IDOR 프로브 | 🔲 |
 | `/medical-equipment-loan/:id/*` (3) IDOR 프로브 | 🔲 |
-| `/safeguard-reports/:id/*` (2) IDOR 프로브 | 🔲 |
+| `/safeguard-reports/:id/*` (2) IDOR 프로브 | ✅ **CUID 전환 완료** (#598 tracer · `refactor/safeguard-report-cuid-598`) — `SafeguardReport.id Int → String @default(cuid())`. `apps/api/src/lib/cuidGuard.ts` 신설 (`cuidRouter()` 팩토리). enumerable IDOR 방어 (`/safeguard-reports/1` → 400 INVALID_ID). ripple: `ExternalReport.safeguardReportId Int? → String?`, `Notification.entityIdStr String?` 추가. curl 검증: create 201 cuid 발급 · GET cuid 200 · GET ABC/1 400 · list 200 |
 | `/player-callups/:id/*` (6) IDOR 프로브 | 🔲 |
 | `/youth-registrations/:id/*` (4) IDOR 프로브 | 🔲 |
 | `pentest.mjs` `TARGETS` 데이터 드라이브화 | 🔲 `id-routes-classified.json` 에서 로드 |

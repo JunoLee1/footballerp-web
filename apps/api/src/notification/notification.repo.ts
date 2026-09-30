@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from "../generated/client";
+import { PrismaClient, Prisma, $Enums } from "../generated/client";
 
 type MsgFactory = (locale?: string) => { title: string; body: string };
 type UserWhere = Prisma.UserWhereInput;
@@ -146,15 +146,26 @@ export class NotificationRepository {
     return this.createForUser(dept.headId, type, getMsg, entityId);
   }
 
-  async createForUser(userId: string, type: string, getMsg: MsgFactory, entityId?: number) {
+  async createForUser(userId: string, type: string, getMsg: MsgFactory, entityId?: number | string) {
     const userRecord = await this.prisma.user.findUnique({
       where: { id: userId },
       select: { language: true },
     });
     const { title, body } = getMsg(userRecord?.language ?? "ko");
-    return this.prisma.notification.create({
-      data: { userId, type, title, body, ...(entityId && { entityId }) } as any,
-    });
+    const entityField: Pick<Prisma.NotificationUncheckedCreateInput, "entityId" | "entityIdStr"> =
+      entityId == null
+        ? {}
+        : typeof entityId === "string"
+          ? { entityIdStr: entityId }
+          : { entityId };
+    const data: Prisma.NotificationUncheckedCreateInput = {
+      userId,
+      type: type as $Enums.NotificationType,
+      title,
+      body,
+      ...entityField,
+    };
+    return this.prisma.notification.create({ data });
   }
 
   createForGuardian(guardianUserId: string, type: string, getMsg: MsgFactory, entityId?: number) {

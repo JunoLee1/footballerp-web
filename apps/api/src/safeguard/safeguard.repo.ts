@@ -1,5 +1,6 @@
 import type { PrismaClient } from '../generated/client'
 import type { CreateSafeguardReportDto, UpdateSafeguardStatusDto } from './dto/safeguard.dto'
+import { assertCuid } from '../lib/cuidGuard'
 
 export class SafeguardRepository {
   constructor(private prisma: PrismaClient) {}
@@ -22,14 +23,14 @@ export class SafeguardRepository {
     })
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.safeguardReport.findUnique({
       where: { id },
       include: { accusedUser: { select: { id: true, username: true, role: true } } },
     })
   }
 
-  updateStatus(id: number, dto: UpdateSafeguardStatusDto) {
+  updateStatus(id: string, dto: UpdateSafeguardStatusDto) {
     return this.prisma.safeguardReport.update({
       where: { id },
       data: {
@@ -69,7 +70,8 @@ export class SafeguardRepository {
     })
   }
 
-  createExternalReports(safeguardReportId: number) {
+  createExternalReports(safeguardReportId: string) {
+    assertCuid(safeguardReportId)
     const targets = ['POLICE', 'CHILD_PROTECTION_AGENCY', 'FOOTBALL_ASSOCIATION'] as const
     const dueDate = new Date()
     dueDate.setDate(dueDate.getDate() + 3)

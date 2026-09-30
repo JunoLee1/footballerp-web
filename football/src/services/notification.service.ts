@@ -8,6 +8,7 @@ export interface NotificationItem {
   readAt: string | null
   createdAt: string
   entityId?: number
+  entityIdStr?: string
 }
 
 export type NotificationRoute = string | ((entityId: number) => string)
