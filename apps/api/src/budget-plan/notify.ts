@@ -17,7 +17,7 @@ interface Reviewer {
   email: string | null;
   language: string | null;
   scope: "TEAM" | "DEPARTMENT";
-  ownerId: number;
+  ownerId: string;
 }
 
 export interface EmailSender {
