@@ -24,7 +24,7 @@ export type ViolationPrisma = Pick<PrismaClient, "budgetCategoryPlan">;
 
 export async function detectMinimumViolation(
   prisma: ViolationPrisma,
-  categoryPlanId: number,
+  categoryPlanId: string,
 ): Promise<ViolationDetection> {
   const plan = await prisma.budgetCategoryPlan.findUnique({
     where: { id: categoryPlanId },
