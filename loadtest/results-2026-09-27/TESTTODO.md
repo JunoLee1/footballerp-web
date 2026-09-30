@@ -194,8 +194,8 @@
 |---|---|---|
 | Smoke | ✅ `smoke-MEDICAL_DIRECTOR.json` 49/49 PASS, p(95) 195ms  · VU 2|
 | Stress | ✅ `stress-MEDICAL_DIRECTOR.json` p(95) 1,827ms · threshold 근접 · RPS 98 · VU peak 200 |
-| 보안 — Cross-role 접근 차단 | ✅ **부분 LEAK** — `/injuries/active` 는 403 정상, `/medical-equipment-loan`·`/medical-expenses` 는 PLAYER · HR · ASSET 모두 200. **의료 개인정보 노출** (GDPR 관점 심각) |
-| 보안 — GDPR 개인정보 스코프 검증 | 🔲 guardian 계정 접근 범위 미검증 |
+| 보안 — Cross-role 접근 차단 | ✅ **FIXED** — `fix/medical_domain` (02615396 · 2026-09-27) 로 `lib/medicalGuards.ts` 신설 · `requireReadMedical` guard 도입. 통과 role: `isAdminLike` · COACHING_STAFF+MEDICAL/MEDICAL_DIRECTOR · FRONT_OFFICE+FINANCE_MANAGER/STAFF · PERFORMANCE 부서. `medical-expense.routes` GET `/`·`/:id`·POST `/` + `medical-equipment-loan.routes` GET `/`·`/:id` 에 적용. 재프로브 MEDICAL 6 LEAK → 0 |
+| 보안 — GDPR 개인정보 스코프 검증 | ✅ **완전 차단 정책 확립** — GUARDIAN role 은 `canReadMedical` 에서 통과 조건 미포함 → 자녀 medical-expense/medical-equipment-loan 접근 불가 (403). 자녀 의료 정보 조회 필요시 별도 self-scope 라우트 개설 필요 (정책 판단) — 현재는 GDPR 최대 안전 |
 
 ---
 

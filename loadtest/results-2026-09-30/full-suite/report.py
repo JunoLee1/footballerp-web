@@ -194,15 +194,56 @@ def render_bottleneck(domains, threshold=500):
     parts.append("</tbody></table></div>")
     return "\n".join(parts)
 
+# pentest-real-ids-566/REPORT.md 에 기록된 최초 프로브 결과 (2026-09-30 초기 실행).
+# 이후 현재 JSON 은 재프로브로 덮어씀 (2 attacker · 80 probe). 두 LEAK 모두 파치 완료.
+HISTORICAL_LEAKS = [
+    {
+        "endpoint": "GET /players/:id/training-results",
+        "count": 20,
+        "attackers": "HR_MANAGER · ASSET_MANAGER · FACILITY_MANAGER · GUARDIAN",
+        "cause": "player.service.ts:169 — PLAYER role 만 self-scope 체크, 나머지 role 전부 통과. 훈련 개인 데이터 (fitness · attendance · sprint · load) 노출",
+        "status": "✅ FIXED — 이슈 #590 · PR #592",
+    },
+    {
+        "endpoint": "GET /contracts/:id",
+        "count": 5,
+        "attackers": "HR_MANAGER",
+        "cause": "canReadHR 이 privileged 로 계약 열람 허용. HR 인사·급여 실무 담당이므로 정책상 의도된 것일 수 있음",
+        "status": "⚠️ 정책 확인 — 별도 이슈 보류 (owner-scope guard 는 #560/#561 로 파치)",
+    },
+]
+
 def render_pentest(pentest):
     if not pentest:
         return "<p class='muted'>pentest-real-ids 결과 데이터 없음</p>"
     summary = pentest.get("summary", {})
     total = pentest.get("totalProbes", 0)
+    generated_at = pentest.get("generatedAt", "")
+    attackers = pentest.get("attackers", [])
     leaks = pentest.get("rows", [])
     leaks = [r for r in leaks if r.get("verdict") == "LEAK"]
 
     parts = []
+    # Historical LEAK block first
+    parts.append("<h3>📜 최초 프로브 결과 (2026-09-30 초기 · 5 attacker × 81 endpoint = 405 probes)</h3>")
+    parts.append("<p class='note'>실 record ID 매트릭스 첫 실행 시 발견된 <strong>25건 LEAK</strong> (2 endpoint 그룹). 이후 두 endpoint 모두 파치 완료 · 재프로브에서 clean 확인.</p>")
+    parts.append("<table><thead><tr><th>Endpoint</th><th>LEAK Count</th><th>Attackers</th><th>원인 / 상태</th></tr></thead><tbody>")
+    for l in HISTORICAL_LEAKS:
+        parts.append(
+            "<tr>"
+            f"<td class='name'><code>{l['endpoint']}</code></td>"
+            f"<td class='v-bad'><strong>{l['count']}</strong></td>"
+            f"<td>{l['attackers']}</td>"
+            f"<td><div><em>{l['cause']}</em></div><div style='margin-top:6px'>{l['status']}</div></td>"
+            "</tr>"
+        )
+    parts.append("</tbody></table>")
+
+    # Current run
+    parts.append(f"<h3>🔁 재프로브 결과 ({generated_at})</h3>")
+    if len(attackers) < 5:
+        parts.append(f"<p class='note'>⚠️ 현재 실행은 <strong>{len(attackers)} attacker</strong> ({', '.join(attackers)}) 만 로그인 성공 — 다른 attacker 는 rate-limit cooldown 필요. 5-role 매트릭스 전체 재프로브 필요 (Section 15.5 확장 계획).</p>")
+
     parts.append("<div class='kpi-grid'>")
     parts.append(f"<div class='kpi'><h4>Total Probes</h4><div class='value'>{fmt_num(total)}</div></div>")
     leak_cls = "value bad" if summary.get("leaks", 0) > 0 else "value ok"
@@ -217,14 +258,14 @@ def render_pentest(pentest):
         for l in leaks:
             key = f"{l['method']} {re.sub(r'/([a-z0-9-]+)$', '/:id', l['endpoint']) if '/' in l['endpoint'] else l['endpoint']}"
             by_endpoint.setdefault(key, []).append(l)
-        parts.append("<h3>🚨 LEAK 상세</h3>")
+        parts.append("<h4>🚨 재프로브 LEAK 상세</h4>")
         parts.append("<table><thead><tr><th>Endpoint</th><th>Count</th><th>Attackers</th></tr></thead><tbody>")
         for ep, items in sorted(by_endpoint.items(), key=lambda kv: -len(kv[1])):
-            attackers = ", ".join(sorted({i["attacker"] for i in items}))
-            parts.append(f"<tr><td class='name'><code>{ep}</code></td><td>{len(items)}</td><td>{attackers}</td></tr>")
+            attackers_str = ", ".join(sorted({i["attacker"] for i in items}))
+            parts.append(f"<tr><td class='name'><code>{ep}</code></td><td>{len(items)}</td><td>{attackers_str}</td></tr>")
         parts.append("</tbody></table>")
     else:
-        parts.append("<p class='ok-msg'>✅ LEAK 0건 — 모든 sensitive endpoint 가 guard 로 방어됨</p>")
+        parts.append(f"<p class='ok-msg'>✅ 재프로브 LEAK 0건 (attacker={len(attackers)}명 한정 · Blocked {summary.get('blocked', 0)}, PASS_OK {summary.get('passOk', 0)})</p>")
 
     return "\n".join(parts)
 
