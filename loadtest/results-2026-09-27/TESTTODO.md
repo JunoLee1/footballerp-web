@@ -187,12 +187,18 @@
 | 항목 | 상태 | 비고 |
 |---|---|---|
 | 보안 — IDOR (양 세션 임의 ID 프로브) | ✅ 전부 404 반환 (verdict PASS) — record 미존재 · guard 여부는 별도 확인 필요 |
-| 보안 — 실제 존재하는 ID (record hydration 후) 재프로브 | 🔲 미커버 · 404 는 guard 미장착 여부 판정 불가 |
-| Sub-actions 프로브 (총 30+ 건) | 🔲 미커버 (`id-routes-classified.json` 참조) |
+| 보안 — 실제 존재하는 ID (record hydration 후) 재프로브 | ✅ **FIXED** `loadtest/pentest-real-ids.mjs` (#566/PR #591) — DB 실 ID + 5 attacker role 매트릭스 프로브 405 req · 25 LEAK 발견 (`results-2026-09-30/pentest-real-ids-566/`) |
+| Sub-actions 프로브 (총 30+ 건) | ✅ 부분 커버 — OperatingExpense 6 sub-action × 5 attacker = 150 프로브 통과. Contract·Player·Injury·PayrollRun·FinancialReport·Notification 각 sub-action 커버. MedicalExpense·EmployeeContract 는 seed 부재로 skip |
+| 보안 — /players/:id/training-results LEAK 파치 | ✅ **FIXED** PLAYER 만 self-scope, HR/ASSET/FACILITY/GUARDIAN 무제한 통과 → allow-list 재설계 (#590/PR #592). 회귀 테스트 13/13 pass |
+| 보안 — /contracts/:id HR_MANAGER 접근 | ✅ 정책상 정상 (HR 이 급여 실무 담당) — 오탐 확정 |
+| 후속 — MedicalExpense·EmployeeContract seed 추가 후 재프로브 | 🔲 record 부재로 이번 매트릭스 커버 못 함 |
 
 ---
 
 ## 15. Definite-Sensitive 미커버 도메인 (`id-routes-classified.json` definite bucket · 153건 · 31 prefix)
+
+> ℹ️ **재사용 가능**: `loadtest/pentest-real-ids.mjs` (PR #591) 에 각 도메인 sub-action 을 `targets()` 에 추가하면 동일 패턴으로 즉시 확장 가능.
+> DB 실 ID 자동 수집 + 5 attacker role 매트릭스 프로브 로직 검증 완료.
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
@@ -205,7 +211,7 @@
 | `/sales/:id/*` (5) IDOR 프로브 | 🔲 |
 | `/ledger/:id/*` (2) IDOR 프로브 | 🔲 |
 | `/acquisition-surveys/:id/*` (4) IDOR 프로브 | 🔲 |
-| `/staff-records/:id/*` (2) IDOR 프로브 | 🔲 |
+| `/staff-records/:id/*` (2) IDOR 프로브 | 🔲 · #580 파치로 probation-review 만 확인 (2 route 중 1) |
 | `/pii-access/:id/*` (2) IDOR 프로브 | 🔲 |
 | `/medical-equipment-loan/:id/*` (3) IDOR 프로브 | 🔲 |
 | `/safeguard-reports/:id/*` (2) IDOR 프로브 | 🔲 |
@@ -336,6 +342,7 @@
 | 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
 | 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
 | 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| 🐛 `GET /transfers/recalls` → 500 | ✅ **FIXED** (#564) — `/:id` 가 `/recalls` 앞에 정의돼 admin 세션이 `Number("recalls")=NaN` 으로 Prisma 500. 라우트 순서 재배치 + `getRecalls` ADMIN/GM rbac + `?status` enum 검증 (400) + `:id` NaN 방어 (400 INVALID_ID). Burp Repeater 재프로브: admin/GM 200, HR/PLAYER 403, status=BOGUS 400, /transfers/abc 400 |
 
 ---
 
@@ -713,11 +720,12 @@
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
-| Smoke | 🔲 미러닝 |
-| Stress | 🔲 미러닝 |
-| 보안 — 인증 없는 접근 차단 (401) | 🔲 미확인 |
-| 보안 — Cross-role IDOR 프로브 | 🔲 미커버 |
-| 보안 — Write endpoint (POST/PATCH/DELETE) 권한 경계 | 🔲 미확인 |
+| Smoke | ✅ ADMIN/HR/COACH/MEDICAL/GM 세션 200 (2026-09-30 curl 실측) |
+| Stress | ✅ p(95) 102ms · VU peak 200 (별도 스크립트 discarded 후 curl 실측 유지) |
+| 보안 — 인증 없는 접근 차단 (401) | ✅ 무인증 → 401 UNAUTHORIZED |
+| 보안 — Cross-role IDOR 프로브 | ⚠️ **LEAK · 이슈 #589 등록** — ASSET_MANAGER · FACILITY_MANAGER · FINANCE_MANAGER 200 (사고 보고서 열람) |
+| 보안 — Write endpoint 권한 경계 | ⚠️ 위와 동일 원인 (`ALLOWED_ROLES` 에 FRONT_OFFICE 전체 통과) — #589 파치 대상 |
+| 보안 — Fix `incident-report.controller.ts` ALLOWED_ROLES 축소 | 🔲 #589 파치 대기 (#580 probation-review 와 동일 패턴) |
 
 ---
 
