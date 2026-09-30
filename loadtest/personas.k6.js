@@ -286,6 +286,17 @@ const ALL_PERSONAS = [
       { path: '/sponsorships', label: 'vendor_sponsorships' },
     ],
   },
+  // Academy Fee 관리 — 회비 목록·통계·유소년 검색 read heavy.
+  // 실 사용: FINANCE_MANAGER 가 청구 발행 · 승인 · 통계 조회.
+  {
+    name: 'ACADEMY_FEE',
+    email: 'finance@club.com',
+    endpoints: [
+      { path: '/academy-fees', label: 'academy_fees_list' },
+      { path: '/academy-fees/stats', label: 'academy_fees_stats' },
+      { path: '/academy-fees/players/search?name=김', label: 'academy_fees_player_search' },
+    ],
+  },
 ]
 
 const PERSONAS = PERSONA_FILTER

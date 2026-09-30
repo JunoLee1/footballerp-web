@@ -88,6 +88,7 @@
 | **HW_SECURITY** | `/equipment` · `/inventory` · `/department-asset-kits` · `/asset-requests` · `/equipment/loans` | 21ms | **11ms** (RPS 423 · 최고) | ✅ |
 | **SW_LICENSE** | `/software-licenses` | 29ms | 30ms (RPS 85) | ✅ |
 | **VENDOR** | `/partners` · `/sponsorships` | 37ms | 14ms (RPS 171) | ✅ |
+| **ACADEMY_FEE** | `/academy-fees` · `/academy-fees/stats` · `/academy-fees/players/search` | 33ms | **17ms** (RPS 255) | ✅ |
 
 - 5건 전부 threshold p95<2s 통과, fail rate 0%
 - `personas.k6.js` 에 GUARDIAN·HR_YOUTH·HW_SECURITY·SW_LICENSE·VENDOR 페르소나 추가
