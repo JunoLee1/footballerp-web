@@ -1,7 +1,38 @@
 import { PartnerRepository } from "./partner.repo";
 import { AppError } from "../lib/appError";
+import { encrypt } from "../lib/crypto";
 import { PartnerType } from "../generated/enums";
 import { CreatePartnerDto, UpdatePartnerDto, CreatePartnerContractDto, UpdatePartnerContractDto } from "./dto/partner.dto";
+
+// #593 — 평문 민감 필드를 암호화 컬럼 쌍(encrypted + iv)으로 확장.
+function withEncryptedFields(dto: Record<string, unknown>) {
+  const out: Record<string, unknown> = { ...dto };
+  const acct = dto.paymentAccountNumber as string | null | undefined;
+  const biz = dto.businessRegNumber as string | null | undefined;
+  delete out.paymentAccountNumber;
+  delete out.businessRegNumber;
+  if (acct !== undefined) {
+    if (acct === null || acct === "") {
+      out.paymentAccountNumberEncrypted = null;
+      out.paymentAccountNumberIv = null;
+    } else {
+      const { encrypted, iv } = encrypt(acct);
+      out.paymentAccountNumberEncrypted = encrypted;
+      out.paymentAccountNumberIv = iv;
+    }
+  }
+  if (biz !== undefined) {
+    if (biz === null || biz === "") {
+      out.businessRegNumberEncrypted = null;
+      out.businessRegNumberIv = null;
+    } else {
+      const { encrypted, iv } = encrypt(biz);
+      out.businessRegNumberEncrypted = encrypted;
+      out.businessRegNumberIv = iv;
+    }
+  }
+  return out;
+}
 
 export class PartnerService {
   constructor(private repo: PartnerRepository) {}
@@ -20,7 +51,7 @@ export class PartnerService {
     if (!dto.name?.trim()) throw new AppError(400, "PARTNER_NAME_REQUIRED");
     const trimmed = dto.name.trim();
     if (await this.repo.findByName(trimmed)) throw new AppError(409, "PARTNER_NAME_DUPLICATE");
-    return this.repo.create({ ...dto, name: trimmed });
+    return this.repo.create(withEncryptedFields({ ...dto, name: trimmed }) as any);
   }
 
   async update(id: number, dto: UpdatePartnerDto) {
@@ -31,7 +62,7 @@ export class PartnerService {
     if (dto.tier === null && dto.tierReason !== undefined && dto.tierReason !== null) {
       throw new AppError(400, "TIER_REQUIRED_FOR_TIER_REASON");
     }
-    return this.repo.update(id, { ...dto, ...(trimmed !== undefined && { name: trimmed }) });
+    return this.repo.update(id, withEncryptedFields({ ...dto, ...(trimmed !== undefined && { name: trimmed }) }) as any);
   }
 
   async createContract(partnerId: number, dto: CreatePartnerContractDto) {
