@@ -518,6 +518,59 @@ describe("RecruitmentService.completeMfa (HiringPlanItem status)", () => {
   });
 });
 
+describe("RecruitmentService.completeMfa (UserDepartment safety net · #533)", () => {
+  const makeMfaCtx = (
+    postingDepartmentId: number | null,
+    ensureUserDepartment: jest.Mock = jest.fn().mockResolvedValue({}),
+  ) => {
+    const repo = makeRepo({
+      findOnboardingByApplication: jest.fn().mockResolvedValue({
+        id: 1, applicationId: 1, userId: "user-42",
+        otpCode: "hash", otpExpiresAt: new Date(Date.now() + 60_000),
+        emailVerifiedAt: new Date(),
+        mfaRegisteredAt: null,
+      }),
+      markMfaRegistered: jest.fn().mockResolvedValue({ mfaRegisteredAt: new Date() }),
+      findApplicationById: jest.fn().mockResolvedValue({
+        id: 1,
+        applicantName: "테스트",
+        offeredById: "hr-1",
+        posting: {
+          id: 100,
+          title: "Coach",
+          departmentId: postingDepartmentId,
+          hiringPlanItemId: null,
+        },
+      }),
+      completeOnboarding: jest.fn().mockResolvedValue({}),
+      ensureUserDepartment,
+    });
+    return { svc: new RecruitmentService(repo), repo, ensureUserDepartment };
+  };
+
+  it("posting.departmentId 있으면 UserDepartment upsert 호출", async () => {
+    const ensureUserDepartment = jest.fn().mockResolvedValue({});
+    const { svc } = makeMfaCtx(10, ensureUserDepartment);
+    await svc.completeMfa(1);
+    expect(ensureUserDepartment).toHaveBeenCalledWith("user-42", 10);
+  });
+
+  it("posting.departmentId null 이면 UserDepartment upsert 호출 안 함", async () => {
+    const ensureUserDepartment = jest.fn().mockResolvedValue({});
+    const { svc } = makeMfaCtx(null, ensureUserDepartment);
+    await svc.completeMfa(1);
+    expect(ensureUserDepartment).not.toHaveBeenCalled();
+  });
+
+  it("이미 UserDepartment 존재해도 upsert 로 no-op (dispatch 경로와 충돌 없음)", async () => {
+    // upsert 는 idempotent — 반복 호출해도 role 변경 없이 pass
+    const ensureUserDepartment = jest.fn().mockResolvedValue({ userId: "user-42", departmentId: 10, role: "DEPT_HEAD" });
+    const { svc } = makeMfaCtx(10, ensureUserDepartment);
+    await svc.completeMfa(1);
+    expect(ensureUserDepartment).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe("RecruitmentService.bulkCreatePostingsFromPlanReport", () => {
   const planReportData = {
     id: 1,
