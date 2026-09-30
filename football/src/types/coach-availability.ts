@@ -1,16 +1,16 @@
 export interface CoachAvailability {
   id: number
-  userId: number
+  userId: string
   startDate: string
   endDate: string
   reason: string | null
-  createdById: number
+  createdById: string
   createdAt: string
   user: { id: number; nickname: string | null; coachingRole: string | null }
 }
 
 export interface CreateCoachAvailabilityPayload {
-  userId: number
+  userId: string
   startDate: string
   endDate: string
   reason?: string

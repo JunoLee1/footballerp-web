@@ -15,9 +15,9 @@ export interface HiringDocument {
   fileName: string | null
   fileSize: number | null
   status: HiringDocReviewStatus
-  uploadedById: number
+  uploadedById: string
   uploadedAt: string
-  reviewedById: number | null
+  reviewedById: string | null
   reviewedAt: string | null
   reviewNotes: string | null
   createdAt: string

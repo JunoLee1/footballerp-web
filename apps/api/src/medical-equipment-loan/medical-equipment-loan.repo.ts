@@ -17,7 +17,7 @@ export const medicalEquipmentLoanRepo = {
     });
   },
 
-  async findAll(filter?: { status?: string; requestedById?: number }) {
+  async findAll(filter?: { status?: string; requestedById?: string }) {
     return prisma.medicalEquipmentLoanLedger.findMany({
       where: {
         ...(filter?.status ? { status: filter.status as any } : {}),

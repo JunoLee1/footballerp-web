@@ -16,13 +16,13 @@ const makePrisma = (overrides: Partial<PrismaClient> = {}): PrismaClient =>
 describe("SalesService.create", () => {
   it("throws 400 when quantity is negative", async () => {
     const service = new SalesService(makeRepo(), makePrisma());
-    await expect(service.create({ type: "TICKET", quantity: -1, unitPrice: 100, saleDate: "2026-08-05" } as any, 1))
+    await expect(service.create({ type: "TICKET", quantity: -1, unitPrice: 100, saleDate: "2026-08-05" } as any, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"))
       .rejects.toThrow(new AppError(400, "NEGATIVE_SALES_VALUE"));
   });
 
   it("throws 400 when unitPrice is negative", async () => {
     const service = new SalesService(makeRepo(), makePrisma());
-    await expect(service.create({ type: "TICKET", quantity: 1, unitPrice: -100, saleDate: "2026-08-05" } as any, 1))
+    await expect(service.create({ type: "TICKET", quantity: 1, unitPrice: -100, saleDate: "2026-08-05" } as any, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1"))
       .rejects.toThrow(new AppError(400, "NEGATIVE_SALES_VALUE"));
   });
 
@@ -36,7 +36,7 @@ describe("SalesService.create", () => {
       $transaction: jest.fn().mockImplementation((fn) => fn(mockTx)),
     } as any);
     const service = new SalesService(makeRepo(), prisma);
-    await service.create({ type: "UNIFORM", quantity: 3, unitPrice: 50000, saleDate: "2026-08-05" } as any, 1);
+    await service.create({ type: "UNIFORM", quantity: 3, unitPrice: 50000, saleDate: "2026-08-05" } as any, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1");
     expect(mockTx.salesRecord.create).toHaveBeenCalledWith(
       expect.objectContaining({ data: expect.objectContaining({ totalAmount: 150000 }) }),
     );
@@ -86,7 +86,7 @@ describe("SalesService.create — COMPLIMENTARY limit (BS6)", () => {
     await expect(
       service.create(
         { type: "COMPLIMENTARY", quantity: 1, unitPrice: 0, matchId: 42, saleDate: "2026-08-05", description: "VIP guest" } as any,
-        1,
+        "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1",
       ),
     ).rejects.toThrow(new AppError(400, "COMPLIMENTARY_LIMIT_EXCEEDED"));
   });
@@ -100,7 +100,7 @@ describe("SalesService.create — COMPLIMENTARY limit (BS6)", () => {
     await expect(
       service.create(
         { type: "COMPLIMENTARY", quantity: 1, unitPrice: 0, matchId: 42, saleDate: "2026-08-05", description: "VIP guest" } as any,
-        1,
+        "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1",
       ),
     ).resolves.toBeDefined();
   });
@@ -131,7 +131,7 @@ describe("SalesService.create — SeatZone soldCount (BS10)", () => {
     const service = new SalesService(makeRepo(), prisma);
     await service.create(
       { type: "TICKET", quantity: 2, unitPrice: 30000, matchId: 10, seatZoneId: 7, saleDate: "2026-08-05" } as any,
-      1,
+      "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1",
     );
     expect(mockTx.seatZone.update).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -164,7 +164,7 @@ describe("SalesService.create — SeatZone soldCount (BS10)", () => {
     const service = new SalesService(makeRepo(), prisma);
     await service.create(
       { type: "TICKET", quantity: 1, unitPrice: 30000, matchId: 10, saleDate: "2026-08-05" } as any,
-      1,
+      "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1",
     );
     expect(mockTx.seatZone.update).not.toHaveBeenCalled();
   });
@@ -186,7 +186,7 @@ describe("SalesService.delete — SeatZone soldCount (BS10)", () => {
       $transaction: jest.fn().mockImplementation((fn) => fn(mockTx)),
     } as any);
     const service = new SalesService(makeRepo(), prisma);
-    await service.delete(10, 1);
+    await service.delete(10, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1");
     expect(mockTx.seatZone.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: 3 },
@@ -209,7 +209,7 @@ describe("SalesService.delete — SeatZone soldCount (BS10)", () => {
       $transaction: jest.fn().mockImplementation((fn) => fn(mockTx)),
     } as any);
     const service = new SalesService(makeRepo(), prisma);
-    await service.delete(11, 1);
+    await service.delete(11, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1");
     expect(mockTx.seatZone.update).not.toHaveBeenCalled();
   });
 });
@@ -230,7 +230,7 @@ describe("SalesService.delete — REFUNDED status (BS8)", () => {
       $transaction: jest.fn().mockImplementation((fn) => fn(mockTx)),
     } as any);
     const service = new SalesService(makeRepo(), prisma);
-    await service.delete(20, 5);
+    await service.delete(20, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa5");
     expect(mockTx.salesRecord.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: 20 },
@@ -256,7 +256,7 @@ describe("SalesService.delete — double-cancel protection", () => {
       $transaction: jest.fn().mockImplementation((fn) => fn(mockTx)),
     } as any);
     const service = new SalesService(makeRepo(), prisma);
-    await expect(service.delete(50, 1)).rejects.toThrow(new AppError(400, "ALREADY_CANCELLED"));
+    await expect(service.delete(50, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1")).rejects.toThrow(new AppError(400, "ALREADY_CANCELLED"));
     // must NOT have attempted the soft-delete update or soldCount decrement
     expect(mockTx.salesRecord.update).not.toHaveBeenCalled();
     expect(mockTx.seatZone.update).not.toHaveBeenCalled();
@@ -275,7 +275,7 @@ describe("SalesService.delete — double-cancel protection", () => {
       $transaction: jest.fn().mockImplementation((fn) => fn(mockTx)),
     } as any);
     const service = new SalesService(makeRepo(), prisma);
-    await expect(service.delete(999, 1)).rejects.toThrow(new AppError(404, "SALES_RECORD_NOT_FOUND"));
+    await expect(service.delete(999, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1")).rejects.toThrow(new AppError(404, "SALES_RECORD_NOT_FOUND"));
   });
 });
 
@@ -304,7 +304,7 @@ describe("SalesService.delete — reversal ledger entry (L1)", () => {
       $transaction: jest.fn().mockImplementation((fn: any) => fn(mockTx)),
     } as any);
     const service = new SalesService(makeRepo(), prisma);
-    await service.delete(10, 1);
+    await service.delete(10, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1");
     expect(ledgerCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -342,7 +342,7 @@ describe("SalesService.delete — reversal ledger entry (L1)", () => {
       $transaction: jest.fn().mockImplementation((fn: any) => fn(mockTx)),
     } as any);
     const service = new SalesService(makeRepo(), prisma);
-    await service.delete(20, 1);
+    await service.delete(20, "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1");
     expect(ledgerCreate).not.toHaveBeenCalled();
   });
 });
@@ -362,7 +362,7 @@ describe("SalesService.create — LedgerEntry for UNIFORM/OTHER (JO7)", () => {
     const service = new SalesService(makeRepo(), prisma);
     await service.create(
       { type: "UNIFORM", quantity: 2, unitPrice: 80000, saleDate: "2026-08-05" } as any,
-      1,
+      "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1",
     );
     expect(mockTx.ledgerEntry.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -389,7 +389,7 @@ describe("SalesService.create — LedgerEntry for UNIFORM/OTHER (JO7)", () => {
     const service = new SalesService(makeRepo(), prisma);
     await service.create(
       { type: "OTHER", quantity: 1, unitPrice: 5000, saleDate: "2026-08-05" } as any,
-      1,
+      "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaa1",
     );
     expect(mockTx.ledgerEntry.create).toHaveBeenCalledWith(
       expect.objectContaining({

@@ -21,7 +21,7 @@ export class SalesService {
     return this.repo.findByMatch(matchId);
   }
 
-  async create(dto: CreateSalesRecordDto, createdById: number) {
+  async create(dto: CreateSalesRecordDto, createdById: string) {
     if (dto.quantity <= 0) throw new AppError(400, "NEGATIVE_SALES_VALUE");
     if (dto.unitPrice < 0 || (dto.unitPrice === 0 && (dto.type as string) !== "COMPLIMENTARY")) {
       throw new AppError(400, "NEGATIVE_SALES_VALUE");
@@ -175,7 +175,7 @@ export class SalesService {
     return record;
   }
 
-  async createBatch(dtos: CreateSalesRecordDto[], createdById: number) {
+  async createBatch(dtos: CreateSalesRecordDto[], createdById: string) {
     if (dtos.length === 0) throw new AppError(400, "EMPTY_BATCH");
     if (dtos.length > 50) throw new AppError(400, "BATCH_TOO_LARGE");
 
@@ -261,7 +261,7 @@ export class SalesService {
   async update(
     id: number,
     dto: { quantity?: number; unitPrice?: number; saleDate?: string; description?: string | null },
-    updatedById: number,
+    updatedById: string,
   ) {
     const existing = await this.prisma.salesRecord.findUnique({ where: { id } });
     if (!existing || existing.deletedAt) throw new AppError(404, "SALES_RECORD_NOT_FOUND");
@@ -303,7 +303,7 @@ export class SalesService {
     });
   }
 
-  async delete(id: number, deletedById: number) {
+  async delete(id: number, deletedById: string) {
     await this.prisma.$transaction(async (tx) => {
       // Fetch existing record for seatZoneId/quantity needed for BS10 decrement
       const existing = await tx.salesRecord.findUnique({
@@ -382,7 +382,7 @@ export class SalesService {
   async createCancellation(
     originalId: number,
     dto: { quantity: number; saleDate: string; description?: string },
-    createdById: number,
+    createdById: string,
   ) {
     const original = await this.prisma.salesRecord.findUnique({ where: { id: originalId } });
     if (!original || original.deletedAt) throw new AppError(404, "SALES_RECORD_NOT_FOUND");

@@ -6,7 +6,7 @@ export interface CreateHiringDispatchDto {
   jobGrade: "INTERN" | "JUNIOR" | "ASSOCIATE" | "MANAGER" | "DIRECTOR" | "EXECUTIVE";
   employmentType: "FULL_TIME" | "PART_TIME" | "CONTRACT" | "INTERN" | "ADVISOR";
   departmentId: number;
-  reportsToUserId?: number;
+  reportsToUserId?: string;
   // BigInt over the wire — accept number or string; service converts.
   monthlySalary: number | string;
   startDate: string;

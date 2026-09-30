@@ -8,7 +8,7 @@ export class SoftwareLicenseService {
   findAll() { return this.repo.findAll(); }
   findById(id: number) { return this.repo.findById(id); }
 
-  create(dto: CreateSoftwareLicenseDto, createdById: number) {
+  create(dto: CreateSoftwareLicenseDto, createdById: string) {
     return this.repo.create({ ...dto, createdById });
   }
 

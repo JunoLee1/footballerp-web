@@ -3,7 +3,7 @@ import { AppError } from "../lib/appError";
 import { OpsReportRepository, OpsSnapshotData } from "./ops-report.repo";
 
 export interface NoticeUnreadDrillRow {
-  userId: number;
+  userId: string;
   name: string;
   unreadCount: number;
   unreadTitles: string[];
@@ -222,7 +222,7 @@ export class OpsReportService {
       }),
     ]);
     const userMap = new Map(users.map((u) => [u.id, u.nickname]));
-    const noticesByUser = new Map<number, string[]>();
+    const noticesByUser = new Map<string, string[]>();
     for (const n of notices) {
       const titles = noticesByUser.get(n.userId) ?? [];
       titles.push(n.title);

@@ -24,12 +24,12 @@ jest.mock("../../src/lib/hash", () => ({
   hashPassword: jest.fn().mockResolvedValue("hashed"),
 }));
 
-const HR_EXEC = 101;
-const DEPT_HEAD = 50;
+const HR_EXEC = "00000000-0000-4000-8000-000000000101";
+const DEPT_HEAD = "00000000-0000-4000-8000-000000000050";
 const DEPT_ID = 10;
 const APPLICATION_ID = 555;
 const DISPATCH_ID = 1;
-const NEW_USER_ID = 700;
+const NEW_USER_ID = "00000000-0000-4000-8000-000000000700";
 const PHONE_ID = 800;
 
 const makeDispatch = (overrides: Partial<any> = {}) => ({
@@ -50,7 +50,7 @@ const makeDispatch = (overrides: Partial<any> = {}) => ({
   permissionNotes: null,
   status: "DISPATCH_APPROVED" as const,
   createdUserId: null,
-  createdById: 999,
+  createdById: "00000000-0000-4000-8000-000000000999",
   createdAt: new Date(),
   updatedAt: new Date(),
   application: {
@@ -74,7 +74,7 @@ const makeDispatch = (overrides: Partial<any> = {}) => ({
     parentId: null,
     parent: null,
   },
-  createdBy: { id: 999, username: "hr", nickname: "HR" },
+  createdBy: { id: "00000000-0000-4000-8000-000000000999", username: "hr", nickname: "HR" },
   createdUser: null,
   reportsToUser: null,
   approvals: [],
@@ -90,7 +90,7 @@ const makeContract = (overrides: Partial<any> = {}) => ({
   fileName: null,
   signedFileUrl: null,
   signedFileName: null,
-  createdById: 999,
+  createdById: "00000000-0000-4000-8000-000000000999",
   issuedById: null,
   issuedAt: null,
   signedAt: null,
@@ -101,7 +101,7 @@ const makeContract = (overrides: Partial<any> = {}) => ({
   cancelReason: null,
   createdAt: new Date(),
   updatedAt: new Date(),
-  createdBy: { id: 999, username: "hr", nickname: "HR" },
+  createdBy: { id: "00000000-0000-4000-8000-000000000999", username: "hr", nickname: "HR" },
   issuedBy: null,
   signedConfirmedBy: null,
   cancelledBy: null,

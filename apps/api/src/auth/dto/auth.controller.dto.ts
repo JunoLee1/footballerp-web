@@ -1,7 +1,7 @@
 import { Role } from "../../generated/enums";
 
 export type ParamsDto = {
-  id: number;
+  id: string;
 };
 
 export type SignUpInputDto = {

@@ -12,7 +12,7 @@ export class ReportService {
   ) {}
 
   list(
-    userId: number,
+    userId: string,
     isGM: boolean,
     isHeadCoach: boolean = false,
     filters: { type?: string; status?: string } = {},
@@ -33,11 +33,11 @@ export class ReportService {
     return report;
   }
 
-  create(data: { authorId: number; type: string; title: string; content: string; fileUrl?: string; fileName?: string; departmentId?: number }) {
+  create(data: { authorId: string; type: string; title: string; content: string; fileUrl?: string; fileName?: string; departmentId?: number }) {
     return this.repo.create(data);
   }
 
-  async update(id: number, userId: number, data: { title?: string; content?: string; fileUrl?: string; fileName?: string }) {
+  async update(id: number, userId: string, data: { title?: string; content?: string; fileUrl?: string; fileName?: string }) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");
     if (report.authorId !== userId) throw new AppError(403, "FORBIDDEN");
@@ -45,7 +45,7 @@ export class ReportService {
     return this.repo.update(id, data);
   }
 
-  async submit(id: number, userId: number) {
+  async submit(id: number, userId: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");
     if (report.authorId !== userId) throw new AppError(403, "FORBIDDEN");
@@ -80,7 +80,7 @@ export class ReportService {
     return submitted;
   }
 
-  async confirmReview(reportId: number, reviewerDeptId: number, userId: number, comment?: string) {
+  async confirmReview(reportId: number, reviewerDeptId: number, userId: string, comment?: string) {
     const report = await this.repo.findById(reportId);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");
     if (report.status !== "REVIEWING") throw new AppError(409, "INVALID_STATUS");
@@ -96,7 +96,7 @@ export class ReportService {
     return result;
   }
 
-  async rejectReview(reportId: number, reviewerDeptId: number, userId: number, reason: string) {
+  async rejectReview(reportId: number, reviewerDeptId: number, userId: string, reason: string) {
     if (!reason?.trim()) throw new AppError(400, "REJECTION_REASON_REQUIRED");
 
     const report = await this.repo.findById(reportId);
@@ -123,7 +123,7 @@ export class ReportService {
     return result;
   }
 
-  async approve(id: number, reviewerId: number) {
+  async approve(id: number, reviewerId: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");
     if (report.authorId === reviewerId) throw new AppError(403, "SELF_APPROVAL_FORBIDDEN");
@@ -155,7 +155,7 @@ export class ReportService {
     return approved;
   }
 
-  async reject(id: number, reviewerId: number, reason: string) {
+  async reject(id: number, reviewerId: string, reason: string) {
     if (!reason?.trim()) throw new AppError(400, "REJECTION_REASON_REQUIRED");
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");

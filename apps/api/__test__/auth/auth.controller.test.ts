@@ -43,7 +43,7 @@ describe("AuthController - login", () => {
     } as unknown as Response;
     const next = jest.fn() as NextFunction;
 
-    authService.login.mockResolvedValue({ accessToken: "acc", refreshToken: "ref", userId: 1, teamId: 1 });
+    authService.login.mockResolvedValue({ accessToken: "acc", refreshToken: "ref", userId: "00000000-0000-4000-8000-000000000001", teamId: 1 });
 
     await controller.login(req, res, next);
     expect(res.status).toHaveBeenCalledWith(200);
@@ -84,15 +84,15 @@ describe("AuthController - me", () => {
 
   test("인증된 유저면 200과 유저 정보 반환", async () => {
     const req = {
-      user: { id: 1, role: "ADMIN" },
+      user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN" },
     } as unknown as Request;
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as unknown as Response;
     const next = jest.fn() as NextFunction;
 
-    authService.me.mockResolvedValue({ id: 1, email: "a@test.com", role: "ADMIN" });
+    authService.me.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000001", email: "a@test.com", role: "ADMIN" });
     await controller.me(req, res, next);
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ id: 1 }));
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ id: "00000000-0000-4000-8000-000000000001" }));
   });
 });
 
@@ -109,7 +109,7 @@ describe("AuthController - createUser", () => {
   });
 
   test("ADMIN이 아니면 403", async () => {
-    const req = { user: { id: 1, role: "PLAYER" }, body: {} } as unknown as Request;
+    const req = { user: { id: "00000000-0000-4000-8000-000000000001", role: "PLAYER" }, body: {} } as unknown as Request;
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as unknown as Response;
     const next = jest.fn() as NextFunction;
 
@@ -119,13 +119,13 @@ describe("AuthController - createUser", () => {
 
   test("성공시 201 반환", async () => {
     const req = {
-      user: { id: 1, role: "ADMIN" },
+      user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN" },
       body: { email: "new@test.com", role: "PLAYER" },
     } as unknown as Request;
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as unknown as Response;
     const next = jest.fn() as NextFunction;
 
-    authService.createUser.mockResolvedValue({ id: 2, email: "new@test.com" });
+    authService.createUser.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000002", email: "new@test.com" });
     await controller.createUser(req, res, next);
     expect(res.status).toHaveBeenCalledWith(201);
   });
@@ -162,7 +162,7 @@ describe("AuthController - gdprErasure", () => {
   });
 
   test("ADMIN이 아니면 403", async () => {
-    const req = { user: { id: 1, role: "PLAYER" }, params: { id: "2" } } as unknown as Request;
+    const req = { user: { id: "00000000-0000-4000-8000-000000000001", role: "PLAYER" }, params: { id: "2" } } as unknown as Request;
     const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as unknown as Response;
     const next = jest.fn() as NextFunction;
 
@@ -171,12 +171,12 @@ describe("AuthController - gdprErasure", () => {
   });
 
   test("성공시 결과 반환", async () => {
-    const req = { user: { id: 1, role: "ADMIN" }, params: { id: "2" } } as unknown as Request;
+    const req = { user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN" }, params: { id: "2" } } as unknown as Request;
     const res = { json: jest.fn() } as unknown as Response;
     const next = jest.fn() as NextFunction;
 
-    authService.gdprErasure.mockResolvedValue({ id: 2, email: "anon" });
+    authService.gdprErasure.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000002", email: "anon" });
     await controller.gdprErasure(req, res, next);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ id: 2 }));
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ id: "00000000-0000-4000-8000-000000000002" }));
   });
 });

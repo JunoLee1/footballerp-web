@@ -29,7 +29,7 @@ describe("MedicalExpenseService — youth auto payerType", () => {
     mockRepo.findPlayerLevel.mockResolvedValue("YOUTH");
 
     await service.create({
-      submittedById: 1,
+      submittedById: "00000000-0000-4000-8000-000000000001",
       receiptDate: new Date(),
       costCategory: "MEDICAL_TREATMENT",
       totalAmount: 50000,
@@ -46,7 +46,7 @@ describe("MedicalExpenseService — youth auto payerType", () => {
     mockRepo.findPlayerLevel.mockResolvedValue("SENIOR");
 
     await service.create({
-      submittedById: 1,
+      submittedById: "00000000-0000-4000-8000-000000000001",
       receiptDate: new Date(),
       costCategory: "MEDICAL_TREATMENT",
       totalAmount: 50000,
@@ -61,7 +61,7 @@ describe("MedicalExpenseService — youth auto payerType", () => {
 
   test("no playerId keeps submitted payerType without lookup", async () => {
     await service.create({
-      submittedById: 1,
+      submittedById: "00000000-0000-4000-8000-000000000001",
       receiptDate: new Date(),
       costCategory: "MEDICAL_TREATMENT",
       totalAmount: 50000,

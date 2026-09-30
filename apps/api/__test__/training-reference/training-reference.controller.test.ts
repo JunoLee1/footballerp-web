@@ -12,7 +12,7 @@ const controller = new TrainingReferenceController(mockService);
 
 const mockReq = (overrides: any) =>
   ({
-    user: { id: 1, role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null },
+    user: { id: "00000000-0000-4000-8000-000000000001", role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null },
     body: {},
     params: {},
     query: {},
@@ -40,7 +40,7 @@ describe("TrainingReferenceController - list", () => {
   });
 
   test("PLAYER role is forbidden → 403", async () => {
-    const req = mockReq({ user: { id: 2, role: "PLAYER" }, query: {} });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000002", role: "PLAYER" }, query: {} });
     const res = mockRes();
     await controller.list(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403 }));
@@ -60,7 +60,7 @@ describe("TrainingReferenceController - create", () => {
   });
 
   test("FRONT_OFFICE role is forbidden → 403", async () => {
-    const req = mockReq({ user: { id: 2, role: "FRONT_OFFICE", frontOfficeRole: "GM" }, body: {} });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000002", role: "FRONT_OFFICE", frontOfficeRole: "GM" }, body: {} });
     const res = mockRes();
     await controller.create(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403 }));

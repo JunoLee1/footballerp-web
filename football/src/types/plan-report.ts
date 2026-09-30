@@ -8,7 +8,7 @@ export interface PlanReport {
   title: string
   purpose: string
   departmentId: number
-  department: { id: number; name: string; headId: number | null }
+  department: { id: number; name: string; headId: string | null }
   startDate: string
   endDate: string
   budget: number
@@ -32,9 +32,9 @@ export interface PlanReport {
   approvedAt: string | null
   rejectedAt: string | null
   vaultPath: string | null
-  createdById: number
+  createdById: string
   createdBy: { id: number; username: string }
-  approvedById: number | null
+  approvedById: string | null
   approvedBy: { id: number; username: string } | null
   reviews: PlanReview[]
   createdAt: string
@@ -48,7 +48,7 @@ export interface PlanReview {
   reviewerDept: { id: number; name: string }
   status: ReviewStatus
   comment: string | null
-  confirmedById: number | null
+  confirmedById: string | null
   confirmedBy: { id: number; username: string } | null
   confirmedAt: string | null
   createdAt: string

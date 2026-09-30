@@ -10,7 +10,7 @@ export interface ProbationReview {
   reviewType: ProbationReviewType
   status: ProbationReviewStatus
   leaderAssessment: string | null
-  reviewedById: number | null
+  reviewedById: string | null
   reviewedAt: string | null
   createdAt: string
   updatedAt: string

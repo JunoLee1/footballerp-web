@@ -101,7 +101,7 @@ export const recruitmentApi = {
     api.patch(`/recruitment/applications/${appId}/reference-check`, data),
 
   // Onboarding
-  startOnboarding: (appId: number, userId: number): Promise<JobApplication> =>
+  startOnboarding: (appId: number, userId: string): Promise<JobApplication> =>
     api.post(`/recruitment/applications/${appId}/onboarding`, { userId }),
 
   verifyEmail: (appId: number, otp: string): Promise<JobApplication> =>

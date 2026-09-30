@@ -24,7 +24,7 @@ export class TacticalService {
     return analysis;
   }
 
-  async createAnalysis(dto: CreateAnalysisDto, createdById: number) {
+  async createAnalysis(dto: CreateAnalysisDto, createdById: string) {
     const match = await getPrisma().match.findUnique({
       where: { id: dto.matchId },
       select: { seasonId: true },
@@ -71,7 +71,7 @@ export class TacticalService {
     return this.repo.confirm(id);
   }
 
-  private async resolvePlayerId(userId: number): Promise<string> {
+  private async resolvePlayerId(userId: string): Promise<string> {
     const player = await getPrisma().player.findFirst({
       where: { userId },
       select: { id: true },
@@ -80,12 +80,12 @@ export class TacticalService {
     return player.id;
   }
 
-  async listForPlayer(userId: number) {
+  async listForPlayer(userId: string) {
     const playerId = await this.resolvePlayerId(userId);
     return this.repo.findAllForPlayer(playerId);
   }
 
-  async getByIdForPlayer(id: number, userId: number) {
+  async getByIdForPlayer(id: number, userId: string) {
     const playerId = await this.resolvePlayerId(userId);
     const analysis = await this.repo.findByIdForPlayer(id, playerId);
     if (!analysis) throw new AppError(404, "ANALYSIS_NOT_FOUND");

@@ -5,7 +5,7 @@ export interface AcademyFee {
   id: number
   playerId: string
   player: { id: string; playerName: string; teamId: number | null; status: string }
-  guardianId: number
+  guardianId: string
   guardian: { id: number; username: string }
   amount: number
   dueDate: string
@@ -37,7 +37,7 @@ export interface FeeReceipt {
 export interface YouthPlayerSearchResult {
   id: string
   playerName: string
-  guardianId: number | null
+  guardianId: string | null
   guardianUsername: string | null
 }
 

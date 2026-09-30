@@ -27,7 +27,7 @@ export class MatchSquadRepository {
     });
   }
 
-  confirmSquad(matchId: number, confirmedById: number) {
+  confirmSquad(matchId: number, confirmedById: string) {
     return this.prisma.matchSquad.updateMany({
       where: { matchId },
       data: { isConfirmed: true, confirmedAt: new Date(), confirmedById },

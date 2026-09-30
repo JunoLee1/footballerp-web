@@ -34,7 +34,7 @@ export class BudgetOverrideService {
 
   async requestOverride(
     seasonId: number,
-    actorUserId: number,
+    actorUserId: string,
     dto: OverrideRequestDto,
   ): Promise<{ id: number }> {
     const report = await this.prisma.financialReport.findUnique({
@@ -74,7 +74,7 @@ export class BudgetOverrideService {
 
   async reviewOverride(
     logId: number,
-    reviewerUserId: number,
+    reviewerUserId: string,
     decision: "APPROVED" | "REJECTED",
     note?: string,
   ): Promise<void> {

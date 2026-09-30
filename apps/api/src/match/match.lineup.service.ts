@@ -66,7 +66,7 @@ export class MatchLineupService {
     return this.repo.saveLineup(matchId, dto);
   }
 
-  async confirmLineup(matchId: number, confirmedById: number) {
+  async confirmLineup(matchId: number, confirmedById: string) {
     const lineup = await this.repo.findByMatch(matchId);
     if (!lineup) throw new AppError(404, "LINEUP_NOT_FOUND");
     const result = await this.repo.confirmLineup(matchId, confirmedById);

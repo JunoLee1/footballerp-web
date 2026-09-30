@@ -25,14 +25,14 @@ export class AdminService {
     return this.repo.findPlayersWithoutAccounts(nameFilter);
   }
 
-  async getUserById(id: number, isDemo: boolean = false) {
+  async getUserById(id: string, isDemo: boolean = false) {
     const user = await this.repo.findById(id);
     if (!user) throw new AppError(404, "USER_NOT_FOUND");
     if (!isDemo) return user;
     return applyUserMask(user);
   }
 
-  async updateUserRole(id: number, dto: UpdateUserRoleDto, requesterId: number, requesterRole?: string) {
+  async updateUserRole(id: string, dto: UpdateUserRoleDto, requesterId: string, requesterRole?: string) {
     if (id === requesterId) throw new AppError(403, "CANNOT_MODIFY_SELF");
     if (dto.role === "SUPER_ADMIN" && requesterRole !== "SUPER_ADMIN") {
       throw new AppError(403, "ONLY_SUPER_ADMIN_CAN_GRANT_SUPER_ADMIN");
@@ -50,7 +50,7 @@ export class AdminService {
     return this.repo.updateRole(id, dto.role, coachingRole, frontOfficeRole, dto.clubId);
   }
 
-  async deactivateUser(id: number, requesterId: number) {
+  async deactivateUser(id: string, requesterId: string) {
     if (id === requesterId) throw new AppError(403, "CANNOT_MODIFY_SELF");
 
     const user = await this.repo.findById(id);
@@ -61,7 +61,7 @@ export class AdminService {
     return result;
   }
 
-  async reactivateUser(id: number) {
+  async reactivateUser(id: string) {
     const user = await this.repo.findById(id);
     if (!user) throw new AppError(404, "USER_NOT_FOUND");
 
@@ -70,7 +70,7 @@ export class AdminService {
     return result;
   }
 
-  async deleteUser(id: number, requesterId: number) {
+  async deleteUser(id: string, requesterId: string) {
     if (id === requesterId) throw new AppError(403, "CANNOT_MODIFY_SELF");
 
     const user = await this.repo.findById(id);
@@ -96,7 +96,7 @@ export class AdminService {
     void invalidateUserActive(id).catch(console.error);
   }
 
-  async setDemoStatus(id: number, dto: SetDemoDto, requesterId: number) {
+  async setDemoStatus(id: string, dto: SetDemoDto, requesterId: string) {
     if (id === requesterId) throw new AppError(403, "CANNOT_MODIFY_SELF");
 
     const user = await this.repo.findById(id);
@@ -106,7 +106,7 @@ export class AdminService {
   }
 
   async getAuditLogs(
-    filters: { actorId?: number; action?: string; targetId?: string; from?: string; to?: string; page?: number; limit?: number },
+    filters: { actorId?: string; action?: string; targetId?: string; from?: string; to?: string; page?: number; limit?: number },
     isDemo: boolean = false,
   ) {
     const key = `admin:audit-logs:${JSON.stringify(filters)}`;

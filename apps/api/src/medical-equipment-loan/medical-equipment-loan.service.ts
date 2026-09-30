@@ -19,7 +19,7 @@ import type {
 const prisma = getPrisma();
 const notifRepo = new NotificationRepository(prisma);
 
-async function getUser(userId: number) {
+async function getUser(userId: string) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, role: true, coachingRole: true, nickname: true },
@@ -57,7 +57,7 @@ function notifyDirector(type: string, entityId: number, title: string, body: str
 // ─── 일반 대여 요청 ─────────────────────────────────────────────────────────
 
 export async function requestNormalLoan(
-  requestedById: number,
+  requestedById: string,
   dto: RequestNormalMedicalLoanDto
 ) {
   const user = await getUser(requestedById);
@@ -131,7 +131,7 @@ export async function requestNormalLoan(
 // ─── 응급 대여 요청 ─────────────────────────────────────────────────────────
 
 export async function requestEmergencyLoan(
-  requestedById: number,
+  requestedById: string,
   dto: RequestEmergencyMedicalLoanDto
 ) {
   const user = await getUser(requestedById);
@@ -195,7 +195,7 @@ export async function requestEmergencyLoan(
 
 export async function approveLoan(
   ledgerId: number,
-  approverId: number,
+  approverId: string,
   dto: ApproveMedicalLoanDto = {}
 ) {
   const approver = await getUser(approverId);
@@ -282,7 +282,7 @@ export async function approveLoan(
 
 export async function rejectLoan(
   ledgerId: number,
-  approverId: number,
+  approverId: string,
   dto: RejectMedicalLoanDto
 ) {
   const approver = await getUser(approverId);

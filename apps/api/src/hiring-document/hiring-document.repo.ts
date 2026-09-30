@@ -18,12 +18,12 @@ export interface CreateHiringDocumentData {
   fileUrl: string;
   fileName?: string;
   fileSize?: number;
-  uploadedById: number;
+  uploadedById: string;
 }
 
 export interface UpdateReviewData {
   status: HiringDocReviewStatus;
-  reviewerId: number;
+  reviewerId: string;
   reviewNotes: string | null;
 }
 

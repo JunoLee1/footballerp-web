@@ -23,7 +23,7 @@ export interface CreateEquipmentUnitDto {
 
 export interface UpdateUnitStatusDto {
   status: EquipmentUnitStatus;
-  disposedById?: number;
+  disposedById?: string;
   disposalNote?: string;
   disposedAt?: Date;
 }

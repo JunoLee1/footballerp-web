@@ -37,7 +37,7 @@ export function startWorkPermitExpiryCheckJob() {
         void notifRepo
           .createForStaff(
             win.notifType,
-            (locale: string) => ({
+            (locale?: string) => ({
               title: locale === "ko" ? "노동허가 만료 임박" : "Work Permit Expiry Warning",
               body: locale === "ko"
                 ? `${player.playerName} 선수의 노동허가가 ${daysLeft}일 후(${expiry.toLocaleDateString("ko-KR")}) 만료됩니다.`

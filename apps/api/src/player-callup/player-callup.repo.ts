@@ -56,7 +56,7 @@ export class PlayerCallupRepository {
     });
   }
 
-  create(dto: CreateCallupDto & { requestedById: number }) {
+  create(dto: CreateCallupDto & { requestedById: string }) {
     return this.prisma.playerCallup.create({
       data: {
         playerId: dto.playerId,
@@ -72,7 +72,7 @@ export class PlayerCallupRepository {
     });
   }
 
-  approve(id: number, approvedById: number) {
+  approve(id: number, approvedById: string) {
     return this.prisma.playerCallup.update({
       where: { id },
       data: { status: "APPROVED", approvedById },
@@ -80,7 +80,7 @@ export class PlayerCallupRepository {
     });
   }
 
-  reject(id: number, approvedById: number, rejectionReason: string) {
+  reject(id: number, approvedById: string, rejectionReason: string) {
     return this.prisma.playerCallup.update({
       where: { id },
       data: { status: "REJECTED", approvedById, rejectionReason },
@@ -127,7 +127,7 @@ export class PlayerCallupRepository {
     });
   }
 
-  findGuardianEmail(guardianId: number) {
+  findGuardianEmail(guardianId: string) {
     return this.prisma.user.findUnique({
       where: { id: guardianId },
       select: { email: true },

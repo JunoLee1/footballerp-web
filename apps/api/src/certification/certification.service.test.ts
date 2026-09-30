@@ -62,14 +62,16 @@ describe("CertificationService.submit", () => {
 });
 
 describe("CertificationService.approve", () => {
+  const APPROVER_ID = "22222222-2222-2222-2222-222222222222";
+
   it("throws 404 when cert not found", async () => {
-    await expect(makeService(makeRepo()).approve(1, 42))
+    await expect(makeService(makeRepo()).approve(1, APPROVER_ID))
       .rejects.toThrow(new AppError(404, "CERTIFICATION_NOT_FOUND"));
   });
 
   it("throws 409 when not in PENDING_REVIEW", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeRecord({ status: "DRAFT" })) });
-    await expect(makeService(repo).approve(1, 42))
+    await expect(makeService(repo).approve(1, APPROVER_ID))
       .rejects.toThrow(new AppError(409, "CERTIFICATION_NOT_PENDING"));
   });
 
@@ -78,15 +80,17 @@ describe("CertificationService.approve", () => {
       findById: jest.fn().mockResolvedValue(makeRecord({ status: "PENDING_REVIEW" })),
       approve:  jest.fn().mockResolvedValue(makeRecord({ status: "FM_APPROVED" })),
     });
-    await makeService(repo).approve(1, 42);
-    expect(repo.approve).toHaveBeenCalledWith(1, 42);
+    await makeService(repo).approve(1, APPROVER_ID);
+    expect(repo.approve).toHaveBeenCalledWith(1, APPROVER_ID);
   });
 });
 
 describe("CertificationService.gmApprove", () => {
+  const GM_APPROVER_ID = "33333333-3333-3333-3333-333333333333";
+
   it("throws 409 when not FM_APPROVED", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeRecord({ status: "PENDING_REVIEW" })) });
-    await expect(makeService(repo).gmApprove(1, 99))
+    await expect(makeService(repo).gmApprove(1, GM_APPROVER_ID))
       .rejects.toThrow(new AppError(409, "CERTIFICATION_NOT_FM_APPROVED"));
   });
 
@@ -95,8 +99,8 @@ describe("CertificationService.gmApprove", () => {
       findById:  jest.fn().mockResolvedValue(makeRecord({ status: "FM_APPROVED" })),
       gmApprove: jest.fn().mockResolvedValue(makeRecord({ status: "VALID", isLocked: true })),
     });
-    await makeService(repo).gmApprove(1, 99);
-    expect(repo.gmApprove).toHaveBeenCalledWith(1, 99);
+    await makeService(repo).gmApprove(1, GM_APPROVER_ID);
+    expect(repo.gmApprove).toHaveBeenCalledWith(1, GM_APPROVER_ID);
   });
 });
 

@@ -35,20 +35,25 @@ describe('runEquipmentOverdueReturnJob', () => {
       {
         id: 100,
         dueDate,
-        requestedById: 5,
-        approvedById: 10,
+        requestedById: "00000000-0000-4000-8000-000000000005",
+        approvedById: "00000000-0000-4000-8000-000000000010",
         equipmentItem: { name: '훈련화' },
       },
     ]);
-    repo.findEquipmentManagers.mockResolvedValue([{ id: 20 }, { id: 21 }]);
+    repo.findEquipmentManagers.mockResolvedValue([{ id: "00000000-0000-4000-8000-000000000020" }, { id: "00000000-0000-4000-8000-000000000021" }]);
 
     const result = await runEquipmentOverdueReturnJob(now, { repo, notifRepo });
 
     expect(result.notified).toBe(1);
     // 4 recipients: borrower(5) + approver(10) + managers(20, 21)
     expect(notifRepo.create).toHaveBeenCalledTimes(4);
-    const recipients = notifRepo.create.mock.calls.map((c: any[]) => c[0].userId).sort((a: number, b: number) => a - b);
-    expect(recipients).toEqual([5, 10, 20, 21]);
+    const recipients = notifRepo.create.mock.calls.map((c: any[]) => c[0].userId).sort();
+    expect(recipients).toEqual([
+      "00000000-0000-4000-8000-000000000005",
+      "00000000-0000-4000-8000-000000000010",
+      "00000000-0000-4000-8000-000000000020",
+      "00000000-0000-4000-8000-000000000021",
+    ]);
     expect(notifRepo.create).toHaveBeenCalledWith(
       expect.objectContaining({
         type: 'EQUIPMENT_RETURN_OVERDUE',
@@ -64,18 +69,21 @@ describe('runEquipmentOverdueReturnJob', () => {
       {
         id: 101,
         dueDate: new Date('2026-09-30T00:00:00Z'),
-        requestedById: 5,
+        requestedById: "00000000-0000-4000-8000-000000000005",
         approvedById: null,
         equipmentItem: { name: '공' },
       },
     ]);
-    repo.findEquipmentManagers.mockResolvedValue([{ id: 20 }]);
+    repo.findEquipmentManagers.mockResolvedValue([{ id: "00000000-0000-4000-8000-000000000020" }]);
 
     await runEquipmentOverdueReturnJob(new Date('2026-10-01T08:00:00Z'), { repo, notifRepo });
 
     expect(notifRepo.create).toHaveBeenCalledTimes(2);
-    const recipients = notifRepo.create.mock.calls.map((c: any[]) => c[0].userId).sort((a: number, b: number) => a - b);
-    expect(recipients).toEqual([5, 20]);
+    const recipients = notifRepo.create.mock.calls.map((c: any[]) => c[0].userId).sort();
+    expect(recipients).toEqual([
+      "00000000-0000-4000-8000-000000000005",
+      "00000000-0000-4000-8000-000000000020",
+    ]);
   });
 
   it('신청자가 매니저 겸직이어도 중복 발송 안 함', async () => {
@@ -83,16 +91,16 @@ describe('runEquipmentOverdueReturnJob', () => {
       {
         id: 102,
         dueDate: new Date('2026-09-30T00:00:00Z'),
-        requestedById: 20, // 매니저 겸직
+        requestedById: "00000000-0000-4000-8000-000000000020", // 매니저 겸직
         approvedById: null,
         equipmentItem: { name: '공' },
       },
     ]);
-    repo.findEquipmentManagers.mockResolvedValue([{ id: 20 }]);
+    repo.findEquipmentManagers.mockResolvedValue([{ id: "00000000-0000-4000-8000-000000000020" }]);
 
     await runEquipmentOverdueReturnJob(new Date('2026-10-01T08:00:00Z'), { repo, notifRepo });
 
     expect(notifRepo.create).toHaveBeenCalledTimes(1);
-    expect(notifRepo.create.mock.calls[0][0].userId).toBe(20);
+    expect(notifRepo.create.mock.calls[0][0].userId).toBe("00000000-0000-4000-8000-000000000020");
   });
 });

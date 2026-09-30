@@ -20,13 +20,13 @@ const controller = new CoachController(mockService);
 
 // PR #108 이후 역할 구조
 const user = {
-  admin:      { id: 1, role: "ADMIN",          coachingRole: null, frontOfficeRole: null },
-  superAdmin: { id: 2, role: "SUPER_ADMIN",     coachingRole: null, frontOfficeRole: null },
-  gm:         { id: 3, role: "GM",              coachingRole: null, frontOfficeRole: null },
-  td:         { id: 4, role: "FRONT_OFFICE",    coachingRole: null, frontOfficeRole: "TD" },
-  hr:         { id: 5, role: "FRONT_OFFICE",    coachingRole: null, frontOfficeRole: "HR_MANAGER" },
-  coaching:   { id: 6, role: "COACHING_STAFF",  coachingRole: "HEAD_COACH", frontOfficeRole: null },
-  player:     { id: 7, role: "PLAYER",          coachingRole: null, frontOfficeRole: null },
+  admin:      { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN",          coachingRole: null, frontOfficeRole: null },
+  superAdmin: { id: "00000000-0000-4000-8000-000000000002", role: "SUPER_ADMIN",     coachingRole: null, frontOfficeRole: null },
+  gm:         { id: "00000000-0000-4000-8000-000000000003", role: "GM",              coachingRole: null, frontOfficeRole: null },
+  td:         { id: "00000000-0000-4000-8000-000000000004", role: "FRONT_OFFICE",    coachingRole: null, frontOfficeRole: "TD" },
+  hr:         { id: "00000000-0000-4000-8000-000000000005", role: "FRONT_OFFICE",    coachingRole: null, frontOfficeRole: "HR_MANAGER" },
+  coaching:   { id: "00000000-0000-4000-8000-000000000006", role: "COACHING_STAFF",  coachingRole: "HEAD_COACH", frontOfficeRole: null },
+  player:     { id: "00000000-0000-4000-8000-000000000007", role: "PLAYER",          coachingRole: null, frontOfficeRole: null },
 };
 
 const mockReq = (overrides: any) =>

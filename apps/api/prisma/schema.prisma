@@ -916,7 +916,7 @@ model PhoneNumber {
 }
 
 model User {
-  id                Int              @id @default(autoincrement())
+  id                String           @id @default(uuid())
   email             String           @unique
   password          String
   username          String
@@ -1167,9 +1167,9 @@ model Player {
   status                            PlayerStatus     @default(ACTIVE)
   externalId                        String?          @unique
   nationalityId                     Int
-  userId                            Int?             @unique
-  agentId                           Int?
-  guardianId                        Int?
+  userId                            String?          @unique
+  agentId                           String?
+  guardianId                        String?
   agencyId                          Int?
   emergencyContactNameEncrypted     String?
   emergencyContactNameIv            String?
@@ -1246,7 +1246,7 @@ model Contract {
   status                  ContractStatus @default(ACTIVE)
   contractType            ContractType   @default(PROFESSIONAL)
   playerId                String
-  managedById             Int?
+  managedById             String?
   agencyId                Int?
   agencyCommission        Decimal?       @db.Decimal(12, 2)
 
@@ -1323,8 +1323,8 @@ model Recall {
   requestedAt   DateTime     @default(now())
   approvedAt    DateTime?
   transferId    Int          @unique
-  requestedById Int
-  approvedById  Int?
+  requestedById String
+  approvedById  String?
 
   transfer    Transfer @relation(fields: [transferId], references: [id])
   requestedBy User     @relation("RecallRequestedBy", fields: [requestedById], references: [id])
@@ -1348,10 +1348,10 @@ model TransferRequest {
   medicalNotes   String?
   registeredAt   DateTime?
 
-  requestedById Int
-  reviewedById  Int?
-  confirmedById Int?
-  rejectedById  Int?
+  requestedById String
+  reviewedById  String?
+  confirmedById String?
+  rejectedById  String?
 
   reviewedAt  DateTime?
   confirmedAt DateTime?
@@ -1374,7 +1374,7 @@ model TransferNegotiationLog {
   type              NegotiationType
   note              String
   amount            Int?
-  createdById       Int
+  createdById       String
   createdAt         DateTime        @default(now())
 
   transferRequest TransferRequest @relation(fields: [transferRequestId], references: [id])
@@ -1422,19 +1422,19 @@ model PartnerContract {
 }
 
 model EquipmentLoan {
-  id              Int                 @id @default(autoincrement())
-  status          EquipmentLoanStatus @default(REQUESTED)
-  requestedAt     DateTime            @default(now())
-  dueDate         DateTime
-  requestedById   Int
-  approvedById    Int?
-  issuedAt        DateTime?
-  returnedAt      DateTime?
-  returnNote      String?
-  notes           String?
-  equipmentItemId Int
-  equipmentUnitId Int?
-  clubId          Int?
+  id                Int                 @id @default(autoincrement())
+  status            EquipmentLoanStatus @default(REQUESTED)
+  requestedAt       DateTime            @default(now())
+  dueDate           DateTime
+  requestedById     String
+  approvedById      String?
+  issuedAt          DateTime?
+  returnedAt        DateTime?
+  returnNote        String?
+  notes             String?
+  equipmentItemId   Int
+  equipmentUnitId   Int?
+  clubId            Int?
   overdueNotifiedAt DateTime?
 
   requestedBy   User                        @relation("LoanRequestedBy", fields: [requestedById], references: [id])
@@ -1456,12 +1456,12 @@ model MedicalEquipmentLoanLedger {
   status MedicalEquipmentLoanStatus @default(DRAFT)
 
   // 요청자 / 승인자
-  requestedById   Int
+  requestedById   String
   requestedBy     User      @relation("MedLoanRequestedBy", fields: [requestedById], references: [id])
-  approvedById    Int?
+  approvedById    String?
   approvedBy      User?     @relation("MedLoanApprovedBy", fields: [approvedById], references: [id])
   approvedAt      DateTime?
-  rejectedById    Int?
+  rejectedById    String?
   rejectedBy      User?     @relation("MedLoanRejectedBy", fields: [rejectedById], references: [id])
   rejectedAt      DateTime?
   rejectionReason String?   @db.Text
@@ -1507,7 +1507,7 @@ model Injury {
   occurredAt         DateTime      @default(now())
   priorWeeklyLoad    Int?
   playerId           String
-  medicalStaffId     Int
+  medicalStaffId     String
   hospitalType       HospitalType?
   partnerId          Int?
   customHospitalName String?
@@ -1541,7 +1541,7 @@ model InjuryAssessment {
   modifierScore     Float
   totalScore        Float
   assessedAt        DateTime @default(now())
-  assessedById      Int
+  assessedById      String
 
   injury     Injury @relation(fields: [injuryId], references: [id], onDelete: Cascade)
   assessedBy User   @relation(fields: [assessedById], references: [id])
@@ -1759,8 +1759,8 @@ model TrainingSession {
   cancelledAt  DateTime?
   createdAt    DateTime    @default(now())
   seasonId     Int
-  createdById  Int
-  approvedById Int?
+  createdById  String
+  approvedById String?
   teamId       Int?
   targetLoad   Int?
   clubId       Int?
@@ -1802,7 +1802,7 @@ model TrainingResult {
   attendance       AttendanceStatus
   feedback         String?
   performanceScore Int?
-  scoredById       Int?
+  scoredById       String?
   sessionId        Int
   playerId         String
 
@@ -1823,7 +1823,7 @@ model TacticalAnalysis {
   createdAt        DateTime       @default(now())
   matchId          Int
   seasonId         Int
-  createdById      Int
+  createdById      String
 
   // PRE_MATCH
   opponentFormation     String?
@@ -1875,7 +1875,7 @@ model FormationSnapshot {
   minute       Int?
   formation    String
   changeReason String?
-  createdById  Int
+  createdById  String
   createdAt    DateTime @default(now())
 
   match     Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
@@ -1890,7 +1890,7 @@ model Notification {
   entityId  Int?
   readAt    DateTime?
   createdAt DateTime         @default(now())
-  userId    Int
+  userId    String
 
   user User @relation(fields: [userId], references: [id])
 }
@@ -1930,7 +1930,7 @@ model EquipmentUnit {
   nextInspectionDue      DateTime?
   lastSanitizedAt        DateTime?
   sanitationStatus       String?
-  disposedById           Int?
+  disposedById           String?
   disposedAt             DateTime?
   disposalNote           String?             @db.Text
   clubId                 Int?
@@ -1971,7 +1971,7 @@ model Prospect {
   currentMarketValue Int?
   playStyle          PlayStyle?
   createdAt          DateTime         @default(now())
-  createdById        Int?
+  createdById        String?
   visaRequired       Boolean          @default(false)
   visaEligibility    VisaEligibility?
   clubId             Int?
@@ -1991,7 +1991,7 @@ model ProspectNegotiationLog {
   type        NegotiationType
   note        String
   amount      Int?
-  createdById Int
+  createdById String
   createdAt   DateTime        @default(now())
 
   prospect  Prospect @relation(fields: [prospectId], references: [id])
@@ -2010,7 +2010,7 @@ model ProspectVideoEvaluation {
   pipelineData  Json?
   result        VideoEvalResult
   notes         String?
-  evaluatedById Int
+  evaluatedById String
   evaluatedAt   DateTime        @default(now())
 
   prospect    Prospect @relation(fields: [prospectId], references: [id])
@@ -2039,7 +2039,7 @@ model ProspectEvaluationLog {
   prospectId    Int
   type          EvaluationLogType
   note          String
-  evaluatedById Int
+  evaluatedById String
   evaluatedAt   DateTime          @default(now())
 
   prospect    Prospect @relation(fields: [prospectId], references: [id])
@@ -2050,7 +2050,7 @@ model ProspectEvaluationLog {
 
 model AuditLog {
   id        Int      @id @default(autoincrement())
-  actorId   Int
+  actorId   String
   action    String
   targetId  String?
   detail    String?
@@ -2088,17 +2088,17 @@ model Report {
   fileName        String?
   rejectionReason String?
 
-  authorId     Int
+  authorId     String
   author       User        @relation("ReportAuthor", fields: [authorId], references: [id])
-  reviewerId   Int?
+  reviewerId   String?
   reviewer     User?       @relation("ReportReviewer", fields: [reviewerId], references: [id])
   departmentId Int?
   department   Department? @relation(fields: [departmentId], references: [id], onDelete: SetNull)
 
-  firstReviewerId  Int?
+  firstReviewerId  String?
   firstReviewer    User?     @relation("ReportFirstReviewer", fields: [firstReviewerId], references: [id])
   firstReviewedAt  DateTime?
-  secondReviewerId Int?
+  secondReviewerId String?
   secondReviewer   User?     @relation("ReportSecondReviewer", fields: [secondReviewerId], references: [id])
   secondReviewedAt DateTime?
 
@@ -2145,9 +2145,9 @@ model MedicalExpense {
   fileName        String?
   rejectionReason String?
 
-  submittedById    Int
-  leaderReviewerId Int?
-  adminReviewerId  Int?
+  submittedById    String
+  leaderReviewerId String?
+  adminReviewerId  String?
 
   submittedAt      DateTime?
   leaderReviewedAt DateTime?
@@ -2198,14 +2198,14 @@ model InjuryReport {
 
   // 복귀 계획 3자 서명
   coachSignedAt     DateTime?
-  coachSignedById   Int?
+  coachSignedById   String?
   trainerSignedAt   DateTime?
-  trainerSignedById Int?
+  trainerSignedById String?
   medicalSignedAt   DateTime?
-  medicalSignedById Int?
+  medicalSignedById String?
 
-  createdById Int
-  updatedById Int?
+  createdById String
+  updatedById String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -2226,7 +2226,7 @@ model CoachHiringRound {
   budget            Int?
   notes             String?
   result            String?
-  createdById       Int
+  createdById       String
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
 
@@ -2245,7 +2245,7 @@ model Coach {
   isDeleted       Boolean          @default(false)
   packageLeadId   Int?
   hiringRoundId   Int?
-  userId          Int?             @unique
+  userId          String?          @unique
   teamId          Int?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
@@ -2345,8 +2345,8 @@ model PlayerSecondaryPosition {
 
 model CoachingStaffEvaluation {
   id          Int      @id @default(autoincrement())
-  staffUserId Int
-  evaluatorId Int
+  staffUserId String
+  evaluatorId String
   score       Int
   comment     String?
   evaluatedAt DateTime @default(now())
@@ -2359,7 +2359,7 @@ model CoachTutorAssignment {
   id                         Int                  @id @default(autoincrement())
   coachId                    Int
   type                       TutorType
-  internalTutorId            Int?
+  internalTutorId            String?
   externalName               String?
   externalContact            String?
   sessionCount               Int                  @default(0)
@@ -2374,11 +2374,11 @@ model CoachTutorAssignment {
 
 model CoachAvailability {
   id          Int      @id @default(autoincrement())
-  userId      Int
+  userId      String
   startDate   DateTime
   endDate     DateTime
   reason      String?
-  createdById Int
+  createdById String
   createdAt   DateTime @default(now())
 
   user      User @relation("CoachAvailabilityUser", fields: [userId], references: [id])
@@ -2412,7 +2412,7 @@ model TrainingLoad {
 model PlayerDevelopmentPlan {
   id         Int                         @id @default(autoincrement())
   playerId   String
-  coachId    Int
+  coachId    String
   seasonId   Int
   goals      String                      @db.Text
   notes      String?                     @db.Text
@@ -2435,7 +2435,7 @@ model TrainingVideo {
   url          String
   tags         String[]
   sessionType  SessionType?
-  uploadedById Int
+  uploadedById String
   createdAt    DateTime     @default(now())
   aiSummary    String?
 
@@ -2447,7 +2447,7 @@ model VideoAssignment {
   id           Int       @id @default(autoincrement())
   videoId      Int
   playerId     String
-  assignedById Int
+  assignedById String
   dueDate      DateTime?
   progressRate Int       @default(0)
   note         String?
@@ -2467,7 +2467,7 @@ model TrainingReference {
   url         String
   source      ReferenceSource
   tags        String[]
-  addedById   Int
+  addedById   String
   createdAt   DateTime        @default(now())
 
   addedBy User @relation(fields: [addedById], references: [id])
@@ -2497,9 +2497,9 @@ model YouthRegistration {
   birthDate             DateTime
   preferredJerseyNumber Int?
   teamId                Int
-  guardianId            Int?
+  guardianId            String?
   status                YouthRegistrationStatus @default(PENDING)
-  requestedById         Int
+  requestedById         String
   rejectionReason       String?
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
@@ -2513,8 +2513,8 @@ model GuardianInviteCode {
   id         Int       @id @default(autoincrement())
   code       String    @unique
   playerId   String
-  issuedById Int
-  usedById   Int?
+  issuedById String
+  usedById   String?
   expiresAt  DateTime
   usedAt     DateTime?
   createdAt  DateTime  @default(now())
@@ -2532,7 +2532,7 @@ model IncidentReport {
   matchId          Int?
   sessionId        Int?
   description      String               @db.Text
-  reportedById     Int
+  reportedById     String
   supervisorSigned Boolean              @default(false)
   medicalSigned    Boolean              @default(false)
   injuryId         Int?
@@ -2553,7 +2553,7 @@ model SafeguardReport {
   id            Int                   @id @default(autoincrement())
   description   String                @db.Text
   contactInfo   String?
-  accusedUserId Int?
+  accusedUserId String?
   status        SafeguardReportStatus @default(RECEIVED)
   resolvedNote  String?
   createdAt     DateTime              @default(now())
@@ -2565,7 +2565,7 @@ model SafeguardReport {
 model GrowthEvaluation {
   id                  Int       @id @default(autoincrement())
   playerId            String
-  coachId             Int
+  coachId             String
   planId              Int?
   year                Int
   month               Int
@@ -2592,7 +2592,7 @@ model GrowthEvaluation {
 model PlayerBadge {
   id        Int       @id @default(autoincrement())
   playerId  String
-  coachId   Int
+  coachId   String
   sessionId Int?
   badgeType BadgeType
   awardedAt DateTime  @default(now())
@@ -2608,8 +2608,8 @@ model PlayerCallup {
   playerId            String
   fromTeamId          Int
   toTeamId            Int
-  requestedById       Int
-  approvedById        Int?
+  requestedById       String
+  approvedById        String?
   reason              String
   rejectionReason     String?
   status              PlayerCallupStatus @default(REQUESTED)
@@ -2631,7 +2631,7 @@ model PlayerCallup {
 
 model LoginHistory {
   id        Int      @id @default(autoincrement())
-  userId    Int?
+  userId    String?
   email     String
   ip        String
   userAgent String
@@ -2646,7 +2646,7 @@ model LoginHistory {
 // TTL 은 애플리케이션 레벨에서 관리 (조회 시 6개월 필터, 배치로 오래된 row 삭제).
 model PasswordHistory {
   id           Int      @id @default(autoincrement())
-  userId       Int
+  userId       String
   passwordHash String
   createdAt    DateTime @default(now())
 
@@ -2674,7 +2674,7 @@ model MarketValueHistory {
   value        Float
   source       MarketValueSource
   recordedAt   DateTime          @default(now())
-  recordedById Int?
+  recordedById String?
   playerId     String
 
   player     Player @relation(fields: [playerId], references: [id])
@@ -2689,7 +2689,7 @@ model MatchSquad {
   playerId      String
   isConfirmed   Boolean   @default(false)
   confirmedAt   DateTime?
-  confirmedById Int?
+  confirmedById String?
   notifiedAt    DateTime?
 
   match       Match  @relation(fields: [matchId], references: [id])
@@ -2706,7 +2706,7 @@ model MatchLineup {
   formation     String
   isConfirmed   Boolean   @default(false)
   confirmedAt   DateTime?
-  confirmedById Int?
+  confirmedById String?
 
   match       Match        @relation(fields: [matchId], references: [id])
   confirmedBy User?        @relation("LineupConfirmations", fields: [confirmedById], references: [id])
@@ -2747,7 +2747,7 @@ enum FeeStatus {
 model AcademyFee {
   id                 Int            @id @default(autoincrement())
   playerId           String
-  guardianId         Int
+  guardianId         String
   amount             Int
   dueDate            DateTime
   status             FeeStatus      @default(PENDING)
@@ -2813,7 +2813,7 @@ model StaffRecord {
   isActive     Boolean     @default(true)
   terminatedAt DateTime?
   notes        String?
-  createdById  Int
+  createdById  String
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
 
@@ -2841,7 +2841,7 @@ model ProbationReview {
   reviewType       ProbationReviewType
   status           ProbationReviewStatus @default(PENDING)
   leaderAssessment String?
-  reviewedById     Int?
+  reviewedById     String?
   reviewedAt       DateTime?
   createdAt        DateTime              @default(now())
   updatedAt        DateTime              @updatedAt
@@ -2884,14 +2884,14 @@ model FinancialReport {
   // net income at closeSeason time, or manually overridden via
   // PATCH /financial-reports/:seasonId/carryover).
   carryOverFromPrev           Float                       @default(0)
-  carryOverOverriddenById     Int?
+  carryOverOverriddenById     String?
   carryOverOverriddenAt       DateTime?
   carryOverOverrideReason     String?
   // 편성 워크플로우 상태 머신 (spec 2026-08-29). FINALIZED 는 legacy 시즌 backfill.
   // BudgetPlanStatus 로 명명 (기존 PlanReport 의 PlanStatus enum 과 구분).
   planStatus                  BudgetPlanStatus            @default(FINALIZED)
   planStatusChangedAt         DateTime?
-  planStatusChangedById       Int?
+  planStatusChangedById       String?
   reviewOpenedAt              DateTime?
   reviewDeadline              DateTime?
   knapsackExecutedAt          DateTime?
@@ -2927,7 +2927,7 @@ model Department {
   updatedAt          DateTime                   @updatedAt
   category           DepartmentCategory?
   parentId           Int?
-  headId             Int?
+  headId             String?
   club               Club?                      @relation(fields: [clubId], references: [id])
   parent             Department?                @relation("DepartmentHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
   children           Department[]               @relation("DepartmentHierarchy")
@@ -2963,14 +2963,14 @@ enum PiiAccessStatus {
 
 model PiiAccessRequest {
   id           Int             @id @default(autoincrement())
-  targetUserId Int
-  requesterId  Int
+  targetUserId String
+  requesterId  String
   reason       String
   status       PiiAccessStatus @default(PENDING)
   grantedUntil DateTime?
   createdAt    DateTime        @default(now())
   reviewedAt   DateTime?
-  reviewedById Int?
+  reviewedById String?
 
   targetUser User  @relation("PiiTargets", fields: [targetUserId], references: [id])
   requester  User  @relation("PiiRequesters", fields: [requesterId], references: [id])
@@ -2985,7 +2985,7 @@ enum DeptRole {
 }
 
 model UserDepartment {
-  userId       Int
+  userId       String
   departmentId Int
   role         DeptRole      @default(MEMBER)
   jobTitleId   Int?
@@ -3059,7 +3059,7 @@ enum BudgetPlanRequestStatus {
 model BudgetPlanRequest {
   id                Int                     @id @default(autoincrement())
   financialReportId Int
-  requestedById     Int
+  requestedById     String
   scope             CategoryScope
   ownerType         String // "TEAM" | "DEPARTMENT" (denormalized for query)
   ownerId           Int // Team.id | Department.id
@@ -3149,10 +3149,10 @@ model BudgetOverrideLog {
   categoryId        Int
   amount            Int
   reason            String
-  createdById       Int
+  createdById       String
   createdAt         DateTime        @default(now())
   status            OverrideStatus  @default(PENDING)
-  reviewedById      Int?
+  reviewedById      String?
   reviewedAt        DateTime?
   reviewNote        String?
   financialReport   FinancialReport @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
@@ -3185,9 +3185,9 @@ model MandatoryMinimumChangeLog {
   reason         String
   effectiveDate  DateTime // 참고용 (계약 개시일 등 감사 기록)
   status         MinimumChangeStatus @default(PENDING)
-  proposedById   Int
+  proposedById   String
   proposedAt     DateTime            @default(now())
-  reviewedById   Int?
+  reviewedById   String?
   reviewedAt     DateTime?
   reviewNote     String?
 
@@ -3212,9 +3212,9 @@ model OperatingExpense {
   amount                     Int
   date                       DateTime
   note                       String?
-  createdById                Int
+  createdById                String
   paidAt                     DateTime?
-  paidById                   Int?
+  paidById                   String?
   createdAt                  DateTime                    @default(now())
   updatedAt                  DateTime                    @updatedAt
   deletedAt                  DateTime?
@@ -3222,14 +3222,14 @@ model OperatingExpense {
   accountCodeId              Int?
   status                     ExpenseStatus               @default(PENDING)
   budgetLineId               Int
-  firstApprovedById          Int?
+  firstApprovedById          String?
   firstApprovedAt            DateTime?
-  approvedById               Int?
+  approvedById               String?
   approvedAt                 DateTime?
-  rejectedById               Int?
+  rejectedById               String?
   rejectedAt                 DateTime?
   rejectionReason            String?
-  cancelledById              Int?
+  cancelledById              String?
   cancelledAt                DateTime?
   cancellationReason         String?
   departmentId               Int?
@@ -3262,8 +3262,8 @@ model BudgetHeader {
   name         String
   totalBudget  Int                @default(0)
   note         String?
-  createdById  Int
-  approvedById Int?
+  createdById  String
+  approvedById String?
   approvedAt   DateTime?
   createdAt    DateTime           @default(now())
   updatedAt    DateTime           @updatedAt
@@ -3303,9 +3303,9 @@ model BudgetAdjustment {
   toLineId       Int?
   reason         String
   status         AdjustmentStatus @default(PENDING)
-  approvedById   Int?
+  approvedById   String?
   approvedAt     DateTime?
-  createdById    Int
+  createdById    String
   createdAt      DateTime         @default(now())
   budgetHeader   BudgetHeader     @relation(fields: [budgetHeaderId], references: [id], onDelete: Cascade)
   createdBy      User             @relation("AdjustmentCreator", fields: [createdById], references: [id])
@@ -3383,8 +3383,8 @@ model JobPosting {
   description       String
   status            JobPostingStatus @default(DRAFT)
   externalJobId     String?
-  createdById       Int
-  approvedById      Int?
+  createdById       String
+  approvedById      String?
   approvedAt        DateTime?
   closedAt          DateTime?
   createdAt         DateTime         @default(now())
@@ -3416,10 +3416,10 @@ model JobApplication {
   rejectionReason     String?
   previousStatus      JobApplicationStatus?
   offeredAt           DateTime?
-  offeredById         Int?
+  offeredById         String?
   screeningResult     ScreeningResult       @default(PENDING)
   screeningNotes      String?
-  screenedById        Int?
+  screenedById        String?
   screenedAt          DateTime?
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
@@ -3449,7 +3449,7 @@ model JobApplicationOfferApproval {
   applicationId Int
   stage         JobApplicationOfferApprovalStage
   action        JobApplicationOfferApprovalAction
-  reviewerId    Int
+  reviewerId    String
   reason        String?
   createdAt     DateTime                          @default(now())
 
@@ -3483,7 +3483,7 @@ model Interview {
 model InterviewerScore {
   id            Int     @id @default(autoincrement())
   interviewId   Int
-  interviewerId Int
+  interviewerId String
   scoreSkill    Int?
   scoreComm     Int?
   scoreCulture  Int?
@@ -3512,7 +3512,7 @@ model Onboarding {
   id                 Int       @id @default(autoincrement())
   applicationId      Int?      @unique
   hiringDispatchId   Int?      @unique
-  userId             Int?      @unique
+  userId             String?   @unique
   otpCode            String
   otpExpiresAt       DateTime
   emailVerifiedAt    DateTime?
@@ -3549,8 +3549,8 @@ model OnboardingTemplate {
   departmentId Int      @unique
   name         String
   tasks        Json
-  createdById  Int
-  updatedById  Int?
+  createdById  String
+  updatedById  String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -3573,7 +3573,7 @@ model OnboardingTask {
   order                Int                  @default(0)
 
   selfReportedAt DateTime?
-  verifiedById   Int?
+  verifiedById   String?
   verifiedAt     DateTime?
   verifyNotes    String?
   skipReason     String?
@@ -3655,7 +3655,7 @@ model FacilityInspection {
   isStatutory       Boolean          @default(false)
   certificateUrl    String?
   statutoryDeadline DateTime?
-  inspectedById     Int
+  inspectedById     String
   inspectedAt       DateTime         @default(now())
   notes             String?
   createdAt         DateTime         @default(now())
@@ -3676,14 +3676,14 @@ model MaintenanceRequest {
   estimatedCost      Decimal?            @db.Decimal(12, 2)
   actualCost         Decimal?            @db.Decimal(12, 2)
   resolvedAt         DateTime?
-  approvedById       Int?
+  approvedById       String?
   approvedAt         DateTime?
-  gmApprovedById     Int?
+  gmApprovedById     String?
   gmApprovedAt       DateTime?
   rejectionReason    String?
   isLocked           Boolean             @default(false)
   financeSubmittedAt DateTime?
-  createdById        Int
+  createdById        String
   partnerId          Int?
   sourceScheduleId   Int?
   createdAt          DateTime            @default(now())
@@ -3715,10 +3715,10 @@ model Certification {
   notes           String?
   rejectionReason String?
 
-  ownerId        Int
-  approvedById   Int?
+  ownerId        String
+  approvedById   String?
   approvedAt     DateTime?
-  gmApprovedById Int?
+  gmApprovedById String?
   gmApprovedAt   DateTime?
 
   playerId     String?
@@ -3769,7 +3769,7 @@ model Sponsorship {
   contractEnd         DateTime
   paymentSchedule     PaymentSchedule
   attachedContractId  Int?
-  createdById         Int
+  createdById         String
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   exposureCount       Int?
@@ -3845,7 +3845,7 @@ model PayrollConfig {
 
 model StaffSalary {
   id            Int            @id @default(autoincrement())
-  userId        Int?
+  userId        String?
   staffRecordId Int?
   baseSalary    Decimal        @db.Decimal(12, 2)
   country       PayrollCountry
@@ -3879,9 +3879,9 @@ model PayrollRun {
   totalDeductions    Decimal          @db.Decimal(12, 2)
   netPay             Decimal          @db.Decimal(12, 2)
   status             PayrollRunStatus @default(DRAFT)
-  confirmedById      Int?
+  confirmedById      String?
   confirmedAt        DateTime?
-  secondApprovedById Int?
+  secondApprovedById String?
   secondApprovedAt   DateTime?
   isLocked           Boolean          @default(false)
   createdAt          DateTime         @default(now())
@@ -3903,7 +3903,7 @@ model UserInvite {
   frontOfficeRole FrontOfficeRole?
   expiresAt       DateTime
   usedAt          DateTime?
-  createdById     Int
+  createdById     String
   createdAt       DateTime         @default(now())
 
   createdBy User @relation("InviteSender", fields: [createdById], references: [id])
@@ -3921,7 +3921,7 @@ model SoftwareLicense {
   usedSeats   Int       @default(0)
   expiresAt   DateTime?
   renewalCost Decimal?  @db.Decimal(12, 2)
-  createdById Int
+  createdById String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -3945,7 +3945,7 @@ model LedgerEntry {
   accountCodeId Int?
   periodLocked  Boolean             @default(false)
   reversedById  Int?                @unique
-  createdById   Int
+  createdById   String
   createdAt     DateTime            @default(now())
 
   createdBy         User               @relation("LedgerEntryCreator", fields: [createdById], references: [id])
@@ -3959,7 +3959,7 @@ model LedgerPeriodLock {
   id         Int      @id @default(autoincrement())
   year       Int
   month      Int
-  lockedById Int
+  lockedById String
   lockedAt   DateTime @default(now())
 
   lockedBy User @relation("PeriodLockCreator", fields: [lockedById], references: [id])
@@ -3991,11 +3991,11 @@ model SalesRecord {
   seatZoneId         Int?
   status             SalesRecordStatus @default(COMPLETED)
   channel            SalesChannel?
-  createdById        Int
+  createdById        String
   createdAt          DateTime          @default(now())
   deletedAt          DateTime?
   updatedAt          DateTime          @updatedAt
-  updatedById        Int?
+  updatedById        String?
   ticketSerialNumber String?
   refundedFromId     Int?
 
@@ -4024,7 +4024,7 @@ model FacilityReservation {
   startTime    DateTime
   endTime      DateTime
   notes        String?
-  reservedById Int
+  reservedById String
   createdAt    DateTime     @default(now())
 
   reservedBy User @relation("FacilityReservations", fields: [reservedById], references: [id])
@@ -4143,7 +4143,7 @@ model SquadPlan {
   formation   String
   slots       Json
   updatedAt   DateTime @updatedAt
-  updatedById Int
+  updatedById String
 
   season    Season @relation(fields: [seasonId], references: [id])
   updatedBy User   @relation(fields: [updatedById], references: [id])
@@ -4163,8 +4163,8 @@ model AttendanceAppeal {
   reason           String           @db.Text
   status           AppealStatus     @default(PENDING)
   reviewNote       String?          @db.Text
-  createdById      Int
-  reviewedById     Int?
+  createdById      String
+  reviewedById     String?
   reviewedAt       DateTime?
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
@@ -4240,8 +4240,8 @@ model PlanReport {
   rejectedAt            DateTime?
   vaultPath             String?
   surveyId              Int?             @unique
-  createdById           Int
-  approvedById          Int?
+  createdById           String
+  approvedById          String?
   createdAt             DateTime         @default(now())
   updatedAt             DateTime         @updatedAt
 
@@ -4259,7 +4259,7 @@ model HiringNeedsSurvey {
   title       String
   deadlineAt  DateTime
   status      SurveyStatus @default(OPEN)
-  createdById Int
+  createdById String
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
@@ -4289,10 +4289,10 @@ model SurveyResponse {
   priority        SurveyPriority
   estimatedBudget Int?
   reason          String
-  submittedById   Int
+  submittedById   String
   status          SurveyResponseStatus @default(DRAFT)
   rejectionReason String?
-  approvedById    Int?
+  approvedById    String?
   approvedAt      DateTime?
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
@@ -4414,7 +4414,7 @@ model PlanReview {
   reviewerDeptId Int
   status         ReviewStatus @default(PENDING)
   comment        String?
-  confirmedById  Int?
+  confirmedById  String?
   confirmedAt    DateTime?
   createdAt      DateTime     @default(now())
 
@@ -4431,7 +4431,7 @@ model ReportReview {
   reviewerDeptId Int
   status         ReviewStatus @default(PENDING)
   comment        String?
-  confirmedById  Int?
+  confirmedById  String?
   confirmedAt    DateTime?
   createdAt      DateTime     @default(now())
 
@@ -4470,7 +4470,7 @@ model PreventiveSchedule {
 
 model FacilityAccessLog {
   id        Int          @id @default(autoincrement())
-  userId    Int
+  userId    String
   zone      FacilityZone
   action    String
   reason    String?
@@ -4482,8 +4482,8 @@ model FacilityAccessLog {
 model EquipmentDisposalVerification {
   id            Int                        @id @default(autoincrement())
   equipmentId   Int                        @unique
-  requestedById Int
-  verifiedById  Int?
+  requestedById String
+  verifiedById  String?
   verifiedAt    DateTime?
   photoUrl      String?
   checklistOk   Boolean                    @default(false)
@@ -4522,7 +4522,7 @@ model SponsorshipExposureEvent {
   fanReach      Int?
   mediaValue    Decimal?        @db.Decimal(15, 2)
   notes         String?         @db.Text
-  createdById   Int
+  createdById   String
   createdAt     DateTime        @default(now())
 
   sponsorship Sponsorship @relation(fields: [sponsorshipId], references: [id], onDelete: Cascade)
@@ -4537,7 +4537,7 @@ model PartnerContactLog {
   partnerId      Int
   channel        ContactChannel
   contactedAt    DateTime
-  actorId        Int
+  actorId        String
   summary        String         @db.Text
   nextActionDate DateTime?
   nextActionNote String?        @db.Text
@@ -4567,12 +4567,12 @@ model MonthlySettlementReport {
 
   note String? @db.Text
 
-  createdById        Int
-  firstSubmittedById Int?
+  createdById        String
+  firstSubmittedById String?
   firstSubmittedAt   DateTime?
-  firstApproverId    Int?
+  firstApproverId    String?
   firstApprovedAt    DateTime?
-  approverId         Int?
+  approverId         String?
   approvedAt         DateTime?
 
   createdAt DateTime @default(now())
@@ -4610,7 +4610,7 @@ model RevenueAdjustment {
   field             RevenueField
   delta             Int
   memo              String?
-  createdById       Int
+  createdById       String
   createdAt         DateTime     @default(now())
   ledgerEntryId     Int?         @unique
 
@@ -4632,7 +4632,7 @@ model FinancialReportRevenueLog {
   field             String
   oldValue          Float
   newValue          Float
-  changedById       Int
+  changedById       String
   createdAt         DateTime        @default(now())
   report            FinancialReport @relation(fields: [financialReportId], references: [id], onDelete: Cascade)
   changedBy         User            @relation("RevenueLogChanger", fields: [changedById], references: [id])
@@ -4670,7 +4670,7 @@ enum AssetRequestApprovalAction {
 
 model AssetRequest {
   id           Int                @id @default(autoincrement())
-  requesterId  Int
+  requesterId  String
   departmentId Int
   type         AssetRequestType
   status       AssetRequestStatus @default(DRAFT)
@@ -4720,7 +4720,7 @@ model AssetRequestApproval {
   assetRequestId Int
   stage          AssetRequestApprovalStage
   action         AssetRequestApprovalAction
-  reviewerId     Int
+  reviewerId     String
   reason         String?
   createdAt      DateTime                   @default(now())
 
@@ -4754,8 +4754,8 @@ model DepartmentDefaultAssetKit {
   departmentId             Int      @unique
   assetItems               Json // [{equipmentItemId, quantity, note?}]
   defaultExpenseCategoryId Int
-  createdById              Int
-  updatedById              Int?
+  createdById              String
+  updatedById              String?
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
 
@@ -4823,7 +4823,7 @@ model HiringDispatch {
   jobGrade              JobGrade
   employmentType        EmploymentType
   departmentId          Int
-  reportsToUserId       Int?
+  reportsToUserId       String?
   monthlySalary         BigInt
   startDate             DateTime
   targetRole            Role
@@ -4831,8 +4831,8 @@ model HiringDispatch {
   targetCoachingRole    CoachingRole?
   permissionNotes       String?
   status                HiringDispatchStatus @default(CREATED)
-  createdUserId         Int?                 @unique
-  createdById           Int
+  createdUserId         String?              @unique
+  createdById           String
   createdAt             DateTime             @default(now())
   updatedAt             DateTime             @updatedAt
   // Application-free path: required document types are declared directly on
@@ -4860,7 +4860,7 @@ model HiringDispatchApproval {
   dispatchId Int
   stage      HiringDispatchStage
   action     HiringDispatchAction
-  reviewerId Int
+  reviewerId String
   reason     String?
   createdAt  DateTime             @default(now())
 
@@ -4891,9 +4891,9 @@ model HiringDocument {
   fileName         String?
   fileSize         Int?
   status           HiringDocReviewStatus @default(PENDING)
-  uploadedById     Int
+  uploadedById     String
   uploadedAt       DateTime              @default(now())
-  reviewedById     Int?
+  reviewedById     String?
   reviewedAt       DateTime?
   reviewNotes      String?
   createdAt        DateTime              @default(now())
@@ -4931,13 +4931,13 @@ model EmployeeContract {
   signedFileUrl  String?
   signedFileName String?
 
-  createdById         Int
-  issuedById          Int?
+  createdById         String
+  issuedById          String?
   issuedAt            DateTime?
   signedAt            DateTime?
-  signedConfirmedById Int?
+  signedConfirmedById String?
   signedConfirmedAt   DateTime?
-  cancelledById       Int?
+  cancelledById       String?
   cancelledAt         DateTime?
   cancelReason        String?
 
@@ -4960,7 +4960,7 @@ model PlayerAcquisitionSurvey {
   status      SurveyStatus @default(OPEN)
   dueDate     DateTime?
   notes       String?
-  createdById Int
+  createdById String
   createdAt   DateTime     @default(now())
   closedAt    DateTime?
 
@@ -4973,7 +4973,7 @@ model PlayerAcquisitionSurvey {
 model PlayerAcquisitionSurveyResponse {
   id           Int       @id @default(autoincrement())
   surveyId     Int
-  respondentId Int
+  respondentId String
   submittedAt  DateTime?
   createdAt    DateTime  @default(now())
 

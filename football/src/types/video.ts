@@ -6,7 +6,7 @@ export interface TrainingVideo {
   url: string
   tags: string[]
   sessionType: SessionType | null
-  uploadedById: number
+  uploadedById: string
   createdAt: string
   aiSummary?: string | null
   uploader: { id: number; nickname: string }
@@ -17,7 +17,7 @@ export interface VideoAssignment {
   id: number
   videoId: number
   playerId: string
-  assignedById: number
+  assignedById: string
   dueDate: string | null
   progressRate: number
   note: string | null

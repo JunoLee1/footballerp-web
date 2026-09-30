@@ -15,7 +15,7 @@ export class GuardianService {
     private feeRepo: AcademyFeeRepository,
   ) {}
 
-  async linkBySearch(dto: LinkBySearchDto, guardianId: number) {
+  async linkBySearch(dto: LinkBySearchDto, guardianId: string) {
     const player = await this.repo.findPlayerBySearch(
       dto.studentCode,
       dto.playerName,
@@ -34,7 +34,7 @@ export class GuardianService {
     return this.repo.linkGuardianToPlayer(player.id, guardianId);
   }
 
-  async linkByCode(dto: LinkByCodeDto, guardianId: number) {
+  async linkByCode(dto: LinkByCodeDto, guardianId: string) {
     const record = await this.repo.findInviteCode(dto.code);
     if (!record) throw new AppError(404, "INVALID_CODE");
     if (record.usedAt !== null) throw new AppError(409, "CODE_ALREADY_USED");
@@ -46,7 +46,7 @@ export class GuardianService {
     ]);
   }
 
-  async issueInviteCode(dto: IssueInviteCodeDto, issuedById: number) {
+  async issueInviteCode(dto: IssueInviteCodeDto, issuedById: string) {
     const existing = await this.repo.findActiveInviteCode(dto.playerId);
     if (existing) return existing;
 
@@ -55,7 +55,7 @@ export class GuardianService {
     return this.repo.createInviteCode({ code, playerId: dto.playerId, issuedById, expiresAt });
   }
 
-  async getChildren(guardianId: number) {
+  async getChildren(guardianId: string) {
     return this.repo.findChildrenByGuardian(guardianId);
   }
 

@@ -3,7 +3,7 @@ import { Role, CoachingRole, FrontOfficeRole } from "../generated/enums";
 declare global {
   namespace Express {
     interface User {
-      id: number;
+      id: string;
       role: Role;
       coachingRole: CoachingRole | null | undefined;
       frontOfficeRole: FrontOfficeRole | null | undefined;

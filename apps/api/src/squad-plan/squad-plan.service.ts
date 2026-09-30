@@ -9,7 +9,7 @@ export class SquadPlanService {
     return this.repo.findBySeasonId(seasonId);
   }
 
-  async save(dto: SaveSquadPlanDto, updatedById: number) {
+  async save(dto: SaveSquadPlanDto, updatedById: string) {
     if (!dto.seasonId || typeof dto.seasonId !== "number") {
       throw new AppError(400, "INVALID_SEASON_ID");
     }

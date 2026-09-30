@@ -28,7 +28,7 @@ export interface ContractSummary {
   endDate: string
   salary: number
   status: ContractStatus
-  managedById: number | null
+  managedById: string | null
 }
 
 export interface ContractSummaryWithPlayer extends ContractSummary {

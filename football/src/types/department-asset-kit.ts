@@ -22,8 +22,8 @@ export interface DepartmentAssetKit {
   departmentId: number
   assetItems: DepartmentAssetKitItem[]
   defaultExpenseCategoryId: number
-  createdById: number
-  updatedById: number | null
+  createdById: string
+  updatedById: string | null
   createdAt: string
   updatedAt: string
 

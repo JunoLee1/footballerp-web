@@ -32,7 +32,7 @@ export const authApi = {
     }
   },
 
-  getLoginHistory: (userId?: number) =>
+  getLoginHistory: (userId?: string) =>
     api.get<LoginHistoryEntry[]>(userId ? `/auth/login-history/${userId}` : '/auth/login-history'),
 }
 

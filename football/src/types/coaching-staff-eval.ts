@@ -1,7 +1,7 @@
 export interface CoachingStaffEval {
   id: number
-  staffUserId: number
-  evaluatorId: number
+  staffUserId: string
+  evaluatorId: string
   score: number
   comment: string | null
   evaluatedAt: string

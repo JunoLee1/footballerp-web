@@ -220,7 +220,7 @@ describe("MedicalEquipmentLoanService", () => {
       mockClient.medicalEquipmentLoanLedger.findUnique.mockResolvedValue({
         id: 10,
         status: "DRAFT",
-        requestedById: 1,
+        requestedById: "00000000-0000-4000-8000-000000000001",
         equipmentLoanId: 100,
         finalCost: 50000,
         operatingExpenseId: null,
@@ -230,7 +230,7 @@ describe("MedicalEquipmentLoanService", () => {
       const { approveLoan } = await import(
         "../../src/medical-equipment-loan/medical-equipment-loan.service"
       );
-      await expect(approveLoan(10, 1)).rejects.toMatchObject({
+      await expect(approveLoan(10, "00000000-0000-4000-8000-000000000001")).rejects.toMatchObject({
         statusCode: 403, code: "SELF_APPROVAL_FORBIDDEN",
       });
     });
@@ -242,7 +242,7 @@ describe("MedicalEquipmentLoanService", () => {
       mockClient.medicalEquipmentLoanLedger.findUnique.mockResolvedValue({
         id: 10,
         status: "DRAFT",
-        requestedById: 1,
+        requestedById: "00000000-0000-4000-8000-000000000001",
         equipmentLoanId: 100,
         finalCost: 50000,
         operatingExpenseId: 5,
@@ -271,7 +271,7 @@ describe("MedicalEquipmentLoanService", () => {
       mockClient.medicalEquipmentLoanLedger.findUnique.mockResolvedValue({
         id: 11,
         status: "EMERGENCY_PENDING_POST_APPROVAL",
-        requestedById: 1,
+        requestedById: "00000000-0000-4000-8000-000000000001",
         equipmentLoanId: 101,
         finalCost: 30000,
         operatingExpenseId: null,
@@ -299,7 +299,7 @@ describe("MedicalEquipmentLoanService", () => {
       mockClient.medicalEquipmentLoanLedger.findUnique.mockResolvedValue({
         id: 11,
         status: "EMERGENCY_PENDING_POST_APPROVAL",
-        requestedById: 1,
+        requestedById: "00000000-0000-4000-8000-000000000001",
         equipmentLoanId: 101,
         equipmentLoan: { equipmentItem: { name: "부목" } },
       });

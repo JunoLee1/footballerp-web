@@ -26,14 +26,14 @@ export class DisposalRepository {
     });
   }
 
-  createVerification(equipmentId: number, requestedById: number) {
+  createVerification(equipmentId: number, requestedById: string) {
     return this.prisma.equipmentDisposalVerification.create({
       data: { equipmentId, requestedById },
       include: VERIFICATION_INCLUDE,
     });
   }
 
-  fmVerify(id: number, verifiedById: number, dto: FmVerifyDto) {
+  fmVerify(id: number, verifiedById: string, dto: FmVerifyDto) {
     return this.prisma.equipmentDisposalVerification.update({
       where: { id },
       data: {
@@ -67,7 +67,7 @@ export class DisposalRepository {
     });
   }
 
-  updateUnitDisposed(equipmentId: number, actorId: number) {
+  updateUnitDisposed(equipmentId: number, actorId: string) {
     return this.prisma.equipmentUnit.update({
       where: { id: equipmentId },
       data: {

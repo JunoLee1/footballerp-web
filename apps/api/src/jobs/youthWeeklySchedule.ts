@@ -32,7 +32,7 @@ export async function collectWeeklyScheduleByGuardian(
     select: { guardianId: true, teamId: true },
   });
 
-  const guardianMap = new Map<number, { sessions: typeof sessions; matches: typeof matches }>();
+  const guardianMap = new Map<string, { sessions: typeof sessions; matches: typeof matches }>();
 
   for (const player of players) {
     if (!player.guardianId) continue;

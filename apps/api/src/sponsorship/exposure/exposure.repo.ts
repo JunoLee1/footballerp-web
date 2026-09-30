@@ -8,7 +8,7 @@ const INCLUDE = {
 export class ExposureRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(sponsorshipId: number, data: CreateExposureEventDto & { createdById: number }) {
+  create(sponsorshipId: number, data: CreateExposureEventDto & { createdById: string }) {
     return this.prisma.sponsorshipExposureEvent.create({
       data: {
         sponsorshipId,

@@ -33,46 +33,46 @@ beforeEach(() => {
 
 describe("GET /applications/:id — SJ9 RBAC (controller)", () => {
   test("HR_MANAGER (FRONT_OFFICE + frontOfficeRole=HR_MANAGER) gets 200", async () => {
-    const app = buildApp({ id: 1, role: "FRONT_OFFICE", frontOfficeRole: "HR_MANAGER", coachingRole: null } as any);
+    const app = buildApp({ id: "00000000-0000-4000-8000-000000000001", role: "FRONT_OFFICE", frontOfficeRole: "HR_MANAGER", coachingRole: null } as any);
     const res = await (request as any).default(app).get("/applications/1");
     expect(res.status).not.toBe(403);
     expect([200, 404]).toContain(res.status);
   });
 
   test("ADMIN gets 200 (or 404 if not found — not 403)", async () => {
-    const app = buildApp({ id: 2, role: "ADMIN", frontOfficeRole: null, coachingRole: null } as any);
+    const app = buildApp({ id: "00000000-0000-4000-8000-000000000002", role: "ADMIN", frontOfficeRole: null, coachingRole: null } as any);
     const res = await (request as any).default(app).get("/applications/1");
     expect(res.status).not.toBe(403);
     expect([200, 404]).toContain(res.status);
   });
 
   test("SUPER_ADMIN gets 200 (or 404 if not found — not 403)", async () => {
-    const app = buildApp({ id: 3, role: "SUPER_ADMIN", frontOfficeRole: null, coachingRole: null } as any);
+    const app = buildApp({ id: "00000000-0000-4000-8000-000000000003", role: "SUPER_ADMIN", frontOfficeRole: null, coachingRole: null } as any);
     const res = await (request as any).default(app).get("/applications/1");
     expect(res.status).not.toBe(403);
     expect([200, 404]).toContain(res.status);
   });
 
   test("COACHING_STAFF (HEAD_COACH) gets 403 FORBIDDEN", async () => {
-    const app = buildApp({ id: 4, role: "COACHING_STAFF", frontOfficeRole: null, coachingRole: "HEAD_COACH" } as any);
+    const app = buildApp({ id: "00000000-0000-4000-8000-000000000004", role: "COACHING_STAFF", frontOfficeRole: null, coachingRole: "HEAD_COACH" } as any);
     const res = await (request as any).default(app).get("/applications/1");
     expect(res.status).toBe(403);
   });
 
   test("COACHING_STAFF without coachingRole gets 403 FORBIDDEN", async () => {
-    const app = buildApp({ id: 5, role: "COACHING_STAFF", frontOfficeRole: null, coachingRole: null } as any);
+    const app = buildApp({ id: "00000000-0000-4000-8000-000000000005", role: "COACHING_STAFF", frontOfficeRole: null, coachingRole: null } as any);
     const res = await (request as any).default(app).get("/applications/1");
     expect(res.status).toBe(403);
   });
 
   test("PLAYER gets 403 FORBIDDEN", async () => {
-    const app = buildApp({ id: 6, role: "PLAYER", frontOfficeRole: null, coachingRole: null } as any);
+    const app = buildApp({ id: "00000000-0000-4000-8000-000000000006", role: "PLAYER", frontOfficeRole: null, coachingRole: null } as any);
     const res = await (request as any).default(app).get("/applications/1");
     expect(res.status).toBe(403);
   });
 
   test("FRONT_OFFICE non-HR role (TD) gets 403 FORBIDDEN", async () => {
-    const app = buildApp({ id: 7, role: "FRONT_OFFICE", frontOfficeRole: "TD", coachingRole: null } as any);
+    const app = buildApp({ id: "00000000-0000-4000-8000-000000000007", role: "FRONT_OFFICE", frontOfficeRole: "TD", coachingRole: null } as any);
     const res = await (request as any).default(app).get("/applications/1");
     expect(res.status).toBe(403);
   });

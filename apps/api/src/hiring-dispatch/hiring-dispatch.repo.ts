@@ -76,7 +76,7 @@ const listInclude = {
 export class HiringDispatchRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(dto: CreateHiringDispatchDto, createdById: number) {
+  create(dto: CreateHiringDispatchDto, createdById: string) {
     return this.prisma.hiringDispatch.create({
       data: {
         // applicationId is optional — Application-free 임원 스카웃 / 즉시 계약직 case.
@@ -117,7 +117,7 @@ export class HiringDispatchRepository {
     });
   }
 
-  findByCreator(userId: number, status?: HiringDispatchStatus) {
+  findByCreator(userId: string, status?: HiringDispatchStatus) {
     return this.prisma.hiringDispatch.findMany({
       where: { createdById: userId, ...(status !== undefined && { status }) },
       include: listInclude,
@@ -167,7 +167,7 @@ export class HiringDispatchRepository {
 
   updateStatus(
     id: number,
-    patch: { status: HiringDispatchStatus; createdUserId?: number },
+    patch: { status: HiringDispatchStatus; createdUserId?: string },
     tx?: Tx,
   ) {
     const client = tx ?? this.prisma;
@@ -186,7 +186,7 @@ export class HiringDispatchRepository {
     data: {
       stage: HiringDispatchStage;
       action: HiringDispatchAction;
-      reviewerId: number;
+      reviewerId: string;
       reason?: string | null;
     },
     tx?: Tx,
@@ -236,7 +236,7 @@ export class HiringDispatchRepository {
     });
   }
 
-  createUserDepartment(data: { userId: number; departmentId: number }, tx?: Tx) {
+  createUserDepartment(data: { userId: string; departmentId: number }, tx?: Tx) {
     const client = tx ?? this.prisma;
     return client.userDepartment.create({
       data: { userId: data.userId, departmentId: data.departmentId, role: "MEMBER" },
@@ -250,7 +250,7 @@ export class HiringDispatchRepository {
       email: string;
       departmentId: number;
       startDate: Date;
-      createdById: number;
+      createdById: string;
       // #375: seed probation tracking so the D-7 cron notifier can find the
       // row. Both are required inputs — dispatch() always sets them.
       probationStartedAt: Date;
@@ -277,7 +277,7 @@ export class HiringDispatchRepository {
   }
 
   createOnboarding(
-    data: { hiringDispatchId: number; userId: number; otpCode: string; otpExpiresAt: Date },
+    data: { hiringDispatchId: number; userId: string; otpCode: string; otpExpiresAt: Date },
     tx?: Tx,
   ) {
     const client = tx ?? this.prisma;

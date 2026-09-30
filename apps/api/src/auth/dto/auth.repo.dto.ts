@@ -15,7 +15,7 @@ export type SignUpInputRepoDto = {
 };
 
 export type UpdateUserInputDTO = {
-  id: number;
+  id: string;
   username?: string;
   email?: string;
   password?: string;

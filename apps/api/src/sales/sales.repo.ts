@@ -19,7 +19,7 @@ export class SalesRepository {
     });
   }
 
-  create(data: CreateSalesRecordDto & { totalAmount: number; createdById: number }) {
+  create(data: CreateSalesRecordDto & { totalAmount: number; createdById: string }) {
     return this.prisma.salesRecord.create({
       data: {
         type: data.type as any,
@@ -35,7 +35,7 @@ export class SalesRepository {
     });
   }
 
-  update(id: number, data: { quantity?: number; unitPrice?: number; totalAmount?: number; saleDate?: Date; description?: string | null; updatedById: number }) {
+  update(id: number, data: { quantity?: number; unitPrice?: number; totalAmount?: number; saleDate?: Date; description?: string | null; updatedById: string }) {
     return this.prisma.salesRecord.update({ where: { id }, data: data as any });
   }
 

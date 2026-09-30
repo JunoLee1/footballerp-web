@@ -99,8 +99,8 @@ describe("DepartmentService", () => {
 });
 
 describe("DeptJobTitle", () => {
-  const adminActor = { id: 1, role: "ADMIN" };
-  const leaderActor = { id: 99, role: "FRONT_OFFICE" };
+  const adminActor = { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN" };
+  const leaderActor = { id: "00000000-0000-4000-8000-000000000099", role: "FRONT_OFFICE" };
 
   beforeEach(() => jest.clearAllMocks());
 
@@ -110,7 +110,7 @@ describe("DeptJobTitle", () => {
   });
 
   test("listJobTitles: 정상 반환", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: 99 });
+    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: "00000000-0000-4000-8000-000000000099" });
     mockRepo.findJobTitles.mockResolvedValue([{ id: 1, label: "과장" }]);
     const result = await service.listJobTitles(1);
     expect(result).toHaveLength(1);
@@ -118,13 +118,13 @@ describe("DeptJobTitle", () => {
   });
 
   test("createJobTitle: headId 아닌 actor면 403", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: 10 });
+    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: "00000000-0000-4000-8000-000000000010" });
     await expect(service.createJobTitle(1, "과장", undefined, leaderActor))
       .rejects.toMatchObject({ statusCode: 403 });
   });
 
   test("createJobTitle: admin이면 정상 생성", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: 10 });
+    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: "00000000-0000-4000-8000-000000000010" });
     mockRepo.createJobTitle.mockResolvedValue({ id: 1, label: "과장" });
     const result = await service.createJobTitle(1, "과장", undefined, adminActor);
     expect(mockRepo.createJobTitle).toHaveBeenCalledWith(1, "과장", undefined);
@@ -132,36 +132,36 @@ describe("DeptJobTitle", () => {
   });
 
   test("createJobTitle: 빈 label이면 400", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: 1 });
+    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: "00000000-0000-4000-8000-000000000001" });
     await expect(service.createJobTitle(1, "  ", undefined, adminActor))
       .rejects.toMatchObject({ statusCode: 400 });
   });
 
   test("deleteJobTitle: soft delete 실행", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: 1 });
+    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: "00000000-0000-4000-8000-000000000001" });
     mockRepo.findJobTitleById.mockResolvedValue({ id: 5, departmentId: 1, isActive: true });
     await service.deleteJobTitle(1, 5, adminActor);
     expect(mockRepo.deactivateJobTitle).toHaveBeenCalledWith(5);
   });
 
   test("deleteJobTitle: 다른 부서 직급이면 404", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: 1 });
+    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: "00000000-0000-4000-8000-000000000001" });
     mockRepo.findJobTitleById.mockResolvedValue({ id: 5, departmentId: 99, isActive: true });
     await expect(service.deleteJobTitle(1, 5, adminActor))
       .rejects.toMatchObject({ statusCode: 404 });
   });
 
   test("updateMemberJobTitle: 비활성 직급이면 400", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: 1 });
-    mockRepo.findMember.mockResolvedValue({ userId: 2, departmentId: 1, role: "MEMBER" });
+    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: "00000000-0000-4000-8000-000000000001" });
+    mockRepo.findMember.mockResolvedValue({ userId: "00000000-0000-4000-8000-000000000002", departmentId: 1, role: "MEMBER" });
     mockRepo.findJobTitleById.mockResolvedValue({ id: 9, departmentId: 1, isActive: false });
     await expect(service.updateMemberJobTitle(1, 2, 9, adminActor))
       .rejects.toMatchObject({ statusCode: 400 });
   });
 
   test("updateMemberJobTitle: null이면 직급 해제", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: 1 });
-    mockRepo.findMember.mockResolvedValue({ userId: 2, departmentId: 1, role: "MEMBER" });
+    mockRepo.findById.mockResolvedValue({ id: 1, name: "기획팀", headId: "00000000-0000-4000-8000-000000000001" });
+    mockRepo.findMember.mockResolvedValue({ userId: "00000000-0000-4000-8000-000000000002", departmentId: 1, role: "MEMBER" });
     await service.updateMemberJobTitle(1, 2, null, adminActor);
     expect(mockRepo.updateMemberJobTitle).toHaveBeenCalledWith(1, 2, null);
   });

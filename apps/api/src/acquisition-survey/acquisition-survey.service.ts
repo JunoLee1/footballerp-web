@@ -23,7 +23,7 @@ export class AcquisitionSurveyService {
     return survey;
   }
 
-  async create(dto: CreateAcquisitionSurveyDto, createdById: number) {
+  async create(dto: CreateAcquisitionSurveyDto, createdById: string) {
     const survey = await this.repo.create({ ...dto, createdById });
     void this.notify.notifyAcquisitionSurveyPublished(survey.id, survey.title).catch(console.error);
     return survey;
@@ -37,7 +37,7 @@ export class AcquisitionSurveyService {
     return closed;
   }
 
-  async submitResponse(surveyId: number, respondentId: number, items: SubmitAcquisitionSurveyResponseItemDto[]) {
+  async submitResponse(surveyId: number, respondentId: string, items: SubmitAcquisitionSurveyResponseItemDto[]) {
     const survey = await this.getById(surveyId);
     if (survey.status === "CLOSED") throw new AppError(409, "SURVEY_CLOSED");
     const existing = await this.repo.findResponse(surveyId, respondentId);

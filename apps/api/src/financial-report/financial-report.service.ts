@@ -29,7 +29,7 @@ export class FinancialReportService {
     private categoryService: ExpenseCategoryService,
   ) {}
 
-  async set(seasonId: number, totalRevenue: number, note?: string, breakdown?: RevenueBreakdownDto, changedById?: number) {
+  async set(seasonId: number, totalRevenue: number, note?: string, breakdown?: RevenueBreakdownDto, changedById?: string) {
     if (totalRevenue <= 0) throw new AppError(400, "INVALID_REVENUE");
     if (breakdown) {
       const breakdownSum = sumBreakdown(breakdown);
@@ -40,7 +40,7 @@ export class FinancialReportService {
     return this.repo.upsert(seasonId, totalRevenue, note, breakdown, changedById);
   }
 
-  async setBreakdown(seasonId: number, breakdown: RevenueBreakdownDto, note?: string, changedById?: number) {
+  async setBreakdown(seasonId: number, breakdown: RevenueBreakdownDto, note?: string, changedById?: string) {
     const total = sumBreakdown(breakdown);
     if (total <= 0) throw new AppError(400, "INVALID_REVENUE");
     return this.repo.upsert(seasonId, total, note, breakdown, changedById);
@@ -125,7 +125,7 @@ export class FinancialReportService {
     category: string,
     amount: number,
     reason: string,
-    createdById: number
+    createdById: string
   ) {
     const plan = await this.repo.getBudgetPlan(seasonId);
     if (!plan) throw new AppError(404, "FINANCIAL_REPORT_NOT_FOUND");
@@ -142,7 +142,7 @@ export class FinancialReportService {
     return this.repo.getPayrollByMonth(seasonId);
   }
 
-  async approveOverride(logId: number, reviewerId: number) {
+  async approveOverride(logId: number, reviewerId: string) {
     const log = await this.repo.findOverrideLog(logId);
     if (!log) throw new AppError(404, "OVERRIDE_LOG_NOT_FOUND");
     if (log.status !== "PENDING") throw new AppError(409, "ALREADY_REVIEWED");
@@ -150,7 +150,7 @@ export class FinancialReportService {
     return this.repo.approveOverrideLog(logId, reviewerId);
   }
 
-  async rejectOverride(logId: number, reviewerId: number, reviewNote: string) {
+  async rejectOverride(logId: number, reviewerId: string, reviewNote: string) {
     if (!reviewNote?.trim()) throw new AppError(400, "REVIEW_NOTE_REQUIRED");
     const log = await this.repo.findOverrideLog(logId);
     if (!log) throw new AppError(404, "OVERRIDE_LOG_NOT_FOUND");
@@ -452,7 +452,7 @@ export class FinancialReportService {
   async overrideCarryOver(
     seasonId: number,
     dto: { amount: number; reason: string },
-    userId: number,
+    userId: string,
   ) {
     if (!dto.reason?.trim()) throw new AppError(400, "REASON_REQUIRED");
     if (typeof dto.amount !== "number" || !Number.isFinite(dto.amount)) {

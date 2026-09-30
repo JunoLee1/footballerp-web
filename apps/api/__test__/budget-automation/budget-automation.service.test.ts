@@ -195,11 +195,11 @@ describe("BudgetAutomationService.apply", () => {
     const repo = makeRepo();
     await makeService(repo).apply(
       { ...baseRequest, name: "2026/27 예산안" },
-      5
+      "00000000-0000-4000-8000-000000000005"
     );
     const [headerData] = (repo.createHeaderWithLines as jest.Mock).mock.calls[0];
     expect(headerData.name).toBe("2026/27 예산안");
-    expect(headerData.createdById).toBe(5);
+    expect(headerData.createdById).toBe("00000000-0000-4000-8000-000000000005");
     expect(headerData.totalBudget).toBeGreaterThan(0);
   });
 });

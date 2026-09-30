@@ -54,12 +54,12 @@ export class AdminRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.user.findUnique({ where: { id }, select: USER_SELECT });
   }
 
   updateRole(
-    id: number,
+    id: string,
     role: Role,
     coachingRole: CoachingRole | null,
     frontOfficeRole: FrontOfficeRole | null,
@@ -72,7 +72,7 @@ export class AdminRepository {
     });
   }
 
-  setDeleted(id: number, isDeleted: boolean) {
+  setDeleted(id: string, isDeleted: boolean) {
     return this.prisma.user.update({
       where: { id },
       data: { isDeleted },
@@ -81,14 +81,14 @@ export class AdminRepository {
   }
 
 
-  getLinkedData(id: number) {
+  getLinkedData(id: string) {
     return this.prisma.user.findUnique({
       where: { id },
       select: LINKED_COUNT_SELECT,
     });
   }
 
-  setDemo(id: number, isDemo: boolean) {
+  setDemo(id: string, isDemo: boolean) {
     return this.prisma.user.update({
       where: { id },
       data: { isDemo },
@@ -96,7 +96,7 @@ export class AdminRepository {
     });
   }
 
-  async hardDelete(id: number): Promise<void> {
+  async hardDelete(id: string): Promise<void> {
     await this.prisma.user.delete({ where: { id } });
   }
 
@@ -114,7 +114,7 @@ export class AdminRepository {
   }
 
   listAuditLogs(filters: {
-    actorId?: number;
+    actorId?: string;
     action?: string;
     targetId?: string;
     from?: string;
@@ -150,7 +150,7 @@ export class AdminRepository {
     });
   }
 
-  countAuditLogs(filters: { actorId?: number; action?: string; targetId?: string; from?: string; to?: string }) {
+  countAuditLogs(filters: { actorId?: string; action?: string; targetId?: string; from?: string; to?: string }) {
     const where: Record<string, unknown> = {};
     if (filters.actorId) where["actorId"] = filters.actorId;
     if (filters.action) where["action"] = filters.action;

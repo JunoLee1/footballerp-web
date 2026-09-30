@@ -23,7 +23,7 @@ const CAT_TRAVEL = 3;
 
 const makeExpense = (over: Partial<any> = {}) => ({
   id: 999, seasonId: 1, categoryId: CAT_TRAVEL, amount: 100_000,
-  date: new Date(), note: null, createdById: 10, status: "PENDING",
+  date: new Date(), note: null, createdById: "00000000-0000-4000-8000-000000000010", status: "PENDING",
   budgetLineId: 1, createdAt: new Date(), updatedAt: new Date(),
   createdBy: { id: 10, username: "staff" },
   budgetLine: { id: 1, originalAmount: 500_000, expenseCategory: { code: "TRAVEL" } },
@@ -70,7 +70,7 @@ describe("OperatingExpenseRepository.createWithBudgetCheck (#474)", () => {
     amount: 100_000,
     date: new Date(),
     note: null,
-    createdById: 10,
+    createdById: "00000000-0000-4000-8000-000000000010",
     budgetLineId: 1,
   };
 

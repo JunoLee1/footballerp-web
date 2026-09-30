@@ -18,7 +18,7 @@ export class ReservationRepository {
     });
   }
 
-  create(data: { facilityZone: string; title: string; startTime: Date; endTime: Date; notes?: string; reservedById: number }) {
+  create(data: { facilityZone: string; title: string; startTime: Date; endTime: Date; notes?: string; reservedById: string }) {
     return this.prisma.facilityReservation.create({
       data: { ...data, facilityZone: data.facilityZone as any },
       include: { reservedBy: { select: { id: true, nickname: true } } },

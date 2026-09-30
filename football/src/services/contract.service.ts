@@ -23,7 +23,7 @@ export const contractApi = {
     startDate: string
     endDate: string
     salary: number
-    managedById?: number
+    managedById?: string
     signingBonus?: number
     signingBonusScheduledAt?: string
   }) => api.post<ContractCreateResult>('/contracts', payload),

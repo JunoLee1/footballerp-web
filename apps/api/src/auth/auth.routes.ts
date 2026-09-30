@@ -6,6 +6,7 @@ import { AuthService } from "./auth.service";
 import { AuthRepository } from "./auth.repo";
 import { getPrisma } from "../lib/prisma";
 import { loginLockoutMiddleware } from "../lib/loginRateLimit";
+import { requireUuidParam } from "../lib/uuidGuard";
 
 const router = Router();
 const repo = new AuthRepository(getPrisma());
@@ -45,12 +46,12 @@ router.post("/invites/:token/accept", controller.acceptInvite);
 
 // 로그인 이력 (ADMIN 전용)
 router.get("/login-history", auth, controller.loginHistory);
-router.get("/login-history/:userId", auth, controller.loginHistory);
+router.get("/login-history/:userId", auth, requireUuidParam("userId"), controller.loginHistory);
 
 // GDPR 삭제권 (ADMIN 전용)
-router.delete("/users/:id/gdpr-erasure", auth, controller.gdprErasure);
+router.delete("/users/:id/gdpr-erasure", auth, requireUuidParam("id"), controller.gdprErasure);
 
 // GDPR 데이터 내보내기 (ADMIN 또는 본인)
-router.get("/users/:id/gdpr-export", auth, controller.gdprExport);
+router.get("/users/:id/gdpr-export", auth, requireUuidParam("id"), controller.gdprExport);
 
 export default router;

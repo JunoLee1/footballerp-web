@@ -35,7 +35,7 @@ export class ProbationReviewService {
 
   async submit(
     staffRecordId: number,
-    reviewerId: number,
+    reviewerId: string,
     role: string,
     foRole: string | null | undefined,
     body: SubmitProbationReviewDto,
@@ -149,7 +149,7 @@ export class ProbationReviewService {
 
   async list(
     staffRecordId: number,
-    reviewerId: number,
+    reviewerId: string,
     role: string,
     foRole: string | null | undefined,
   ) {

@@ -3,7 +3,7 @@ import { PrismaClient } from "../generated/client";
 export class CoachingStaffEvalRepository {
   constructor(private prisma: PrismaClient) {}
 
-  listForStaff(staffUserId: number) {
+  listForStaff(staffUserId: string) {
     return this.prisma.coachingStaffEvaluation.findMany({
       where: { staffUserId },
       include: {
@@ -13,7 +13,7 @@ export class CoachingStaffEvalRepository {
     });
   }
 
-  create(staffUserId: number, evaluatorId: number, score: number, comment?: string) {
+  create(staffUserId: string, evaluatorId: string, score: number, comment?: string) {
     return this.prisma.coachingStaffEvaluation.create({
       data: { staffUserId, evaluatorId, score, comment: comment ?? null },
     });

@@ -95,7 +95,7 @@ describe("BudgetPlanRequestService.executeKnapsack (#403)", () => {
           id: 500,
           scope: "TEAM",
           ownerType: "TEAM",
-          ownerId: 7,
+          ownerId: "00000000-0000-4000-8000-000000000007",
           lines: [
             { categoryId: 1, triggers: ["HOME_MATCH"], standardDelta: 50_000, premiumDelta: 100_000 },
             { categoryId: 2, triggers: [], standardDelta: 0, premiumDelta: 0 },
@@ -157,7 +157,7 @@ describe("BudgetPlanRequestService.executeKnapsack (#403)", () => {
           id: 500,
           scope: "TEAM",
           ownerType: "TEAM",
-          ownerId: 7,
+          ownerId: "00000000-0000-4000-8000-000000000007",
           lines: [
             { categoryId: 1, triggers: ["HOME_MATCH"], standardDelta: 50_000, premiumDelta: 0 },
           ],
@@ -185,7 +185,7 @@ describe("BudgetPlanRequestService.executeKnapsack (#403)", () => {
           id: 500,
           scope: "TEAM",
           ownerType: "TEAM",
-          ownerId: 7,
+          ownerId: "00000000-0000-4000-8000-000000000007",
           lines: [
             { categoryId: 2, triggers: [], standardDelta: 0, premiumDelta: 0 },
           ],

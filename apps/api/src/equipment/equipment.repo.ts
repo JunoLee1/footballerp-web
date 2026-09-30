@@ -134,7 +134,7 @@ export class EquipmentRepository {
     });
   }
 
-  updateUnitStatus(id: number, status: EquipmentUnitStatus, disposalData?: { disposedById?: number; disposedAt?: Date; disposalNote?: string }) {
+  updateUnitStatus(id: number, status: EquipmentUnitStatus, disposalData?: { disposedById?: string; disposedAt?: Date; disposalNote?: string }) {
     return this.prisma.equipmentUnit.update({
       where: { id },
       data: {
@@ -216,7 +216,7 @@ export class EquipmentRepository {
     });
   }
 
-  findMyLoans(userId: number, actorClubId?: number) {
+  findMyLoans(userId: string, actorClubId?: number) {
     return this.prisma.equipmentLoan.findMany({
       where: { requestedById: userId, ...(actorClubId !== undefined ? { clubId: actorClubId } : {}) },
       select: LOAN_SELECT,
@@ -224,7 +224,7 @@ export class EquipmentRepository {
     });
   }
 
-  createLoan(requestedById: number, dto: CreateEquipmentLoanDto, actorClubId?: number) {
+  createLoan(requestedById: string, dto: CreateEquipmentLoanDto, actorClubId?: number) {
     return this.prisma.equipmentLoan.create({
       data: {
         requestedById,
@@ -237,7 +237,7 @@ export class EquipmentRepository {
     });
   }
 
-  hasActiveOverdueLoan(requestedById: number, now: Date = new Date()) {
+  hasActiveOverdueLoan(requestedById: string, now: Date = new Date()) {
     return this.prisma.equipmentLoan.findFirst({
       where: {
         requestedById,
@@ -278,7 +278,7 @@ export class EquipmentRepository {
 
   updateLoan(id: number, data: {
     status: EquipmentLoanStatus;
-    approvedById?: number;
+    approvedById?: string;
     equipmentUnitId?: number;
     issuedAt?: Date;
     returnedAt?: Date;
@@ -290,7 +290,7 @@ export class EquipmentRepository {
     });
   }
 
-  returnLoan(id: number, _returnedById: number, returnNote?: string) {
+  returnLoan(id: number, _returnedById: string, returnNote?: string) {
     // NOTE: returnedById 파라미터는 audit log 에서만 사용됨 (schema 에 필드 없음).
     return this.prisma.equipmentLoan.update({
       where: { id },

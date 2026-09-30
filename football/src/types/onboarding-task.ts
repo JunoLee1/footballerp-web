@@ -17,7 +17,7 @@ export interface OnboardingTask {
   status: OnboardingTaskStatus
   order: number
   selfReportedAt: string | null
-  verifiedById: number | null
+  verifiedById: string | null
   verifiedAt: string | null
   verifyNotes: string | null
   skipReason: string | null
@@ -34,7 +34,7 @@ export interface OnboardingTask {
 export interface OnboardingVerifyQueueRow extends OnboardingTask {
   onboarding: {
     id: number
-    userId: number | null
+    userId: string | null
     user: { id: number; username: string; nickname: string } | null
     hiringDispatch: { id: number; departmentId: number; candidateName: string } | null
   }

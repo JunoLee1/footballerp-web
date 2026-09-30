@@ -84,7 +84,7 @@ export class ProspectRepository {
     return links.map(l => l.league.countryId).filter((id): id is number => id != null);
   }
 
-  create(dto: CreateProspectDto, clubId?: number | null, createdById?: number, visaRequired?: boolean) {
+  create(dto: CreateProspectDto, clubId?: number | null, createdById?: string, visaRequired?: boolean) {
     return this.prisma.prospect.create({
       data: {
         name: dto.name,
@@ -188,7 +188,7 @@ export class ProspectRepository {
     });
   }
 
-  addNegotiationLog(id: number, dto: CreateProspectNegotiationLogDto, createdById: number) {
+  addNegotiationLog(id: number, dto: CreateProspectNegotiationLogDto, createdById: string) {
     return (this.prisma as any).prospectNegotiationLog.create({
       data: {
         prospectId: id,
@@ -211,7 +211,7 @@ export class ProspectRepository {
   addVideoEvaluation(
     prospectId: number,
     dto: CreateProspectVideoEvaluationDto,
-    evaluatedById: number,
+    evaluatedById: string,
     result: VideoEvalResult,
   ) {
     return this.prisma.prospectVideoEvaluation.create({
@@ -279,7 +279,7 @@ export class ProspectRepository {
   addEvaluationLog(
     prospectId: number,
     dto: CreateProspectEvaluationLogDto,
-    evaluatedById: number,
+    evaluatedById: string,
   ) {
     return this.prisma.prospectEvaluationLog.create({
       data: {

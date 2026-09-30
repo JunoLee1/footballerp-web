@@ -14,7 +14,7 @@ const mockEquipmentRepo = {
   findUnreturnedByPlayer: jest.fn(),
   findAssignmentById: jest.fn(),
   markReturned: jest.fn(),
-  findEquipmentManagers: jest.fn<() => Promise<{ id: number }[]>>().mockResolvedValue([{ id: 10 }]),
+  findEquipmentManagers: jest.fn<() => Promise<{ id: string }[]>>().mockResolvedValue([{ id: "00000000-0000-4000-8000-000000000010" }]),
 } as any;
 
 const mockNotificationRepo = {
@@ -41,7 +41,7 @@ describe("EquipmentService - adjustQuantity", () => {
     await service.adjustQuantity(1, { delta: 0 });
 
     expect(mockNotificationRepo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ type: "EQUIPMENT_LOW_STOCK", userId: 10 }),
+      expect.objectContaining({ type: "EQUIPMENT_LOW_STOCK", userId: "00000000-0000-4000-8000-000000000010" }),
     );
   });
 
@@ -131,7 +131,7 @@ describe("EquipmentService - transitionUnitStatus", () => {
     mockEquipmentRepo.findUnitById.mockResolvedValue({ id: 3, status: "MAINTENANCE", equipmentItemId: 1 });
     mockEquipmentRepo.updateUnitStatus.mockResolvedValue({ id: 3, status: "RETIRED", equipmentItemId: 1 });
 
-    const result = await service.transitionUnitStatus(3, { status: "RETIRED", disposedById: 99 });
+    const result = await service.transitionUnitStatus(3, { status: "RETIRED", disposedById: "00000000-0000-4000-8000-000000000099" });
 
     expect(result.status).toBe("RETIRED");
   });

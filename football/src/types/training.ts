@@ -21,7 +21,7 @@ export interface TrainingSession {
   sessionType: SessionType
   isApproved: boolean
   seasonId: number
-  createdById: number
+  createdById: string
 }
 
 export interface TrainingContent {
@@ -44,7 +44,7 @@ export interface TrainingResult {
 }
 
 export interface TrainingSessionDetail extends TrainingSession {
-  approvedById: number | null
+  approvedById: string | null
   contents: TrainingContent[]
   participants: TrainingParticipant[]
   results: TrainingResult[]

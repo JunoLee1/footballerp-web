@@ -4,7 +4,7 @@ import type { CreateBudgetHeaderDto, UpdateBudgetHeaderDto, CreateBudgetLineDto,
 export class BudgetControlRepository {
   constructor(private prisma: PrismaClient) {}
 
-  async createHeader(dto: CreateBudgetHeaderDto, createdById: number) {
+  async createHeader(dto: CreateBudgetHeaderDto, createdById: string) {
     // BudgetHeader @@unique([seasonId, version]) — 같은 시즌 재실행 시 version 자동 증가
     const latest = await this.prisma.budgetHeader.findFirst({
       where: { seasonId: dto.seasonId },
@@ -52,7 +52,7 @@ export class BudgetControlRepository {
     });
   }
 
-  updateStatus(id: number, status: "SUBMITTED" | "APPROVED" | "LOCKED", approverId?: number) {
+  updateStatus(id: number, status: "SUBMITTED" | "APPROVED" | "LOCKED", approverId?: string) {
     return this.prisma.budgetHeader.update({
       where: { id },
       data: {
@@ -86,7 +86,7 @@ export class BudgetControlRepository {
     return this.prisma.budgetLine.delete({ where: { id: lineId } });
   }
 
-  createAdjustment(budgetHeaderId: number, dto: CreateAdjustmentDto, createdById: number) {
+  createAdjustment(budgetHeaderId: number, dto: CreateAdjustmentDto, createdById: string) {
     return this.prisma.budgetAdjustment.create({
       data: { budgetHeaderId, ...dto, createdById },
       include: {
@@ -96,7 +96,7 @@ export class BudgetControlRepository {
     });
   }
 
-  updateAdjustmentStatus(id: number, status: "APPROVED" | "REJECTED", approverId: number) {
+  updateAdjustmentStatus(id: number, status: "APPROVED" | "REJECTED", approverId: string) {
     return this.prisma.budgetAdjustment.update({
       where: { id },
       data: {

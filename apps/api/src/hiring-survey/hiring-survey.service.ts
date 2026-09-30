@@ -27,7 +27,7 @@ export class HiringSurveyService {
     return survey
   }
 
-  async create(dto: CreateHiringSurveyDto, createdById: number) {
+  async create(dto: CreateHiringSurveyDto, createdById: string) {
     if (!dto.title?.trim()) throw new AppError(400, 'TITLE_REQUIRED')
     if (!dto.deadlineAt) throw new AppError(400, 'DEADLINE_REQUIRED')
     if (!dto.targetDeptIds?.length) throw new AppError(400, 'TARGET_DEPTS_REQUIRED')
@@ -45,12 +45,12 @@ export class HiringSurveyService {
    * head and a LEADER row doesn't get two notifications.
    */
   private async notifyTargetHeadsAndLeaders(
-    survey: { id: number; title: string; targetDepartments: Array<{ departmentId?: number; department: { id?: number; headId: number | null } }> },
+    survey: { id: number; title: string; targetDepartments: Array<{ departmentId?: number; department: { id?: number; headId: string | null } }> },
     deadlineAt: Date,
   ) {
     const headIds = survey.targetDepartments
       .map((t) => t.department.headId)
-      .filter((id): id is number => id !== null)
+      .filter((id): id is string => id !== null)
 
     const deptIds = survey.targetDepartments
       .map((t) => (t.departmentId ?? t.department.id))
@@ -58,7 +58,7 @@ export class HiringSurveyService {
     const leaderIds = await this.repo.findLeaderUserIdsForDepartments(deptIds)
 
     // Union — a LEADER who also happens to be the head shouldn't be notified twice
-    const recipients = Array.from(new Set<number>([...headIds, ...leaderIds]))
+    const recipients = Array.from(new Set<string>([...headIds, ...leaderIds]))
 
     const body = `"${survey.title}" 채용 수요 조사에 응답해 주세요. 마감일: ${deadlineAt.toLocaleDateString('ko-KR')}`
 
@@ -83,7 +83,7 @@ export class HiringSurveyService {
   async createResponse(
     surveyId: number,
     departmentId: number,
-    userId: number,
+    userId: string,
     dto: CreateSurveyResponseDto,
   ) {
     const survey = await this.getById(surveyId)
@@ -105,7 +105,7 @@ export class HiringSurveyService {
    * are locked — SUBMITTED belongs to the dept head's queue, APPROVED is
    * terminal (grill Q3 d2).
    */
-  async updateResponse(id: number, userId: number, dto: UpdateSurveyResponseDto) {
+  async updateResponse(id: number, userId: string, dto: UpdateSurveyResponseDto) {
     const response = await this.repo.findResponseById(id)
     if (!response) throw new AppError(404, 'RESPONSE_NOT_FOUND')
     if (response.survey.status !== 'OPEN') throw new AppError(409, 'SURVEY_NOT_OPEN')
@@ -139,7 +139,7 @@ export class HiringSurveyService {
    * 팀장 transitions DRAFT|REJECTED → SUBMITTED. On success fires
    * `SURVEY_RESPONSE_SUBMITTED` to the department head (부서장).
    */
-  async submitResponse(id: number, userId: number) {
+  async submitResponse(id: number, userId: string) {
     const response = await this.repo.findResponseById(id)
     if (!response) throw new AppError(404, 'RESPONSE_NOT_FOUND')
     if (response.survey.status !== 'OPEN') throw new AppError(409, 'SURVEY_NOT_OPEN')
@@ -183,7 +183,7 @@ export class HiringSurveyService {
    * 부서장 (Department.headId) approves a SUBMITTED response.
    * Fires `SURVEY_RESPONSE_APPROVED` back to the leader who submitted.
    */
-  async approveResponse(id: number, reviewerId: number) {
+  async approveResponse(id: number, reviewerId: string) {
     const response = await this.repo.findResponseById(id)
     if (!response) throw new AppError(404, 'RESPONSE_NOT_FOUND')
     if (response.department.headId !== reviewerId) throw new AppError(403, 'NOT_DEPT_HEAD')
@@ -253,7 +253,7 @@ export class HiringSurveyService {
    * Fires `SURVEY_RESPONSE_REJECTED` back to the leader with the reason.
    * The response returns to REJECTED status; leader can edit and resubmit.
    */
-  async rejectResponse(id: number, reviewerId: number, rejectionReason: string) {
+  async rejectResponse(id: number, reviewerId: string, rejectionReason: string) {
     const trimmed = rejectionReason?.trim()
     if (!trimmed) throw new AppError(400, 'REJECTION_REASON_REQUIRED')
 
@@ -299,7 +299,7 @@ export class HiringSurveyService {
     if (!dto.reason?.trim()) throw new AppError(400, 'REASON_REQUIRED')
   }
 
-  async close(surveyId: number, closedByUserId: number) {
+  async close(surveyId: number, closedByUserId: string) {
     const survey = await this.getById(surveyId)
     if (survey.status !== 'OPEN') throw new AppError(409, 'SURVEY_NOT_OPEN')
 
@@ -421,7 +421,7 @@ export class HiringSurveyService {
     title: string
     deadlineAt: Date
     targetDeptIds: number[]
-    systemUserId: number
+    systemUserId: string
   }) {
     if (!args.title?.trim()) throw new AppError(400, 'TITLE_REQUIRED')
     if (!args.deadlineAt) throw new AppError(400, 'DEADLINE_REQUIRED')
@@ -469,7 +469,7 @@ export class HiringSurveyService {
     };
   }
 
-  async autoCloseExpired(systemUserId: number) {
+  async autoCloseExpired(systemUserId: string) {
     const expired = await this.repo.findOpenPastDeadline()
     for (const survey of expired) {
       // With the APPROVED-all close guard, surveys with pending reviews will
@@ -496,7 +496,7 @@ export class HiringSurveyService {
       const unrespondedHeadIds = survey.targetDepartments
         .filter((t) => !respondedDeptIds.has(t.departmentId))
         .map((t) => t.department.headId)
-        .filter((id): id is number => id !== null)
+        .filter((id): id is string => id !== null)
 
       await Promise.all(
         unrespondedHeadIds.map((userId) =>

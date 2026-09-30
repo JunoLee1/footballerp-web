@@ -28,10 +28,10 @@ export interface Certification {
   reminderDays: number[];
   notes: string | null;
   rejectionReason: string | null;
-  ownerId: number;
-  approvedById: number | null;
+  ownerId: string;
+  approvedById: string | null;
   approvedAt: string | null;
-  gmApprovedById: number | null;
+  gmApprovedById: string | null;
   gmApprovedAt: string | null;
   owner: { id: number; username: string };
   player?: { id: string; playerName: string } | null;

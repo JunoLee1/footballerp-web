@@ -32,7 +32,7 @@ export class TrainingService {
     return session;
   }
 
-  async createSession(dto: CreateSessionDto, createdById: number, actorClubId?: number | null) {
+  async createSession(dto: CreateSessionDto, createdById: string, actorClubId?: number | null) {
     const sessionDate = new Date(dto.date);
     if (sessionDate > new Date()) {
       throw new AppError(400, "SESSION_DATE_FUTURE_NOT_ALLOWED");
@@ -54,7 +54,7 @@ export class TrainingService {
     return session;
   }
 
-  async approveSession(id: number, approvedById: number, actorClubId?: number | null) {
+  async approveSession(id: number, approvedById: string, actorClubId?: number | null) {
     const session = await this.repo.findById(id, actorClubId);
     if (!session) throw new AppError(404, "SESSION_NOT_FOUND");
     if (session.isApproved) throw new AppError(409, "ALREADY_APPROVED");
@@ -157,7 +157,7 @@ export class TrainingService {
     return result;
   }
 
-  async updateSession(id: number, data: { date?: string; goal?: string }, _updatedById: number, actorClubId?: number | null) {
+  async updateSession(id: number, data: { date?: string; goal?: string }, _updatedById: string, actorClubId?: number | null) {
     const session = await this.repo.findByIdWithTeam(id, actorClubId);
     if (!session) throw new AppError(404, "SESSION_NOT_FOUND");
     const updated = await this.repo.updateSession(id, data);
@@ -215,7 +215,7 @@ export class TrainingService {
     return result;
   }
 
-  async correctAttendance(resultId: number, adminId: number, attendance: string, reason: string) {
+  async correctAttendance(resultId: number, adminId: string, attendance: string, reason: string) {
     if (!reason?.trim()) throw new AppError(400, "REASON_REQUIRED");
     const result = await this.repo.findResultById(resultId);
     if (!result) throw new AppError(404, "RESULT_NOT_FOUND");

@@ -8,7 +8,7 @@ export class MonthlySettlementService {
     private prisma: PrismaClient,
   ) {}
 
-  async generate(seasonId: number, year: number, month: number, createdById: number) {
+  async generate(seasonId: number, year: number, month: number, createdById: string) {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 1);
 
@@ -108,7 +108,7 @@ export class MonthlySettlementService {
     return report;
   }
 
-  async submitFirst(id: number, userId: number) {
+  async submitFirst(id: number, userId: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "SETTLEMENT_NOT_FOUND");
     if (report.status !== "DRAFT") throw new AppError(400, "SETTLEMENT_NOT_DRAFT");
@@ -120,7 +120,7 @@ export class MonthlySettlementService {
     });
   }
 
-  async approveFirst(id: number, userId: number) {
+  async approveFirst(id: number, userId: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "SETTLEMENT_NOT_FOUND");
     if (report.status !== "PENDING_FIRST") throw new AppError(400, "SETTLEMENT_NOT_PENDING_FIRST");
@@ -132,7 +132,7 @@ export class MonthlySettlementService {
     });
   }
 
-  async approve(id: number, userId: number) {
+  async approve(id: number, userId: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "SETTLEMENT_NOT_FOUND");
     if (report.status !== "FIRST_APPROVED") throw new AppError(400, "SETTLEMENT_NOT_FIRST_APPROVED");

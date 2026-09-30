@@ -15,7 +15,7 @@ export const PLAN_STATUS_STYLE: Record<PlanStatus, string> = {
 export interface DevelopmentPlan {
   id: number
   playerId: string
-  coachId: number
+  coachId: string
   seasonId: number
   goals: string
   notes: string | null

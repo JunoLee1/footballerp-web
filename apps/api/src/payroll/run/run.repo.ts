@@ -38,7 +38,7 @@ export class RunRepository {
     });
   }
 
-  update(id: number, data: { status: "CONFIRMED"; confirmedById: number; confirmedAt: Date }) {
+  update(id: number, data: { status: "CONFIRMED"; confirmedById: string; confirmedAt: Date }) {
     return this.prisma.payrollRun.update({
       where: { id },
       data: {

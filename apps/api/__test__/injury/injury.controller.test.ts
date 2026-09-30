@@ -18,7 +18,7 @@ const controller = new InjuryController(mockService);
 
 const mockReq = (overrides: any) =>
   ({
-    user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+    user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null },
     body: {},
     params: {},
     query: {},
@@ -38,7 +38,7 @@ describe("InjuryController - getStats (MEDICAL_DIRECTOR)", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("ADMIN can access injury stats → 200", async () => {
-    const req = mockReq({ user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null } });
     const res = mockRes();
     await controller.getStats(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
@@ -47,7 +47,7 @@ describe("InjuryController - getStats (MEDICAL_DIRECTOR)", () => {
 
   test("MEDICAL_DIRECTOR can access injury stats → 200", async () => {
     const req = mockReq({
-      user: { id: 2, role: "COACHING_STAFF", coachingRole: "MEDICAL_DIRECTOR", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000002", role: "COACHING_STAFF", coachingRole: "MEDICAL_DIRECTOR", frontOfficeRole: null },
     });
     const res = mockRes();
     await controller.getStats(req, res, mockNext);
@@ -57,7 +57,7 @@ describe("InjuryController - getStats (MEDICAL_DIRECTOR)", () => {
 
   test("plain MEDICAL cannot access injury stats → 403", async () => {
     const req = mockReq({
-      user: { id: 3, role: "COACHING_STAFF", coachingRole: "MEDICAL", frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000003", role: "COACHING_STAFF", coachingRole: "MEDICAL", frontOfficeRole: null },
     });
     const res = mockRes();
     await controller.getStats(req, res, mockNext);
@@ -69,7 +69,7 @@ describe("InjuryController - getStats (MEDICAL_DIRECTOR)", () => {
 
   test("FRONT_OFFICE cannot access injury stats → 403", async () => {
     const req = mockReq({
-      user: { id: 4, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
+      user: { id: "00000000-0000-4000-8000-000000000004", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
     });
     const res = mockRes();
     await controller.getStats(req, res, mockNext);
@@ -105,7 +105,7 @@ describe("InjuryController - getByPlayer (TACTICAL_ANALYST 읽기 접근)", () =
 
   test("TACTICAL_ANALYST (FRONT_OFFICE) can read injuries → 200", async () => {
     const req = mockReq({
-      user: { id: 5, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
+      user: { id: "00000000-0000-4000-8000-000000000005", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TACTICAL_ANALYST" },
       params: { playerId: "player-uuid-1" },
     });
     const res = mockRes();

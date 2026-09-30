@@ -67,7 +67,7 @@ export class MandatoryMinimumService {
   async propose(
     categoryPlanId: number,
     dto: ProposeDto,
-    actorId: number,
+    actorId: string,
   ) {
     if (!dto.reason || dto.reason.trim().length === 0) {
       throw new AppError(400, "REASON_REQUIRED");
@@ -137,7 +137,7 @@ export class MandatoryMinimumService {
     logId: number,
     decision: ReviewDecision,
     note: string | undefined,
-    actorId: number,
+    actorId: string,
   ) {
     if (decision !== "APPROVED" && decision !== "REJECTED") {
       throw new AppError(400, "DECISION_MUST_BE_APPROVED_OR_REJECTED");

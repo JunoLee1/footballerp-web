@@ -24,7 +24,7 @@ export class TransferRequestService {
     return req;
   }
 
-  async create(dto: CreateTransferRequestDto, requestedById: number) {
+  async create(dto: CreateTransferRequestDto, requestedById: string) {
     const inProgress = await this.repo.hasInProgress(dto.playerId);
     if (inProgress) throw new AppError(409, "TRANSFER_REQUEST_IN_PROGRESS");
     return this.repo.create(dto, requestedById);
@@ -36,7 +36,7 @@ export class TransferRequestService {
     return this.repo.update(id, dto);
   }
 
-  async submit(id: number, userId: number) {
+  async submit(id: number, userId: string) {
     const req = await this.getById(id);
     if (req.status !== TransferRequestStatus.DRAFT) throw new AppError(409, "CANNOT_SUBMIT_NON_DRAFT");
     if (req.requestedBy.id !== userId) throw new AppError(403, "FORBIDDEN");
@@ -57,7 +57,7 @@ export class TransferRequestService {
     return result;
   }
 
-  async review(id: number, dto: ReviewTransferRequestDto, reviewedById: number) {
+  async review(id: number, dto: ReviewTransferRequestDto, reviewedById: string) {
     const req = await this.getById(id);
     if (req.status !== TransferRequestStatus.PENDING_APPROVAL) throw new AppError(409, "CANNOT_REVIEW_NON_PENDING");
     if (dto.action === "reject" && !dto.rejectReason?.trim()) throw new AppError(400, "REJECT_REASON_REQUIRED");
@@ -79,7 +79,7 @@ export class TransferRequestService {
     return result;
   }
 
-  async confirmStep(id: number, dto: ConfirmTransferRequestDto, confirmedById: number) {
+  async confirmStep(id: number, dto: ConfirmTransferRequestDto, confirmedById: string) {
     const req = await this.getById(id);
     if (req.status !== TransferRequestStatus.APPROVED) throw new AppError(409, "CANNOT_CONFIRM_NON_APPROVED");
     if (dto.action === "reject" && !dto.rejectReason?.trim()) throw new AppError(400, "REJECT_REASON_REQUIRED");
@@ -87,7 +87,7 @@ export class TransferRequestService {
       const result = await this.repo.sendToMedical(id);
       await this.notifRepo.createForMedicalStaff(
         "TRANSFER_MEDICAL_REQUIRED",
-        (lang: string) => ({
+        (lang?: string) => ({
           title: lang === "ko" ? "이적 메디컬 테스트 요청" : "Transfer Medical Test Required",
           body: lang === "ko" ? "이적 선수 메디컬 테스트를 진행해 주세요." : "Please conduct a medical test for the transfer candidate.",
         }),
@@ -99,7 +99,7 @@ export class TransferRequestService {
     await this.notifRepo.createForUser(
       req.requestedBy.id,
       "TRANSFER_REQUEST_REJECTED",
-      (lang: string) => ({
+      (lang?: string) => ({
         title: lang === "ko" ? "이적 요청 최종 반려" : "Transfer Request Rejected",
         body: lang === "ko"
           ? `이적 요청이 최종 반려되었습니다: ${dto.rejectReason}`
@@ -110,7 +110,7 @@ export class TransferRequestService {
     return result;
   }
 
-  async recordMedicalResult(id: number, dto: MedicalResultDto, updatedById: number) {
+  async recordMedicalResult(id: number, dto: MedicalResultDto, updatedById: string) {
     const req = await this.getById(id);
     if (req.status !== TransferRequestStatus.MEDICAL_PENDING) throw new AppError(409, "CANNOT_RECORD_MEDICAL_NON_PENDING");
     if (dto.result === "fail" && !dto.medicalNotes?.trim()) throw new AppError(400, "MEDICAL_NOTES_REQUIRED");
@@ -120,7 +120,7 @@ export class TransferRequestService {
         this.notifRepo.createForUser(
           req.requestedBy.id,
           "TRANSFER_REQUEST_CONFIRMED",
-          (lang: string) => ({
+          (lang?: string) => ({
             title: lang === "ko" ? "이적 최종 확정" : "Transfer Confirmed",
             body: lang === "ko" ? "메디컬 통과 후 이적이 최종 확정되었습니다." : "Transfer confirmed after passing the medical.",
           }),
@@ -128,7 +128,7 @@ export class TransferRequestService {
         ),
         this.notifRepo.createForGM(
           "TRANSFER_REQUEST_CONFIRMED",
-          (lang: string) => ({
+          (lang?: string) => ({
             title: lang === "ko" ? "이적 확정 완료" : "Transfer Confirmed",
             body: lang === "ko" ? "이적 선수가 메디컬을 통과했습니다." : "Transfer candidate passed the medical.",
           }),
@@ -139,7 +139,7 @@ export class TransferRequestService {
       await this.notifRepo.createForUser(
         req.requestedBy.id,
         "TRANSFER_REQUEST_REJECTED",
-        (lang: string) => ({
+        (lang?: string) => ({
           title: lang === "ko" ? "메디컬 불합격" : "Medical Test Failed",
           body: lang === "ko" ? `메디컬 테스트 불합격으로 이적이 취소되었습니다: ${dto.medicalNotes}` : `Transfer cancelled due to failed medical: ${dto.medicalNotes}`,
         }),
@@ -157,7 +157,7 @@ export class TransferRequestService {
     await this.notifRepo.createForUser(
       req.requestedBy.id,
       "TRANSFER_REGISTERED",
-      (lang: string) => ({
+      (lang?: string) => ({
         title: lang === "ko" ? "리그 등록 완료" : "League Registration Complete",
         body: lang === "ko" ? "이적 선수의 리그 등록이 완료되었습니다." : "The transfer player has been registered with the league.",
       }),
@@ -166,7 +166,7 @@ export class TransferRequestService {
     return result;
   }
 
-  async addNegotiationLog(id: number, dto: CreateNegotiationLogDto, createdById: number) {
+  async addNegotiationLog(id: number, dto: CreateNegotiationLogDto, createdById: string) {
     const req = await this.getById(id);
     const allowedStatuses = [TransferRequestStatus.APPROVED, TransferRequestStatus.MEDICAL_PENDING, TransferRequestStatus.CONFIRMED];
     if (!allowedStatuses.includes(req.status as typeof allowedStatuses[number])) {
@@ -179,7 +179,7 @@ export class TransferRequestService {
     return this.repo.getNegotiationLogs(id);
   }
 
-  async delete(id: number, userId: number) {
+  async delete(id: number, userId: string) {
     const req = await this.getById(id);
     if (req.status !== TransferRequestStatus.DRAFT) throw new AppError(409, "CANNOT_DELETE_NON_DRAFT");
     if (req.requestedBy.id !== userId) throw new AppError(403, "FORBIDDEN");

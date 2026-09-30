@@ -45,7 +45,7 @@ export interface FinancialReport {
    */
   planStatus?: BudgetPlanStatus
   planStatusChangedAt?: string | null
-  planStatusChangedById?: number | null
+  planStatusChangedById?: string | null
   reviewOpenedAt?: string | null
   reviewDeadline?: string | null
 }
@@ -114,7 +114,7 @@ export const financialReportApi = {
     api.patch<{
       seasonId: number
       carryOverFromPrev: number
-      carryOverOverriddenById: number | null
+      carryOverOverriddenById: string | null
       carryOverOverriddenAt: string | null
       carryOverOverrideReason: string | null
     }>(`/financial-reports/${seasonId}/carryover`, payload),

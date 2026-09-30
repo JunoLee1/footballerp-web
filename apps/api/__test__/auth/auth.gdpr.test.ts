@@ -27,42 +27,42 @@ describe("AuthService — GDPR", () => {
   });
 
   test("gdprErasure calls anonymizeUser and writes audit log", async () => {
-    mockRepo.findById.mockResolvedValue({ id: 5, email: "test@example.com", isDeleted: false });
-    mockRepo.anonymizeUser.mockResolvedValue({ id: 5, email: "deleted_5@deleted.com", isDeleted: true });
+    mockRepo.findById.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000005", email: "test@example.com", isDeleted: false });
+    mockRepo.anonymizeUser.mockResolvedValue({ id: "00000000-0000-4000-8000-000000000005", email: "deleted_5@deleted.com", isDeleted: true });
 
-    await service.gdprErasure(5, 1);
+    await service.gdprErasure("00000000-0000-4000-8000-000000000005", "00000000-0000-4000-8000-000000000001");
 
-    expect(mockRepo.anonymizeUser).toHaveBeenCalledWith(5);
+    expect(mockRepo.anonymizeUser).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000005");
     await Promise.resolve();
     expect(mockWriteAuditLog).toHaveBeenCalledWith(
-      expect.objectContaining({ actorId: 1, action: "GDPR_ERASURE_REQUESTED", targetId: 5 })
+      expect.objectContaining({ actorId: "00000000-0000-4000-8000-000000000001", action: "GDPR_ERASURE_REQUESTED", targetId: "00000000-0000-4000-8000-000000000005" })
     );
   });
 
   test("gdprErasure throws 404 if user not found", async () => {
     mockRepo.findById.mockResolvedValue(null);
-    await expect(service.gdprErasure(999, 1)).rejects.toMatchObject({ statusCode: 404 });
+    await expect(service.gdprErasure("00000000-0000-4000-8000-000000000999", "00000000-0000-4000-8000-000000000001")).rejects.toMatchObject({ statusCode: 404 });
   });
 
   test("gdprExport returns user data for ADMIN", async () => {
-    mockRepo.exportUserData.mockResolvedValue({ profile: { id: 5 }, player: null, contracts: [] });
+    mockRepo.exportUserData.mockResolvedValue({ profile: { id: "00000000-0000-4000-8000-000000000005" }, player: null, contracts: [] });
 
-    const result = await service.gdprExport(5, 1, "ADMIN");
+    const result = await service.gdprExport("00000000-0000-4000-8000-000000000005", "00000000-0000-4000-8000-000000000001", "ADMIN");
 
-    expect(mockRepo.exportUserData).toHaveBeenCalledWith(5);
-    expect(result.profile.id).toBe(5);
+    expect(mockRepo.exportUserData).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000005");
+    expect(result.profile.id).toBe("00000000-0000-4000-8000-000000000005");
   });
 
   test("gdprExport returns user data when self-requesting", async () => {
-    mockRepo.exportUserData.mockResolvedValue({ profile: { id: 5 }, player: null, contracts: [] });
+    mockRepo.exportUserData.mockResolvedValue({ profile: { id: "00000000-0000-4000-8000-000000000005" }, player: null, contracts: [] });
 
-    const result = await service.gdprExport(5, 5, "PLAYER");
+    const result = await service.gdprExport("00000000-0000-4000-8000-000000000005", "00000000-0000-4000-8000-000000000005", "PLAYER");
 
-    expect(mockRepo.exportUserData).toHaveBeenCalledWith(5);
-    expect(result.profile.id).toBe(5);
+    expect(mockRepo.exportUserData).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000005");
+    expect(result.profile.id).toBe("00000000-0000-4000-8000-000000000005");
   });
 
   test("gdprExport throws 403 when non-admin requests another user", async () => {
-    await expect(service.gdprExport(5, 99, "PLAYER")).rejects.toMatchObject({ statusCode: 403 });
+    await expect(service.gdprExport("00000000-0000-4000-8000-000000000005", "00000000-0000-4000-8000-000000000099", "PLAYER")).rejects.toMatchObject({ statusCode: 403 });
   });
 });

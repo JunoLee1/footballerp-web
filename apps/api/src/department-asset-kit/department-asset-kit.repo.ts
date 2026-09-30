@@ -26,7 +26,7 @@ const KIT_INCLUDE = {
 export interface UpsertKitData {
   assetItems: AssetKitItemDto[];
   defaultExpenseCategoryId: number;
-  actorId: number;
+  actorId: string;
 }
 
 export class DepartmentAssetKitRepository {

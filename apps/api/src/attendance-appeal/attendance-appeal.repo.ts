@@ -8,7 +8,7 @@ export class AttendanceAppealRepository {
     originalStatus: string;
     requestedStatus: string;
     reason: string;
-    createdById: number;
+    createdById: string;
   }) {
     return (this.prisma.attendanceAppeal as any).create({
       data,
@@ -39,7 +39,7 @@ export class AttendanceAppealRepository {
     });
   }
 
-  async updateStatus(id: number, status: string, reviewedById: number, reviewNote?: string) {
+  async updateStatus(id: number, status: string, reviewedById: string, reviewNote?: string) {
     return (this.prisma.attendanceAppeal as any).update({
       where: { id },
       data: { status, reviewedById, reviewedAt: new Date(), ...(reviewNote ? { reviewNote } : {}) },

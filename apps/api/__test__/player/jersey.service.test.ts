@@ -69,7 +69,7 @@ describe("JerseyService - assignToPlayer with notification", () => {
     mockRepo.findByNumberAndTeam.mockResolvedValue({
       id: 1, number: 7, status: "OCCUPIED", playerId: "existing",
     });
-    mockRepo.findPlayerUserId = jest.fn<() => Promise<any>>().mockResolvedValue({ userId: 99 });
+    mockRepo.findPlayerUserId = jest.fn<() => Promise<any>>().mockResolvedValue({ userId: "00000000-0000-4000-8000-000000000099" });
 
     const serviceWithNotif = new JerseyService(mockRepo, mockNotifRepo);
 
@@ -79,7 +79,7 @@ describe("JerseyService - assignToPlayer with notification", () => {
     // fire-and-forget — wait a tick
     await new Promise((r) => setTimeout(r, 10));
     expect(mockNotifRepo.createForUser).toHaveBeenCalledWith(
-      99, "JERSEY_NUMBER_CONFLICT",
+      "00000000-0000-4000-8000-000000000099", "JERSEY_NUMBER_CONFLICT",
       expect.any(Function),
     );
   });

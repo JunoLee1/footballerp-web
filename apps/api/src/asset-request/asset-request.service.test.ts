@@ -12,7 +12,7 @@ jest.mock("../lib/auditLog", () => ({
 
 const REQUEST_FIXTURE = {
   id: 1,
-  requesterId: 5,
+  requesterId: "user-5",
   departmentId: 3,
   type: "HARDWARE",
   status: "DRAFT",
@@ -22,8 +22,8 @@ const REQUEST_FIXTURE = {
   clubId: 1,
   department: {
     id: 3,
-    headId: 7,
-    parent: { id: 2, headId: 9 },
+    headId: "user-7",
+    parent: { id: 2, headId: "user-9" },
   },
 };
 
@@ -100,8 +100,8 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await service.list(5, "PLAYER", "me", undefined, 1);
-      expect(repo.findByRequester).toHaveBeenCalledWith(5, undefined, 1);
+      await service.list("user-5", "PLAYER", "me", undefined, 1);
+      expect(repo.findByRequester).toHaveBeenCalledWith("user-5", undefined, 1);
     });
 
     it("pending-leader + clubId → repo.findPendingForLeader 로 전달", async () => {
@@ -111,8 +111,8 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await service.list(7, "COACHING_STAFF", "pending-leader", undefined, 1);
-      expect(repo.findPendingForLeader).toHaveBeenCalledWith(7, 1);
+      await service.list("user-7", "COACHING_STAFF", "pending-leader", undefined, 1);
+      expect(repo.findPendingForLeader).toHaveBeenCalledWith("user-7", 1);
     });
 
     it("all 필터 + non-admin → 403 FORBIDDEN", async () => {
@@ -120,7 +120,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.list(5, "PLAYER", "all", undefined, 1))
+      await expect(service.list("user-5", "PLAYER", "all", undefined, 1))
         .rejects.toThrow(new AppError(403, "FORBIDDEN"));
     });
 
@@ -131,7 +131,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await service.list(1, "ADMIN", "all", undefined, 1);
+      await service.list("user-1", "ADMIN", "all", undefined, 1);
       expect(repo.findAll).toHaveBeenCalledWith(undefined, 1);
     });
   });
@@ -151,8 +151,8 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
         expectedAmount: 10000,
         justification: "필요",
       };
-      await service.create(dto, 5, 1);
-      expect(repo.create).toHaveBeenCalledWith(dto, 5, 3, 1);
+      await service.create(dto, "user-5", 1);
+      expect(repo.create).toHaveBeenCalledWith(dto, "user-5", 3, 1);
     });
   });
 
@@ -164,7 +164,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.submit(1, 5, 99))
+      await expect(service.submit(1, "user-5", 99))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
 
@@ -175,7 +175,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      const result = await service.submit(1, 5, 1);
+      const result = await service.submit(1, "user-5", 1);
       expect(findById).toHaveBeenCalledWith(1, 1);
       expect(updateStatus).toHaveBeenCalledWith(1, { status: "SUBMITTED" });
       expect((result as any).status).toBe("SUBMITTED");
@@ -190,7 +190,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.cancel(1, 5, 99))
+      await expect(service.cancel(1, "user-5", 99))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
   });
@@ -203,7 +203,7 @@ describe("AssetRequestService — clubId 스코핑 (Phase 2.5)", () => {
       const service = new AssetRequestService(
         repo, {} as any, makeNotifRepo(), makePrisma(),
       );
-      await expect(service.leaderApprove(1, 7, 99))
+      await expect(service.leaderApprove(1, "user-7", 99))
         .rejects.toThrow(new AppError(404, "NOT_FOUND"));
     });
   });

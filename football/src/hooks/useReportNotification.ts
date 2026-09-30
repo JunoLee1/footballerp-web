@@ -5,7 +5,7 @@ import { getSocket } from '@/lib/socket'
 interface ReportSubmittedEvent {
   reportId: number
   title: string
-  authorId: number
+  authorId: string
 }
 
 export function useReportNotification(onNew: () => void) {

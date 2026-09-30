@@ -14,14 +14,14 @@ const mockService = {
 const controller = new IncidentReportController(mockService);
 
 const user = {
-  admin: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
-  gm: { id: 2, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "GM" },
-  headCoach: { id: 3, role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null },
-  medical: { id: 4, role: "COACHING_STAFF", coachingRole: "MEDICAL", frontOfficeRole: null },
-  medicalDirector: { id: 5, role: "COACHING_STAFF", coachingRole: "MEDICAL_DIRECTOR", frontOfficeRole: null },
-  assistantCoach: { id: 6, role: "COACHING_STAFF", coachingRole: "ASSISTANT_COACH", frontOfficeRole: null },
-  player: { id: 7, role: "PLAYER", coachingRole: null, frontOfficeRole: null },
-  guardian: { id: 8, role: "GUARDIAN", coachingRole: null, frontOfficeRole: null },
+  admin: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+  gm: { id: "00000000-0000-4000-8000-000000000002", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "GM" },
+  headCoach: { id: "00000000-0000-4000-8000-000000000003", role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null },
+  medical: { id: "00000000-0000-4000-8000-000000000004", role: "COACHING_STAFF", coachingRole: "MEDICAL", frontOfficeRole: null },
+  medicalDirector: { id: "00000000-0000-4000-8000-000000000005", role: "COACHING_STAFF", coachingRole: "MEDICAL_DIRECTOR", frontOfficeRole: null },
+  assistantCoach: { id: "00000000-0000-4000-8000-000000000006", role: "COACHING_STAFF", coachingRole: "ASSISTANT_COACH", frontOfficeRole: null },
+  player: { id: "00000000-0000-4000-8000-000000000007", role: "PLAYER", coachingRole: null, frontOfficeRole: null },
+  guardian: { id: "00000000-0000-4000-8000-000000000008", role: "GUARDIAN", coachingRole: null, frontOfficeRole: null },
 };
 
 const mockReq = (overrides: any) =>

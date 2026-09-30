@@ -23,6 +23,6 @@ export interface CreateSoftwareLicenseDto {
 export const softwareLicenseApi = {
   list: () => api.get<SoftwareLicense[]>('/software-licenses'),
   create: (dto: CreateSoftwareLicenseDto) => api.post<SoftwareLicense>('/software-licenses', dto),
-  assign: (id: number, userId: number) => api.post<SoftwareLicense>(`/software-licenses/${id}/assign`, { userId }),
-  revoke: (id: number, userId: number) => api.delete<SoftwareLicense>(`/software-licenses/${id}/assign/${userId}`),
+  assign: (id: number, userId: string) => api.post<SoftwareLicense>(`/software-licenses/${id}/assign`, { userId }),
+  revoke: (id: number, userId: string) => api.delete<SoftwareLicense>(`/software-licenses/${id}/assign/${userId}`),
 }

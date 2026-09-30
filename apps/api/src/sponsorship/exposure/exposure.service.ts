@@ -9,7 +9,7 @@ export class ExposureService {
     return this.repo.findAll(sponsorshipId);
   }
 
-  async create(sponsorshipId: number, dto: CreateExposureEventDto, createdById: number) {
+  async create(sponsorshipId: number, dto: CreateExposureEventDto, createdById: string) {
     if (dto.exposureCount === undefined && dto.fanReach === undefined && dto.mediaValue === undefined) {
       throw new AppError(400, "EXPOSURE_METRIC_REQUIRED");
     }

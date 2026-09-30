@@ -71,7 +71,7 @@ export class ProbationReviewRepository {
       reviewType: ProbationReviewType;
       status: ProbationReviewStatus;
       leaderAssessment: string;
-      reviewedById: number;
+      reviewedById: string;
       reviewedAt: Date;
     },
     tx?: Tx,

@@ -8,10 +8,10 @@ import type { CreateAssetRequestDto } from "../../src/asset-request/dto/asset-re
 
 jest.mock("../../src/lib/auditLog", () => ({ writeAuditLog: jest.fn().mockResolvedValue(undefined) }));
 
-const REQUESTER = 100;
-const LEADER = 200;
-const DEPT_HEAD = 300;
-const OUTSIDER = 999;
+const REQUESTER = "00000000-0000-4000-8000-000000000100";
+const LEADER = "00000000-0000-4000-8000-000000000200";
+const DEPT_HEAD = "00000000-0000-4000-8000-000000000300";
+const OUTSIDER = "00000000-0000-4000-8000-000000000999";
 const LEAF_DEPT = 10;
 const PARENT_DEPT = 5;
 const CAT_ID = 7; // IT_SECURITY-ish
@@ -147,7 +147,7 @@ describe("AssetRequestService.create", () => {
     const repo = makeRepo();
     const result = await makeService(repo).create(baseCreateDto, REQUESTER);
     expect(result.status).toBe("DRAFT");
-    expect(repo.create).toHaveBeenCalledWith(baseCreateDto, REQUESTER, LEAF_DEPT);
+    expect(repo.create).toHaveBeenCalledWith(baseCreateDto, REQUESTER, LEAF_DEPT, undefined);
   });
 
   it("creates HARDWARE request with equipmentItemId", async () => {
@@ -515,7 +515,7 @@ describe("AssetRequestService.fulfill", () => {
         makeRequest({ status: "APPROVED", type: "SOFTWARE", softwareLicenseId: 3 }),
       ),
     });
-    const result = await makeService(repo).fulfill(1, 500, "FRONT_OFFICE", "ASSET_MANAGER");
+    const result = await makeService(repo).fulfill(1, "00000000-0000-4000-8000-000000000500", "FRONT_OFFICE", "ASSET_MANAGER");
     expect(result.status).toBe("FULFILLED");
   });
 
@@ -525,7 +525,7 @@ describe("AssetRequestService.fulfill", () => {
         makeRequest({ status: "APPROVED", type: "HARDWARE", equipmentItemId: 3 }),
       ),
     });
-    const result = await makeService(repo).fulfill(1, 500, "FRONT_OFFICE", "EQUIPMENT_MANAGER");
+    const result = await makeService(repo).fulfill(1, "00000000-0000-4000-8000-000000000500", "FRONT_OFFICE", "EQUIPMENT_MANAGER");
     expect(result.status).toBe("FULFILLED");
   });
 
@@ -535,13 +535,13 @@ describe("AssetRequestService.fulfill", () => {
         makeRequest({ status: "APPROVED", type: "HARDWARE", equipmentItemId: 3 }),
       ),
     });
-    const result = await makeService(repo).fulfill(1, 500, "ADMIN", null);
+    const result = await makeService(repo).fulfill(1, "00000000-0000-4000-8000-000000000500", "ADMIN", null);
     expect(result.status).toBe("FULFILLED");
   });
 
   it("throws 400 INVALID_STATUS when not APPROVED", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(makeRequest({ status: "DRAFT" })) });
-    await expect(makeService(repo).fulfill(1, 500, "ADMIN", null)).rejects.toThrow(
+    await expect(makeService(repo).fulfill(1, "00000000-0000-4000-8000-000000000500", "ADMIN", null)).rejects.toThrow(
       new AppError(400, "INVALID_STATUS"),
     );
   });
@@ -552,7 +552,7 @@ describe("AssetRequestService.fulfill", () => {
         makeRequest({ status: "APPROVED", type: "SOFTWARE", softwareLicenseId: 3 }),
       ),
     });
-    await expect(makeService(repo).fulfill(1, 500, "PLAYER", null)).rejects.toThrow(
+    await expect(makeService(repo).fulfill(1, "00000000-0000-4000-8000-000000000500", "PLAYER", null)).rejects.toThrow(
       new AppError(403, "FORBIDDEN"),
     );
   });
@@ -564,7 +564,7 @@ describe("AssetRequestService.fulfill", () => {
       ),
     });
     const prisma = makePrisma();
-    await makeService(repo, makeExpenseRepo(), makeNotifRepo(), prisma).fulfill(1, 500, "ADMIN", null);
+    await makeService(repo, makeExpenseRepo(), makeNotifRepo(), prisma).fulfill(1, "00000000-0000-4000-8000-000000000500", "ADMIN", null);
     expect(prisma.equipmentItem.create).toHaveBeenCalled();
     expect(repo.linkEquipmentItem).toHaveBeenCalledWith(1, 77);
   });
@@ -576,7 +576,7 @@ describe("AssetRequestService.fulfill", () => {
       ),
     });
     const prisma = makePrisma();
-    await makeService(repo, makeExpenseRepo(), makeNotifRepo(), prisma).fulfill(1, 500, "ADMIN", null);
+    await makeService(repo, makeExpenseRepo(), makeNotifRepo(), prisma).fulfill(1, "00000000-0000-4000-8000-000000000500", "ADMIN", null);
     expect(prisma.softwareLicense.create).toHaveBeenCalled();
     expect(repo.linkSoftwareLicense).toHaveBeenCalledWith(1, 88);
   });

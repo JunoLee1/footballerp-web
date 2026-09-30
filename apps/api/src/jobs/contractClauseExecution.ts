@@ -63,7 +63,7 @@ export function startContractClauseExecutionJob() {
               });
 
               void writeAuditLog({
-                actorId: 0,
+                actorId: "",
                 action: "PERFORMANCE_BONUS_TRIGGERED",
                 targetId: contract.id,
                 detail: { bonusId: bonus.id, metric: trigger.metric, currentValue, threshold: trigger.threshold },

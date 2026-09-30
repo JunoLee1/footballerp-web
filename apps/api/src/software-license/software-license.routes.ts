@@ -7,6 +7,7 @@ import { getPrisma } from "../lib/prisma";
 import { SoftwareLicenseRepository } from "./software-license.repo";
 import { SoftwareLicenseService } from "./software-license.service";
 import { SoftwareLicenseController } from "./software-license.controller";
+import { requireUuidParam } from "../lib/uuidGuard";
 
 const router = Router();
 const repo = new SoftwareLicenseRepository(getPrisma());
@@ -25,6 +26,6 @@ router.post("/", auth, checkSystemManage, ctrl.create);
 router.get("/:id", auth, checkSystemManage, ctrl.get);
 router.patch("/:id", auth, checkSystemManage, ctrl.update);
 router.post("/:id/assign", auth, checkSystemManage, ctrl.assign);
-router.delete("/:id/assign/:userId", auth, checkSystemManage, ctrl.revoke);
+router.delete("/:id/assign/:userId", auth, checkSystemManage, requireUuidParam("userId"), ctrl.revoke);
 
 export default router;

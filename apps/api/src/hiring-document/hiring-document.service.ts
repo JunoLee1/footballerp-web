@@ -43,7 +43,7 @@ export class HiringDocumentService {
   // upload — always a new row (append-only)
   // ────────────────────────────────────────────
 
-  async upload(dto: UploadHiringDocumentDto, file: UploadedFileInfo, uploaderId: number) {
+  async upload(dto: UploadHiringDocumentDto, file: UploadedFileInfo, uploaderId: string) {
     const { applicationId, hiringDispatchId } = dto;
     const hasApp = applicationId != null;
     const hasDisp = hiringDispatchId != null;
@@ -98,7 +98,7 @@ export class HiringDocumentService {
   // review — HR approves or rejects a PENDING row
   // ────────────────────────────────────────────
 
-  async review(id: number, dto: ReviewHiringDocumentDto, reviewerId: number) {
+  async review(id: number, dto: ReviewHiringDocumentDto, reviewerId: string) {
     if (dto.status !== "APPROVED" && dto.status !== "REJECTED") {
       throw new AppError(400, "INVALID_REVIEW_STATUS");
     }

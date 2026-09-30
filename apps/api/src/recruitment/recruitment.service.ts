@@ -65,7 +65,7 @@ export class RecruitmentService {
     return posting;
   }
 
-  async createPosting(dto: CreateJobPostingDto, createdById: number) {
+  async createPosting(dto: CreateJobPostingDto, createdById: string) {
     if (!this.planReportRepo) throw new AppError(500, "INTERNAL_ERROR");
     const planReport = await this.planReportRepo.findByIdLight(dto.planReportId);
     if (!planReport) throw new AppError(404, "PLAN_REPORT_NOT_FOUND");
@@ -94,7 +94,7 @@ export class RecruitmentService {
     return posting;
   }
 
-  async bulkCreatePostingsFromPlanReport(planReportId: number, createdById: number) {
+  async bulkCreatePostingsFromPlanReport(planReportId: number, createdById: string) {
     if (!this.planReportRepo) throw new AppError(500, "INTERNAL_ERROR");
 
     const planReport = await this.planReportRepo.findByIdLight(planReportId);
@@ -147,7 +147,7 @@ export class RecruitmentService {
     });
   }
 
-  async approvePosting(id: number, approvedById: number) {
+  async approvePosting(id: number, approvedById: string) {
     const posting = await this.getPosting(id);
     if (posting.status !== "DRAFT") throw new AppError(409, "JOB_POSTING_NOT_DRAFT");
     return this.repo.approvePosting(id, approvedById);
@@ -189,7 +189,7 @@ export class RecruitmentService {
     return this.repo.updateApplication(id, dto);
   }
 
-  async screenApplication(id: number, dto: ScreenApplicationDto, actorId: number) {
+  async screenApplication(id: number, dto: ScreenApplicationDto, actorId: string) {
     const app = await this.getApplication(id);
     if (app.status !== "SCREENING") throw new AppError(409, "INVALID_STATUS_FOR_SCREEN");
     if (dto.result === "FAIL" && !dto.notes?.trim()) {
@@ -204,13 +204,13 @@ export class RecruitmentService {
     });
   }
 
-  async rejectApplication(id: number, actorId?: number) {
+  async rejectApplication(id: number, actorId?: string) {
     const app = await this.getApplication(id);
     if (app.status === "REJECTED") throw new AppError(409, "APPLICATION_ALREADY_REJECTED");
     const wasOffered = app.status === "OFFERED";
     const postingId = (app as any).posting?.id ?? (app as any).postingId ?? null;
 
-    const result = await this.repo.rejectApplication(id, actorId as number);
+    const result = await this.repo.rejectApplication(id, actorId as string);
     // SJ6: email applicant on rejection — fetch raw (unmasked) record for email address
     const rawApp = await this.repo.findApplicationById(id);
     if (rawApp?.email) {
@@ -240,9 +240,9 @@ export class RecruitmentService {
             // may not have a REFERENCE_CHECK row yet — the auto-promote path
             // therefore bypasses `offerApplication`'s status guard and calls
             // `beginOfferApproval` directly.
-            await this.beginOfferApproval(top.applicationId, actorId as number);
+            await this.beginOfferApproval(top.applicationId, actorId as string);
             void writeAuditLog({
-              actorId: actorId ?? 0,
+              actorId: actorId ?? "",
               action: "APPLICATION_AUTO_PROMOTED_FROM_WAITLIST",
               targetId: top.applicationId,
               detail: { triggeredByRejectionOf: id },
@@ -257,7 +257,7 @@ export class RecruitmentService {
     return result;
   }
 
-  async reinstateApplication(id: number, actorId: number) {
+  async reinstateApplication(id: number, actorId: string) {
     const app = await this.getApplication(id);
     if (app.status !== "REJECTED") throw new AppError(409, "APPLICATION_NOT_REJECTED");
     if (!(app as any).previousStatus) throw new AppError(409, "NO_PREVIOUS_STATUS");
@@ -274,7 +274,7 @@ export class RecruitmentService {
    * The actual OFFERED transition (+ email + HiringPlanItem link) happens
    * only when HR approves (see `hrApprove`).
    */
-  async offerApplication(id: number, initiatedById: number) {
+  async offerApplication(id: number, initiatedById: string) {
     const app = await this.getApplication(id);
     if (app.status !== "REFERENCE_CHECK") throw new AppError(409, "APPLICATION_NOT_IN_REFERENCE_CHECK");
     const refCheck = await getPrisma().referenceCheck.findUnique({
@@ -299,7 +299,7 @@ export class RecruitmentService {
    * Called both by explicit HR-initiated offer and by the waitlist auto-
    * promote path so the two enter the same state machine.
    */
-  private async beginOfferApproval(id: number, initiatedById: number) {
+  private async beginOfferApproval(id: number, initiatedById: string) {
     // Load raw (unmasked) — we need posting.department to route.
     const raw = await this.repo.findApplicationById(id);
     if (!raw) throw new AppError(404, "JOB_APPLICATION_NOT_FOUND");
@@ -371,7 +371,7 @@ export class RecruitmentService {
   // Offer 3-stage approval — LEADER
   // ────────────────────────────────────────────
 
-  async leaderApprove(applicationId: number, reviewerId: number) {
+  async leaderApprove(applicationId: number, reviewerId: string) {
     const raw = await this.repo.findApplicationById(applicationId);
     if (!raw) throw new AppError(404, "JOB_APPLICATION_NOT_FOUND");
     if (raw.status !== "OFFER_PENDING_LEADER") throw new AppError(409, "INVALID_STATUS");
@@ -438,7 +438,7 @@ export class RecruitmentService {
     return updated;
   }
 
-  async leaderReject(applicationId: number, reviewerId: number, reason: string) {
+  async leaderReject(applicationId: number, reviewerId: string, reason: string) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -477,7 +477,7 @@ export class RecruitmentService {
   // Offer 3-stage approval — DEPT_HEAD
   // ────────────────────────────────────────────
 
-  async deptHeadApprove(applicationId: number, reviewerId: number) {
+  async deptHeadApprove(applicationId: number, reviewerId: string) {
     const raw = await this.repo.findApplicationById(applicationId);
     if (!raw) throw new AppError(404, "JOB_APPLICATION_NOT_FOUND");
     if (raw.status !== "OFFER_PENDING_DEPT_HEAD") throw new AppError(409, "INVALID_STATUS");
@@ -518,7 +518,7 @@ export class RecruitmentService {
     return updated;
   }
 
-  async deptHeadReject(applicationId: number, reviewerId: number, reason: string) {
+  async deptHeadReject(applicationId: number, reviewerId: string, reason: string) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -558,7 +558,7 @@ export class RecruitmentService {
    * offeredById / offeredAt on the application). The controller already
    * gates on `canWriteHR` so anyone landing here is HR-eligible.
    */
-  async hrApprove(applicationId: number, reviewerId: number) {
+  async hrApprove(applicationId: number, reviewerId: string) {
     const raw = await this.repo.findApplicationById(applicationId);
     if (!raw) throw new AppError(404, "JOB_APPLICATION_NOT_FOUND");
     if (raw.status !== "OFFER_PENDING_HR") throw new AppError(409, "INVALID_STATUS");
@@ -614,7 +614,7 @@ export class RecruitmentService {
     return updated;
   }
 
-  async hrReject(applicationId: number, reviewerId: number, reason: string) {
+  async hrReject(applicationId: number, reviewerId: string, reason: string) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -648,7 +648,7 @@ export class RecruitmentService {
   // ────────────────────────────────────────────
 
   async listOfferApprovalQueue(
-    userId: number,
+    userId: string,
     role: string,
     foRole: string | null | undefined,
     stage: "LEADER" | "DEPT_HEAD" | "HR",
@@ -671,7 +671,7 @@ export class RecruitmentService {
 
   // --- Interview ---
 
-  async scheduleInterview(applicationId: number, dto: CreateInterviewDto, actorId?: number) {
+  async scheduleInterview(applicationId: number, dto: CreateInterviewDto, actorId?: string) {
     await this.getApplication(applicationId);
     const existing = await this.repo.findInterview(applicationId, dto.round);
     if (existing) throw new AppError(409, "INTERVIEW_ALREADY_EXISTS");
@@ -681,9 +681,12 @@ export class RecruitmentService {
     const interview = await this.repo.createInterview(applicationId, dto);
 
     // S3: notify assigned interviewers
+    // Interview.interviewerIds is still Int[] in the schema (pre-User.id-UUID
+    // migration column) — coerce to string[] at the notification boundary so
+    // createForUsers gets the User.id shape it now expects.
     if (dto.interviewerIds && dto.interviewerIds.length > 0 && this.notifRepo) {
       void this.notifRepo.createForUsers(
-        dto.interviewerIds,
+        dto.interviewerIds.map(String),
         "INTERVIEW_SCHEDULED",
         () => ({
           title: "면접 일정 배정됨",
@@ -727,7 +730,7 @@ export class RecruitmentService {
           }
           // Override 승인: audit log 남김. actorId 는 controller 에서 전달받는 확장 여지.
           void writeAuditLog({
-            actorId: 0,
+            actorId: "",
             action: "INTERVIEW_THRESHOLD_OVERRIDE",
             targetId: existing.id,
             detail: {
@@ -745,7 +748,7 @@ export class RecruitmentService {
 
   // --- ReferenceCheck ---
 
-  async createReferenceCheck(applicationId: number, dto: CreateReferenceCheckDto, actorId?: number) {
+  async createReferenceCheck(applicationId: number, dto: CreateReferenceCheckDto, actorId?: string) {
     const app = await this.getApplication(applicationId);
 
     // CL5: consent must not be explicitly declined
@@ -764,7 +767,7 @@ export class RecruitmentService {
 
   // --- Onboarding ---
 
-  async startOnboarding(applicationId: number, userId: number) {
+  async startOnboarding(applicationId: number, userId: string) {
     const app = await this.getApplication(applicationId);
     if (app.status !== "OFFERED") throw new AppError(409, "APPLICATION_NOT_OFFERED");
     const existing = await this.repo.findOnboardingByApplication(applicationId);
@@ -797,7 +800,7 @@ export class RecruitmentService {
     const prisma = getPrisma();
     const application = await this.repo.findApplicationById(applicationId);
     if (application) {
-      await this.repo.completeOnboarding(applicationId, 0);
+      await this.repo.completeOnboarding(applicationId, "");
 
       // Auto-create StaffRecord if not already exists
       const existingRecord = await prisma.staffRecord.findFirst({
@@ -810,7 +813,7 @@ export class RecruitmentService {
             role: application.posting?.title ?? "Staff",
             employeeId: String(applicationId),
             isActive: true,
-            createdById: application.offeredById ?? 1,
+            createdById: application.offeredById ?? "",
             employmentStartDate: new Date(),
           } as any,
         });
@@ -861,7 +864,7 @@ export class RecruitmentService {
     return this.repo.getCostPerHire();
   }
 
-  addInterviewerScore(interviewId: number, data: { interviewerId: number; scoreSkill?: number; scoreComm?: number; scoreCulture?: number; comment?: string }, actorId: number) {
+  addInterviewerScore(interviewId: number, data: { interviewerId: string; scoreSkill?: number; scoreComm?: number; scoreCulture?: number; comment?: string }, actorId: string) {
     return this.repo.addInterviewerScore({ interviewId, ...data }, actorId);
   }
 
@@ -915,7 +918,7 @@ export class RecruitmentService {
       .sort((a: any, b: any) => b.scoreSum - a.scoreSum);
   }
 
-  async promoteFromWaitlist(applicationId: number, actorId: number) {
+  async promoteFromWaitlist(applicationId: number, actorId: string) {
     const app = await this.getApplication(applicationId);
 
     // C2 fix: status guard — reject terminal/already-offered states.

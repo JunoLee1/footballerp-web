@@ -110,7 +110,7 @@ export class ProspectService {
     return this.repo.recordMedicalResult(id, dto);
   }
 
-  async addNegotiationLog(id: number, dto: CreateProspectNegotiationLogDto, createdById: number, actorClubId?: number | null) {
+  async addNegotiationLog(id: number, dto: CreateProspectNegotiationLogDto, createdById: string, actorClubId?: number | null) {
     const prospect = await this.getById(id, actorClubId);
     if (NON_ACTIVE_STATUSES.includes(prospect.status as ProspectStatus)) {
       throw new AppError(409, "CANNOT_LOG_NEGOTIATION_ON_NON_ACTIVE");
@@ -122,7 +122,7 @@ export class ProspectService {
     return this.repo.getNegotiationLogs(id);
   }
 
-  async addVideoEvaluation(id: number, dto: CreateProspectVideoEvaluationDto, evaluatedById: number, actorClubId?: number | null) {
+  async addVideoEvaluation(id: number, dto: CreateProspectVideoEvaluationDto, evaluatedById: string, actorClubId?: number | null) {
     await this.getById(id, actorClubId); // 존재 + club 스코핑 확인
     const result = computeVideoEvalResult(dto.qualityPassed, dto.identifiable, dto.continuity, dto.totalScore);
     return this.repo.addVideoEvaluation(id, dto, evaluatedById, result);
@@ -145,7 +145,7 @@ export class ProspectService {
     return this.repo.updateVideoEvaluation(prospectId, evalId, dto, result);
   }
 
-  async addEvaluationLog(id: number, dto: CreateProspectEvaluationLogDto, evaluatedById: number, actorClubId?: number | null) {
+  async addEvaluationLog(id: number, dto: CreateProspectEvaluationLogDto, evaluatedById: string, actorClubId?: number | null) {
     await this.getById(id, actorClubId); // 존재 + club 스코핑 확인
     return this.repo.addEvaluationLog(id, dto, evaluatedById);
   }

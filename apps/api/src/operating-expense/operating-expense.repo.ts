@@ -89,7 +89,7 @@ export class OperatingExpenseRepository {
       amount: number;
       date: Date;
       note?: string | null;
-      createdById: number;
+      createdById: string;
       budgetLineId: number;
       clubId?: number | null;
     },
@@ -159,18 +159,18 @@ export class OperatingExpenseRepository {
     id: number,
     data: Partial<{
       status: ExpenseStatus;
-      firstApprovedById: number;
+      firstApprovedById: string;
       firstApprovedAt: Date;
-      approvedById: number;
+      approvedById: string;
       approvedAt: Date;
-      rejectedById: number;
+      rejectedById: string;
       rejectedAt: Date;
       rejectionReason: string;
-      cancelledById: number;
+      cancelledById: string;
       cancelledAt: Date;
       cancellationReason: string;
       paidAt: Date;
-      paidById: number;
+      paidById: string;
     }>
   ) {
     return this.prisma.operatingExpense.update({ where: { id }, data });

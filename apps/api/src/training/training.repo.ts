@@ -44,7 +44,7 @@ export class TrainingRepository {
     });
   }
 
-  create(dto: CreateSessionDto, createdById: number, clubId?: number | null) {
+  create(dto: CreateSessionDto, createdById: string, clubId?: number | null) {
     return this.prisma.trainingSession.create({
       data: {
         date: new Date(dto.date),
@@ -62,7 +62,7 @@ export class TrainingRepository {
     });
   }
 
-  approve(id: number, approvedById: number) {
+  approve(id: number, approvedById: string) {
     return this.prisma.trainingSession.update({
       where: { id },
       data: { isApproved: true, approvedById },
@@ -260,7 +260,7 @@ export class TrainingRepository {
     });
   }
 
-  findGuardiansByTeam(teamId: number): Promise<number[]> {
+  findGuardiansByTeam(teamId: number): Promise<string[]> {
     return this.prisma.player
       .findMany({
         where: { teamId, guardianId: { not: null } },

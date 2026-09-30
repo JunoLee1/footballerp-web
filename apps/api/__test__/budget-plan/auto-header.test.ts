@@ -172,8 +172,8 @@ describe("autoGenBudgetHeaderFromPlan (#474)", () => {
           status: "APPROVED",
           name: "2026 시즌 편성 확정 v1",
           totalBudget: 500_000,
-          createdById: 999,
-          approvedById: 999,
+          createdById: "00000000-0000-4000-8000-000000000999",
+          approvedById: "00000000-0000-4000-8000-000000000999",
           approvedAt: new Date("2026-06-01T00:00:00Z"),
         },
       ],
@@ -271,13 +271,13 @@ describe("autoGenBudgetHeaderFromPlan (#474)", () => {
       existingHeaders: [
         {
           id: 1, seasonId: 1, version: 1, status: "APPROVED",
-          name: "auto v1", totalBudget: 100, createdById: 1,
-          approvedById: 1, approvedAt: new Date(),
+          name: "auto v1", totalBudget: 100, createdById: "00000000-0000-4000-8000-000000000001",
+          approvedById: "00000000-0000-4000-8000-000000000001", approvedAt: new Date(),
         },
         {
           id: 2, seasonId: 1, version: 2, status: "APPROVED",
-          name: "manual v2", totalBudget: 200, createdById: 1,
-          approvedById: 1, approvedAt: new Date(),
+          name: "manual v2", totalBudget: 200, createdById: "00000000-0000-4000-8000-000000000001",
+          approvedById: "00000000-0000-4000-8000-000000000001", approvedAt: new Date(),
         },
       ],
       categoryPlans: [

@@ -24,7 +24,7 @@ export class StaffRecordRepository {
     departmentId?: number;
     phone?: string;
     notes?: string;
-    createdById: number;
+    createdById: string;
   }) {
     return this.prisma.staffRecord.create({
       data,

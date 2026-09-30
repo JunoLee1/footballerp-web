@@ -163,7 +163,7 @@ export class HiringAutomationRepository {
     departmentId: number;
     headcount: number;
     description: string;
-    createdById: number;
+    createdById: string;
   }) {
     return this.prisma.jobPosting.create({ data });
   }

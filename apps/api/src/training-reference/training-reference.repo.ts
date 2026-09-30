@@ -25,7 +25,7 @@ export class TrainingReferenceRepository {
     });
   }
 
-  create(dto: CreateTrainingReferenceDto, addedById: number) {
+  create(dto: CreateTrainingReferenceDto, addedById: string) {
     return this.prisma.trainingReference.create({
       data: {
         sessionType: dto.sessionType,

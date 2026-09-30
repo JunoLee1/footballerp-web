@@ -35,7 +35,7 @@ export function startSponsorshipExpiryAlertJob() {
         if (alreadySent) continue;
 
         const endDate = s.contractEnd;
-        const getMsg = (locale: string) => ({
+        const getMsg = (locale?: string) => ({
           title: locale === "ko" ? "스폰서십 계약 만료 임박" : "Sponsorship Expiring Soon",
           body:
             locale === "ko"

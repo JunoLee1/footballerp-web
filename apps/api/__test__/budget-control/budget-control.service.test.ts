@@ -6,7 +6,7 @@ jest.mock("../../src/lib/auditLog", () => ({ writeAuditLog: jest.fn().mockResolv
 
 const makeHeader = (overrides = {}) => ({
   id: 1, seasonId: 1, version: 1, status: "DRAFT", name: "2026시즌", totalBudget: 100_000_000,
-  note: null, createdById: 1, approvedById: null, approvedAt: null, createdAt: new Date(), updatedAt: new Date(),
+  note: null, createdById: "00000000-0000-4000-8000-000000000001", approvedById: null, approvedAt: null, createdAt: new Date(), updatedAt: new Date(),
   lines: [], adjustments: [], season: { id: 1, name: "2026" }, createdBy: { id: 1, username: "admin" }, approvedBy: null,
   ...overrides,
 });

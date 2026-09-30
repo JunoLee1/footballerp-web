@@ -7,7 +7,7 @@ const openSurvey = {
   status: "OPEN" as const,
   dueDate: new Date("2025-12-31"),
   notes: null,
-  createdById: 10,
+  createdById: "00000000-0000-4000-8000-000000000010",
   createdAt: new Date(),
   closedAt: null,
 };
@@ -25,8 +25,12 @@ const mockRepo = {
 } as any;
 
 const mockNotify = jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
+const mockNotifyClosed = jest.fn<() => Promise<void>>().mockResolvedValue(undefined);
 
-const service = new AcquisitionSurveyService(mockRepo, { notifyAcquisitionSurveyPublished: mockNotify } as any);
+const service = new AcquisitionSurveyService(mockRepo, {
+  notifyAcquisitionSurveyPublished: mockNotify,
+  notifyAcquisitionSurveyClosed: mockNotifyClosed,
+} as any);
 
 describe("AcquisitionSurveyService.create", () => {
   beforeEach(() => jest.clearAllMocks());
@@ -36,11 +40,11 @@ describe("AcquisitionSurveyService.create", () => {
 
     const result = await service.create(
       { title: "2025 시즌 영입 수요조사", dueDate: "2025-12-31" },
-      10,
+      "00000000-0000-4000-8000-000000000010",
     );
 
     expect(mockRepo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ title: "2025 시즌 영입 수요조사", createdById: 10 }),
+      expect.objectContaining({ title: "2025 시즌 영입 수요조사", createdById: "00000000-0000-4000-8000-000000000010" }),
     );
     expect(mockNotify).toHaveBeenCalledWith(openSurvey.id, openSurvey.title);
     expect(result.status).toBe("OPEN");
@@ -95,10 +99,12 @@ describe("AcquisitionSurveyService.submitResponse", () => {
     { position: "STRIKER", priority: "HIGH" as const, budgetMin: 100_000_000, budgetMax: 200_000_000 },
   ];
 
+  const RESPONDENT_UUID = "00000000-0000-4000-8000-000000000020";
+
   test("CLOSED 수요조사에 응답 → 409", async () => {
     mockRepo.findById.mockResolvedValue(closedSurvey);
 
-    await expect(service.submitResponse(1, 20, items)).rejects.toMatchObject({
+    await expect(service.submitResponse(1, RESPONDENT_UUID, items)).rejects.toMatchObject({
       statusCode: 409,
       code: "SURVEY_CLOSED",
     });
@@ -108,7 +114,7 @@ describe("AcquisitionSurveyService.submitResponse", () => {
     mockRepo.findById.mockResolvedValue(openSurvey);
     mockRepo.findResponse.mockResolvedValue({ id: 5, submittedAt: new Date() });
 
-    await expect(service.submitResponse(1, 20, items)).rejects.toMatchObject({
+    await expect(service.submitResponse(1, RESPONDENT_UUID, items)).rejects.toMatchObject({
       statusCode: 409,
       code: "ALREADY_SUBMITTED",
     });
@@ -119,15 +125,15 @@ describe("AcquisitionSurveyService.submitResponse", () => {
     mockRepo.findResponse.mockResolvedValue(null);
     mockRepo.submitResponse.mockResolvedValue({ id: 1 });
 
-    const result = await service.submitResponse(1, 20, items);
-    expect(mockRepo.submitResponse).toHaveBeenCalledWith(1, 20, items);
+    const result = await service.submitResponse(1, RESPONDENT_UUID, items);
+    expect(mockRepo.submitResponse).toHaveBeenCalledWith(1, RESPONDENT_UUID, items);
     expect(result.id).toBe(1);
   });
 
   test("존재하지 않는 수요조사 → 404", async () => {
     mockRepo.findById.mockResolvedValue(null);
 
-    await expect(service.submitResponse(99, 20, items)).rejects.toMatchObject({
+    await expect(service.submitResponse(99, RESPONDENT_UUID, items)).rejects.toMatchObject({
       statusCode: 404,
       code: "SURVEY_NOT_FOUND",
     });

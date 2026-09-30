@@ -12,7 +12,7 @@ export class PlanReviewService {
     return this.repo.findByPlan(planId);
   }
 
-  async confirm(planId: number, userId: number, comment?: string) {
+  async confirm(planId: number, userId: string, comment?: string) {
     // 사용자가 부서장(headId)인 부서 중 해당 계획서의 reviewer 부서를 단일 쿼리로 확인
     const review = await this.prisma.planReview.findFirst({
       where: {
@@ -29,7 +29,7 @@ export class PlanReviewService {
     return this.repo.confirm(planId, review.reviewerDeptId, userId, comment);
   }
 
-  async reject(planId: number, reviewerDeptId: number, rejectedById: number, reason: string) {
+  async reject(planId: number, reviewerDeptId: number, rejectedById: string, reason: string) {
     const reviews = await this.repo.findByPlan(planId);
     const review = reviews.find((r) => r.reviewerDeptId === reviewerDeptId);
     if (!review) throw new AppError(404, "REVIEW_NOT_FOUND");

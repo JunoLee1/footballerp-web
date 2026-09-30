@@ -19,7 +19,7 @@ export class InspectionService {
     return record;
   }
 
-  async create(dto: CreateInspectionDto, inspectedById: number) {
+  async create(dto: CreateInspectionDto, inspectedById: string) {
     if (
       dto.sanitationScore !== undefined &&
       (dto.sanitationScore < 1 || dto.sanitationScore > 5 || !Number.isInteger(dto.sanitationScore))

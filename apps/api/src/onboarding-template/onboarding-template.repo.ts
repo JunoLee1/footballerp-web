@@ -13,7 +13,7 @@ const TEMPLATE_INCLUDE = {
 export interface UpsertTemplateData {
   name: string;
   tasks: Prisma.InputJsonValue;
-  actorId: number;
+  actorId: string;
 }
 
 /**

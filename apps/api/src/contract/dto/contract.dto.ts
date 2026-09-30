@@ -5,7 +5,7 @@ export interface CreateContractDto {
   startDate: string;
   endDate: string;
   salary: number;
-  managedById?: number;
+  managedById?: string;
   agencyId?: number;
   agencyCommission?: number;
   signingBonus?: number;          // ≥ 0

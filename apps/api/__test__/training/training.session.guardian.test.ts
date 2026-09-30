@@ -5,7 +5,7 @@ const mockRepo = {
   findByIdWithTeam: jest.fn(),
   updateSession: jest.fn(),
   cancelSession: jest.fn(),
-  findGuardiansByTeam: jest.fn<() => Promise<number[]>>().mockResolvedValue([100, 101]),
+  findGuardiansByTeam: jest.fn<() => Promise<string[]>>().mockResolvedValue(["00000000-0000-4000-8000-000000000100", "00000000-0000-4000-8000-000000000101"]),
   findById: jest.fn(),
   addAllActivePlayers: jest.fn().mockResolvedValue(undefined),
 } as any;
@@ -27,11 +27,11 @@ describe("TrainingService - YOUTH 세션 변경 시 GUARDIAN 알림", () => {
     });
     mockRepo.updateSession.mockResolvedValue({ id: 1 });
 
-    await service.updateSession(1, { date: "2026-07-22T09:00:00.000Z" }, 1);
+    await service.updateSession(1, { date: "2026-07-22T09:00:00.000Z" }, "00000000-0000-4000-8000-000000000001");
 
     expect(mockRepo.findGuardiansByTeam).toHaveBeenCalledWith(2);
     expect(mockNotifRepo.createForGuardian).toHaveBeenCalledWith(
-      100, "YOUTH_SESSION_CHANGED", expect.any(Function), 1,
+      "00000000-0000-4000-8000-000000000100", "YOUTH_SESSION_CHANGED", expect.any(Function), 1,
     );
   });
 
@@ -42,7 +42,7 @@ describe("TrainingService - YOUTH 세션 변경 시 GUARDIAN 알림", () => {
     });
     mockRepo.updateSession.mockResolvedValue({ id: 2 });
 
-    await service.updateSession(2, { date: "2026-07-22T10:00:00.000Z" }, 1);
+    await service.updateSession(2, { date: "2026-07-22T10:00:00.000Z" }, "00000000-0000-4000-8000-000000000001");
 
     expect(mockRepo.findGuardiansByTeam).not.toHaveBeenCalled();
     expect(mockNotifRepo.createForGuardian).not.toHaveBeenCalled();

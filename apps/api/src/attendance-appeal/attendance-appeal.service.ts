@@ -14,7 +14,7 @@ export class AttendanceAppealService {
     trainingResultId: number;
     requestedStatus: string;
     reason: string;
-    createdById: number;
+    createdById: string;
   }) {
     const prisma = getPrisma();
     const result = await (prisma.trainingResult as any).findUnique({
@@ -58,7 +58,7 @@ export class AttendanceAppealService {
     return this.repo.findAll(status);
   }
 
-  async accept(id: number, reviewedById: number, reviewNote?: string) {
+  async accept(id: number, reviewedById: string, reviewNote?: string) {
     const appeal = await this.repo.findById(id);
     if (!appeal) throw new AppError(404, "APPEAL_NOT_FOUND");
     if (appeal.status !== "PENDING") throw new AppError(409, "APPEAL_NOT_PENDING");
@@ -95,7 +95,7 @@ export class AttendanceAppealService {
     return this.repo.findById(id);
   }
 
-  async reject(id: number, reviewedById: number, reviewNote?: string) {
+  async reject(id: number, reviewedById: string, reviewNote?: string) {
     const appeal = await this.repo.findById(id);
     if (!appeal) throw new AppError(404, "APPEAL_NOT_FOUND");
     if (appeal.status !== "PENDING") throw new AppError(409, "APPEAL_NOT_PENDING");

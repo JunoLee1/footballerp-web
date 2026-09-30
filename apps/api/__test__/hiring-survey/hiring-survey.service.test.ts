@@ -90,7 +90,7 @@ beforeEach(() => {
 describe('create', () => {
   test('targetDeptIds가 비어있으면 400 TARGET_DEPTS_REQUIRED를 던진다', async () => {
     await expect(
-      service.create({ title: '2027 채용 조사', deadlineAt: '2027-01-31', targetDeptIds: [] }, 1)
+      service.create({ title: '2027 채용 조사', deadlineAt: '2027-01-31', targetDeptIds: [] }, "00000000-0000-4000-8000-000000000001")
     ).rejects.toMatchObject({ statusCode: 400, code: 'TARGET_DEPTS_REQUIRED' })
   })
 
@@ -99,26 +99,26 @@ describe('create', () => {
       id: 1,
       title: '2027 채용 조사',
       targetDepartments: [
-        { departmentId: 1, department: { id: 1, headId: 10 } },
-        { departmentId: 2, department: { id: 2, headId: 20 } },
+        { departmentId: 1, department: { id: 1, headId: "00000000-0000-4000-8000-000000000010" } },
+        { departmentId: 2, department: { id: 2, headId: "00000000-0000-4000-8000-000000000020" } },
       ],
     })
     mockNotifRepo.create.mockResolvedValue({})
     // 부서 1 팀장: [30], 부서 2 팀장: [] (부서장만)
-    mockRepo.findLeaderUserIdsForDepartments.mockResolvedValue([30])
+    mockRepo.findLeaderUserIdsForDepartments.mockResolvedValue(["00000000-0000-4000-8000-000000000030"])
 
-    await service.create({ title: '2027 채용 조사', deadlineAt: '2027-01-31', targetDeptIds: [1, 2] }, 5)
+    await service.create({ title: '2027 채용 조사', deadlineAt: '2027-01-31', targetDeptIds: [1, 2] }, "00000000-0000-4000-8000-000000000005")
 
     // 2 부서장 + 1 팀장 = 3
     expect(mockNotifRepo.create).toHaveBeenCalledTimes(3)
     expect(mockNotifRepo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 10, type: 'HIRING_SURVEY_OPEN' })
+      expect.objectContaining({ userId: "00000000-0000-4000-8000-000000000010", type: 'HIRING_SURVEY_OPEN' })
     )
     expect(mockNotifRepo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 20, type: 'HIRING_SURVEY_OPEN' })
+      expect.objectContaining({ userId: "00000000-0000-4000-8000-000000000020", type: 'HIRING_SURVEY_OPEN' })
     )
     expect(mockNotifRepo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 30, type: 'HIRING_SURVEY_OPEN' })
+      expect.objectContaining({ userId: "00000000-0000-4000-8000-000000000030", type: 'HIRING_SURVEY_OPEN' })
     )
   })
 })
@@ -133,7 +133,7 @@ describe('createResponse (팀장 DRAFT 작성)', () => {
     })
 
     await expect(
-      service.createResponse(1, 5, 10, { roleTitle: '코치', headcount: 1, priority: 'HIGH', reason: '공백' })
+      service.createResponse(1, 5, "00000000-0000-4000-8000-000000000010",{ roleTitle: '코치', headcount: 1, priority: 'HIGH', reason: '공백' })
     ).rejects.toMatchObject({ statusCode: 409, code: 'SURVEY_NOT_OPEN' })
   })
 
@@ -141,12 +141,12 @@ describe('createResponse (팀장 DRAFT 작성)', () => {
     mockRepo.findById.mockResolvedValue({
       id: 1,
       status: 'OPEN',
-      targetDepartments: [{ departmentId: 5, department: { headId: 99 } }],
+      targetDepartments: [{ departmentId: 5, department: { headId: "00000000-0000-4000-8000-000000000099" } }],
       responses: [],
     })
 
     await expect(
-      service.createResponse(1, 99, 10, { roleTitle: '코치', headcount: 1, priority: 'HIGH', reason: '공백' })
+      service.createResponse(1, 99, "00000000-0000-4000-8000-000000000010",{ roleTitle: '코치', headcount: 1, priority: 'HIGH', reason: '공백' })
     ).rejects.toMatchObject({ statusCode: 403, code: 'NOT_TARGET_DEPARTMENT' })
   })
 
@@ -154,13 +154,13 @@ describe('createResponse (팀장 DRAFT 작성)', () => {
     mockRepo.findById.mockResolvedValue({
       id: 1,
       status: 'OPEN',
-      targetDepartments: [{ departmentId: 5, department: { headId: 99 } }],
+      targetDepartments: [{ departmentId: 5, department: { headId: "00000000-0000-4000-8000-000000000099" } }],
       responses: [],
     })
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(false)
 
     await expect(
-      service.createResponse(1, 5, 10, { roleTitle: '코치', headcount: 1, priority: 'HIGH', reason: '공백' })
+      service.createResponse(1, 5, "00000000-0000-4000-8000-000000000010",{ roleTitle: '코치', headcount: 1, priority: 'HIGH', reason: '공백' })
     ).rejects.toMatchObject({ statusCode: 403, code: 'NOT_LEADER' })
   })
 
@@ -168,18 +168,18 @@ describe('createResponse (팀장 DRAFT 작성)', () => {
     mockRepo.findById.mockResolvedValue({
       id: 1,
       status: 'OPEN',
-      targetDepartments: [{ departmentId: 5, department: { headId: 99 } }],
+      targetDepartments: [{ departmentId: 5, department: { headId: "00000000-0000-4000-8000-000000000099" } }],
       responses: [],
     })
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(true)
     mockRepo.upsertResponse.mockResolvedValue({ id: 42, status: 'DRAFT' })
 
-    const result = await service.createResponse(1, 5, 10, {
+    const result = await service.createResponse(1, 5, "00000000-0000-4000-8000-000000000010",{
       roleTitle: '코치', headcount: 2, priority: 'HIGH', reason: '공백',
     })
 
-    expect(mockRepo.isUserLeaderOfDepartment).toHaveBeenCalledWith(10, 5)
-    expect(mockRepo.upsertResponse).toHaveBeenCalledWith(1, 5, 10, expect.objectContaining({ roleTitle: '코치' }))
+    expect(mockRepo.isUserLeaderOfDepartment).toHaveBeenCalledWith("00000000-0000-4000-8000-000000000010", 5)
+    expect(mockRepo.upsertResponse).toHaveBeenCalledWith(1, 5, "00000000-0000-4000-8000-000000000010", expect.objectContaining({ roleTitle: '코치' }))
     expect(result.status).toBe('DRAFT')
   })
 })
@@ -194,7 +194,7 @@ describe('close', () => {
       responses: [],
     })
 
-    await expect(service.close(1, 5)).rejects.toMatchObject({ statusCode: 409, code: 'SURVEY_NOT_OPEN' })
+    await expect(service.close(1, "00000000-0000-4000-8000-000000000005")).rejects.toMatchObject({ statusCode: 409, code: 'SURVEY_NOT_OPEN' })
   })
 
   test('close 시 PlanReport DRAFT와 HiringPlanItem을 생성한다', async () => {
@@ -213,7 +213,7 @@ describe('close', () => {
     mockPlanReportRepo.createHiringPlanItems.mockResolvedValue({})
     mockNotifRepo.createForHrManager.mockResolvedValue(undefined)
 
-    await service.close(1, 5)
+    await service.close(1, "00000000-0000-4000-8000-000000000005")
 
     expect(mockPlanReportRepo.createDraftForSurvey).toHaveBeenCalledWith(
       expect.objectContaining({ surveyId: 1 })
@@ -243,7 +243,7 @@ describe('close', () => {
       ],
     })
 
-    await expect(service.close(1, 5)).rejects.toMatchObject({
+    await expect(service.close(1, "00000000-0000-4000-8000-000000000005")).rejects.toMatchObject({
       statusCode: 409,
       code: 'RESPONSES_NOT_APPROVED',
     })
@@ -261,7 +261,7 @@ describe('close', () => {
       responses: [], // no response at all
     })
 
-    await expect(service.close(1, 5)).rejects.toMatchObject({
+    await expect(service.close(1, "00000000-0000-4000-8000-000000000005")).rejects.toMatchObject({
       statusCode: 409,
       code: 'RESPONSES_NOT_APPROVED',
     })
@@ -280,7 +280,7 @@ describe('updateResponse (팀장 DRAFT/REJECTED 편집)', () => {
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(true)
     mockRepo.updateResponse.mockResolvedValue({ id: 42, status: 'DRAFT', roleTitle: '수정됨' })
 
-    const result = await service.updateResponse(42, 10, { roleTitle: '수정됨' })
+    const result = await service.updateResponse(42, "00000000-0000-4000-8000-000000000010",{ roleTitle: '수정됨' })
 
     expect(mockRepo.updateResponse).toHaveBeenCalledWith(42, expect.objectContaining({ roleTitle: '수정됨' }))
     expect(result.roleTitle).toBe('수정됨')
@@ -297,7 +297,7 @@ describe('updateResponse (팀장 DRAFT/REJECTED 편집)', () => {
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(true)
     mockRepo.updateResponse.mockResolvedValue({ id: 42, status: 'REJECTED', roleTitle: '수정' })
 
-    await service.updateResponse(42, 10, { roleTitle: '수정' })
+    await service.updateResponse(42, "00000000-0000-4000-8000-000000000010",{ roleTitle: '수정' })
     expect(mockRepo.updateResponse).toHaveBeenCalled()
   })
 
@@ -312,7 +312,7 @@ describe('updateResponse (팀장 DRAFT/REJECTED 편집)', () => {
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(true)
 
     await expect(
-      service.updateResponse(42, 10, { roleTitle: '수정' })
+      service.updateResponse(42, "00000000-0000-4000-8000-000000000010",{ roleTitle: '수정' })
     ).rejects.toMatchObject({ statusCode: 409, code: 'RESPONSE_NOT_EDITABLE' })
   })
 
@@ -327,7 +327,7 @@ describe('updateResponse (팀장 DRAFT/REJECTED 편집)', () => {
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(true)
 
     await expect(
-      service.updateResponse(42, 10, { roleTitle: '수정' })
+      service.updateResponse(42, "00000000-0000-4000-8000-000000000010",{ roleTitle: '수정' })
     ).rejects.toMatchObject({ statusCode: 409, code: 'RESPONSE_NOT_EDITABLE' })
   })
 
@@ -342,7 +342,7 @@ describe('updateResponse (팀장 DRAFT/REJECTED 편집)', () => {
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(false)
 
     await expect(
-      service.updateResponse(42, 10, { roleTitle: '수정' })
+      service.updateResponse(42, "00000000-0000-4000-8000-000000000010",{ roleTitle: '수정' })
     ).rejects.toMatchObject({ statusCode: 403, code: 'NOT_LEADER' })
   })
 
@@ -350,7 +350,7 @@ describe('updateResponse (팀장 DRAFT/REJECTED 편집)', () => {
     mockRepo.findResponseById.mockResolvedValue(null)
 
     await expect(
-      service.updateResponse(999, 10, { roleTitle: '수정' })
+      service.updateResponse(999, "00000000-0000-4000-8000-000000000010",{ roleTitle: '수정' })
     ).rejects.toMatchObject({ statusCode: 404, code: 'RESPONSE_NOT_FOUND' })
   })
 })
@@ -367,7 +367,7 @@ describe('submitResponse (팀장 DRAFT/REJECTED → SUBMITTED)', () => {
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(true)
     mockRepo.setResponseStatus.mockResolvedValue({ id: 42, status: 'SUBMITTED' })
 
-    const result = await service.submitResponse(42, 10)
+    const result = await service.submitResponse(42, "00000000-0000-4000-8000-000000000010")
 
     expect(mockRepo.setResponseStatus).toHaveBeenCalledWith(42, expect.objectContaining({ status: 'SUBMITTED' }))
     expect(result.status).toBe('SUBMITTED')
@@ -390,7 +390,7 @@ describe('submitResponse (팀장 DRAFT/REJECTED → SUBMITTED)', () => {
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(true)
     mockRepo.setResponseStatus.mockResolvedValue({ id: 42, status: 'SUBMITTED' })
 
-    await service.submitResponse(42, 10)
+    await service.submitResponse(42, "00000000-0000-4000-8000-000000000010")
     expect(mockRepo.setResponseStatus).toHaveBeenCalledWith(
       42,
       expect.objectContaining({ status: 'SUBMITTED', rejectionReason: null }),
@@ -407,7 +407,7 @@ describe('submitResponse (팀장 DRAFT/REJECTED → SUBMITTED)', () => {
     })
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(true)
 
-    await expect(service.submitResponse(42, 10)).rejects.toMatchObject({
+    await expect(service.submitResponse(42, "00000000-0000-4000-8000-000000000010")).rejects.toMatchObject({
       statusCode: 409,
       code: 'INVALID_TRANSITION',
     })
@@ -423,7 +423,7 @@ describe('submitResponse (팀장 DRAFT/REJECTED → SUBMITTED)', () => {
     })
     mockRepo.isUserLeaderOfDepartment.mockResolvedValue(false)
 
-    await expect(service.submitResponse(42, 10)).rejects.toMatchObject({
+    await expect(service.submitResponse(42, "00000000-0000-4000-8000-000000000010")).rejects.toMatchObject({
       statusCode: 403, code: 'NOT_LEADER',
     })
   })
@@ -435,22 +435,22 @@ describe('approveResponse (부서장 SUBMITTED → APPROVED)', () => {
       id: 42,
       surveyId: 1,
       departmentId: 5,
-      submittedById: 10,
+      submittedById: "00000000-0000-4000-8000-000000000010",
       status: 'SUBMITTED',
       survey: { id: 1, status: 'OPEN', title: '2027 채용 조사' },
-      department: { id: 5, name: '코칭', headId: 99 },
+      department: { id: 5, name: '코칭', headId: "00000000-0000-4000-8000-000000000099" },
     })
     mockRepo.setResponseStatus.mockResolvedValue({ id: 42, status: 'APPROVED' })
 
-    const result = await service.approveResponse(42, 99)
+    const result = await service.approveResponse(42, "00000000-0000-4000-8000-000000000099")
 
     expect(mockRepo.setResponseStatus).toHaveBeenCalledWith(
       42,
-      expect.objectContaining({ status: 'APPROVED', approvedById: 99 }),
+      expect.objectContaining({ status: 'APPROVED', approvedById: "00000000-0000-4000-8000-000000000099" }),
     )
     expect(result.status).toBe('APPROVED')
     expect(mockNotifRepo.createForUser).toHaveBeenCalledWith(
-      10,
+      "00000000-0000-4000-8000-000000000010",
       'SURVEY_RESPONSE_APPROVED',
       expect.any(Function),
       42,
@@ -461,13 +461,13 @@ describe('approveResponse (부서장 SUBMITTED → APPROVED)', () => {
     mockRepo.findResponseById.mockResolvedValue({
       id: 42,
       status: 'SUBMITTED',
-      submittedById: 10,
+      submittedById: "00000000-0000-4000-8000-000000000010",
       departmentId: 5,
       survey: { id: 1, status: 'OPEN' },
-      department: { id: 5, name: '코칭', headId: 99 },
+      department: { id: 5, name: '코칭', headId: "00000000-0000-4000-8000-000000000099" },
     })
 
-    await expect(service.approveResponse(42, 77)).rejects.toMatchObject({
+    await expect(service.approveResponse(42, "00000000-0000-4000-8000-000000000077")).rejects.toMatchObject({
       statusCode: 403, code: 'NOT_DEPT_HEAD',
     })
   })
@@ -476,13 +476,13 @@ describe('approveResponse (부서장 SUBMITTED → APPROVED)', () => {
     mockRepo.findResponseById.mockResolvedValue({
       id: 42,
       status: 'DRAFT',
-      submittedById: 10,
+      submittedById: "00000000-0000-4000-8000-000000000010",
       departmentId: 5,
       survey: { id: 1, status: 'OPEN' },
-      department: { id: 5, name: '코칭', headId: 99 },
+      department: { id: 5, name: '코칭', headId: "00000000-0000-4000-8000-000000000099" },
     })
 
-    await expect(service.approveResponse(42, 99)).rejects.toMatchObject({
+    await expect(service.approveResponse(42, "00000000-0000-4000-8000-000000000099")).rejects.toMatchObject({
       statusCode: 409, code: 'INVALID_TRANSITION',
     })
   })
@@ -495,18 +495,18 @@ describe('approveResponse (부서장 SUBMITTED → APPROVED)', () => {
     mockRepo.findResponseById.mockResolvedValue({
       id: 42,
       status: 'SUBMITTED',
-      submittedById: 99,
+      submittedById: "00000000-0000-4000-8000-000000000099",
       departmentId: 5,
       surveyId: 1,
       survey: { id: 1, status: 'OPEN', title: 'x' },
-      department: { id: 5, name: '코칭', headId: 99 },
+      department: { id: 5, name: '코칭', headId: "00000000-0000-4000-8000-000000000099" },
     })
     mockRepo.setResponseStatus.mockResolvedValue({ id: 42, status: 'APPROVED' })
 
-    await service.approveResponse(42, 99)
+    await service.approveResponse(42, "00000000-0000-4000-8000-000000000099")
     expect(mockRepo.setResponseStatus).toHaveBeenCalledWith(
       42,
-      expect.objectContaining({ status: 'APPROVED', approvedById: 99 }),
+      expect.objectContaining({ status: 'APPROVED', approvedById: "00000000-0000-4000-8000-000000000099" }),
     )
   })
 
@@ -516,10 +516,10 @@ describe('approveResponse (부서장 SUBMITTED → APPROVED)', () => {
       id: 42,
       surveyId: 1,
       departmentId: 5,
-      submittedById: 10,
+      submittedById: "00000000-0000-4000-8000-000000000010",
       status: 'SUBMITTED',
       survey: { id: 1, status: 'OPEN', title: '2027 채용 조사' },
-      department: { id: 5, name: '코칭', headId: 99 },
+      department: { id: 5, name: '코칭', headId: "00000000-0000-4000-8000-000000000099" },
     })
     mockRepo.setResponseStatus.mockResolvedValue({ id: 42, status: 'APPROVED' })
     // After the transition, findById returns the survey with all APPROVED responses.
@@ -536,7 +536,7 @@ describe('approveResponse (부서장 SUBMITTED → APPROVED)', () => {
       ],
     })
 
-    await service.approveResponse(42, 99)
+    await service.approveResponse(42, "00000000-0000-4000-8000-000000000099")
 
     // Wait for microtask queue to drain (fire-and-forget uses `void`).
     await new Promise((resolve) => setImmediate(resolve))
@@ -552,10 +552,10 @@ describe('approveResponse (부서장 SUBMITTED → APPROVED)', () => {
       id: 42,
       surveyId: 1,
       departmentId: 5,
-      submittedById: 10,
+      submittedById: "00000000-0000-4000-8000-000000000010",
       status: 'SUBMITTED',
       survey: { id: 1, status: 'OPEN', title: '2027 채용 조사' },
-      department: { id: 5, name: '코칭', headId: 99 },
+      department: { id: 5, name: '코칭', headId: "00000000-0000-4000-8000-000000000099" },
     })
     mockRepo.setResponseStatus.mockResolvedValue({ id: 42, status: 'APPROVED' })
     mockRepo.findById.mockResolvedValue({
@@ -571,7 +571,7 @@ describe('approveResponse (부서장 SUBMITTED → APPROVED)', () => {
       ],
     })
 
-    await service.approveResponse(42, 99)
+    await service.approveResponse(42, "00000000-0000-4000-8000-000000000099")
 
     await new Promise((resolve) => setImmediate(resolve))
     expect(mockNotifRepo.createForHrManager).not.toHaveBeenCalledWith(
@@ -588,21 +588,21 @@ describe('rejectResponse (부서장 SUBMITTED → REJECTED)', () => {
       id: 42,
       surveyId: 1,
       departmentId: 5,
-      submittedById: 10,
+      submittedById: "00000000-0000-4000-8000-000000000010",
       status: 'SUBMITTED',
       survey: { id: 1, status: 'OPEN', title: '2027 채용 조사' },
-      department: { id: 5, name: '코칭', headId: 99 },
+      department: { id: 5, name: '코칭', headId: "00000000-0000-4000-8000-000000000099" },
     })
     mockRepo.setResponseStatus.mockResolvedValue({ id: 42, status: 'REJECTED' })
 
-    await service.rejectResponse(42, 99, '예산 재검토 필요')
+    await service.rejectResponse(42, "00000000-0000-4000-8000-000000000099",'예산 재검토 필요')
 
     expect(mockRepo.setResponseStatus).toHaveBeenCalledWith(
       42,
       expect.objectContaining({ status: 'REJECTED', rejectionReason: '예산 재검토 필요' }),
     )
     expect(mockNotifRepo.createForUser).toHaveBeenCalledWith(
-      10,
+      "00000000-0000-4000-8000-000000000010",
       'SURVEY_RESPONSE_REJECTED',
       expect.any(Function),
       42,
@@ -611,34 +611,34 @@ describe('rejectResponse (부서장 SUBMITTED → REJECTED)', () => {
 
   test('rejectionReason 빈 문자열이면 400 REJECTION_REASON_REQUIRED', async () => {
     mockRepo.findResponseById.mockResolvedValue({
-      id: 42, status: 'SUBMITTED', submittedById: 10, departmentId: 5,
+      id: 42, status: 'SUBMITTED', submittedById: "00000000-0000-4000-8000-000000000010", departmentId: 5,
       survey: { id: 1, status: 'OPEN' },
-      department: { id: 5, headId: 99 },
+      department: { id: 5, headId: "00000000-0000-4000-8000-000000000099" },
     })
 
-    await expect(service.rejectResponse(42, 99, '   ')).rejects.toMatchObject({
+    await expect(service.rejectResponse(42, "00000000-0000-4000-8000-000000000099",'   ')).rejects.toMatchObject({
       statusCode: 400, code: 'REJECTION_REASON_REQUIRED',
     })
   })
 
   test('부서장이 아니면 403 NOT_DEPT_HEAD', async () => {
     mockRepo.findResponseById.mockResolvedValue({
-      id: 42, status: 'SUBMITTED', submittedById: 10, departmentId: 5,
+      id: 42, status: 'SUBMITTED', submittedById: "00000000-0000-4000-8000-000000000010", departmentId: 5,
       survey: { id: 1, status: 'OPEN' },
-      department: { id: 5, headId: 99 },
+      department: { id: 5, headId: "00000000-0000-4000-8000-000000000099" },
     })
-    await expect(service.rejectResponse(42, 77, 'r')).rejects.toMatchObject({
+    await expect(service.rejectResponse(42, "00000000-0000-4000-8000-000000000077",'r')).rejects.toMatchObject({
       statusCode: 403, code: 'NOT_DEPT_HEAD',
     })
   })
 
   test('SUBMITTED 가 아니면 409 INVALID_TRANSITION', async () => {
     mockRepo.findResponseById.mockResolvedValue({
-      id: 42, status: 'DRAFT', submittedById: 10, departmentId: 5,
+      id: 42, status: 'DRAFT', submittedById: "00000000-0000-4000-8000-000000000010", departmentId: 5,
       survey: { id: 1, status: 'OPEN' },
-      department: { id: 5, headId: 99 },
+      department: { id: 5, headId: "00000000-0000-4000-8000-000000000099" },
     })
-    await expect(service.rejectResponse(42, 99, 'r')).rejects.toMatchObject({
+    await expect(service.rejectResponse(42, "00000000-0000-4000-8000-000000000099",'r')).rejects.toMatchObject({
       statusCode: 409, code: 'INVALID_TRANSITION',
     })
   })
@@ -650,8 +650,8 @@ describe('HiringSurveyService.updateDraft', () => {
     title: '2026 Q4 채용 수요 조사',
     deadlineAt: new Date('2026-12-31T23:59:59Z'),
     status: 'DRAFT' as const,
-    createdById: 1,
-    targetDepartments: [{ department: { id: 10, name: '코칭', headId: 100 } }],
+    createdById: "00000000-0000-4000-8000-000000000001",
+    targetDepartments: [{ department: { id: 10, name: '코칭', headId: "00000000-0000-4000-8000-000000000100" } }],
     responses: [],
   }
 
@@ -711,10 +711,10 @@ describe('HiringSurveyService.open', () => {
     title: '2026 Q4 채용 수요 조사',
     deadlineAt: new Date('2026-12-31T23:59:59Z'),
     status: 'DRAFT' as const,
-    createdById: 1,
+    createdById: "00000000-0000-4000-8000-000000000001",
     targetDepartments: [
-      { department: { id: 10, name: '코칭', headId: 100 } },
-      { department: { id: 20, name: '의료', headId: 200 } },
+      { department: { id: 10, name: '코칭', headId: "00000000-0000-4000-8000-000000000100" } },
+      { department: { id: 20, name: '의료', headId: "00000000-0000-4000-8000-000000000200" } },
     ],
     responses: [],
   }
@@ -735,7 +735,11 @@ describe('HiringSurveyService.open', () => {
         findById: jest.fn().mockResolvedValue(draftSurvey),
         openDraft,
         // 부서 10=팀장 유저 [110], 부서 20=팀장 유저 [210, 211]
-        findLeaderUserIdsForDepartments: jest.fn().mockResolvedValue([110, 210, 211]),
+        findLeaderUserIdsForDepartments: jest.fn().mockResolvedValue([
+          "00000000-0000-4000-8000-000000000110",
+          "00000000-0000-4000-8000-000000000210",
+          "00000000-0000-4000-8000-000000000211",
+        ]),
       }),
       makePlanRepo(),
       notifRepo,
@@ -748,19 +752,19 @@ describe('HiringSurveyService.open', () => {
     // 부서장 2명 + LEADER 3명 = 총 5명에게 알림
     expect(notifCreate).toHaveBeenCalledTimes(5)
     expect(notifCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 100, type: 'HIRING_SURVEY_OPEN' })
+      expect.objectContaining({ userId: "00000000-0000-4000-8000-000000000100", type: 'HIRING_SURVEY_OPEN' })
     )
     expect(notifCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 200, type: 'HIRING_SURVEY_OPEN' })
+      expect.objectContaining({ userId: "00000000-0000-4000-8000-000000000200", type: 'HIRING_SURVEY_OPEN' })
     )
     expect(notifCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 110, type: 'HIRING_SURVEY_OPEN' })
+      expect.objectContaining({ userId: "00000000-0000-4000-8000-000000000110", type: 'HIRING_SURVEY_OPEN' })
     )
     expect(notifCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 210, type: 'HIRING_SURVEY_OPEN' })
+      expect.objectContaining({ userId: "00000000-0000-4000-8000-000000000210", type: 'HIRING_SURVEY_OPEN' })
     )
     expect(notifCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 211, type: 'HIRING_SURVEY_OPEN' })
+      expect.objectContaining({ userId: "00000000-0000-4000-8000-000000000211", type: 'HIRING_SURVEY_OPEN' })
     )
   })
 
@@ -804,7 +808,7 @@ describe('HiringSurveyService.deleteDraft', () => {
     title: '2026 Q4 채용 수요 조사',
     deadlineAt: new Date('2026-12-31T23:59:59Z'),
     status: 'DRAFT' as const,
-    createdById: 1,
+    createdById: "00000000-0000-4000-8000-000000000001",
     targetDepartments: [],
     responses: [],
   }
@@ -871,14 +875,14 @@ describe('HiringSurveyService.createQuarterlyDraft', () => {
       title: '2026 Q4 채용 수요 조사',
       deadlineAt: new Date('2026-12-31T23:59:59Z'),
       targetDeptIds,
-      systemUserId: 1,
+      systemUserId: "00000000-0000-4000-8000-000000000001",
     })
 
     expect(createDraft).toHaveBeenCalledWith({
       title: '2026 Q4 채용 수요 조사',
       deadlineAt: new Date('2026-12-31T23:59:59Z'),
       targetDeptIds,
-      createdById: 1,
+      createdById: "00000000-0000-4000-8000-000000000001",
     })
     expect(result.id).toBe(42)
     expect(notifHrCreate).toHaveBeenCalledWith(
@@ -895,7 +899,7 @@ describe('HiringSurveyService.createQuarterlyDraft', () => {
         title: 'x',
         deadlineAt: new Date(),
         targetDeptIds: [],
-        systemUserId: 1,
+        systemUserId: "00000000-0000-4000-8000-000000000001",
       })
     ).rejects.toMatchObject({ statusCode: 400, message: 'TARGET_DEPTS_REQUIRED' })
   })
@@ -907,7 +911,7 @@ describe('HiringSurveyService.createQuarterlyDraft', () => {
         title: '',
         deadlineAt: new Date(),
         targetDeptIds: [10],
-        systemUserId: 1,
+        systemUserId: "00000000-0000-4000-8000-000000000001",
       })
     ).rejects.toMatchObject({ statusCode: 400, message: 'TITLE_REQUIRED' })
   })
@@ -919,7 +923,7 @@ describe('HiringSurveyService.createQuarterlyDraft', () => {
         title: 'x',
         deadlineAt: undefined as any,
         targetDeptIds: [10],
-        systemUserId: 1,
+        systemUserId: "00000000-0000-4000-8000-000000000001",
       })
     ).rejects.toMatchObject({ statusCode: 400, message: 'DEADLINE_REQUIRED' })
   })

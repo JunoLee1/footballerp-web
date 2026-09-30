@@ -17,7 +17,7 @@ export class GrowthReportService {
     return this.repo.findEvaluationsByPlayer(playerId);
   }
 
-  async getEvaluationsByPlayerForGuardian(playerId: string, guardianId: number) {
+  async getEvaluationsByPlayerForGuardian(playerId: string, guardianId: string) {
     const child = await this.guardianRepo.findChildByIdAndGuardian(playerId, guardianId);
     if (!child) throw new AppError(403, "FORBIDDEN");
     return this.repo.findPublishedEvaluationsByPlayer(playerId);
@@ -29,14 +29,14 @@ export class GrowthReportService {
     return ev;
   }
 
-  async createEvaluation(dto: CreateGrowthEvaluationDto, coachId: number) {
+  async createEvaluation(dto: CreateGrowthEvaluationDto, coachId: string) {
     const existing = await this.repo.findEvaluationByPeriod(dto.playerId, dto.year, dto.month);
     if (existing) throw new AppError(409, "GROWTH_EVALUATION_ALREADY_EXISTS");
     const activePlan = await this.planRepo.findActiveByPlayer(dto.playerId);
     return this.repo.createEvaluation(dto, coachId, activePlan?.id);
   }
 
-  async updateEvaluation(id: number, dto: Partial<CreateGrowthEvaluationDto>, coachId: number) {
+  async updateEvaluation(id: number, dto: Partial<CreateGrowthEvaluationDto>, coachId: string) {
     const ev = await this.repo.findEvaluationById(id);
     if (!ev) throw new AppError(404, "GROWTH_EVALUATION_NOT_FOUND");
     if (ev.coachId !== coachId) throw new AppError(403, "FORBIDDEN");
@@ -76,7 +76,7 @@ export class GrowthReportService {
     return this.repo.findBadgesByPlayer(playerId);
   }
 
-  awardBadge(dto: AwardBadgeDto, coachId: number) {
+  awardBadge(dto: AwardBadgeDto, coachId: string) {
     return this.repo.awardBadge(dto, coachId);
   }
 }

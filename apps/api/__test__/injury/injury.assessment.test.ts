@@ -18,7 +18,7 @@ const mockService = {
 const controller = new InjuryController(mockService);
 
 const mockReq = (overrides: any) =>
-  ({ user: { id: 1, role: "COACHING_STAFF", coachingRole: "MEDICAL", frontOfficeRole: null }, body: {}, params: {}, query: {}, ...overrides }) as any;
+  ({ user: { id: "00000000-0000-4000-8000-000000000001", role: "COACHING_STAFF", coachingRole: "MEDICAL", frontOfficeRole: null }, body: {}, params: {}, query: {}, ...overrides }) as any;
 
 const mockRes = () => {
   const r: any = {};
@@ -45,7 +45,7 @@ describe("InjuryController - getAssessment", () => {
 
   test("ADMIN도 접근 가능 → 200", async () => {
     mockService.getAssessment.mockResolvedValue(null);
-    const req = mockReq({ user: { id: 2, role: "ADMIN", coachingRole: null, frontOfficeRole: null }, params: { id: "3" } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000002", role: "ADMIN", coachingRole: null, frontOfficeRole: null }, params: { id: "3" } });
     const res = mockRes();
     await controller.getAssessment(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
@@ -62,14 +62,14 @@ describe("InjuryController - processAssessment", () => {
     const req = mockReq({ params: { id: "5" }, body: dto });
     const res = mockRes();
     await controller.processAssessment(req, res, mockNext);
-    expect(mockService.processAssessment).toHaveBeenCalledWith(5, dto, 1);
+    expect(mockService.processAssessment).toHaveBeenCalledWith(5, dto, "00000000-0000-4000-8000-000000000001");
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(mockResult);
   });
 
   test("FRONT_OFFICE → 403", async () => {
     const req = mockReq({
-      user: { id: 3, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "FINANCE" },
+      user: { id: "00000000-0000-4000-8000-000000000003", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "FINANCE" },
       params: { id: "5" },
       body: {},
     });
@@ -113,7 +113,7 @@ describe("InjuryController - updateExternalReportStatus", () => {
 
   test("FRONT_OFFICE → 403, service 미호출", async () => {
     const req = mockReq({
-      user: { id: 3, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "GM" },
+      user: { id: "00000000-0000-4000-8000-000000000003", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "GM" },
       params: { id: "1", reportId: "7" },
       body: { status: "SUBMITTED" },
     });

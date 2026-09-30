@@ -11,7 +11,7 @@ export class DisposalService {
     return record;
   }
 
-  async requestDisposal(equipmentId: number, requestedById: number) {
+  async requestDisposal(equipmentId: number, requestedById: string) {
     const unit = await this.repo.findUnitById(equipmentId);
     if (!unit) throw new AppError(404, "EQUIPMENT_UNIT_NOT_FOUND");
     if (unit.status === "RETIRED") throw new AppError(409, "UNIT_ALREADY_RETIRED");
@@ -24,7 +24,7 @@ export class DisposalService {
     return this.repo.createVerification(equipmentId, requestedById);
   }
 
-  async fmVerify(equipmentId: number, verifiedById: number, dto: FmVerifyDto) {
+  async fmVerify(equipmentId: number, verifiedById: string, dto: FmVerifyDto) {
     const verification = await this.repo.findVerification(equipmentId);
     if (!verification) throw new AppError(404, "DISPOSAL_VERIFICATION_NOT_FOUND");
     if (verification.status !== "PENDING") throw new AppError(400, "INVALID_VERIFICATION_STATUS");
@@ -42,7 +42,7 @@ export class DisposalService {
     return updated;
   }
 
-  async gmApprove(equipmentId: number, gmId: number, dto: GmApproveDto) {
+  async gmApprove(equipmentId: number, gmId: string, dto: GmApproveDto) {
     const verification = await this.repo.findVerification(equipmentId);
     if (!verification) throw new AppError(404, "DISPOSAL_VERIFICATION_NOT_FOUND");
     if (verification.status !== "FM_VERIFIED") throw new AppError(400, "INVALID_VERIFICATION_STATUS");

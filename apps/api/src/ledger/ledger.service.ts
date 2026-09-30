@@ -25,7 +25,7 @@ export class LedgerService {
     if (locked) throw new AppError(409, "PERIOD_LOCKED");
   }
 
-  async create(dto: CreateLedgerEntryDto, createdById: number) {
+  async create(dto: CreateLedgerEntryDto, createdById: string) {
     if (dto.amount <= 0) throw new AppError(400, "INVALID_AMOUNT");
     this.validateExchangeRate(dto.exchangeRate);
 
@@ -45,7 +45,7 @@ export class LedgerService {
     return entry;
   }
 
-  async createRefund(originalId: number, createdById: number) {
+  async createRefund(originalId: number, createdById: string) {
     const original = await this.repo.findById(originalId);
     if (!original) throw new AppError(404, "LEDGER_ENTRY_NOT_FOUND");
     if (original.reversedById != null) throw new AppError(400, "ALREADY_REVERSED");
@@ -79,7 +79,7 @@ export class LedgerService {
     return refund;
   }
 
-  async lockPeriod(year: number, month: number, actorId: number) {
+  async lockPeriod(year: number, month: number, actorId: string) {
     const already = await this.repo.isPeriodLocked(year, month);
     if (already) throw new AppError(409, "PERIOD_ALREADY_LOCKED");
     try {
@@ -94,7 +94,7 @@ export class LedgerService {
 
   // Auto-entry helper for internal trusted modules (payroll, contracts, etc.)
   // relatedModule/relatedId validation bypassed — callers are trusted internal modules
-  async createAutoEntry(dto: CreateLedgerEntryDto, createdById: number) {
+  async createAutoEntry(dto: CreateLedgerEntryDto, createdById: string) {
     this.validateExchangeRate(dto.exchangeRate);
     await this.assertPeriodNotLocked();
     const rate = dto.exchangeRate ?? 1;

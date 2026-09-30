@@ -11,7 +11,7 @@ export class MarketValueRepository {
     });
   }
 
-  async updateCurrentValue(playerId: string, value: number, recordedById: number) {
+  async updateCurrentValue(playerId: string, value: number, recordedById: string) {
     await this.prisma.$transaction([
       this.prisma.player.update({
         where: { id: playerId },

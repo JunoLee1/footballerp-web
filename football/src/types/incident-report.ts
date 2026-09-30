@@ -4,14 +4,14 @@ export type IncidentType = 'MATCH' | 'TRAINING'
 export interface IncidentReport {
   id: number
   playerId: string
-  player: { id: string; playerName: string; guardianId: number | null }
+  player: { id: string; playerName: string; guardianId: string | null }
   teamId: number
   team: { id: number; name: string }
   type: IncidentType
   matchId: number | null
   sessionId: number | null
   description: string
-  reportedById: number
+  reportedById: string
   reportedBy: { id: number; username: string }
   supervisorSigned: boolean
   medicalSigned: boolean

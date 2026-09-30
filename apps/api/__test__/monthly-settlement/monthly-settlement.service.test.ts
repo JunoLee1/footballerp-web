@@ -14,7 +14,7 @@ const makeReport = (overrides = {}) => ({
   snapshotJson: {},
   note: null,
   rejectionReason: null,
-  createdById: 1,
+  createdById: "00000000-0000-4000-8000-000000000001",
   firstSubmittedById: null,
   firstSubmittedAt: null,
   firstApproverId: null,
@@ -164,10 +164,10 @@ describe("MonthlySettlementService.submitFirst", () => {
     const repo = makeRepo({
       findById: jest.fn().mockResolvedValue(makeReport({ status: "DRAFT" })),
     });
-    await makeService(repo).submitFirst(1, 42);
+    await makeService(repo).submitFirst(1, "00000000-0000-4000-8000-000000000042");
     expect(repo.updateStatus).toHaveBeenCalledWith(1, expect.objectContaining({
       status: "PENDING_FIRST",
-      firstSubmittedById: 42,
+      firstSubmittedById: "00000000-0000-4000-8000-000000000042",
     }));
   });
 });
@@ -181,14 +181,14 @@ describe("MonthlySettlementService.approve", () => {
       findById: jest.fn().mockResolvedValue(report),
     });
     const service = makeService(repo);
-    await service.approve(1, 99);
+    await service.approve(1, "00000000-0000-4000-8000-000000000099");
 
     expect(repo.updateStatus).toHaveBeenCalledWith(1, expect.objectContaining({
       status: "APPROVED",
-      approverId: 99,
+      approverId: "00000000-0000-4000-8000-000000000099",
     }));
     expect(repo.lockAcademyFees).toHaveBeenCalledWith(2026, 8);
-    expect(repo.createPeriodLock).toHaveBeenCalledWith(2026, 8, 99);
+    expect(repo.createPeriodLock).toHaveBeenCalledWith(2026, 8, "00000000-0000-4000-8000-000000000099");
   });
 
   it("throws 400 if status is not FIRST_APPROVED", async () => {
@@ -215,7 +215,7 @@ describe("MonthlySettlementService.reject", () => {
     const repo = makeRepo({
       findById: jest.fn().mockResolvedValue(makeReport({
         status: "PENDING_FIRST",
-        firstSubmittedById: 10,
+        firstSubmittedById: "00000000-0000-4000-8000-000000000010",
         firstSubmittedAt: new Date(),
       })),
     });

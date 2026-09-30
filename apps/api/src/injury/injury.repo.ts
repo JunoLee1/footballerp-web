@@ -186,7 +186,7 @@ export class InjuryRepository {
     });
   }
 
-  upsertReport(injuryId: number, dto: UpsertInjuryReportDto, userId: number) {
+  upsertReport(injuryId: number, dto: UpsertInjuryReportDto, userId: string) {
     const data = {
       diagnosisName: dto.diagnosisName ?? null,
       treatmentContent: dto.treatmentContent ?? null,
@@ -207,7 +207,7 @@ export class InjuryRepository {
     });
   }
 
-  signReport(injuryId: number, role: 'COACH' | 'TRAINER' | 'MEDICAL', userId: number) {
+  signReport(injuryId: number, role: 'COACH' | 'TRAINER' | 'MEDICAL', userId: string) {
     const now = new Date();
     const data =
       role === 'COACH'
@@ -285,7 +285,7 @@ export class InjuryRepository {
       psychScore: number; positionRiskScore: number;
       medicalScore: number; functionalScore: number; modifierScore: number; totalScore: number;
     },
-    assessedById: number
+    assessedById: string
   ) {
     return this.prisma.injuryAssessment.upsert({
       where: { injuryId },

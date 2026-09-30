@@ -14,7 +14,7 @@ export const certificationApi = {
     certType?: CertificationType;
     status?: CertStatus;
     playerId?: string;
-    coachId?: number;
+    coachId?: string;
     staffId?: number;
   }): Promise<Certification[]> {
     const qs = new URLSearchParams(
@@ -38,7 +38,7 @@ export const certificationApi = {
     reminderDays?: number[];
     notes?: string;
     playerId?: string;
-    coachId?: number;
+    coachId?: string;
     staffId?: number;
     facilityZone?: string;
   }): Promise<Certification> {

@@ -59,7 +59,7 @@ export class HiringDispatchService {
   }
 
   async list(
-    userId: number,
+    userId: string,
     role: string,
     filter?: "me" | "pending-budget" | "pending-dispatch" | "pending-execution" | "all",
     status?: string,
@@ -93,7 +93,7 @@ export class HiringDispatchService {
    */
   async create(
     dto: CreateHiringDispatchDto,
-    hrUserId: number,
+    hrUserId: string,
     hrRole: string,
     hrFoRole: string | null | undefined,
   ) {
@@ -169,7 +169,7 @@ export class HiringDispatchService {
 
   async budgetReverify(
     id: number,
-    reviewerId: number,
+    reviewerId: string,
     role: string,
     foRole: string | null | undefined,
     body: BudgetReverifyDto,
@@ -266,7 +266,7 @@ export class HiringDispatchService {
 
   async budgetReject(
     id: number,
-    reviewerId: number,
+    reviewerId: string,
     role: string,
     foRole: string | null | undefined,
     reason: string,
@@ -324,7 +324,7 @@ export class HiringDispatchService {
   // Stage 2 — Dispatch approval (임원)
   // ────────────────────────────────────────────
 
-  async dispatchApprove(id: number, reviewerId: number, role: string) {
+  async dispatchApprove(id: number, reviewerId: string, role: string) {
     const dispatch = await this.repo.findById(id);
     if (!dispatch) throw new AppError(404, "NOT_FOUND");
     if (dispatch.status !== "BUDGET_REVERIFIED") throw new AppError(400, "INVALID_STATUS");
@@ -365,7 +365,7 @@ export class HiringDispatchService {
     return updated;
   }
 
-  async dispatchReject(id: number, reviewerId: number, role: string, reason: string) {
+  async dispatchReject(id: number, reviewerId: string, role: string, reason: string) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -424,7 +424,7 @@ export class HiringDispatchService {
    */
   async dispatch(
     id: number,
-    reviewerId: number,
+    reviewerId: string,
     role: string,
     foRole: string | null | undefined,
   ) {
@@ -674,7 +674,7 @@ export class HiringDispatchService {
    */
   private async notifyNewEmployeeTasksAssigned(
     dispatchId: number,
-    newUserId: number,
+    newUserId: string,
   ): Promise<void> {
     const onboarding = await this.prisma.onboarding.findFirst({
       where: { hiringDispatchId: dispatchId },
@@ -705,7 +705,7 @@ export class HiringDispatchService {
 
   async cancel(
     id: number,
-    userId: number,
+    userId: string,
     role: string,
     foRole: string | null | undefined,
     reason: string,
@@ -769,7 +769,7 @@ export class HiringDispatchService {
    */
   async complete(
     id: number,
-    userId: number,
+    userId: string,
     role: string,
     foRole: string | null | undefined,
   ) {

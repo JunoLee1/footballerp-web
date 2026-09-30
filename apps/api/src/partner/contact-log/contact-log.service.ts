@@ -15,7 +15,7 @@ export class ContactLogService {
     return this.repo.findAll(partnerId);
   }
 
-  async create(partnerId: number, dto: CreateContactLogDto, actorId: number) {
+  async create(partnerId: number, dto: CreateContactLogDto, actorId: string) {
     const partner = await this.partnerRepo.findById(partnerId);
     if (!partner) throw new AppError(404, "PARTNER_NOT_FOUND");
     if (dto.nextActionDate && !dto.nextActionNote) {

@@ -23,7 +23,7 @@ export function startRejectedApplicantRetentionJob() {
       if (flagged.count > 0) {
         console.log(`[RejectedApplicantRetention] Flagged ${flagged.count} applications past 1-year retention`);
         void writeAuditLog({
-          actorId: 0,
+          actorId: "",
           action: "APPLICANT_DATA_RETENTION_FLAGGED",
           detail: { count: flagged.count, date: now.toISOString() },
         }).catch(console.error);

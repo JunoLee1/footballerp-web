@@ -45,7 +45,7 @@ export interface Coach {
   isDeleted: boolean
   packageLeadId: number | null
   hiringRoundId: number | null
-  userId: number | null
+  userId: string | null
   createdAt: string
   updatedAt: string
   packageLead: { id: number; name: string } | null
@@ -58,21 +58,21 @@ export interface Coach {
 }
 
 export interface HeadCoachEval {
-  id: number; coachId: number
+  id: number; coachId: string
   possession: number | null; pressingIntensity: number | null
   progressivePassAccuracy: number | null; teamActivity: number | null
   philosophyFitScore: number | null; dataSource: string | null; evaluatedAt: string | null
 }
 
 export interface DefensiveCoachEval {
-  id: number; coachId: number
+  id: number; coachId: string
   tackleSuccessRate: number | null; clearances: number | null; blocks: number | null
   defensiveErrors: number | null; ballRecovery: number | null; pressingIntensity: number | null
   dataSource: string | null; evaluatedAt: string | null
 }
 
 export interface AttackingCoachEval {
-  id: number; coachId: number
+  id: number; coachId: string
   xG: number | null; xA: number | null; chanceCreation: number | null
   dribbleSuccessRate: number | null; progressivePassAccuracy: number | null
   shotConversionRate: number | null; goalInvolvement: number | null
@@ -80,13 +80,13 @@ export interface AttackingCoachEval {
 }
 
 export interface GoalkeeperCoachEval {
-  id: number; coachId: number
+  id: number; coachId: string
   psxG: number | null; xGConcededDiff: number | null; buildupPassAccuracy: number | null
   dataSource: string | null; evaluatedAt: string | null
 }
 
 export interface Tier2Eval {
-  id: number; coachId: number
+  id: number; coachId: string
   fitScore: number | null; notes: string | null; evaluatedAt: string | null
 }
 
@@ -94,7 +94,7 @@ export interface TutorAssignment {
   id: number; type: TutorType; sessionCount: number
   languageProficiency: LanguageProficiency | null; tacticalImplementationRate: number | null
   externalName: string | null; externalContact: string | null
-  internalTutorId: number | null
+  internalTutorId: string | null
   internalTutor: { nickname: string } | null
   createdAt: string; updatedAt: string
 }
@@ -120,7 +120,7 @@ export interface CreateCoachDto {
 
 export interface CreateTutorDto {
   type: TutorType
-  internalTutorId?: number
+  internalTutorId?: string
   externalName?: string
   externalContact?: string
   sessionCount?: number

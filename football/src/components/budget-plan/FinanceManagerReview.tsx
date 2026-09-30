@@ -171,7 +171,7 @@ function requesterDisplayName(req: BudgetPlanRequestDto): string {
 interface OwnerGroup {
   key: string
   scope: 'TEAM' | 'DEPARTMENT'
-  ownerId: number
+  ownerId: string
   displayName: string
   requests: BudgetPlanRequestDto[]
 }

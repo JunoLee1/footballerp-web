@@ -10,8 +10,8 @@ export interface CreatePlayerDto {
   level: PlayerLevel;
   nationalityId: number;
   externalId?: string;
-  userId?: number;
-  agentId?: number;
+  userId?: string;
+  agentId?: string;
   agencyId?: number;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
@@ -28,7 +28,7 @@ export interface UpdatePlayerDto {
   level?: PlayerLevel;
   nationalityId?: number;
   externalId?: string;
-  agentId?: number;
+  agentId?: string;
   agencyId?: number | null;
   emergencyContactName?: string | null;
   emergencyContactPhone?: string | null;

@@ -28,7 +28,7 @@ const fakePlayer = {
   team: { id: 1, type: "FIRST_TEAM" },
 };
 
-const actor = { id: 10, role: "ADMIN", clubId: 1 } as any;
+const actor = { id: "00000000-0000-4000-8000-000000000010", role: "ADMIN", clubId: 1 } as any;
 
 describe("PlayerService — club scoping", () => {
   beforeEach(() => jest.clearAllMocks());

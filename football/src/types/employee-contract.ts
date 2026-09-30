@@ -10,7 +10,7 @@
 export type EmployeeContractStatus = 'DRAFT' | 'ISSUED' | 'SIGNED' | 'CANCELLED'
 
 export interface UserRef {
-  id: number
+  id: string
   username: string
   nickname: string
 }
@@ -23,13 +23,13 @@ export interface EmployeeContract {
   fileName: string | null
   signedFileUrl: string | null
   signedFileName: string | null
-  createdById: number
-  issuedById: number | null
+  createdById: string
+  issuedById: string | null
   issuedAt: string | null
   signedAt: string | null
-  signedConfirmedById: number | null
+  signedConfirmedById: string | null
   signedConfirmedAt: string | null
-  cancelledById: number | null
+  cancelledById: string | null
   cancelledAt: string | null
   cancelReason: string | null
   createdAt: string

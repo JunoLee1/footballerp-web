@@ -20,7 +20,7 @@ export async function checkAndReserveBudget(
     seasonId: number;
     categoryId: number;
     departmentId: number;
-    createdById: number;
+    createdById: string;
     note?: string;
   }
 ): Promise<ReserveBudgetResult> {

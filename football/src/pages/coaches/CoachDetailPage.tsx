@@ -243,7 +243,7 @@ function EvaluationSection({ coach, canWrite, onSaved }: EvalSectionProps) {
 // ─── Tutor Section ───────────────────────────────────────────────────────────
 
 interface TutorSectionProps {
-  coachId: number
+  coachId: string
   tutors: TutorAssignment[]
   canWrite: boolean
   onSaved: () => void

@@ -15,7 +15,7 @@ export class RevenueAdjustmentService {
     field: RevenueField;
     delta: number;
     memo?: string;
-    createdById: number;
+    createdById: string;
   }) {
     if (data.delta === 0) throw new AppError(400, "DELTA_ZERO");
     const category = FIELD_TO_CATEGORY[data.field];

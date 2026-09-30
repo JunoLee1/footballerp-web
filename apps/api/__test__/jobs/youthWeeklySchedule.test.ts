@@ -23,8 +23,8 @@ const mockPrisma = {
   },
   player: {
     findMany: jest.fn<() => Promise<any[]>>().mockResolvedValue([
-      { guardianId: 100, teamId: 2 },
-      { guardianId: 101, teamId: 2 },
+      { guardianId: "00000000-0000-4000-8000-000000000100", teamId: 2 },
+      { guardianId: "00000000-0000-4000-8000-000000000101", teamId: 2 },
     ]),
   },
 } as any;
@@ -35,13 +35,13 @@ describe("collectWeeklyScheduleByGuardian", () => {
   test("이번 주 훈련과 경기를 guardianId별로 묶어 반환", async () => {
     const result = await collectWeeklyScheduleByGuardian(mockPrisma, monday);
     expect(result).toHaveLength(2);
-    expect(result[0]!.guardianId).toBe(100);
+    expect(result[0]!.guardianId).toBe("00000000-0000-4000-8000-000000000100");
     expect(result[0]!.sessions).toHaveLength(1);
     expect(result[0]!.matches).toHaveLength(1);
   });
 
   test("guardianId 없는 선수는 제외", async () => {
-    mockPrisma.player.findMany.mockResolvedValueOnce([{ guardianId: null, teamId: 2 }, { guardianId: 200, teamId: 2 }]);
+    mockPrisma.player.findMany.mockResolvedValueOnce([{ guardianId: null, teamId: 2 }, { guardianId: "00000000-0000-4000-8000-000000000200", teamId: 2 }]);
     const result = await collectWeeklyScheduleByGuardian(mockPrisma, monday);
     expect(result.every(r => r.guardianId !== null)).toBe(true);
   });

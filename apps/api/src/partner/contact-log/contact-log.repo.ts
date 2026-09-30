@@ -8,7 +8,7 @@ const INCLUDE = {
 export class ContactLogRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(partnerId: number, data: CreateContactLogDto & { actorId: number }) {
+  create(partnerId: number, data: CreateContactLogDto & { actorId: string }) {
     return this.prisma.partnerContactLog.create({
       data: {
         partnerId,

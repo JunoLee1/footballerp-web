@@ -29,7 +29,7 @@ const ONBOARDING_AUTH_INCLUDE = {
 export interface UpdateTaskStatusData {
   status: OnboardingTaskStatus;
   selfReportedAt?: Date | null;
-  verifiedById?: number | null;
+  verifiedById?: string | null;
   verifiedAt?: Date | null;
   verifyNotes?: string | null;
   skipReason?: string | null;

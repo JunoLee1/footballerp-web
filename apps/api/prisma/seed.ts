@@ -359,7 +359,7 @@ async function seedReports() {
   console.log(`✅ Reports seeded: ${reports.length}개 (HR×6, ASSET×4, FINANCIAL×4, TRAINING×3, PERFORMANCE×1)`);
 }
 
-async function seedQACases() {
+async function seedQACases(adminId: string) {
   const d = (days: number) => new Date(Date.now() - days * 24 * 3600_000);
   const f = (days: number) => new Date(Date.now() + days * 24 * 3600_000);
 
@@ -397,14 +397,14 @@ async function seedQACases() {
   await prisma.contract.upsert({
     where: { id: 4 },
     update: {},
-    create: { id: 4, playerId: 'player-004', startDate: new Date('2024-01-01'), endDate: f(25), salary: 45_000_000, status: 'ACTIVE', managedById: 1 },
+    create: { id: 4, playerId: 'player-004', startDate: new Date('2024-01-01'), endDate: f(25), salary: 45_000_000, status: 'ACTIVE', managedById: adminId },
   });
 
   // p6 (최재원) — 해지된 계약
   await prisma.contract.upsert({
     where: { id: 5 },
     update: {},
-    create: { id: 5, playerId: 'player-006', startDate: new Date('2023-01-01'), endDate: new Date('2025-12-31'), salary: 60_000_000, status: 'TERMINATED', managedById: 1 },
+    create: { id: 5, playerId: 'player-006', startDate: new Date('2023-01-01'), endDate: new Date('2025-12-31'), salary: 60_000_000, status: 'TERMINATED', managedById: adminId },
   });
 
   // ── 2. Player status edge cases ───────────────────────
@@ -877,7 +877,7 @@ function resolveBaseSalary(
   return 50_000_000; // fallback
 }
 
-async function seedStaffSalaries() {
+async function seedStaffSalaries(adminId: string) {
   const staffUsers = await prisma.user.findMany({
     where: { role: { in: ["ADMIN", "GM", "FRONT_OFFICE", "COACHING_STAFF"] } },
     select: {
@@ -908,7 +908,7 @@ async function seedStaffSalaries() {
             role: roleLabel ?? "STAFF",
             email: user.email,
             isActive: true,
-            createdById: 1, // admin id
+            createdById: adminId, // admin id (UUID)
           },
         })
       : null;
@@ -2877,7 +2877,7 @@ async function main() {
   await seedReports();
 
   // ── QA edge cases ─────────────────────────────────────
-  await seedQACases();
+  await seedQACases(admin.id);
 
   // ── 2025 시즌 홈 경기 & 티켓 판매 ─────────────────────
   await seedTicketSales2025(admin.id);
@@ -2886,7 +2886,7 @@ async function main() {
   await seedAcademyFees2025(admin.id);
 
   // ── Staff Salaries + Payroll (2026 Jan~Jun) ───────────
-  await seedStaffSalaries();
+  await seedStaffSalaries(admin.id);
 
   // ── 편성 워크플로우 (ExpenseCategory + BudgetPlanRequest + BudgetOverrideLog) ──
   await seedBudgetPlanWorkflow();

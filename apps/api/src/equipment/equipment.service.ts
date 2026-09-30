@@ -95,7 +95,7 @@ export class EquipmentService {
     return this.repo.updateUnitDepreciation(unitId, newBookValue);
   }
 
-  async transitionUnitStatus(unitId: number, dto: UpdateUnitStatusDto, userId?: number, actorClubId?: number) {
+  async transitionUnitStatus(unitId: number, dto: UpdateUnitStatusDto, userId?: string, actorClubId?: number) {
     const unit = await this.repo.findUnitById(unitId, actorClubId);
     if (!unit) throw new AppError(404, "EQUIPMENT_UNIT_NOT_FOUND");
     const allowed = VALID_UNIT_TRANSITIONS[unit.status as unknown as EquipmentUnitStatus];
@@ -111,7 +111,7 @@ export class EquipmentService {
     });
     if (dto.status === "RETIRED") {
       void writeAuditLog({
-        actorId: userId ?? 0,
+        actorId: userId ?? "",
         action: "EQUIPMENT_UNIT_RETIRED",
         targetId: unitId,
         detail: { previousStatus: unit.status, disposedById: dto.disposedById },
@@ -129,7 +129,7 @@ export class EquipmentService {
           description: formatLedgerDescription("equipment", "retired", { unitId }),
           relatedModule: "equipment",
           relatedId: unitId,
-        }, userId ?? 0).catch(err => console.error("[LedgerAutoEntry:equipment]", err));
+        }, userId ?? "").catch(err => console.error("[LedgerAutoEntry:equipment]", err));
       }
     }
     return updated;
@@ -153,7 +153,7 @@ export class EquipmentService {
     return this.repo.markReturned(assignmentId);
   }
 
-  async requestLoan(requestedById: number, dto: CreateEquipmentLoanDto, actorClubId?: number) {
+  async requestLoan(requestedById: string, dto: CreateEquipmentLoanDto, actorClubId?: number) {
     const item = await this.repo.findItemById(dto.equipmentItemId, actorClubId);
     if (!item) throw new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND");
     if (!dto.dueDate) throw new AppError(400, "DUE_DATE_REQUIRED");
@@ -175,7 +175,7 @@ export class EquipmentService {
     return loan;
   }
 
-  async approveLoan(loanId: number, approvedById: number, actorClubId?: number) {
+  async approveLoan(loanId: number, approvedById: string, actorClubId?: number) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "REQUESTED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -189,7 +189,7 @@ export class EquipmentService {
     return updated;
   }
 
-  async rejectLoan(loanId: number, approvedById: number, actorClubId?: number) {
+  async rejectLoan(loanId: number, approvedById: string, actorClubId?: number) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "REQUESTED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -214,7 +214,7 @@ export class EquipmentService {
     });
   }
 
-  async returnLoan(loanId: number, returnedById: number, returnNote?: string, actorClubId?: number) {
+  async returnLoan(loanId: number, returnedById: string, returnNote?: string, actorClubId?: number) {
     const loan = await this.repo.findLoanById(loanId, actorClubId);
     if (!loan) throw new AppError(404, "LOAN_NOT_FOUND");
     if (loan.status !== "ISSUED") throw new AppError(409, "INVALID_LOAN_STATUS_TRANSITION");
@@ -263,7 +263,7 @@ export class EquipmentService {
     return cached(key, 30, () => this.repo.findAllLoans(status, actorClubId));
   }
 
-  listMyLoans(userId: number, actorClubId?: number) {
+  listMyLoans(userId: string, actorClubId?: number) {
     return this.repo.findMyLoans(userId, actorClubId);
   }
 

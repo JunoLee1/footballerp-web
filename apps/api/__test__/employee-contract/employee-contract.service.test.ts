@@ -7,7 +7,7 @@ jest.mock("../../src/lib/auditLog", () => ({
   writeAuditLog: jest.fn().mockResolvedValue(undefined),
 }));
 
-const HR_ID = 100;
+const HR_ID = "00000000-0000-4000-8000-000000000100";
 const DISPATCH_ID = 777;
 const CONTRACT_ID = 42;
 
@@ -16,7 +16,8 @@ const fakeFile = {
   filename: "1735-contract.pdf",
   originalname: "근로계약서.pdf",
   size: 12345,
-};
+  gcsUrl: "/uploads/employee-contracts/1735-contract.pdf",
+} as any;
 
 const makeContract = (overrides: Partial<any> = {}) => ({
   id: CONTRACT_ID,

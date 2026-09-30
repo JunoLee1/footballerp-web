@@ -106,7 +106,7 @@ function buildCostPerHireApp() {
   app.use(express.json());
   // Stub auth: inject an HR_MANAGER user
   app.use((req: Request, _res: Response, next: NextFunction) => {
-    req.user = { id: 1, role: "FRONT_OFFICE", frontOfficeRole: "HR_MANAGER", coachingRole: null } as any;
+    req.user = { id: "00000000-0000-4000-8000-000000000001", role: "FRONT_OFFICE", frontOfficeRole: "HR_MANAGER", coachingRole: null } as any;
     next();
   });
   app.get("/cost-per-hire", controllerForRoute.getCostPerHire);

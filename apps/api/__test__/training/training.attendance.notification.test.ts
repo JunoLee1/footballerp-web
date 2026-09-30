@@ -6,7 +6,7 @@ const mockRepo = {
   upsertResult: jest.fn<() => Promise<any>>().mockResolvedValue({ id: 1 }),
   countUnexcusedAttendance: jest.fn<() => Promise<any>>().mockResolvedValue({ absences: 0, lateCount: 0 }),
   findPlayerNameById: jest.fn<() => Promise<any>>().mockResolvedValue({ playerName: "김선수" }),
-  findPlayerUserId: jest.fn<() => Promise<any>>().mockResolvedValue({ userId: 55 }),
+  findPlayerUserId: jest.fn<() => Promise<any>>().mockResolvedValue({ userId: "00000000-0000-4000-8000-000000000055" }),
 } as any;
 
 const mockNotifRepo = {

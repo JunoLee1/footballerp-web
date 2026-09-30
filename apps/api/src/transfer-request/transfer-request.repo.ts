@@ -60,7 +60,7 @@ export class TransferRequestRepository {
     });
   }
 
-  create(dto: CreateTransferRequestDto, requestedById: number) {
+  create(dto: CreateTransferRequestDto, requestedById: string) {
     return this.prisma.transferRequest.create({
       data: {
         playerId: dto.playerId,
@@ -100,7 +100,7 @@ export class TransferRequestRepository {
     });
   }
 
-  review(id: number, action: "approve" | "reject", reviewedById: number, rejectReason?: string) {
+  review(id: number, action: "approve" | "reject", reviewedById: string, rejectReason?: string) {
     const isApprove = action === "approve";
     return this.prisma.transferRequest.update({
       where: { id },
@@ -187,7 +187,7 @@ export class TransferRequestRepository {
     });
   }
 
-  addNegotiationLog(id: number, dto: CreateNegotiationLogDto, createdById: number) {
+  addNegotiationLog(id: number, dto: CreateNegotiationLogDto, createdById: string) {
     return (this.prisma as any).transferNegotiationLog.create({
       data: {
         transferRequestId: id,

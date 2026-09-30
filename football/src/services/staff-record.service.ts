@@ -10,7 +10,7 @@ export interface StaffRecord {
   phone: string | null;
   isActive: boolean;
   notes: string | null;
-  createdById: number;
+  createdById: string;
   createdAt: string;
   updatedAt: string;
   // 신규 직원 팔로우업 (issue #375). Populated by HiringDispatch.dispatch().

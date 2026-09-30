@@ -15,7 +15,7 @@ const REQUEST_SELECT = {
 export class PiiAccessRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(targetUserId: number, requesterId: number, reason: string) {
+  create(targetUserId: string, requesterId: string, reason: string) {
     return this.prisma.piiAccessRequest.create({
       data: { targetUserId, requesterId, reason },
       select: REQUEST_SELECT,
@@ -30,7 +30,7 @@ export class PiiAccessRepository {
     });
   }
 
-  findByRequester(requesterId: number) {
+  findByRequester(requesterId: string) {
     return this.prisma.piiAccessRequest.findMany({
       where: { requesterId },
       orderBy: { createdAt: "desc" },
@@ -42,7 +42,7 @@ export class PiiAccessRepository {
     return this.prisma.piiAccessRequest.findUnique({ where: { id }, select: REQUEST_SELECT });
   }
 
-  review(id: number, status: PiiAccessStatus, reviewedById: number, grantedUntil?: Date) {
+  review(id: number, status: PiiAccessStatus, reviewedById: string, grantedUntil?: Date) {
     return this.prisma.piiAccessRequest.update({
       where: { id },
       data: { status, reviewedById, reviewedAt: new Date(), grantedUntil: grantedUntil ?? null },
@@ -50,7 +50,7 @@ export class PiiAccessRepository {
     });
   }
 
-  hasPendingRequest(requesterId: number, targetUserId: number) {
+  hasPendingRequest(requesterId: string, targetUserId: string) {
     return this.prisma.piiAccessRequest.findFirst({
       where: { requesterId, targetUserId, status: "PENDING" },
       select: { id: true },

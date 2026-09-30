@@ -72,7 +72,7 @@ describe("TrainingController.getResultById", () => {
     const result = { id: 5, sessionId: 10, playerId: "p1", attendance: "PRESENT", feedback: null, performanceScore: 7 };
     const service = makeService({ getResultById: jest.fn().mockResolvedValue(result) });
     const controller = new TrainingController(service as any);
-    const req: any = { user: { id: 1, role: "COACHING_STAFF" }, params: { resultId: "5" }, body: {}, query: {} };
+    const req: any = { user: { id: "00000000-0000-4000-8000-000000000001", role: "COACHING_STAFF" }, params: { resultId: "5" }, body: {}, query: {} };
     const res = mockRes();
     await controller.getResultById(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
@@ -83,7 +83,7 @@ describe("TrainingController.getResultById", () => {
     const err = { statusCode: 404, code: "RESULT_NOT_FOUND" };
     const service = makeService({ getResultById: jest.fn().mockRejectedValue(err) });
     const controller = new TrainingController(service as any);
-    const req: any = { user: { id: 1, role: "COACHING_STAFF" }, params: { resultId: "99" }, body: {}, query: {} };
+    const req: any = { user: { id: "00000000-0000-4000-8000-000000000001", role: "COACHING_STAFF" }, params: { resultId: "99" }, body: {}, query: {} };
     const res = mockRes();
     await controller.getResultById(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(err);

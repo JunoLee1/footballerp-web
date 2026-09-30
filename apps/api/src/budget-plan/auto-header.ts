@@ -26,7 +26,7 @@ import type { Prisma } from "../generated/client";
  */
 export async function autoGenBudgetHeaderFromPlan(
   seasonId: number,
-  actorUserId: number,
+  actorUserId: string,
   tx: Prisma.TransactionClient,
 ): Promise<{ headerId: number; lineCount: number }> {
   // 1) FinancialReport + BudgetCategoryPlan[] fetch (categoryId, planned amounts).

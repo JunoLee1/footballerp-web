@@ -159,7 +159,7 @@ export class AcademyFeeService {
     return this.repo.updateStatus(id, "FIRST_APPROVED");
   }
 
-  async approvePayment(id: number, approverId: number) {
+  async approvePayment(id: number, approverId: string) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
     if (fee.status !== "FIRST_APPROVED" && fee.status !== "SUBMITTED") throw new AppError(409, "INVALID_STATUS");
@@ -326,7 +326,7 @@ export class AcademyFeeService {
     return { ok: true };
   }
 
-  async getReceipt(id: number, requesterId: number, requesterRole: string, requesterFoRole?: string | null) {
+  async getReceipt(id: number, requesterId: string, requesterRole: string, requesterFoRole?: string | null) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
     if ((fee.status as string) !== "PAID") throw new AppError(404, "RECEIPT_NOT_AVAILABLE");

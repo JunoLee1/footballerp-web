@@ -13,10 +13,10 @@ export interface MedicalEquipmentLoanLedger {
   id: number;
   equipmentLoanId: number;
   status: MedicalEquipmentLoanStatus;
-  requestedById: number;
-  approvedById?: number | null;
+  requestedById: string;
+  approvedById?: string | null;
   approvedAt?: string | null;
-  rejectedById?: number | null;
+  rejectedById?: string | null;
   rejectedAt?: string | null;
   rejectionReason?: string | null;
   isEmergency: boolean;

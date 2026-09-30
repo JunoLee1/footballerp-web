@@ -35,9 +35,9 @@ export interface BudgetOverrideLogDto {
   amount: number
   reason: string
   status: 'PENDING' | 'APPROVED' | 'REJECTED'
-  createdById: number
+  createdById: string
   createdAt: string
-  reviewedById: number | null
+  reviewedById: string | null
   reviewedAt: string | null
   reviewNote: string | null
   expenseCategory?: { id?: number; code: string; label?: string }
@@ -131,10 +131,10 @@ export interface BudgetPlanRequesterDto {
 export interface BudgetPlanRequestDto {
   id: number
   financialReportId: number
-  requestedById: number
+  requestedById: string
   scope: 'TEAM' | 'DEPARTMENT'
   ownerType: string
-  ownerId: number
+  ownerId: string
   /**
    * issue #445: 서버가 ownerType 별 batch lookup 으로 조합해서 반환.
    * TEAM → Team.name, DEPARTMENT → Department.name, lookup 실패 시

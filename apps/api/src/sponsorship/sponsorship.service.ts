@@ -46,7 +46,7 @@ export class SponsorshipService {
     return { ...record, payments: this.applyOverdue(record.payments) };
   }
 
-  async create(dto: CreateSponsorshipDto, createdById: number) {
+  async create(dto: CreateSponsorshipDto, createdById: string) {
     if (await this.repo.findBySponsorName(dto.sponsorName)) throw new AppError(409, "SPONSORSHIP_NAME_DUPLICATE");
     const sponsorship = await this.repo.create({ ...dto, createdById });
     const dates = generatePaymentDates(
@@ -73,7 +73,7 @@ export class SponsorshipService {
     return this.get(sponsorship.id);
   }
 
-  async update(id: number, dto: UpdateSponsorshipDto, updatedById: number) {
+  async update(id: number, dto: UpdateSponsorshipDto, updatedById: string) {
     const current = await this.get(id);
     if (dto.sponsorName && await this.repo.findBySponsorName(dto.sponsorName, id)) {
       throw new AppError(409, "SPONSORSHIP_NAME_DUPLICATE");
@@ -125,7 +125,7 @@ export class SponsorshipService {
     return this.applyOverdue(payments);
   }
 
-  async markPaid(sponsorshipId: number, paymentId: number, userId: number, dto: MarkPaidDto = {}) {
+  async markPaid(sponsorshipId: number, paymentId: number, userId: string, dto: MarkPaidDto = {}) {
     const sponsorship = await this.get(sponsorshipId);
     const payment = await this.repo.findPaymentById(paymentId);
     if (!payment || payment.sponsorshipId !== sponsorshipId) {
@@ -185,7 +185,7 @@ export class SponsorshipService {
   }
 
   // PB6: soft-delete a sponsorship contract
-  async delete(id: number, deletedById: number) {
+  async delete(id: number, deletedById: string) {
     await this.get(id);
     await this.repo.softDelete(id);
     void writeAuditLog({

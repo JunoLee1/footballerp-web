@@ -257,7 +257,7 @@ describe('ProspectService mutation — clubId 스코핑', () => {
       findById: jest.fn().mockResolvedValue(null),
     }));
     await expect(
-      service.addNegotiationLog(1, {} as any, 1, OTHER_CLUB_ID),
+      service.addNegotiationLog(1, {} as any, '11111111-1111-1111-1111-111111111111', OTHER_CLUB_ID),
     ).rejects.toThrow(new AppError(404, 'PROSPECT_NOT_FOUND'));
   });
 
@@ -266,7 +266,7 @@ describe('ProspectService mutation — clubId 스코핑', () => {
       findById: jest.fn().mockResolvedValue(null),
     }));
     await expect(
-      service.addVideoEvaluation(1, {} as any, 1, OTHER_CLUB_ID),
+      service.addVideoEvaluation(1, {} as any, '11111111-1111-1111-1111-111111111111', OTHER_CLUB_ID),
     ).rejects.toThrow(new AppError(404, 'PROSPECT_NOT_FOUND'));
   });
 
@@ -275,7 +275,7 @@ describe('ProspectService mutation — clubId 스코핑', () => {
       findById: jest.fn().mockResolvedValue(null),
     }));
     await expect(
-      service.addEvaluationLog(1, {} as any, 1, OTHER_CLUB_ID),
+      service.addEvaluationLog(1, {} as any, '11111111-1111-1111-1111-111111111111', OTHER_CLUB_ID),
     ).rejects.toThrow(new AppError(404, 'PROSPECT_NOT_FOUND'));
   });
 });

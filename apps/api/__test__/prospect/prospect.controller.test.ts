@@ -13,7 +13,7 @@ const controller = new ProspectController(mockService);
 
 const mockReq = (overrides: any) =>
   ({
-    user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+    user: { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null },
     body: {},
     params: {},
     query: {},
@@ -42,7 +42,7 @@ describe("ProspectController - create (write permission)", () => {
 
   test("SCOUT can create prospect → 201", async () => {
     const req = mockReq({
-      user: { id: 2, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "SCOUT" },
+      user: { id: "00000000-0000-4000-8000-000000000002", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "SCOUT" },
       body: { name: "Test", nationalityId: 1, position: "STRIKER", currentTeam: "FC Lyon" },
     });
     const res = mockRes();
@@ -53,7 +53,7 @@ describe("ProspectController - create (write permission)", () => {
 
   test("GM can create prospect → 201", async () => {
     const req = mockReq({
-      user: { id: 3, role: "GM", coachingRole: null, frontOfficeRole: null },
+      user: { id: "00000000-0000-4000-8000-000000000003", role: "GM", coachingRole: null, frontOfficeRole: null },
       body: { name: "Test", nationalityId: 1, position: "STRIKER", currentTeam: "FC Lyon" },
     });
     const res = mockRes();
@@ -62,7 +62,7 @@ describe("ProspectController - create (write permission)", () => {
   });
 
   test("TD cannot create prospect → 403", async () => {
-    const req = mockReq({ user: { id: 4, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TD" } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000004", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TD" } });
     const res = mockRes();
     await controller.create(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403, code: "FORBIDDEN" }));
@@ -70,7 +70,7 @@ describe("ProspectController - create (write permission)", () => {
   });
 
   test("CONTRACT_MANAGER cannot create prospect → 403", async () => {
-    const req = mockReq({ user: { id: 5, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "CONTRACT_MANAGER" } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000005", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "CONTRACT_MANAGER" } });
     const res = mockRes();
     await controller.create(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403, code: "FORBIDDEN" }));
@@ -78,7 +78,7 @@ describe("ProspectController - create (write permission)", () => {
   });
 
   test("ASSISTANT_COACH (COACHING_STAFF) cannot create → 403", async () => {
-    const req = mockReq({ user: { id: 6, role: "COACHING_STAFF", coachingRole: "ASSISTANT_COACH", frontOfficeRole: null } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000006", role: "COACHING_STAFF", coachingRole: "ASSISTANT_COACH", frontOfficeRole: null } });
     const res = mockRes();
     await controller.create(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403, code: "FORBIDDEN" }));
@@ -90,21 +90,21 @@ describe("ProspectController - list (read permission)", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("FRONT_OFFICE (TD) can list prospects → 200", async () => {
-    const req = mockReq({ user: { id: 7, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TD" }, query: {} });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000007", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TD" }, query: {} });
     const res = mockRes();
     await controller.list(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
   test("HEAD_COACH can list prospects → 200", async () => {
-    const req = mockReq({ user: { id: 8, role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null }, query: {} });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000008", role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null }, query: {} });
     const res = mockRes();
     await controller.list(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
   test("ASSISTANT_COACH cannot list prospects → 403", async () => {
-    const req = mockReq({ user: { id: 9, role: "COACHING_STAFF", coachingRole: "ASSISTANT_COACH", frontOfficeRole: null }, query: {} });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000009", role: "COACHING_STAFF", coachingRole: "ASSISTANT_COACH", frontOfficeRole: null }, query: {} });
     const res = mockRes();
     await controller.list(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403, code: "FORBIDDEN" }));
@@ -112,7 +112,7 @@ describe("ProspectController - list (read permission)", () => {
   });
 
   test("PLAYER cannot list prospects → 403", async () => {
-    const req = mockReq({ user: { id: 10, role: "PLAYER", coachingRole: null, frontOfficeRole: null }, query: {} });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000010", role: "PLAYER", coachingRole: null, frontOfficeRole: null }, query: {} });
     const res = mockRes();
     await controller.list(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403, code: "FORBIDDEN" }));

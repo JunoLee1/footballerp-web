@@ -23,7 +23,7 @@ export class PlanReviewRepository {
   }
 
   // 확인 완료
-  confirm(planId: number, reviewerDeptId: number, confirmedById: number, comment?: string) {
+  confirm(planId: number, reviewerDeptId: number, confirmedById: string, comment?: string) {
     return this.prisma.planReview.update({
       where: { planId_reviewerDeptId: { planId, reviewerDeptId } },
       data: {
@@ -45,7 +45,7 @@ export class PlanReviewRepository {
     return total === confirmed;
   }
 
-  reject(planId: number, reviewerDeptId: number, rejectedById: number, reason: string) {
+  reject(planId: number, reviewerDeptId: number, rejectedById: string, reason: string) {
     return this.prisma.planReview.update({
       where: { planId_reviewerDeptId: { planId, reviewerDeptId } },
       data: {

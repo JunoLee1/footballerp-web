@@ -15,12 +15,12 @@ const controller = new CoachingStaffController(mockService, mockEvalRepo);
 
 // PR #108 이후 역할 구조
 const user = {
-  admin:     { id: 1, role: "ADMIN",         coachingRole: null,            frontOfficeRole: null },
-  gm:        { id: 2, role: "GM",            coachingRole: null,            frontOfficeRole: null },
-  headCoach: { id: 3, role: "COACHING_STAFF", coachingRole: "HEAD_COACH",   frontOfficeRole: null },
-  assiCoach: { id: 4, role: "COACHING_STAFF", coachingRole: "ASSISTANT_COACH", frontOfficeRole: null },
-  frontOffice:{ id: 5, role: "FRONT_OFFICE", coachingRole: null,            frontOfficeRole: null },
-  player:    { id: 6, role: "PLAYER",        coachingRole: null,            frontOfficeRole: null },
+  admin:     { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN",         coachingRole: null,            frontOfficeRole: null },
+  gm:        { id: "00000000-0000-4000-8000-000000000002", role: "GM",            coachingRole: null,            frontOfficeRole: null },
+  headCoach: { id: "00000000-0000-4000-8000-000000000003", role: "COACHING_STAFF", coachingRole: "HEAD_COACH",   frontOfficeRole: null },
+  assiCoach: { id: "00000000-0000-4000-8000-000000000004", role: "COACHING_STAFF", coachingRole: "ASSISTANT_COACH", frontOfficeRole: null },
+  frontOffice:{ id: "00000000-0000-4000-8000-000000000005", role: "FRONT_OFFICE", coachingRole: null,            frontOfficeRole: null },
+  player:    { id: "00000000-0000-4000-8000-000000000006", role: "PLAYER",        coachingRole: null,            frontOfficeRole: null },
 };
 
 const mockReq = (overrides: any) =>

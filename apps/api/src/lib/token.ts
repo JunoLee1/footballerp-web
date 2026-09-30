@@ -4,7 +4,7 @@ import { JWT_ACCESS_TOKEN_SECRET, JWT_REFRESH_TOKEN_SECRET } from "./constants";
 import { Role, CoachingRole, FrontOfficeRole } from "../generated/enums";
 
 interface TokenPayload {
-  id: number;
+  id: string;
   role: Role;
   coachingRole?: CoachingRole | null;
   frontOfficeRole?: FrontOfficeRole | null;

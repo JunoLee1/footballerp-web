@@ -6,7 +6,7 @@ const makeEvent = (overrides: Record<string, unknown> = {}) => ({
   id: 1, sponsorshipId: 10, channel: "SNS",
   occurredAt: new Date("2026-08-17"), exposureCount: 5000,
   fanReach: 12000, mediaValue: "600000", notes: null,
-  createdById: 5, createdAt: new Date(), ...overrides,
+  createdById: "55555555-5555-5555-5555-555555555555", createdAt: new Date(), ...overrides,
 });
 
 const makeRepo = (overrides: Partial<ExposureRepository> = {}): ExposureRepository => ({
@@ -20,20 +20,20 @@ const makeService = (repo: ExposureRepository) => new ExposureService(repo);
 describe("ExposureService.create", () => {
   it("throws 400 when no metric provided", async () => {
     await expect(
-      makeService(makeRepo()).create(10, { channel: "TV", occurredAt: "2026-08-17" }, 5),
+      makeService(makeRepo()).create(10, { channel: "TV", occurredAt: "2026-08-17" }, "55555555-5555-5555-5555-555555555555"),
     ).rejects.toThrow(new AppError(400, "EXPOSURE_METRIC_REQUIRED"));
   });
 
   it("creates event when valid", async () => {
     const repo = makeRepo({ create: jest.fn().mockResolvedValue(makeEvent()) });
-    await makeService(repo).create(10, { channel: "SNS", occurredAt: "2026-08-17", exposureCount: 5000 }, 5);
-    expect(repo.create).toHaveBeenCalledWith(10, expect.objectContaining({ channel: "SNS", createdById: 5 }));
+    await makeService(repo).create(10, { channel: "SNS", occurredAt: "2026-08-17", exposureCount: 5000 }, "55555555-5555-5555-5555-555555555555");
+    expect(repo.create).toHaveBeenCalledWith(10, expect.objectContaining({ channel: "SNS", createdById: "55555555-5555-5555-5555-555555555555" }));
   });
 
   it("does not throw when exposureCount is 0", async () => {
     const repo = makeRepo({ create: jest.fn().mockResolvedValue(makeEvent({ exposureCount: 0 })) });
     await expect(
-      makeService(repo).create(10, { channel: "SNS", occurredAt: "2026-08-17", exposureCount: 0 }, 5),
+      makeService(repo).create(10, { channel: "SNS", occurredAt: "2026-08-17", exposureCount: 0 }, "55555555-5555-5555-5555-555555555555"),
     ).resolves.toBeDefined();
   });
 });

@@ -15,14 +15,18 @@ const mockService = {
 
 const controller = new EquipmentController(mockService);
 
-const mockReq = (overrides: any) =>
-  ({
-    user: { id: 1, role: "ADMIN", coachingRole: null, frontOfficeRole: null },
+const mockReq = (overrides: any) => {
+  const base = { id: "00000000-0000-4000-8000-000000000001", role: "ADMIN", coachingRole: null, frontOfficeRole: null, clubId: 1 } as any;
+  const merged = overrides.user
+    ? { ...overrides, user: { clubId: 1, ...overrides.user } }
+    : { user: base, ...overrides };
+  return ({
     body: {},
     params: {},
     query: {},
-    ...overrides,
+    ...merged,
   }) as any;
+};
 
 const mockRes = () => {
   const r: any = {};
@@ -45,7 +49,7 @@ describe("EquipmentController - createItem (write permission)", () => {
   });
 
   test("EQUIPMENT_MANAGER can create item → 201", async () => {
-    const req = mockReq({ user: { id: 2, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "EQUIPMENT_MANAGER" }, body: { name: "GPS Vest", category: "TACTICAL", trackedIndividually: true } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000002", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "EQUIPMENT_MANAGER" }, body: { name: "GPS Vest", category: "TACTICAL", trackedIndividually: true } });
     const res = mockRes();
     await controller.createItem(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(201);
@@ -53,14 +57,14 @@ describe("EquipmentController - createItem (write permission)", () => {
   });
 
   test("GM can create item → 201", async () => {
-    const req = mockReq({ user: { id: 3, role: "GM", coachingRole: null, frontOfficeRole: null }, body: { name: "Ball", category: "BALL_AND_TOOLS", trackedIndividually: false } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000003", role: "GM", coachingRole: null, frontOfficeRole: null }, body: { name: "Ball", category: "BALL_AND_TOOLS", trackedIndividually: false } });
     const res = mockRes();
     await controller.createItem(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(201);
   });
 
   test("SCOUT cannot create item → 403", async () => {
-    const req = mockReq({ user: { id: 4, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "SCOUT" } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000004", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "SCOUT" } });
     const res = mockRes();
     await controller.createItem(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403, code: "FORBIDDEN" }));
@@ -68,7 +72,7 @@ describe("EquipmentController - createItem (write permission)", () => {
   });
 
   test("COACHING_STAFF (HEAD_COACH) cannot create item → 403", async () => {
-    const req = mockReq({ user: { id: 5, role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000005", role: "COACHING_STAFF", coachingRole: "HEAD_COACH", frontOfficeRole: null } });
     const res = mockRes();
     await controller.createItem(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403, code: "FORBIDDEN" }));
@@ -76,7 +80,7 @@ describe("EquipmentController - createItem (write permission)", () => {
   });
 
   test("PLAYER cannot create item → 403", async () => {
-    const req = mockReq({ user: { id: 6, role: "PLAYER", coachingRole: null, frontOfficeRole: null } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000006", role: "PLAYER", coachingRole: null, frontOfficeRole: null } });
     const res = mockRes();
     await controller.createItem(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403, code: "FORBIDDEN" }));
@@ -88,21 +92,21 @@ describe("EquipmentController - listItems (read permission)", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("FRONT_OFFICE (TD) can list items → 200", async () => {
-    const req = mockReq({ user: { id: 7, role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TD" } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000007", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "TD" } });
     const res = mockRes();
     await controller.listItems(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
   test("COACHING_STAFF can list items → 200", async () => {
-    const req = mockReq({ user: { id: 8, role: "COACHING_STAFF", coachingRole: "ASSISTANT_COACH", frontOfficeRole: null } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000008", role: "COACHING_STAFF", coachingRole: "ASSISTANT_COACH", frontOfficeRole: null } });
     const res = mockRes();
     await controller.listItems(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
   });
 
   test("PLAYER cannot list items → 403", async () => {
-    const req = mockReq({ user: { id: 9, role: "PLAYER", coachingRole: null, frontOfficeRole: null } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000009", role: "PLAYER", coachingRole: null, frontOfficeRole: null } });
     const res = mockRes();
     await controller.listItems(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403, code: "FORBIDDEN" }));
@@ -110,7 +114,7 @@ describe("EquipmentController - listItems (read permission)", () => {
   });
 
   test("AGENT cannot list items → 403", async () => {
-    const req = mockReq({ user: { id: 10, role: "AGENT", coachingRole: null, frontOfficeRole: null } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000010", role: "AGENT", coachingRole: null, frontOfficeRole: null } });
     const res = mockRes();
     await controller.listItems(req, res, mockNext);
     expect(mockNext).toHaveBeenCalledWith(expect.objectContaining({ statusCode: 403, code: "FORBIDDEN" }));

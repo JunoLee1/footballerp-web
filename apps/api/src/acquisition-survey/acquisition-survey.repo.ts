@@ -30,7 +30,7 @@ export class AcquisitionSurveyRepository {
     });
   }
 
-  create(dto: CreateAcquisitionSurveyDto & { createdById: number }) {
+  create(dto: CreateAcquisitionSurveyDto & { createdById: string }) {
     return (this.prisma as any).playerAcquisitionSurvey.create({
       data: {
         title: dto.title,
@@ -50,13 +50,13 @@ export class AcquisitionSurveyRepository {
     });
   }
 
-  findResponse(surveyId: number, respondentId: number) {
+  findResponse(surveyId: number, respondentId: string) {
     return (this.prisma as any).playerAcquisitionSurveyResponse.findUnique({
       where: { surveyId_respondentId: { surveyId, respondentId } },
     });
   }
 
-  async submitResponse(surveyId: number, respondentId: number, items: SubmitAcquisitionSurveyResponseItemDto[]) {
+  async submitResponse(surveyId: number, respondentId: string, items: SubmitAcquisitionSurveyResponseItemDto[]) {
     return (this.prisma as any).playerAcquisitionSurveyResponse.create({
       data: {
         surveyId,

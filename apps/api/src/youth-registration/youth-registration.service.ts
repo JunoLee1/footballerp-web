@@ -14,7 +14,7 @@ export class YouthRegistrationService {
   constructor(
     private repo: YouthRegistrationRepository,
     private notifRepo: NotificationRepository,
-    private inviteService: { inviteUser: (data: { email: string; role: string }) => Promise<{ id: number }> },
+    private inviteService: { inviteUser: (data: { email: string; role: string }) => Promise<{ id: string }> },
   ) {}
 
   async getAll(query: YouthRegistrationListQuery) {
@@ -28,8 +28,8 @@ export class YouthRegistrationService {
     return maskGuardianEmail(reg);
   }
 
-  async create(dto: CreateYouthRegistrationDto, requestedById: number) {
-    let guardianId: number | undefined;
+  async create(dto: CreateYouthRegistrationDto, requestedById: string) {
+    let guardianId: string | undefined;
 
     const existingGuardian = await this.repo.findGuardianByEmail(dto.guardianEmail);
     if (existingGuardian) {
@@ -39,10 +39,10 @@ export class YouthRegistrationService {
       guardianId = invited.id;
     }
 
-    return this.repo.create({ ...dto, requestedById, guardianId });
+    return this.repo.create({ ...dto, requestedById, ...(guardianId !== undefined && { guardianId }) });
   }
 
-  async guardianApprove(id: number, guardianUserId: number) {
+  async guardianApprove(id: number, guardianUserId: string) {
     const reg = await this.repo.findById(id);
     if (!reg) throw new AppError(404, "YOUTH_REGISTRATION_NOT_FOUND");
     if (reg.guardianId !== guardianUserId) throw new AppError(403, "FORBIDDEN");
@@ -75,7 +75,7 @@ export class YouthRegistrationService {
     return updated;
   }
 
-  async contract(id: number, requestedById: number, nationalityId: number) {
+  async contract(id: number, requestedById: string, nationalityId: number) {
     const reg = await this.repo.findById(id);
     if (!reg) throw new AppError(404, "YOUTH_REGISTRATION_NOT_FOUND");
     if (reg.status !== "GUARDIAN_APPROVED") throw new AppError(409, "INVALID_STATUS");

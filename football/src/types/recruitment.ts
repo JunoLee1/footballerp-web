@@ -27,7 +27,7 @@ export interface OfferApproval {
   applicationId: number
   stage: OfferApprovalStage
   action: OfferApprovalAction
-  reviewerId: number
+  reviewerId: string
   reason: string | null
   createdAt: string
   reviewer: { id: number; username: string; nickname: string | null }
@@ -81,8 +81,8 @@ export interface JobPosting {
   headcount: number
   description: string
   status: JobPostingStatus
-  createdById: number
-  approvedById: number | null
+  createdById: string
+  approvedById: string | null
   approvedAt: string | null
   closedAt: string | null
   createdAt: string
@@ -105,14 +105,14 @@ export interface JobApplication {
   status: JobApplicationStatus
   rejectedAt: string | null
   offeredAt: string | null
-  offeredById: number | null
+  offeredById: string | null
   createdAt: string
   updatedAt: string
   posting: {
     id: number
     title: string
     departmentId?: number | null
-    department?: { id: number; name: string; headId: number | null } | null
+    department?: { id: number; name: string; headId: string | null } | null
   }
   offeredBy: { id: number; username: string } | null
   interviews: Interview[]
@@ -151,7 +151,7 @@ export interface ReferenceCheck {
 export interface Onboarding {
   id: number
   applicationId: number
-  userId: number | null
+  userId: string | null
   otpCode: string
   otpExpiresAt: string
   emailVerifiedAt: string | null

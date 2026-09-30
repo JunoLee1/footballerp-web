@@ -5,11 +5,11 @@ import { getIO } from "../lib/io";
 export class NotificationService {
   constructor(private repo: NotificationRepository) {}
 
-  getMyNotifications(userId: number) {
+  getMyNotifications(userId: string) {
     return this.repo.findByUserId(userId);
   }
 
-  async markRead(id: number, userId: number) {
+  async markRead(id: number, userId: string) {
     const count = await this.repo.markRead(id, userId);
     if (count.count === 0) throw new AppError(404, "NOTIFICATION_NOT_FOUND");
     return { ok: true };
@@ -48,7 +48,7 @@ export class NotificationService {
     getIO().to("staff-room").emit("notification:coach", { type: "COACH_CONTRACTED", title, body, createdAt: new Date().toISOString() });
   }
 
-  async notifyCoachArchived(coachName: string, coachId: number, roundCreatorId: number) {
+  async notifyCoachArchived(coachName: string, coachId: number, roundCreatorId: string) {
     const title = "코치 후보 탈락";
     const body = `${coachName} 코치 후보가 탈락 처리됐습니다.`;
     await this.repo.create({ userId: roundCreatorId, type: "COACH_ARCHIVED", title, body, entityId: coachId });
@@ -64,7 +64,7 @@ export class NotificationService {
   }
 
   async notifyJerseyConflict(
-    playerUserId: number,
+    playerUserId: string,
     number: number,
     reason: "OCCUPIED" | "RETIRED" | "RESERVED",
   ) {
@@ -79,7 +79,7 @@ export class NotificationService {
   }
 
   async notifyAttendanceUnauthorized(
-    playerUserId: number,
+    playerUserId: string,
     type: "LATE" | "ABSENT",
     date: Date,
     lateCount: number,
@@ -92,14 +92,14 @@ export class NotificationService {
     await this.repo.createForUser(playerUserId, "ATTENDANCE_UNAUTHORIZED", () => ({ title, body }));
   }
 
-  async notifyAttendancePenaltyPlayer(playerUserId: number, effectiveAbsences: number) {
+  async notifyAttendancePenaltyPlayer(playerUserId: string, effectiveAbsences: number) {
     const title = "출결 페널티 경고";
     const body = `무단 결근 누적 환산 ${effectiveAbsences}회로 규정에 따른 페널티(벌금, 출전 정지 등)가 부여될 수 있습니다. 코치진에게 문의하세요.`;
     await this.repo.createForUser(playerUserId, "ATTENDANCE_PENALTY_PLAYER", () => ({ title, body }));
   }
 
   async notifyMatchDayReminder(
-    playerUserId: number,
+    playerUserId: string,
     matchInfo: { date: Date; homeTeamName: string; awayTeamName: string; venue?: string | null },
   ) {
     const dateStr = matchInfo.date.toLocaleDateString("ko-KR", {
@@ -117,7 +117,7 @@ export class NotificationService {
   }
 
   async notifyLineupConfirmed(
-    playerUserId: number,
+    playerUserId: string,
     isStarter: boolean,
     matchInfo: { homeTeamName: string; awayTeamName: string },
     matchId: number,
@@ -167,14 +167,14 @@ export class NotificationService {
     });
   }
 
-  async notifyMaintenanceApproved(requestTitle: string, requestId: number, requesterUserId: number) {
+  async notifyMaintenanceApproved(requestTitle: string, requestId: number, requesterUserId: string) {
     await this.repo.createForUser(requesterUserId, "MAINTENANCE_APPROVED", () => ({
       title: "유지보수 요청 승인",
       body: `'${requestTitle}' 유지보수 요청이 승인됐습니다.`,
     }), requestId);
   }
 
-  async notifyMaintenanceRejected(requestTitle: string, requestId: number, requesterUserId: number, reason?: string) {
+  async notifyMaintenanceRejected(requestTitle: string, requestId: number, requesterUserId: string, reason?: string) {
     await this.repo.createForUser(requesterUserId, "MAINTENANCE_REJECTED", () => ({
       title: "유지보수 요청 거절",
       body: `'${requestTitle}' 유지보수 요청이 거절됐습니다.${reason ? ` 사유: ${reason}` : ''}`,
@@ -199,7 +199,7 @@ export class NotificationService {
     });
   }
 
-  async notifyContactFollowUp(partnerName: string, contactLogId: number, actorId: number) {
+  async notifyContactFollowUp(partnerName: string, contactLogId: number, actorId: string) {
     const title = "파트너 팔로업 일정";
     const body = `'${partnerName}' 파트너 접촉 팔로업이 내일 예정되어 있습니다.`;
     await this.repo.create({ userId: actorId, type: "PARTNER_CONTACT_FOLLOWUP", title, body, entityId: contactLogId });

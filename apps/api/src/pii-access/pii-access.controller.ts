@@ -12,7 +12,7 @@ export class PiiAccessController {
     try {
       const { id: requesterId } = requireUser(req);
       const { targetUserId, reason } = req.body as { targetUserId?: unknown; reason?: unknown };
-      if (typeof targetUserId !== "number" || typeof reason !== "string") {
+      if (typeof targetUserId !== "string" || typeof reason !== "string") {
         throw new AppError(400, "INVALID_BODY");
       }
       res.status(201).json(await this.service.requestAccess(requesterId, targetUserId, reason));

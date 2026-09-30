@@ -37,11 +37,11 @@ export interface MedicalExpense {
   fileUrl: string | null
   fileName: string | null
   rejectionReason: string | null
-  submittedById: number
+  submittedById: string
   submittedBy: ExpenseUser
-  leaderReviewerId: number | null
+  leaderReviewerId: string | null
   leaderReviewer: ExpenseUser | null
-  adminReviewerId: number | null
+  adminReviewerId: string | null
   adminReviewer: ExpenseUser | null
   submittedAt: string | null
   leaderReviewedAt: string | null

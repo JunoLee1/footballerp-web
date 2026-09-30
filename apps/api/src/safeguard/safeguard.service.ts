@@ -51,7 +51,7 @@ export class SafeguardService {
     return report
   }
 
-  async updateStatus(id: number, dto: UpdateSafeguardStatusDto, actorId: number) {
+  async updateStatus(id: number, dto: UpdateSafeguardStatusDto, actorId: string) {
     const report = await this.repo.findById(id)
     if (!report) throw new AppError(404, 'SAFEGUARD_REPORT_NOT_FOUND')
     if (report.status === 'RESOLVED') throw new AppError(409, 'ALREADY_RESOLVED')

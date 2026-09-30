@@ -57,9 +57,9 @@ export interface MandatoryMinimumChangeLogDto {
   reason: string
   effectiveDate: string
   status: MinimumChangeStatus
-  proposedById: number
+  proposedById: string
   proposedAt: string
-  reviewedById: number | null
+  reviewedById: string | null
   reviewedAt: string | null
   reviewNote: string | null
   proposedBy?: {

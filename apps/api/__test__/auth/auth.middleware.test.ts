@@ -50,7 +50,7 @@ beforeEach(() => {
 
 describe("authMiddleware", () => {
   test("유효한 유저 — next() 호출", async () => {
-    mockPassportUser({ id: 1, role: "ADMIN" });
+    mockPassportUser({ id: "00000000-0000-4000-8000-000000000001", role: "ADMIN" });
     mockFindUnique.mockResolvedValue({ isDeleted: false });
 
     await auth(makeReq(), makeRes(), next);
@@ -60,7 +60,7 @@ describe("authMiddleware", () => {
   });
 
   test("isDeleted=true — 401 반환", async () => {
-    mockPassportUser({ id: 2, role: "PLAYER" });
+    mockPassportUser({ id: "00000000-0000-4000-8000-000000000002", role: "PLAYER" });
     mockFindUnique.mockResolvedValue({ isDeleted: true });
 
     const res = makeRes();
@@ -71,7 +71,7 @@ describe("authMiddleware", () => {
   });
 
   test("DB에 유저 없음 — 401 반환", async () => {
-    mockPassportUser({ id: 99, role: "PLAYER" });
+    mockPassportUser({ id: "00000000-0000-4000-8000-000000000099", role: "PLAYER" });
     mockFindUnique.mockResolvedValue(null);
 
     const res = makeRes();
@@ -92,7 +92,7 @@ describe("authMiddleware", () => {
   });
 
   test("SUPER_ADMIN — x-team-id 헤더 반영", async () => {
-    const user = { id: 1, role: "SUPER_ADMIN" };
+    const user = { id: "00000000-0000-4000-8000-000000000001", role: "SUPER_ADMIN" };
     mockPassportUser(user);
     mockFindUnique.mockResolvedValue({ isDeleted: false });
     mockTeamFindUnique.mockResolvedValue({ id: 5 });

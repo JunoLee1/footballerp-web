@@ -41,7 +41,7 @@ export class DepartmentAssetKitService {
   async upsert(
     departmentId: number,
     dto: UpsertDepartmentAssetKitDto,
-    actorId: number,
+    actorId: string,
   ) {
     this.assertValidId(departmentId, "INVALID_DEPARTMENT_ID");
     if (!dto || typeof dto !== "object") {
@@ -96,7 +96,7 @@ export class DepartmentAssetKitService {
     return kit;
   }
 
-  async remove(departmentId: number, actorId: number) {
+  async remove(departmentId: number, actorId: string) {
     this.assertValidId(departmentId, "INVALID_DEPARTMENT_ID");
     const existing = await this.repo.findByDepartment(departmentId);
     if (!existing) throw new AppError(404, "KIT_NOT_FOUND");

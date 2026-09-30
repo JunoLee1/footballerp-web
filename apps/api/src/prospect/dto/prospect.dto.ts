@@ -6,7 +6,7 @@ export interface CreateProspectDto {
   position?: Position;
   currentTeam?: string;
   notes?: string;
-  createdById?: number;
+  createdById?: string;
   status?: 'LONGLIST' | 'PRE_SHORTLIST';
   playStyle?: string;
   visaRequired?: boolean;
@@ -37,7 +37,7 @@ export interface SignProspectDto {
   contractEndDate: string;
   salary: number;
   signingBonus?: number;
-  managedById?: number;
+  managedById?: string;
   workPermitStatus?: WorkPermitStatus;
   workPermitExpiry?: string;
 }

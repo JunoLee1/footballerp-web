@@ -3,8 +3,8 @@ import { AppError } from "../../src/lib/appError";
 import type { PrismaClient } from "../../src/generated/client";
 
 const makePrisma = (
-  headCoach: { userId: number; teamId: number } | null,
-  headOfDepartment: { headId: number; departmentId: number } | null,
+  headCoach: { userId: string; teamId: number } | null,
+  headOfDepartment: { headId: string; departmentId: number } | null,
 ): Pick<PrismaClient, "coach" | "department"> => ({
   coach: {
     findFirst: jest.fn().mockImplementation(({ where }: any) => {
@@ -31,17 +31,17 @@ const makePrisma = (
 
 describe("resolveRequesterScope", () => {
   test("HEAD_COACH 유저 → TEAM 스코프 반환", async () => {
-    const prisma = makePrisma({ userId: 100, teamId: 5 }, null) as PrismaClient;
+    const prisma = makePrisma({ userId: "00000000-0000-4000-8000-000000000100", teamId: 5 }, null) as PrismaClient;
 
-    const result = await resolveRequesterScope(100, prisma);
+    const result = await resolveRequesterScope("00000000-0000-4000-8000-000000000100", prisma);
 
     expect(result).toEqual({ scope: "TEAM", ownerId: 5 });
   });
 
   test("Department.head 유저 → DEPARTMENT 스코프 반환", async () => {
-    const prisma = makePrisma(null, { headId: 200, departmentId: 3 }) as PrismaClient;
+    const prisma = makePrisma(null, { headId: "00000000-0000-4000-8000-000000000200", departmentId: 3 }) as PrismaClient;
 
-    const result = await resolveRequesterScope(200, prisma);
+    const result = await resolveRequesterScope("00000000-0000-4000-8000-000000000200", prisma);
 
     expect(result).toEqual({ scope: "DEPARTMENT", ownerId: 3 });
   });
@@ -49,18 +49,18 @@ describe("resolveRequesterScope", () => {
   test("팀장·부서장 둘 다 아님 → 403 NOT_BUDGET_PLAN_REQUESTER", async () => {
     const prisma = makePrisma(null, null) as PrismaClient;
 
-    await expect(resolveRequesterScope(999, prisma)).rejects.toThrow(AppError);
-    await expect(resolveRequesterScope(999, prisma)).rejects.toMatchObject({
+    await expect(resolveRequesterScope("00000000-0000-4000-8000-000000000999", prisma)).rejects.toThrow(AppError);
+    await expect(resolveRequesterScope("00000000-0000-4000-8000-000000000999", prisma)).rejects.toMatchObject({
       statusCode: 403,
       code: "NOT_BUDGET_PLAN_REQUESTER",
     });
   });
 
   test("팀장·부서장 겸직 → 409 AMBIGUOUS_BUDGET_PLAN_SCOPE", async () => {
-    const prisma = makePrisma({ userId: 300, teamId: 5 }, { headId: 300, departmentId: 3 }) as PrismaClient;
+    const prisma = makePrisma({ userId: "00000000-0000-4000-8000-000000000300", teamId: 5 }, { headId: "00000000-0000-4000-8000-000000000300", departmentId: 3 }) as PrismaClient;
 
-    await expect(resolveRequesterScope(300, prisma)).rejects.toThrow(AppError);
-    await expect(resolveRequesterScope(300, prisma)).rejects.toMatchObject({
+    await expect(resolveRequesterScope("00000000-0000-4000-8000-000000000300", prisma)).rejects.toThrow(AppError);
+    await expect(resolveRequesterScope("00000000-0000-4000-8000-000000000300", prisma)).rejects.toMatchObject({
       statusCode: 409,
       code: "AMBIGUOUS_BUDGET_PLAN_SCOPE",
     });
