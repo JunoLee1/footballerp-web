@@ -1503,7 +1503,7 @@ model MedicalEquipmentLoanLedger {
 }
 
 model Injury {
-  id                 Int           @id @default(autoincrement())
+  id                 String        @id @default(cuid())
   bodyPart           BodyPart
   cause              InjuryCause
   expectedReturnDate DateTime?
@@ -1531,7 +1531,7 @@ model Injury {
 
 model InjuryAssessment {
   id                Int      @id @default(autoincrement())
-  injuryId          Int      @unique
+  injuryId          String   @unique
   painLevel         Int
   hasSwelling       Boolean  @default(false)
   romScore          Int
@@ -1577,7 +1577,7 @@ enum ExternalReportStatus {
 
 model ExternalReport {
   id                Int                  @id @default(autoincrement())
-  injuryId          Int?
+  injuryId          String?
   incidentReportId  String?
   safeguardReportId String?
   target            ExternalReportTarget
@@ -2139,7 +2139,7 @@ enum MedicalExpenseStatus {
 model MedicalExpense {
   id              String               @id @default(cuid())
   status          MedicalExpenseStatus @default(DRAFT)
-  injuryId        Int?
+  injuryId        String?
   playerId        String?
   receiptDate     DateTime
   costCategory    ExpenseCostCategory
@@ -2188,8 +2188,8 @@ enum SecurityLevel {
 }
 
 model InjuryReport {
-  id                  Int           @id @default(autoincrement())
-  injuryId            Int           @unique
+  id                  String        @id @default(cuid())
+  injuryId            String        @unique
   diagnosisName       String?
   treatmentContent    String?       @db.Text
   rehabStage          RehabStage?
@@ -2540,7 +2540,7 @@ model IncidentReport {
   reportedById     String
   supervisorSigned Boolean              @default(false)
   medicalSigned    Boolean              @default(false)
-  injuryId         Int?
+  injuryId         String?
   status           IncidentReportStatus @default(DRAFT)
   createdAt        DateTime             @default(now())
   updatedAt        DateTime             @updatedAt

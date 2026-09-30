@@ -32,7 +32,7 @@ export type InjuryStatus =
 export type HospitalType = 'ACCREDITED' | 'GENERAL'
 
 export interface Injury {
-  id: number
+  id: string
   bodyPart: BodyPart
   cause: InjuryCause
   status: InjuryStatus
@@ -84,8 +84,8 @@ export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH'
 export type SecurityLevel = 'INTERNAL' | 'MEDICAL' | 'PRIVATE'
 
 export interface InjuryReport {
-  id: number
-  injuryId: number
+  id: string
+  injuryId: string
   diagnosisName: string | null
   treatmentContent: string | null
   rehabStage: RehabStage | null
@@ -100,17 +100,17 @@ export interface InjuryReport {
   updatedById: string | null
   createdAt: string
   updatedAt: string
-  createdBy: { id: number; nickname: string }
-  updatedBy: { id: number; nickname: string } | null
+  createdBy: { id: string; nickname: string }
+  updatedBy: { id: string; nickname: string } | null
   coachSignedAt: string | null
   coachSignedById: string | null
-  coachSigner: { id: number; nickname: string } | null
+  coachSigner: { id: string; nickname: string } | null
   trainerSignedAt: string | null
   trainerSignedById: string | null
-  trainerSigner: { id: number; nickname: string } | null
+  trainerSigner: { id: string; nickname: string } | null
   medicalSignedAt: string | null
   medicalSignedById: string | null
-  medicalSigner: { id: number; nickname: string } | null
+  medicalSigner: { id: string; nickname: string } | null
 }
 
 export const REHAB_STAGE_LABEL: Record<RehabStage, string> = {
@@ -141,7 +141,7 @@ export const SECURITY_LEVEL_LABEL: Record<SecurityLevel, string> = {
 
 export interface InjuryAssessment {
   id: number
-  injuryId: number
+  injuryId: string
   painLevel: number
   hasSwelling: boolean
   romScore: number
@@ -188,7 +188,7 @@ export const EXTERNAL_REPORT_STATUS_STYLE: Record<ExternalReportStatus, string> 
 
 export interface ExternalReport {
   id: number
-  injuryId: number
+  injuryId: string
   target: ExternalReportTarget
   status: ExternalReportStatus
   reportData: Record<string, unknown>

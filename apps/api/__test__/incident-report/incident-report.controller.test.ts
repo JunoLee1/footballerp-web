@@ -28,7 +28,7 @@ const mockReq = (overrides: any) =>
   ({
     user: user.admin,
     body: {},
-    params: { id: "1" },
+    params: { id: "cmxtestincidenrpt00000001" },
     query: {},
     ...overrides,
   }) as any;

@@ -39,19 +39,19 @@ export class InjuryService {
     return this.repo.findByPlayer(playerId);
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const injury = await this.repo.findById(id);
     if (!injury) throw new AppError(404, "INJURY_NOT_FOUND");
     return injury;
   }
 
   // #584: PLAYER 본인 부상이면 true — 없거나 unlinked player 면 false.
-  async isSelfOwnedInjury(injuryId: number, userId: number): Promise<boolean> {
+  async isSelfOwnedInjury(injuryId: string, userId: string): Promise<boolean> {
     const row = await this.repo.findPlayerUserIdByInjury(injuryId);
     return row?.player?.userId === userId;
   }
 
-  async isSelfOwnedPlayer(playerId: string, userId: number): Promise<boolean> {
+  async isSelfOwnedPlayer(playerId: string, userId: string): Promise<boolean> {
     const row = await this.repo.findPlayerUserId(playerId);
     return row?.userId === userId;
   }
@@ -103,7 +103,7 @@ export class InjuryService {
   }
 
   async updateStatus(
-    id: number,
+    id: string,
     dto: UpdateInjuryStatusDto,
     _userId?: number,
     _requester?: { role: string; coachingRole: string | null },
@@ -147,7 +147,7 @@ export class InjuryService {
     return result;
   }
 
-  private async checkAndNotifySquadDepth(entityId: number) {
+  private async checkAndNotifySquadDepth(entityId: number | string) {
     const ZONE_MIN = { GK: 2, DEF: 4, MID: 3, FWD: 2 } as const;
     const ZONE_LABEL = { GK: "골키퍼", DEF: "수비", MID: "미드필더", FWD: "공격" } as const;
     const counts = await this.repo.countAvailableByZone();
@@ -172,7 +172,7 @@ export class InjuryService {
       (coachingRole === 'MEDICAL' || coachingRole === 'MEDICAL_DIRECTOR');
   }
 
-  async getReport(injuryId: number, requester: { role: string; coachingRole: string | null }) {
+  async getReport(injuryId: string, requester: { role: string; coachingRole: string | null }) {
     const injury = await this.repo.findById(injuryId);
     if (!injury) throw new AppError(404, "INJURY_NOT_FOUND");
     const report = await this.repo.findReport(injuryId);
@@ -184,7 +184,7 @@ export class InjuryService {
   }
 
   async saveReport(
-    injuryId: number,
+    injuryId: string,
     dto: UpsertInjuryReportDto,
     userId: string,
     requester: { role: string; coachingRole: string | null },
@@ -226,7 +226,7 @@ export class InjuryService {
     return warning ? { ...report, _warning: warning } : report;
   }
 
-  async signReport(injuryId: number, role: 'COACH' | 'TRAINER' | 'MEDICAL', userId: string, signerTeamId?: number | null) {
+  async signReport(injuryId: string, role: 'COACH' | 'TRAINER' | 'MEDICAL', userId: string, signerTeamId?: number | null) {
     const report = await this.repo.findReport(injuryId);
     if (!report) throw new AppError(404, "INJURY_REPORT_NOT_FOUND");
     // SH20: 부상 선수의 팀 == 서명자의 팀 검증 (SUPER_ADMIN은 signerTeamId가 undefined로 전달되어 스킵)
@@ -242,7 +242,7 @@ export class InjuryService {
     return this.repo.signReport(injuryId, role, userId);
   }
 
-  async unsignReport(injuryId: number, role: 'COACH' | 'TRAINER' | 'MEDICAL') {
+  async unsignReport(injuryId: string, role: 'COACH' | 'TRAINER' | 'MEDICAL') {
     const report = await this.repo.findReport(injuryId);
     if (!report) throw new AppError(404, "INJURY_REPORT_NOT_FOUND");
     return this.repo.unsignReport(injuryId, role);
@@ -256,11 +256,11 @@ export class InjuryService {
     return cached("injuries:active", 30, () => this.repo.findActive());
   }
 
-  getAssessment(injuryId: number) {
+  getAssessment(injuryId: string) {
     return this.repo.getAssessment(injuryId);
   }
 
-  async processAssessment(injuryId: number, dto: UpsertAssessmentDto, assessedById: string) {
+  async processAssessment(injuryId: string, dto: UpsertAssessmentDto, assessedById: string) {
     const scores = calculateTotalScore(dto);
 
     const assessment = await this.repo.upsertAssessment(injuryId, { ...dto, ...scores }, assessedById);
@@ -316,7 +316,7 @@ export class InjuryService {
     return { assessment, triggeredReports: scores.totalScore >= SCORE_THRESHOLD };
   }
 
-  getExternalReports(injuryId: number) {
+  getExternalReports(injuryId: string) {
     return this.repo.getExternalReports(injuryId);
   }
 

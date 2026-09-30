@@ -33,19 +33,19 @@ describe("InjuryController - getAssessment", () => {
   beforeEach(() => jest.clearAllMocks());
 
   test("MEDICAL → 200 + assessment data", async () => {
-    const mockAssessment = { id: 1, injuryId: 5, totalScore: 72 };
+    const mockAssessment = { id: 1, injuryId: "cmxtestinjury0000000000005", totalScore: 72 };
     mockService.getAssessment.mockResolvedValue(mockAssessment);
-    const req = mockReq({ params: { id: "5" } });
+    const req = mockReq({ params: { id: "cmxtestinjury0000000000005" } });
     const res = mockRes();
     await controller.getAssessment(req, res, mockNext);
-    expect(mockService.getAssessment).toHaveBeenCalledWith(5);
+    expect(mockService.getAssessment).toHaveBeenCalledWith("cmxtestinjury0000000000005");
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(mockAssessment);
   });
 
   test("ADMIN도 접근 가능 → 200", async () => {
     mockService.getAssessment.mockResolvedValue(null);
-    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000002", role: "ADMIN", coachingRole: null, frontOfficeRole: null }, params: { id: "3" } });
+    const req = mockReq({ user: { id: "00000000-0000-4000-8000-000000000002", role: "ADMIN", coachingRole: null, frontOfficeRole: null }, params: { id: "cmxtestinjury0000000000003" } });
     const res = mockRes();
     await controller.getAssessment(req, res, mockNext);
     expect(res.status).toHaveBeenCalledWith(200);
@@ -59,10 +59,10 @@ describe("InjuryController - processAssessment", () => {
     const mockResult = { assessment: { totalScore: 85 }, triggeredReports: true };
     mockService.processAssessment.mockResolvedValue(mockResult);
     const dto = { painLevel: 9, hasSwelling: true, romScore: 10, strengthScore: 5, sprintScore: 5, jumpScore: 5, psychScore: 90, positionRiskScore: 80 };
-    const req = mockReq({ params: { id: "5" }, body: dto });
+    const req = mockReq({ params: { id: "cmxtestinjury0000000000005" }, body: dto });
     const res = mockRes();
     await controller.processAssessment(req, res, mockNext);
-    expect(mockService.processAssessment).toHaveBeenCalledWith(5, dto, "00000000-0000-4000-8000-000000000001");
+    expect(mockService.processAssessment).toHaveBeenCalledWith("cmxtestinjury0000000000005", dto, "00000000-0000-4000-8000-000000000001");
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(mockResult);
   });
@@ -70,7 +70,7 @@ describe("InjuryController - processAssessment", () => {
   test("FRONT_OFFICE → 403", async () => {
     const req = mockReq({
       user: { id: "00000000-0000-4000-8000-000000000003", role: "FRONT_OFFICE", coachingRole: null, frontOfficeRole: "FINANCE" },
-      params: { id: "5" },
+      params: { id: "cmxtestinjury0000000000005" },
       body: {},
     });
     const res = mockRes();
@@ -86,10 +86,10 @@ describe("InjuryController - getExternalReports", () => {
   test("외부 보고서 목록 반환 → 200", async () => {
     const reports = [{ id: 1, target: "LEAGUE", status: "PENDING_SUBMISSION" }];
     mockService.getExternalReports.mockResolvedValue(reports);
-    const req = mockReq({ params: { id: "5" } });
+    const req = mockReq({ params: { id: "cmxtestinjury0000000000005" } });
     const res = mockRes();
     await controller.getExternalReports(req, res, mockNext);
-    expect(mockService.getExternalReports).toHaveBeenCalledWith(5);
+    expect(mockService.getExternalReports).toHaveBeenCalledWith("cmxtestinjury0000000000005");
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(reports);
   });

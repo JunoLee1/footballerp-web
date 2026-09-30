@@ -15,7 +15,7 @@ export interface IncidentReport {
   reportedBy: { id: string; username: string }
   supervisorSigned: boolean
   medicalSigned: boolean
-  injuryId: number | null
+  injuryId: string | null
   status: IncidentReportStatus
   createdAt: string
 }
