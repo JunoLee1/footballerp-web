@@ -6,6 +6,7 @@ import { MarketValueRepository } from "./market-value.repo";
 import { UpdateMarketValueDto } from "./dto/market-value.dto";
 import { getPrisma } from "../lib/prisma";
 import { decrypt } from "../lib/crypto";
+import { isAdminLike } from "../lib/permissions";
 
 export class PlayerService {
   constructor(private repo: PlayerRepository, private mvRepo?: MarketValueRepository) {}
@@ -166,9 +167,17 @@ export class PlayerService {
   async getTrainingResults(playerId: string, requesterId: string, requesterRole: string, from?: string, to?: string) {
     const player = await this.repo.findById(playerId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
-    if (requesterRole === "PLAYER" && String(player.userId) !== requesterId) {
-      throw new AppError(403, "FORBIDDEN");
-    }
+
+    // #590: allow-list guard — 훈련 개인 데이터는 admin·GM·코치 + 본인 · 자녀 담당 보호자 · 담당 에이전트만.
+    // FRONT_OFFICE (HR/ASSET/FACILITY/FINANCE) 등 무관 role 은 접근 불필요.
+    const canRead =
+      isAdminLike(requesterRole) ||
+      requesterRole === "COACHING_STAFF" ||
+      (requesterRole === "PLAYER" && String(player.userId) === requesterId) ||
+      (requesterRole === "GUARDIAN" && String(player.guardianId) === requesterId) ||
+      (requesterRole === "AGENT" && String(player.agentId) === requesterId);
+    if (!canRead) throw new AppError(403, "FORBIDDEN");
+
     return this.repo.getTrainingResults(playerId, from, to);
   }
 
