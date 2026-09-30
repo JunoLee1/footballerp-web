@@ -89,10 +89,16 @@ import { startCertStatusSyncJob } from "./jobs/certStatusSync";
 import { startPreventiveScheduleGenJob } from "./jobs/preventiveScheduleGen";
 import { startContactFollowUpNotifierJob } from "./jobs/contactFollowUpNotifier";
 import { startBudgetPlanReminderJob } from "./jobs/budgetPlanReminder";
+import { writeRateLimit } from "./lib/writeRateLimit";
 
 const apiRouter = Router();
 
 apiRouter.get("/", (_req, res) => res.status(200).json({ status: "ok" }));
+
+// #573: write endpoint mass-write 방어 — POST/PATCH/PUT/DELETE 에만 IP 당 60/min 상한.
+// auth 이전이라 IP 기반 rate-limit (defense-in-depth). Role 별 세밀 threshold 는
+// 향후 auth 이후 미들웨어로 확장 (ROLE_WRITE_LIMITS 참조).
+apiRouter.use(writeRateLimit);
 
 apiRouter.use("/admin", adminRouter);
 apiRouter.use("/analysis", analysisRouter);
