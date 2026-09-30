@@ -66,6 +66,8 @@ enum FrontOfficeRole {
   ASSET_STAFF
   FINANCE_STAFF
   FACILITY_STAFF
+  // #574: 로그인 브루트포스 등 보안 이벤트 알림 수신 담당
+  SECURITY_LEAD
 }
 
 enum PlayerLevel {
@@ -414,6 +416,8 @@ enum NotificationType {
   ACQUISITION_SURVEY_PUBLISHED
   // #494: 수요조사 마감 → SCOUT 알림 (롱리스트 조사 시작)
   ACQUISITION_SURVEY_CLOSED
+  // #574: 20회 로그인 실패 tier 도달 → ADMIN 알림 (progressive rate-limit)
+  LOGIN_LOCKOUT_24H
 }
 
 enum DepreciationMethod {

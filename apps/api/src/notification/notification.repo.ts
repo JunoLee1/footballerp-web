@@ -49,6 +49,11 @@ export class NotificationRepository {
     return this.createForWhere({ role: "ADMIN" }, type, getMsg, entityId);
   }
 
+  // #574: 보안 이벤트 (로그인 브루트포스 등) 수신 담당. FrontOfficeRole = SECURITY_LEAD.
+  createForSecurityLead(type: string, getMsg: MsgFactory, entityId?: number) {
+    return this.createForWhere({ role: "FRONT_OFFICE", frontOfficeRole: "SECURITY_LEAD", isDeleted: false }, type, getMsg, entityId);
+  }
+
   createForGM(type: string, getMsg: MsgFactory, entityId?: number) {
     return this.createForWhere({ role: "GM" }, type, getMsg, entityId);
   }
