@@ -5,9 +5,9 @@ import { IncidentReportService } from "./incident-report.service";
 import { IncidentReportRepository } from "./incident-report.repo";
 import { NotificationRepository } from "../notification/notification.repo";
 import { getPrisma } from "../lib/prisma";
-import { intIdRouter } from "../lib/idParamGuard";
+import { cuidRouter } from "../lib/cuidGuard";
 
-const router = intIdRouter();
+const router = cuidRouter();
 const prisma = getPrisma();
 const repo = new IncidentReportRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

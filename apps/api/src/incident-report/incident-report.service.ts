@@ -25,7 +25,7 @@ export class IncidentReportService {
     return this.repo.findAll(query);
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "INCIDENT_REPORT_NOT_FOUND");
     return report;
@@ -35,7 +35,7 @@ export class IncidentReportService {
     return this.repo.create({ ...dto, reportedById });
   }
 
-  async submit(id: number) {
+  async submit(id: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "INCIDENT_REPORT_NOT_FOUND");
     if (report.status !== "DRAFT") throw new AppError(409, "INVALID_STATUS");
@@ -59,7 +59,7 @@ export class IncidentReportService {
     return updated;
   }
 
-  async sign(id: number, role: "SUPERVISOR" | "MEDICAL") {
+  async sign(id: string, role: "SUPERVISOR" | "MEDICAL") {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "INCIDENT_REPORT_NOT_FOUND");
     if (report.status !== "SUBMITTED") throw new AppError(409, "INVALID_STATUS");

@@ -31,7 +31,7 @@ export class IncidentReportController {
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!canAccess(req)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.getById(Number(req.params["id"])));
+      res.json(await this.service.getById(String(req.params["id"])));
     } catch (e) { next(e); }
   };
 
@@ -53,7 +53,7 @@ export class IncidentReportController {
     try {
       const user = requireUser(req);
       if (!(ALLOWED_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.submit(Number(req.params["id"])));
+      res.json(await this.service.submit(String(req.params["id"])));
     } catch (e) { next(e); }
   };
 
@@ -71,7 +71,7 @@ export class IncidentReportController {
           u.role === "COACHING_STAFF" &&
           u.coachingRole === "HEAD_COACH");
       if (!canSign) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.sign(Number(req.params["id"]), role));
+      res.json(await this.service.sign(String(req.params["id"]), role));
     } catch (e) { next(e); }
   };
 }

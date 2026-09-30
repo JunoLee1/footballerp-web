@@ -1578,7 +1578,7 @@ enum ExternalReportStatus {
 model ExternalReport {
   id                Int                  @id @default(autoincrement())
   injuryId          Int?
-  incidentReportId  Int?
+  incidentReportId  String?
   safeguardReportId String?
   target            ExternalReportTarget
   status            ExternalReportStatus @default(PENDING_SUBMISSION)
@@ -2530,7 +2530,7 @@ model GuardianInviteCode {
 }
 
 model IncidentReport {
-  id               Int                  @id @default(autoincrement())
+  id               String               @id @default(cuid())
   playerId         String
   teamId           Int
   type             IncidentType

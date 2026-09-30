@@ -10,13 +10,13 @@ export const incidentReportApi = {
     return api.get<IncidentReport[]>(`/incident-reports${q ? `?${q}` : ''}`)
   },
 
-  getById: (id: number) =>
+  getById: (id: string) =>
     api.get<IncidentReport>(`/incident-reports/${id}`),
 
   create: (payload: CreateIncidentReportPayload) =>
     api.post<IncidentReport>('/incident-reports', payload),
 
-  submit: (id: number) =>
+  submit: (id: string) =>
     api.patch<IncidentReport>(`/incident-reports/${id}/submit`, {}),
 
   sign: (id: number, role: 'SUPERVISOR' | 'MEDICAL') =>
