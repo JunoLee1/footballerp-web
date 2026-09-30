@@ -15,23 +15,23 @@ function buildExpenseForm(dto: CreateExpenseDto | UpdateExpenseDto): FormData {
 export const medicalExpenseApi = {
   list: () => api.get<MedicalExpense[]>('/medical-expenses'),
 
-  get: (id: number) => api.get<MedicalExpense>(`/medical-expenses/${id}`),
+  get: (id: string) => api.get<MedicalExpense>(`/medical-expenses/${id}`),
 
   create: (dto: CreateExpenseDto) =>
     api.postForm<MedicalExpense>('/medical-expenses', buildExpenseForm(dto)),
 
-  update: (id: number, dto: UpdateExpenseDto) =>
+  update: (id: string, dto: UpdateExpenseDto) =>
     api.patchForm<MedicalExpense>(`/medical-expenses/${id}`, buildExpenseForm(dto)),
 
-  submit: (id: number) => api.post<MedicalExpense>(`/medical-expenses/${id}/submit`),
+  submit: (id: string) => api.post<MedicalExpense>(`/medical-expenses/${id}/submit`),
 
-  leaderApprove: (id: number) => api.post<MedicalExpense>(`/medical-expenses/${id}/leader-approve`),
+  leaderApprove: (id: string) => api.post<MedicalExpense>(`/medical-expenses/${id}/leader-approve`),
 
-  leaderReject: (id: number, reason: string) =>
+  leaderReject: (id: string, reason: string) =>
     api.post<MedicalExpense>(`/medical-expenses/${id}/leader-reject`, { reason }),
 
-  approve: (id: number) => api.post<MedicalExpense>(`/medical-expenses/${id}/approve`),
+  approve: (id: string) => api.post<MedicalExpense>(`/medical-expenses/${id}/approve`),
 
-  reject: (id: number, reason: string) =>
+  reject: (id: string, reason: string) =>
     api.post<MedicalExpense>(`/medical-expenses/${id}/reject`, { reason }),
 }

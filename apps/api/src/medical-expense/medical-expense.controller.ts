@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { MedicalExpenseService } from "./medical-expense.service";
 
 function isMedical(req: Request) {
@@ -30,7 +31,7 @@ export class MedicalExpenseController {
 
   get = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const expense = await this.service.get(Number(req.params["id"]));
+      const expense = await this.service.get(assertCuid(req.params["id"]));
       const canAccess =
         isAdmin(req) ||
         isMedicalDirector(req) ||
@@ -70,7 +71,7 @@ export class MedicalExpenseController {
       const { receiptDate, costCategory, totalAmount, payerType, injuryId, playerId, description } = req.body;
       const file = req.file;
       res.json(
-        await this.service.update(Number(req.params["id"]), requireUser(req).id, {
+        await this.service.update(assertCuid(req.params["id"]), requireUser(req).id, {
           ...(receiptDate !== undefined && { receiptDate: new Date(receiptDate) }),
           ...(costCategory !== undefined && { costCategory }),
           ...(totalAmount !== undefined && { totalAmount: Number(totalAmount) }),
@@ -88,7 +89,7 @@ export class MedicalExpenseController {
 
   submit = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.submit(Number(req.params["id"]), requireUser(req).id));
+      res.json(await this.service.submit(assertCuid(req.params["id"]), requireUser(req).id));
     } catch (err) {
       next(err);
     }
@@ -97,7 +98,7 @@ export class MedicalExpenseController {
   leaderApprove = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!isMedicalDirector(req)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.leaderApprove(Number(req.params["id"]), requireUser(req).id));
+      res.json(await this.service.leaderApprove(assertCuid(req.params["id"]), requireUser(req).id));
     } catch (err) {
       next(err);
     }
@@ -106,7 +107,7 @@ export class MedicalExpenseController {
   leaderReject = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!isMedicalDirector(req)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.leaderReject(Number(req.params["id"]), requireUser(req).id, req.body.reason));
+      res.json(await this.service.leaderReject(assertCuid(req.params["id"]), requireUser(req).id, req.body.reason));
     } catch (err) {
       next(err);
     }
@@ -115,7 +116,7 @@ export class MedicalExpenseController {
   approve = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!isAdmin(req)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.approve(Number(req.params["id"]), requireUser(req).id));
+      res.json(await this.service.approve(assertCuid(req.params["id"]), requireUser(req).id));
     } catch (err) {
       next(err);
     }
@@ -124,7 +125,7 @@ export class MedicalExpenseController {
   reject = async (req: Request, res: Response, next: NextFunction) => {
     try {
       if (!isAdmin(req)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.reject(Number(req.params["id"]), requireUser(req).id, req.body.reason));
+      res.json(await this.service.reject(assertCuid(req.params["id"]), requireUser(req).id, req.body.reason));
     } catch (err) {
       next(err);
     }

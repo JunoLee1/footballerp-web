@@ -8,9 +8,9 @@ import { MedicalExpenseService } from "./medical-expense.service";
 import { MedicalExpenseRepository } from "./medical-expense.repo";
 import { NotificationRepository } from "../notification/notification.repo";
 import { getPrisma } from "../lib/prisma";
-import { intIdRouter } from "../lib/idParamGuard";
+import { cuidRouter } from "../lib/cuidGuard";
 
-const router = intIdRouter();
+const router = cuidRouter();
 const prisma = getPrisma();
 const repo = new MedicalExpenseRepository(prisma);
 const notifRepo = new NotificationRepository(prisma);

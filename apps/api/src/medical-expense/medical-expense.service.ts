@@ -21,7 +21,7 @@ export class MedicalExpenseService {
     });
   }
 
-  async get(id: number) {
+  async get(id: string) {
     const expense = await this.repo.findById(id);
     if (!expense) throw new AppError(404, "EXPENSE_NOT_FOUND");
     return expense;
@@ -47,7 +47,7 @@ export class MedicalExpenseService {
     return this.repo.create({ ...data, payerType });
   }
 
-  async update(id: number, userId: string, data: {
+  async update(id: string, userId: string, data: {
     receiptDate?: Date;
     costCategory?: string;
     totalAmount?: number;
@@ -65,7 +65,7 @@ export class MedicalExpenseService {
     return this.repo.update(id, data);
   }
 
-  async submit(id: number, userId: string) {
+  async submit(id: string, userId: string) {
     const expense = await this.repo.findById(id);
     if (!expense) throw new AppError(404, "EXPENSE_NOT_FOUND");
     if (expense.submittedById !== userId) throw new AppError(403, "FORBIDDEN");
@@ -85,7 +85,7 @@ export class MedicalExpenseService {
     return submitted;
   }
 
-  async leaderApprove(id: number, reviewerId: string) {
+  async leaderApprove(id: string, reviewerId: string) {
     const expense = await this.repo.findById(id);
     if (!expense) throw new AppError(404, "EXPENSE_NOT_FOUND");
     if (expense.status !== "SUBMITTED") throw new AppError(409, "INVALID_STATUS");
@@ -106,7 +106,7 @@ export class MedicalExpenseService {
     return approved;
   }
 
-  async leaderReject(id: number, reviewerId: string, reason: string) {
+  async leaderReject(id: string, reviewerId: string, reason: string) {
     if (!reason?.trim()) throw new AppError(400, "REJECTION_REASON_REQUIRED");
     const expense = await this.repo.findById(id);
     if (!expense) throw new AppError(404, "EXPENSE_NOT_FOUND");
@@ -127,7 +127,7 @@ export class MedicalExpenseService {
     return rejected;
   }
 
-  async approve(id: number, adminId: string) {
+  async approve(id: string, adminId: string) {
     const expense = await this.repo.findById(id);
     if (!expense) throw new AppError(404, "EXPENSE_NOT_FOUND");
     if (expense.status !== "LEADER_APPROVED") throw new AppError(409, "INVALID_STATUS");
@@ -147,7 +147,7 @@ export class MedicalExpenseService {
     return approved;
   }
 
-  async reject(id: number, adminId: string, reason: string) {
+  async reject(id: string, adminId: string, reason: string) {
     if (!reason?.trim()) throw new AppError(400, "REJECTION_REASON_REQUIRED");
     const expense = await this.repo.findById(id);
     if (!expense) throw new AppError(404, "EXPENSE_NOT_FOUND");
