@@ -45,6 +45,17 @@ export class InjuryService {
     return injury;
   }
 
+  // #584: PLAYER 본인 부상이면 true — 없거나 unlinked player 면 false.
+  async isSelfOwnedInjury(injuryId: number, userId: number): Promise<boolean> {
+    const row = await this.repo.findPlayerUserIdByInjury(injuryId);
+    return row?.player?.userId === userId;
+  }
+
+  async isSelfOwnedPlayer(playerId: string, userId: number): Promise<boolean> {
+    const row = await this.repo.findPlayerUserId(playerId);
+    return row?.userId === userId;
+  }
+
   async createInjury(dto: CreateInjuryDto) {
     const result = await this.repo.create(dto);
     // BH4: 부상 시점 직전 7일 훈련 부하 스냅샷 (fire-and-forget)

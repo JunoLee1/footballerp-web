@@ -122,6 +122,22 @@ export class InjuryRepository {
     });
   }
 
+  // #584: PLAYER self-scope 체크용 — injuryId → player.userId
+  findPlayerUserIdByInjury(injuryId: number) {
+    return this.prisma.injury.findUnique({
+      where: { id: injuryId },
+      select: { player: { select: { userId: true } } },
+    });
+  }
+
+  // #584: PLAYER self-scope 체크용 — playerId → userId
+  findPlayerUserId(playerId: string) {
+    return this.prisma.player.findUnique({
+      where: { id: playerId },
+      select: { userId: true },
+    });
+  }
+
   create(dto: CreateInjuryDto) {
     return this.prisma.injury.create({
       data: {
