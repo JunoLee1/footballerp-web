@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { assertCuid } from "../lib/cuidGuard";
 import { AppError } from "../lib/appError";
 import { isAdminLike, canWriteFinance } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
@@ -26,7 +27,7 @@ export class SponsorshipController {
     try {
       const user = requireUser(req);
       if (!canRead(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.get(Number(req.params["id"])));
+      res.json(await this.service.get(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -42,7 +43,7 @@ export class SponsorshipController {
     try {
       const { role, frontOfficeRole, id: userId } = requireUser(req);
       if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.update(Number(req.params["id"]), req.body as UpdateSponsorshipDto, userId));
+      res.json(await this.service.update(assertCuid(req.params["id"]), req.body as UpdateSponsorshipDto, userId));
     } catch (err) { next(err); }
   };
 
@@ -64,7 +65,7 @@ export class SponsorshipController {
 
   getPayments = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.getPayments(Number(req.params["id"])));
+      res.json(await this.service.getPayments(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -74,7 +75,7 @@ export class SponsorshipController {
       if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       res.json(
         await this.service.markPaid(
-          Number(req.params["id"]),
+          assertCuid(req.params["id"]),
           Number(req.params["paymentId"]),
           userId,
           req.body as MarkPaidDto,
@@ -88,7 +89,7 @@ export class SponsorshipController {
     try {
       const { role, frontOfficeRole, id: userId } = requireUser(req);
       if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      await this.service.delete(Number(req.params["id"]), userId);
+      await this.service.delete(assertCuid(req.params["id"]), userId);
       res.status(204).send();
     } catch (err) { next(err); }
   };

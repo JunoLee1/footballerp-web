@@ -52,7 +52,7 @@ export class EquipmentRepository {
 
   findAllItems(actorClubId?: number) {
     return this.prisma.equipmentItem.findMany({
-      where: actorClubId !== undefined ? { clubId: actorClubId } : undefined,
+      ...(actorClubId !== undefined && { where: { clubId: actorClubId } }),
       select: ITEM_SELECT,
     });
   }

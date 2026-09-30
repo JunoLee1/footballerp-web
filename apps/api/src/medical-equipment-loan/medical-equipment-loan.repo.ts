@@ -3,7 +3,7 @@ import { getPrisma } from "../lib/prisma";
 const prisma = getPrisma();
 
 export const medicalEquipmentLoanRepo = {
-  async findLedgerById(id: number) {
+  async findLedgerById(id: string) {
     return prisma.medicalEquipmentLoanLedger.findUnique({
       where: { id },
       include: { equipmentLoan: true, partner: true, budgetLine: true },

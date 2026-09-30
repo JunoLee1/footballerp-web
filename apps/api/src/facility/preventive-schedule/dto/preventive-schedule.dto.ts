@@ -6,7 +6,7 @@ export interface CreatePreventiveScheduleDto {
   description?: string;
   intervalDays: number;
   priority: MaintenancePriority;
-  partnerId?: number;
+  partnerId?: string;
 }
 
 export interface UpdatePreventiveScheduleDto {
@@ -14,7 +14,7 @@ export interface UpdatePreventiveScheduleDto {
   description?: string;
   intervalDays?: number;
   priority?: MaintenancePriority;
-  partnerId?: number;
+  partnerId?: string;
 }
 
 export interface PreventiveScheduleListQuery {

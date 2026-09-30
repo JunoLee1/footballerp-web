@@ -397,7 +397,7 @@ export class OpsReportService {
       where: { status: "ACTIVE" },
       select: { partnerId: true, sponsorshipFee: true },
     });
-    const contractsByPartner = new Map<number, number>();
+    const contractsByPartner = new Map<string, number>();
     for (const c of activeContracts) {
       contractsByPartner.set(c.partnerId, (contractsByPartner.get(c.partnerId) ?? 0) + Number(c.sponsorshipFee ?? 0));
     }

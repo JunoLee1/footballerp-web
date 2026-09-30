@@ -80,7 +80,7 @@ export class PartnerService {
     return this.repo.createContract(partnerId, dto);
   }
 
-  async updateContract(partnerId: string, contractId: number, dto: UpdatePartnerContractDto) {
+  async updateContract(partnerId: string, contractId: string, dto: UpdatePartnerContractDto) {
     await this.getById(partnerId);
     const contract = await this.repo.findContractById(contractId);
     if (!contract || contract.partnerId !== partnerId) throw new AppError(404, "CONTRACT_NOT_FOUND");

@@ -30,7 +30,7 @@ export function startSponsorshipExpiryAlertJob() {
 
       for (const s of sponsorships) {
         const alreadySent = await prisma.notification.findFirst({
-          where: { type, entityId: s.id },
+          where: { type, entityIdStr: s.id },
         });
         if (alreadySent) continue;
 

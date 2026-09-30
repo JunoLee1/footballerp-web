@@ -40,7 +40,7 @@ export class SponsorshipService {
     return this.repo.findAll(query, page);
   }
 
-  async get(id: number) {
+  async get(id: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "SPONSORSHIP_NOT_FOUND");
     return { ...record, payments: this.applyOverdue(record.payments) };
@@ -73,7 +73,7 @@ export class SponsorshipService {
     return this.get(sponsorship.id);
   }
 
-  async update(id: number, dto: UpdateSponsorshipDto, updatedById: string) {
+  async update(id: string, dto: UpdateSponsorshipDto, updatedById: string) {
     const current = await this.get(id);
     if (dto.sponsorName && await this.repo.findBySponsorName(dto.sponsorName, id)) {
       throw new AppError(409, "SPONSORSHIP_NAME_DUPLICATE");
@@ -119,13 +119,13 @@ export class SponsorshipService {
     return result;
   }
 
-  async getPayments(id: number) {
+  async getPayments(id: string) {
     await this.get(id);
     const payments = await this.repo.findPayments(id);
     return this.applyOverdue(payments);
   }
 
-  async markPaid(sponsorshipId: number, paymentId: number, userId: string, dto: MarkPaidDto = {}) {
+  async markPaid(sponsorshipId: string, paymentId: number, userId: string, dto: MarkPaidDto = {}) {
     const sponsorship = await this.get(sponsorshipId);
     const payment = await this.repo.findPaymentById(paymentId);
     if (!payment || payment.sponsorshipId !== sponsorshipId) {
@@ -167,9 +167,8 @@ export class SponsorshipService {
       currency: sponsorshipCurrency,
       exchangeRate: rate,
       amountKrw,
-      description: formatLedgerDescription("sponsorship", "payment_received", { sponsorName: sponsorship.sponsorName, paymentId }),
+      description: formatLedgerDescription("sponsorship", "payment_received", { sponsorName: sponsorship.sponsorName, paymentId }) + ` [sponsorshipId=${sponsorshipId}]`,
       relatedModule: "sponsorship",
-      relatedId: sponsorshipId,
     }, userId);
     return updated;
   }
@@ -185,7 +184,7 @@ export class SponsorshipService {
   }
 
   // PB6: soft-delete a sponsorship contract
-  async delete(id: number, deletedById: string) {
+  async delete(id: string, deletedById: string) {
     await this.get(id);
     await this.repo.softDelete(id);
     void writeAuditLog({

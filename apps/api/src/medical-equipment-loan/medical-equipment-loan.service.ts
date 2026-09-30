@@ -194,7 +194,7 @@ export async function requestEmergencyLoan(
 // ─── 승인 (일반 + 응급 사후) ─────────────────────────────────────────────────
 
 export async function approveLoan(
-  ledgerId: number,
+  ledgerId: string,
   approverId: string,
   dto: ApproveMedicalLoanDto = {}
 ) {
@@ -281,7 +281,7 @@ export async function approveLoan(
 // ─── 반려 ────────────────────────────────────────────────────────────────────
 
 export async function rejectLoan(
-  ledgerId: number,
+  ledgerId: string,
   approverId: string,
   dto: RejectMedicalLoanDto
 ) {

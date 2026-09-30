@@ -3,8 +3,8 @@ import { getPrisma } from "../../lib/prisma";
 
 export interface PartnerDiscountResult {
   partnerId: string | null;
-  partnerContractId: number | null;
-  sponsorshipId: number | null;
+  partnerContractId: string | null;
+  sponsorshipId: string | null;
   discountRate: number; // 0~100
 }
 

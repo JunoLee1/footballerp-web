@@ -50,12 +50,12 @@ export interface UpdateJobApplicationDto {
 export interface CreateInterviewDto {
   round: InterviewRound;
   scheduledAt?: string;
-  interviewerIds?: number[];
+  interviewerIds?: string[];
 }
 
 export interface UpdateInterviewDto {
   scheduledAt?: string;
-  interviewerIds?: number[];
+  interviewerIds?: string[];
   scoreSkill?: number;
   scoreComm?: number;
   scoreCulture?: number;

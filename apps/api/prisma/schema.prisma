@@ -1419,7 +1419,7 @@ model Partner {
 }
 
 model PartnerContract {
-  id             Int                   @id @default(autoincrement())
+  id             String                @id @default(cuid())
   partnerId      String
   status         PartnerContractStatus @default(ACTIVE)
   startDate      DateTime
@@ -1462,7 +1462,7 @@ model EquipmentLoan {
 }
 
 model MedicalEquipmentLoanLedger {
-  id Int @id @default(autoincrement())
+  id String @id @default(cuid())
 
   // 기존 EquipmentLoan 과 1:1 연결
   equipmentLoanId String        @unique
@@ -1489,9 +1489,9 @@ model MedicalEquipmentLoanLedger {
   // 파트너 / 스폰서 참조
   partnerId         String?
   partner           Partner?         @relation(fields: [partnerId], references: [id])
-  partnerContractId Int?
+  partnerContractId String?
   partnerContract   PartnerContract? @relation(fields: [partnerContractId], references: [id])
-  sponsorshipId     Int?
+  sponsorshipId     String?
   sponsorship       Sponsorship?     @relation(fields: [sponsorshipId], references: [id])
 
   // 할인 / 비용
@@ -3778,14 +3778,14 @@ model CertificationReminderLog {
 // ─────────────────────────────────────────────
 
 model Sponsorship {
-  id                  Int             @id @default(autoincrement())
+  id                  String          @id @default(cuid())
   sponsorName         String
   type                SponsorType
   totalFee            Decimal         @db.Decimal(14, 2)
   contractStart       DateTime
   contractEnd         DateTime
   paymentSchedule     PaymentSchedule
-  attachedContractId  Int?
+  attachedContractId  String?
   createdById         String
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
@@ -3829,7 +3829,7 @@ model Sponsorship {
 
 model SponsorshipPayment {
   id               Int                      @id @default(autoincrement())
-  sponsorshipId    Int
+  sponsorshipId    String
   dueDate          DateTime
   amount           Decimal                  @db.Decimal(14, 2)
   paidAt           DateTime?
@@ -4531,7 +4531,7 @@ model EquipmentDisposalVerification {
 
 model SponsorshipClause {
   id            Int          @id @default(autoincrement())
-  sponsorshipId Int
+  sponsorshipId String
   type          ClauseType
   condition     String       @db.Text
   rate          Decimal?     @db.Decimal(5, 4)
@@ -4548,7 +4548,7 @@ model SponsorshipClause {
 
 model SponsorshipExposureEvent {
   id            Int             @id @default(autoincrement())
-  sponsorshipId Int
+  sponsorshipId String
   channel       ExposureChannel
   occurredAt    DateTime
   exposureCount Int?
@@ -4566,7 +4566,7 @@ model SponsorshipExposureEvent {
 }
 
 model PartnerContactLog {
-  id             Int            @id @default(autoincrement())
+  id             String         @id @default(cuid())
   partnerId      String
   channel        ContactChannel
   contactedAt    DateTime

@@ -391,20 +391,20 @@ async function seedQACases(adminId: string) {
 
   // ── 1. Contract edge cases ────────────────────────────
   // p2 (이서준) 계약 만료: endDate 2026-06-30 이미 지났으므로 EXPIRED로 업데이트
-  await prisma.contract.update({ where: { id: 2 }, data: { status: 'EXPIRED' } });
+  await prisma.contract.update({ where: { id: "injury-001" }, data: { status: 'EXPIRED' } });
 
   // p4 (박지훈, GK) — 만료 임박 계약 (25일 후)
   await prisma.contract.upsert({
-    where: { id: 4 },
+    where: { id: "injury-001" },
     update: {},
-    create: { id: 4, playerId: 'player-004', startDate: new Date('2024-01-01'), endDate: f(25), salary: 45_000_000, status: 'ACTIVE', managedById: adminId },
+    create: { id: "injury-001", playerId: 'player-004', startDate: new Date('2024-01-01'), endDate: f(25), salary: 45_000_000, status: 'ACTIVE', managedById: adminId },
   });
 
   // p6 (최재원) — 해지된 계약
   await prisma.contract.upsert({
-    where: { id: 5 },
+    where: { id: "injury-003" },
     update: {},
-    create: { id: 5, playerId: 'player-006', startDate: new Date('2023-01-01'), endDate: new Date('2025-12-31'), salary: 60_000_000, status: 'TERMINATED', managedById: adminId },
+    create: { id: "injury-003", playerId: 'player-006', startDate: new Date('2023-01-01'), endDate: new Date('2025-12-31'), salary: 60_000_000, status: 'TERMINATED', managedById: adminId },
   });
 
   // ── 2. Player status edge cases ───────────────────────
@@ -413,10 +413,10 @@ async function seedQACases(adminId: string) {
 
   // ── 3. Injury — 현재 부상 중 + 과거 완치 ────────────────
   await prisma.injury.upsert({
-    where: { id: 2 },
+    where: { id: "injury-001" },
     update: {},
     create: {
-      id: 2, playerId: 'player-001',
+      id: "injury-001", playerId: 'player-001',
       bodyPart: 'ANKLE', cause: 'MATCH',
       status: 'REHABILITATING',
       expectedReturnDate: f(14),
@@ -425,10 +425,10 @@ async function seedQACases(adminId: string) {
   });
 
   await prisma.injury.upsert({
-    where: { id: 3 },
+    where: { id: "injury-004" },
     update: {},
     create: {
-      id: 3, playerId: 'player-005',
+      id: "injury-003", playerId: 'player-005',
       bodyPart: 'KNEE', cause: 'TRAINING',
       status: 'RETURNED',
       medicalStaffId: 1,
@@ -565,7 +565,7 @@ async function seedRecruitment() {
 
   // ── HR Manager user ──────────────────────────────────
   const existingHr = await prisma.user.findUnique({ where: { email: 'hr@club.com' } });
-  let hr: { id: number };
+  let hr: { id: string };
   if (!existingHr) {
     const hrPhone = await prisma.phoneNumber.create({ data: encryptPhone('010-0000-0015') });
     hr = await prisma.user.create({
@@ -3311,7 +3311,7 @@ async function seedBudgetPlanWorkflow() {
 
 // Sponsorship seed — 2025 실적 + 2026 in-flight 로 FinancialReport 스폰서십 revenue 집계 데이터 확보.
 // getSeasonRevenueActuals 는 status=PAID + paidAt in season window 만 count (cash basis, #325 참조).
-async function seedSponsorships(adminId: number) {
+async function seedSponsorships(adminId: string) {
   const s2025 = new Date("2025-01-01");
   const e2025 = new Date("2025-12-31");
   const s2026 = new Date("2026-01-01");
@@ -3429,7 +3429,7 @@ async function seedSponsorships(adminId: number) {
 // 운영비 실적 seed — 부서·팀별 지출 데이터로 BudgetAutoPage expense CAGR 예측 활성화.
 // budget-automation.getExpenseActualsByCategory 는 status ∈ {APPROVED, PAID} + deletedAt=null 만 집계.
 // getLatestApprovedBudgetLines 는 BudgetHeader status ∈ {APPROVED, LOCKED} 만 lookup.
-async function seedOperatingExpenses(adminId: number) {
+async function seedOperatingExpenses(adminId: string) {
   // 2024 CLOSED 시즌 (CAGR 계산용 이전 시즌). 2025/2026 은 별도 로직에서 이미 생성됨.
   // Season.name 은 unique 아니라 findFirst 후 conditional create.
   let season2024 = await prisma.season.findFirst({ where: { name: "2024 시즌" } });

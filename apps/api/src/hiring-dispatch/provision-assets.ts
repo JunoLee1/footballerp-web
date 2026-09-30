@@ -25,13 +25,13 @@ import type { NotificationRepository } from "../notification/notification.repo";
  */
 
 interface KitItem {
-  equipmentItemId: number;
+  equipmentItemId: string;
   quantity: number;
   note?: string;
 }
 
 interface ShortageReport {
-  equipmentItemId: number;
+  equipmentItemId: string;
   name: string;
   requested: number;
   available: number;
@@ -88,7 +88,7 @@ export async function provisionNewEmployeeAssets(
   const trackedIds = stockRows
     .filter((s) => s.trackedIndividually)
     .map((s) => s.id);
-  const availableUnitsByItem = new Map<number, number>();
+  const availableUnitsByItem = new Map<string, number>();
   if (trackedIds.length > 0) {
     const grouped = await prisma.equipmentUnit.groupBy({
       by: ["equipmentItemId"],
@@ -105,7 +105,7 @@ export async function provisionNewEmployeeAssets(
 
   // 5. 각 kit item 마다 draft 생성 (재고 무관) + 부족 여부 기록.
   const shortages: ShortageReport[] = [];
-  const createdRequestIds: number[] = [];
+  const createdRequestIds: number[] = []; // AssetRequest.id (Int) — 그대로 유지
   for (const kitItem of items) {
     const stock = stockById.get(kitItem.equipmentItemId);
     if (!stock) continue; // EquipmentItem 삭제됨 — skip (draft 는 FK 위반 방지)

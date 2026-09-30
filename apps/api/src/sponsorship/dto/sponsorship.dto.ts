@@ -11,7 +11,7 @@ export interface CreateSponsorshipDto {
   targetExposureCount?: number;
   targetFanReach?: number;
   targetMediaValue?: number;
-  attachedContractId?: number;
+  attachedContractId?: string;
   // 국내 계좌
   domesticBankName?: string;
   domesticAccountNumber?: string;
@@ -40,7 +40,7 @@ export interface UpdateSponsorshipDto {
   contractStart?: string;
   contractEnd?: string;
   paymentSchedule?: PaymentSchedule;
-  attachedContractId?: number;
+  attachedContractId?: string;
   // 국내 계좌
   domesticBankName?: string | null;
   domesticAccountNumber?: string | null;
