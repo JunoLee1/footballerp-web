@@ -52,7 +52,9 @@ app.set('json replacer', (_key: string, value: unknown) =>
 );
 
 app.use(cors({ origin: process.env["CLIENT_ORIGIN"], credentials: true }));
-app.use(express.json());
+// #572: default express.json() 은 100kb limit 을 초과해도 downstream 크래시 유발.
+// 1mb 명시로 초과 시 body-parser 가 entity.too.large 를 throw → 413 반환 (에러 핸들러 참조).
+app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
 app.use(passport.initialize());
 
@@ -70,6 +72,11 @@ app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   }
   if (typeof err === "object" && err !== null && "type" in err && (err as { type: string }).type === "entity.parse.failed") {
     res.status(400).json({ code: "INVALID_REQUEST" });
+    return;
+  }
+  // #572: body-parser 가 1mb 초과 감지 시 던지는 에러 → 413 반환
+  if (typeof err === "object" && err !== null && "type" in err && (err as { type: string }).type === "entity.too.large") {
+    res.status(413).json({ code: "PAYLOAD_TOO_LARGE" });
     return;
   }
   if (err instanceof MulterError) {

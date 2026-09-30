@@ -20,7 +20,8 @@ app.use(
     })
 )
 app.use("/webhooks", express.raw({ type: "application/json" }), webhookRouter)
-app.use("/api", express.json(), APIRouter)
+// #572: 1mb limit — 초과 시 body-parser 가 entity.too.large 를 throw
+app.use("/api", express.json({ limit: "1mb" }), APIRouter)
 app.use(errorHandler);
 
 export default app
