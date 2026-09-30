@@ -36,7 +36,7 @@ export class BudgetOverrideService {
     seasonId: number,
     actorUserId: string,
     dto: OverrideRequestDto,
-  ): Promise<{ id: number }> {
+  ): Promise<{ id: string }> {
     const report = await this.prisma.financialReport.findUnique({
       where: { seasonId },
       select: { id: true, planStatus: true },
@@ -69,11 +69,11 @@ export class BudgetOverrideService {
         status: "PENDING",
       },
     });
-    return { id: log.id };
+    return { id: String(log.id) };
   }
 
   async reviewOverride(
-    logId: number,
+    logId: string,
     reviewerUserId: string,
     decision: "APPROVED" | "REJECTED",
     note?: string,
@@ -138,7 +138,7 @@ export class BudgetOverrideService {
         },
       }),
       this.prisma.budgetCategoryPlan.update({
-        where: { id: plan.id },
+        where: { id: String(plan.id) }, //TODO: plan Id 수정
         data: { knapsackAllocated: log.amount },
       }),
     ]);
