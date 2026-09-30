@@ -18,36 +18,36 @@ describe("RunService.secondApproveRun", () => {
   it("throws 404 when run is not found", async () => {
     const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
     const service = new RunService(repo, undefined as any, undefined as any, undefined as any);
-    await expect(service.secondApproveRun(10, 1, APPROVER_ID))
+    await expect(service.secondApproveRun("salary-cuid-10", "run-cuid-01", APPROVER_ID))
       .rejects.toThrow(new AppError(404, "PAYROLL_RUN_NOT_FOUND"));
   });
 
   it("throws 400 when run is already locked", async () => {
     const repo = makeRepo({
-      findById: jest.fn().mockResolvedValue({ id: 1, staffSalaryId: 10, status: "CONFIRMED", isLocked: true }),
+      findById: jest.fn().mockResolvedValue({ id: "run-cuid-01", staffSalaryId: "salary-cuid-10", status: "CONFIRMED", isLocked: true }),
     });
     const service = new RunService(repo, undefined as any, undefined as any, undefined as any);
-    await expect(service.secondApproveRun(10, 1, APPROVER_ID))
+    await expect(service.secondApproveRun("salary-cuid-10", "run-cuid-01", APPROVER_ID))
       .rejects.toThrow(new AppError(400, "PAYROLL_RUN_ALREADY_LOCKED"));
   });
 
   it("throws 400 when status is not CONFIRMED", async () => {
     const repo = makeRepo({
-      findById: jest.fn().mockResolvedValue({ id: 1, staffSalaryId: 10, status: "DRAFT", isLocked: false }),
+      findById: jest.fn().mockResolvedValue({ id: "run-cuid-01", staffSalaryId: "salary-cuid-10", status: "DRAFT", isLocked: false }),
     });
     const service = new RunService(repo, undefined as any, undefined as any, undefined as any);
-    await expect(service.secondApproveRun(10, 1, APPROVER_ID))
+    await expect(service.secondApproveRun("salary-cuid-10", "run-cuid-01", APPROVER_ID))
       .rejects.toThrow(new AppError(400, "PAYROLL_RUN_NOT_CONFIRMED"));
   });
 
   it("throws 403 when approver is the same as confirmer", async () => {
     const repo = makeRepo({
       findById: jest.fn().mockResolvedValue({
-        id: 1, staffSalaryId: 10, status: "CONFIRMED", isLocked: false, confirmedById: APPROVER_ID,
+        id: "run-cuid-01", staffSalaryId: "salary-cuid-10", status: "CONFIRMED", isLocked: false, confirmedById: APPROVER_ID,
       }),
     });
     const service = new RunService(repo, undefined as any, undefined as any, undefined as any);
-    await expect(service.secondApproveRun(10, 1, APPROVER_ID))
+    await expect(service.secondApproveRun("salary-cuid-10", "run-cuid-01", APPROVER_ID))
       .rejects.toThrow(new AppError(403, "CANNOT_SECOND_APPROVE_OWN_CONFIRMATION"));
   });
 
@@ -65,15 +65,15 @@ describe("RunService.secondApproveRun", () => {
     } as any);
     const repo = makeRepo({
       findById: jest.fn().mockResolvedValue({
-        id: 1, staffSalaryId: 10, status: "CONFIRMED", isLocked: false,
+        id: "run-cuid-01", staffSalaryId: "salary-cuid-10", status: "CONFIRMED", isLocked: false,
         confirmedById: OTHER_ID, grossPay: 5_000_000,
       }),
     });
     const service = new RunService(repo, undefined as any, undefined as any, prisma);
-    const result = await service.secondApproveRun(10, 1, APPROVER_ID);
+    const result = await service.secondApproveRun("salary-cuid-10", "run-cuid-01", APPROVER_ID);
 
     expect(payrollUpdate).toHaveBeenCalledWith(expect.objectContaining({
-      where: { id: 1 },
+      where: { id: "run-cuid-01" },
       data: expect.objectContaining({ isLocked: true, secondApprovedById: APPROVER_ID }),
     }));
     expect(ledgerCreate).toHaveBeenCalledWith(expect.objectContaining({

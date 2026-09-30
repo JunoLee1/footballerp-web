@@ -9,7 +9,7 @@ const makeService = () => ({
 });
 
 function makeReq(role: string, foRole: string | null = null): any {
-  return { user: { id: "00000000-0000-4000-8000-000000000001", role, frontOfficeRole: foRole, departmentCategories: [] }, query: {}, body: {}, params: { id: "1", aid: "10" } };
+  return { user: { id: "00000000-0000-4000-8000-000000000001", role, frontOfficeRole: foRole, departmentCategories: [] }, query: {}, body: {}, params: { id: "cmxtestsalary000000000001", aid: "10" } };
 }
 function makeRes(): any {
   return { json: jest.fn(), status: jest.fn().mockReturnThis(), send: jest.fn() };

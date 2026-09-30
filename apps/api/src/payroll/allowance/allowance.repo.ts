@@ -4,7 +4,7 @@ import type { CreateAllowanceDto, UpdateAllowanceDto } from "./dto/allowance.dto
 export class AllowanceRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findAll(staffSalaryId: number) {
+  findAll(staffSalaryId: string) {
     return this.prisma.staffAllowance.findMany({
       where: { staffSalaryId },
       orderBy: { createdAt: "asc" },
@@ -15,7 +15,7 @@ export class AllowanceRepository {
     return this.prisma.staffAllowance.findUnique({ where: { id } });
   }
 
-  create(staffSalaryId: number, data: CreateAllowanceDto) {
+  create(staffSalaryId: string, data: CreateAllowanceDto) {
     return this.prisma.staffAllowance.create({
       data: {
         staffSalaryId,
