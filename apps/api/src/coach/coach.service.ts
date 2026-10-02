@@ -23,7 +23,7 @@ export class CoachService {
     return this.repo.findAllRounds();
   }
 
-  async getRoundById(id: number) {
+  async getRoundById(id: string) {
     const round = await this.repo.findRoundById(id);
     if (!round) throw new AppError(404, "HIRING_ROUND_NOT_FOUND");
     return round;
@@ -33,7 +33,7 @@ export class CoachService {
     return this.repo.createRound(dto);
   }
 
-  async updateRoundStatus(id: number, dto: UpdateHiringRoundStatusDto) {
+  async updateRoundStatus(id: string, dto: UpdateHiringRoundStatusDto) {
     const round = await this.repo.findRoundById(id);
     if (!round) throw new AppError(404, "HIRING_ROUND_NOT_FOUND");
     return this.repo.updateRoundStatus(id, dto);
@@ -41,11 +41,11 @@ export class CoachService {
 
   // ── Coach ──────────────────────────────────────────────────────────────────
 
-  getAll(filters: { roundId?: number; status?: CoachStatus }) {
+  getAll(filters: { roundId?: string; status?: CoachStatus }) {
     return this.repo.findAll(filters);
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const coach = await this.repo.findById(id);
     if (!coach) throw new AppError(404, "COACH_NOT_FOUND");
     return coach;
@@ -55,13 +55,13 @@ export class CoachService {
     return this.repo.create(dto);
   }
 
-  async update(id: number, dto: UpdateCoachDto) {
+  async update(id: string, dto: UpdateCoachDto) {
     const coach = await this.repo.findById(id);
     if (!coach) throw new AppError(404, "COACH_NOT_FOUND");
     return this.repo.update(id, dto);
   }
 
-  async updateStatus(id: number, dto: TransitionCoachStatusDto) {
+  async updateStatus(id: string, dto: TransitionCoachStatusDto) {
     const { coach, roundCreatorId } = await this.repo.updateStatus(id, dto);
     const name = coach.name;
 
@@ -81,7 +81,7 @@ export class CoachService {
   // ── Evaluation ─────────────────────────────────────────────────────────────
 
   async upsertEvaluation(
-    coachId: number,
+    coachId: string,
     dto: UpsertHeadCoachEvalDto | UpsertDefensiveEvalDto | UpsertAttackingEvalDto | UpsertGoalkeeperEvalDto | UpsertTier2EvalDto,
   ) {
     const coach = await this.repo.findById(coachId);
@@ -91,13 +91,13 @@ export class CoachService {
 
   // ── TutorAssignment ────────────────────────────────────────────────────────
 
-  async getTutors(coachId: number) {
+  async getTutors(coachId: string) {
     const coach = await this.repo.findById(coachId);
     if (!coach) throw new AppError(404, "COACH_NOT_FOUND");
     return this.repo.findTutors(coachId);
   }
 
-  async createTutor(coachId: number, dto: CreateTutorAssignmentDto) {
+  async createTutor(coachId: string, dto: CreateTutorAssignmentDto) {
     const coach = await this.repo.findById(coachId);
     if (!coach) throw new AppError(404, "COACH_NOT_FOUND");
     if (dto.type === "INTERNAL" && !dto.internalTutorId) {
@@ -109,7 +109,7 @@ export class CoachService {
     return this.repo.createTutor(coachId, dto);
   }
 
-  async updateTutor(id: number, dto: UpdateTutorAssignmentDto) {
+  async updateTutor(id: string, dto: UpdateTutorAssignmentDto) {
     const tutor = await this.repo.findTutorById(id);
     if (!tutor) throw new AppError(404, "TUTOR_ASSIGNMENT_NOT_FOUND");
     return this.repo.updateTutor(id, dto);

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { canManageTD } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { CoachService } from "./coach.service";
 import { CoachStatus } from "../generated/enums";
 
@@ -39,7 +40,7 @@ export class CoachController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canApprove(role)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.updateRoundStatus(Number(req.params["id"]), req.body));
+      res.json(await this.service.updateRoundStatus(assertCuid(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 
@@ -49,8 +50,8 @@ export class CoachController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canRead(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      const filter: { roundId?: number; status?: CoachStatus } = {};
-      if (req.query["roundId"]) filter.roundId = Number(req.query["roundId"]);
+      const filter: { roundId?: string; status?: CoachStatus } = {};
+      if (req.query["roundId"]) filter.roundId = assertCuid(String(req.query["roundId"]));
       if (req.query["status"]) filter.status = req.query["status"] as CoachStatus;
       res.json(await this.service.getAll(filter));
     } catch (err) { next(err); }
@@ -60,7 +61,7 @@ export class CoachController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canRead(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.getById(Number(req.params["id"])));
+      res.json(await this.service.getById(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -79,7 +80,7 @@ export class CoachController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.update(Number(req.params["id"]), req.body));
+      res.json(await this.service.update(assertCuid(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 
@@ -91,7 +92,7 @@ export class CoachController {
       } else {
         if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       }
-      res.json(await this.service.updateStatus(Number(req.params["id"]), req.body));
+      res.json(await this.service.updateStatus(assertCuid(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 
@@ -101,7 +102,7 @@ export class CoachController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.upsertEvaluation(Number(req.params["id"]), req.body));
+      res.json(await this.service.upsertEvaluation(assertCuid(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 
@@ -111,7 +112,7 @@ export class CoachController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canRead(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.getTutors(Number(req.params["id"])));
+      res.json(await this.service.getTutors(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -119,7 +120,7 @@ export class CoachController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.status(201).json(await this.service.createTutor(Number(req.params["id"]), req.body));
+      res.status(201).json(await this.service.createTutor(assertCuid(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 
@@ -127,7 +128,7 @@ export class CoachController {
     try {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.updateTutor(Number(req.params["tutorId"]), req.body));
+      res.json(await this.service.updateTutor(assertCuid(req.params["tutorId"]), req.body));
     } catch (err) { next(err); }
   };
 }

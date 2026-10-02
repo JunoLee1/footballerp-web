@@ -27,28 +27,28 @@ export class NotificationService {
     });
   }
 
-  async notifyCoachShortlisted(coachName: string, coachId: number) {
+  async notifyCoachShortlisted(coachName: string, coachId: string) {
     const title = "코치 후보 숏리스트 등록";
     const body = `${coachName} 코치가 숏리스트에 추가됐습니다. 검토 바랍니다.`;
     await this.repo.createForTD("COACH_SHORTLISTED", () => ({ title, body }), coachId);
     getIO().to("staff-room").emit("notification:coach", { type: "COACH_SHORTLISTED", title, body, createdAt: new Date().toISOString() });
   }
 
-  async notifyCoachApprovalPending(coachName: string, coachId: number) {
+  async notifyCoachApprovalPending(coachName: string, coachId: string) {
     const title = "코치 채용 승인 요청";
     const body = `${coachName} 코치 채용 건에 GM 최종 승인이 필요합니다.`;
     await this.repo.createForGM("COACH_APPROVAL_PENDING", () => ({ title, body }), coachId);
     getIO().to("staff-room").emit("notification:coach", { type: "COACH_APPROVAL_PENDING", title, body, createdAt: new Date().toISOString() });
   }
 
-  async notifyCoachContracted(coachName: string, coachId: number) {
+  async notifyCoachContracted(coachName: string, coachId: string) {
     const title = "코치 채용 완료 — 계정 생성 필요";
     const body = `${coachName} 코치 계약이 확정됐습니다. ADMIN이 User 계정을 생성하고 초대해주세요.`;
     await this.repo.createForAdmin("COACH_CONTRACTED", () => ({ title, body }), coachId);
     getIO().to("staff-room").emit("notification:coach", { type: "COACH_CONTRACTED", title, body, createdAt: new Date().toISOString() });
   }
 
-  async notifyCoachArchived(coachName: string, coachId: number, roundCreatorId: string) {
+  async notifyCoachArchived(coachName: string, coachId: string, roundCreatorId: string) {
     const title = "코치 후보 탈락";
     const body = `${coachName} 코치 후보가 탈락 처리됐습니다.`;
     await this.repo.create({ userId: roundCreatorId, type: "COACH_ARCHIVED", title, body, entityId: coachId });

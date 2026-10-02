@@ -63,7 +63,7 @@ export class CoachRepository {
     });
   }
 
-  findRoundById(id: number) {
+  findRoundById(id: string) {
     return this.prisma.coachHiringRound.findUnique({ where: { id }, select: ROUND_SELECT });
   }
 
@@ -81,7 +81,7 @@ export class CoachRepository {
     });
   }
 
-  updateRoundStatus(id: number, dto: UpdateHiringRoundStatusDto) {
+  updateRoundStatus(id: string, dto: UpdateHiringRoundStatusDto) {
     return this.prisma.coachHiringRound.update({
       where: { id },
       data: {
@@ -94,7 +94,7 @@ export class CoachRepository {
 
   // ── Coach ──────────────────────────────────────────────────────────────────
 
-  findAll(filters: { roundId?: number; status?: CoachStatus }) {
+  findAll(filters: { roundId?: string; status?: CoachStatus }) {
     return this.prisma.coach.findMany({
       where: {
         isDeleted: false,
@@ -106,7 +106,7 @@ export class CoachRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.coach.findFirst({ where: { id, isDeleted: false }, select: COACH_SELECT });
   }
 
@@ -124,7 +124,7 @@ export class CoachRepository {
     });
   }
 
-  update(id: number, dto: UpdateCoachDto) {
+  update(id: string, dto: UpdateCoachDto) {
     return this.prisma.coach.update({
       where: { id },
       data: {
@@ -137,7 +137,7 @@ export class CoachRepository {
     });
   }
 
-  async updateStatus(id: number, dto: TransitionCoachStatusDto) {
+  async updateStatus(id: string, dto: TransitionCoachStatusDto) {
     const coach = await this.prisma.coach.findUnique({
       where: { id },
       select: { status: true, coachingRole: true, hiringRound: { select: { createdById: true } } },
@@ -169,7 +169,7 @@ export class CoachRepository {
 
   // ── Evaluation ─────────────────────────────────────────────────────────────
 
-  async upsertEvaluation(coachId: number, role: CoachingRole, dto: Record<string, unknown>) {
+  async upsertEvaluation(coachId: string, role: CoachingRole, dto: Record<string, unknown>) {
     const evalAt = dto["evaluatedAt"] ? new Date(dto["evaluatedAt"] as string) : new Date();
     const { evaluatedAt: _discarded, ...rest } = dto;
     const base = { ...rest, coachId, evaluatedAt: evalAt };
@@ -216,11 +216,11 @@ export class CoachRepository {
 
   // ── TutorAssignment ────────────────────────────────────────────────────────
 
-  findTutorById(id: number) {
+  findTutorById(id: string) {
     return this.prisma.coachTutorAssignment.findUnique({ where: { id } });
   }
 
-  findTutors(coachId: number) {
+  findTutors(coachId: string) {
     return this.prisma.coachTutorAssignment.findMany({
       where: { coachId },
       select: {
@@ -235,7 +235,7 @@ export class CoachRepository {
     });
   }
 
-  createTutor(coachId: number, dto: CreateTutorAssignmentDto) {
+  createTutor(coachId: string, dto: CreateTutorAssignmentDto) {
     return this.prisma.coachTutorAssignment.create({
       data: {
         coachId,
@@ -249,7 +249,7 @@ export class CoachRepository {
     });
   }
 
-  updateTutor(id: number, dto: UpdateTutorAssignmentDto) {
+  updateTutor(id: string, dto: UpdateTutorAssignmentDto) {
     return this.prisma.coachTutorAssignment.update({
       where: { id },
       data: {
