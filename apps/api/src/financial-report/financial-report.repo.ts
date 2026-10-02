@@ -15,7 +15,7 @@ export interface RevenueBreakdownDto {
 // Category descriptor shared with services — code from wire, id from cache lookup.
 export interface CategoryRef {
   code: string;
-  id: number;
+  id: string;
 }
 
 export function sumBreakdown(b: RevenueBreakdownDto): number {

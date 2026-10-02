@@ -179,7 +179,7 @@ export class EmployeeContractService {
   // reads
   // ────────────────────────────────────────────
 
-  listByDispatch(hiringDispatchId: number) {
+  listByDispatch(hiringDispatchId: string) {
     return this.repo.findAllByDispatch(hiringDispatchId);
   }
 
@@ -197,7 +197,7 @@ export class EmployeeContractService {
    * Same shape as `HiringDocumentService.assertRequiredDocsApproved` so
    * `dispatch()` composes them left-to-right without cross-coupling.
    */
-  async assertContractSigned(hiringDispatchId: number): Promise<void> {
+  async assertContractSigned(hiringDispatchId: string): Promise<void> {
     const latest = await this.repo.findLatestActiveByDispatch(hiringDispatchId);
     if (!latest) {
       throw new AppError(400, "CONTRACT_NOT_ISSUED");

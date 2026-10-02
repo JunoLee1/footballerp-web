@@ -52,7 +52,7 @@ export class HiringDispatchService {
   // Read
   // ────────────────────────────────────────────
 
-  async getById(id: number) {
+  async getById(id: string) {
     const row = await this.repo.findById(id);
     if (!row) throw new AppError(404, "NOT_FOUND");
     return row;
@@ -64,7 +64,7 @@ export class HiringDispatchService {
     filter?: "me" | "pending-budget" | "pending-dispatch" | "pending-execution" | "all",
     status?: string,
   ) {
-    const asStatus = status as any;
+    const asStatus = status as any;//TODO 타입 as ant 캐스팅 지우기
     const cacheKey = `hiring-dispatches:list:${userId}:${role}:${filter ?? ""}:${status ?? ""}`;
     switch (filter) {
       case "me":
@@ -168,7 +168,7 @@ export class HiringDispatchService {
   // ────────────────────────────────────────────
 
   async budgetReverify(
-    id: number,
+    id: string,
     reviewerId: string,
     role: string,
     foRole: string | null | undefined,
@@ -265,7 +265,7 @@ export class HiringDispatchService {
   }
 
   async budgetReject(
-    id: number,
+    id: string,
     reviewerId: string,
     role: string,
     foRole: string | null | undefined,
@@ -324,7 +324,7 @@ export class HiringDispatchService {
   // Stage 2 — Dispatch approval (임원)
   // ────────────────────────────────────────────
 
-  async dispatchApprove(id: number, reviewerId: string, role: string) {
+  async dispatchApprove(id: string, reviewerId: string, role: string) {
     const dispatch = await this.repo.findById(id);
     if (!dispatch) throw new AppError(404, "NOT_FOUND");
     if (dispatch.status !== "BUDGET_REVERIFIED") throw new AppError(400, "INVALID_STATUS");
@@ -365,7 +365,7 @@ export class HiringDispatchService {
     return updated;
   }
 
-  async dispatchReject(id: number, reviewerId: string, role: string, reason: string) {
+  async dispatchReject(id: string, reviewerId: string, role: string, reason: string) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -423,7 +423,7 @@ export class HiringDispatchService {
    * etc.).
    */
   async dispatch(
-    id: number,
+    id: string,
     reviewerId: string,
     role: string,
     foRole: string | null | undefined,
@@ -806,8 +806,8 @@ export class HiringDispatchService {
    * than throw. Production must always inject it (see hiring-dispatch.routes.ts).
    */
   private async assertHiringDocsGate(dispatch: {
-    id: number;
-    applicationId: number | null;
+    id: string;
+    applicationId: string | null;
     requiredDocuments: string[];
     application: { posting: { requiredDocuments: string[] } | null } | null;
   }): Promise<void> {
