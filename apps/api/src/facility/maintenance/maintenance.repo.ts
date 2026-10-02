@@ -23,7 +23,7 @@ export class MaintenanceRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.maintenanceRequest.findUnique({ where: { id }, include: INCLUDE });
   }
 
@@ -42,7 +42,7 @@ export class MaintenanceRepository {
     });
   }
 
-  update(id: number, data: UpdateMaintenanceDto) {
+  update(id: string, data: UpdateMaintenanceDto) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
       data: {
@@ -57,7 +57,7 @@ export class MaintenanceRepository {
     });
   }
 
-  updateStatus(id: number, status: string) {
+  updateStatus(id: string, status: string) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
       data: { status: status as any },
@@ -65,7 +65,7 @@ export class MaintenanceRepository {
     });
   }
 
-  approve(id: number, approverId: string) {
+  approve(id: string, approverId: string) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
       data: { status: "APPROVED", approvedById: approverId, approvedAt: new Date() },
@@ -73,7 +73,7 @@ export class MaintenanceRepository {
     });
   }
 
-  gmApprove(id: number, gmId: string) {
+  gmApprove(id: string, gmId: string) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
       data: { status: "RESOLVED", gmApprovedById: gmId, gmApprovedAt: new Date(), resolvedAt: new Date() },
@@ -81,7 +81,7 @@ export class MaintenanceRepository {
     });
   }
 
-  reject(id: number, reason?: string) {
+  reject(id: string, reason?: string) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
       data: { status: "REJECTED", ...(reason && { rejectionReason: reason }) },
@@ -89,7 +89,7 @@ export class MaintenanceRepository {
     });
   }
 
-  lock(id: number) {
+  lock(id: string) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
       data: { isLocked: true },
@@ -97,7 +97,7 @@ export class MaintenanceRepository {
     });
   }
 
-  submitToFinance(id: number) {
+  submitToFinance(id: string) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
       data: { financeSubmittedAt: new Date() },

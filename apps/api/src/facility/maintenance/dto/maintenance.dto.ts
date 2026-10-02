@@ -4,7 +4,7 @@ export interface CreateMaintenanceDto {
   title: string;
   description: string;
   priority: MaintenancePriority;
-  sourceInspectionId?: number;
+  sourceInspectionId?: string;
   estimatedCost?: number;
   partnerId?: string;
 }
