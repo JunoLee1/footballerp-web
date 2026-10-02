@@ -81,7 +81,7 @@ export class AssetRequestRepository {
     });
   }
 
-  findByDepartment(departmentId: number, status?: AssetRequestStatus, actorClubId?: string) {
+  findByDepartment(departmentId: string, status?: AssetRequestStatus, actorClubId?: string) {
     return this.prisma.assetRequest.findMany({
       where: {
         departmentId,
