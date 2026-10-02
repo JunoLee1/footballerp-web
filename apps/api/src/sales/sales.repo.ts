@@ -12,7 +12,7 @@ export class SalesRepository {
     });
   }
 
-  findByMatch(matchId: number) {
+  findByMatch(matchId: string) {
     return this.prisma.salesRecord.findMany({
       where: { matchId, type: "TICKET" },
       orderBy: { saleDate: "desc" },
@@ -22,7 +22,7 @@ export class SalesRepository {
   create(data: CreateSalesRecordDto & { totalAmount: number; createdById: string }) {
     return this.prisma.salesRecord.create({
       data: {
-        type: data.type as any,
+        type: data.type,
         quantity: data.quantity,
         unitPrice: data.unitPrice,
         totalAmount: data.totalAmount,
@@ -35,11 +35,11 @@ export class SalesRepository {
     });
   }
 
-  update(id: number, data: { quantity?: number; unitPrice?: number; totalAmount?: number; saleDate?: Date; description?: string | null; updatedById: string }) {
+  update(id: string, data: { quantity?: number; unitPrice?: number; totalAmount?: number; saleDate?: Date; description?: string | null; updatedById: string }) {
     return this.prisma.salesRecord.update({ where: { id }, data: data as any });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prisma.salesRecord.delete({ where: { id } });
   }
 
@@ -118,7 +118,7 @@ export class SalesRepository {
         type: { in: ["TICKET", "VIP_TICKET", "COMPLIMENTARY"] as any[] },
         match: { seasonId },
         deletedAt: null,
-      } as any,
+      },
       orderBy: { saleDate: "desc" },
       include: { match: { select: { id: true, homeTeamName: true, awayTeamName: true, date: true } } },
     });
@@ -126,7 +126,7 @@ export class SalesRepository {
 
   findWithFilters(filters: {
     type?: string;
-    matchId?: number;
+    matchId?: string;
     fromDate?: string;
     toDate?: string;
     minAmount?: number;

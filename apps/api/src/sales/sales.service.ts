@@ -17,7 +17,7 @@ export class SalesService {
 
   findTicketsBySeason(seasonId: number) { return this.repo.findTicketsBySeason(seasonId); }
 
-  async findByMatch(matchId: number) {
+  async findByMatch(matchId: string) {
     return this.repo.findByMatch(matchId);
   }
 
@@ -59,7 +59,7 @@ export class SalesService {
             where: { matchId: dto.matchId, type: { in: ["TICKET", "VIP_TICKET", "COMPLIMENTARY"] as any[] }, deletedAt: null } as any,
             _sum: { quantity: true },
           });
-          const soldQty = Number((sold._sum as any).quantity ?? 0);
+          const soldQty = Number((sold._sum).quantity ?? 0);
           if (soldQty + dto.quantity > match.capacity) {
             throw new AppError(400, "MATCH_CAPACITY_EXCEEDED");
           }
@@ -182,13 +182,13 @@ export class SalesService {
     return this.prisma.$transaction(async (tx) => {
       // capacity 사전 체크 (배치 전체에 대해 matchId별로 합산 후 한 번만 체크)
       // BUG-1: 홈경기 체크 추가 + match 정보 캐시
-      const matchQtyMap = new Map<number, number>();
+      const matchQtyMap = new Map<string, number>();
       for (const dto of dtos) {
         if ((dto.type === "TICKET" || dto.type === "VIP_TICKET") && dto.matchId) {
           matchQtyMap.set(dto.matchId, (matchQtyMap.get(dto.matchId) ?? 0) + dto.quantity);
         }
       }
-      const matchInfoMap = new Map<number, { homeTeamName: string; awayTeamName: string; capacity: number | null }>();
+      const matchInfoMap = new Map<string, { homeTeamName: string; awayTeamName: string; capacity: number | null }>();
       for (const [matchId, batchQty] of matchQtyMap) {
         const match = await tx.match.findUnique({
           where: { id: matchId },
@@ -231,7 +231,7 @@ export class SalesService {
             ...(dto.matchId && { matchId: dto.matchId }),
             ...(dto.seatZoneId && { seatZoneId: dto.seatZoneId }),
             createdById,
-          } as any,
+          },
         });
 
         if (dto.type === "TICKET" || dto.type === "VIP_TICKET") {
@@ -259,7 +259,7 @@ export class SalesService {
   }
 
   async update(
-    id: number,
+    id: string,
     dto: { quantity?: number; unitPrice?: number; saleDate?: string; description?: string | null },
     updatedById: string,
   ) {
@@ -281,7 +281,7 @@ export class SalesService {
           totalAmount,
           updatedById,
           updatedAt: new Date(),
-        } as any,
+        },
       });
 
       await tx.ledgerEntry.updateMany({
@@ -303,7 +303,7 @@ export class SalesService {
     });
   }
 
-  async delete(id: number, deletedById: string) {
+  async delete(id: string, deletedById: string) {
     await this.prisma.$transaction(async (tx) => {
       // Fetch existing record for seatZoneId/quantity needed for BS10 decrement
       const existing = await tx.salesRecord.findUnique({
@@ -343,7 +343,7 @@ export class SalesService {
       // JO1: soft-delete instead of hard delete; BS8: mark REFUNDED for duplicate-refund prevention
       await tx.salesRecord.update({
         where: { id },
-        data: { deletedAt: new Date(), updatedById: deletedById, updatedAt: new Date(), status: "REFUNDED" } as any,
+        data: { deletedAt: new Date(), updatedById: deletedById, updatedAt: new Date(), status: "REFUNDED" },
       });
 
       // BS10: decrement SeatZone.soldCount on cancel
@@ -375,12 +375,12 @@ export class SalesService {
     return this.repo.seasonTicketTotal(seasonId);
   }
 
-  searchSales(filters: { type?: string; matchId?: number; fromDate?: string; toDate?: string; minAmount?: number; maxAmount?: number }) {
+  searchSales(filters: { type?: string; matchId?: string; fromDate?: string; toDate?: string; minAmount?: number; maxAmount?: number }) {
     return this.repo.findWithFilters(filters);
   }
 
   async createCancellation(
-    originalId: number,
+    originalId: string,
     dto: { quantity: number; saleDate: string; description?: string },
     createdById: string,
   ) {
@@ -402,7 +402,7 @@ export class SalesService {
         matchId: original.matchId,
         ...(dto.description && { description: dto.description }),
         createdById,
-      } as any,
+      },
     });
 
     await writeAuditLog({

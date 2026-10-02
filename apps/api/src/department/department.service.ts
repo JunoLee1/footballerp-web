@@ -5,7 +5,7 @@ import { isAdminLike, canWriteHR } from "../lib/permissions";
 import { cached } from "../lib/cache";
 import type { DepartmentCategory, DeptRole } from "../generated/enums";
 
-type Actor = { id: string; role: string; frontOfficeRole?: string | null; deptCategories?: string[] };
+type Actor = { id: string; role: string; frontOfficeRole?: string | null | undefined; deptCategories?: string[] | undefined };
 
 export class DepartmentService {
   constructor(private repo: DepartmentRepository) {}
@@ -14,13 +14,13 @@ export class DepartmentService {
     return cached(`departments:list:${clubId ?? "null"}`, 60, () => this.repo.findAll(clubId));
   }
 
-  async get(id: number) {
+  async get(id: string) {
     const dept = await this.repo.findById(id);
     if (!dept) throw new AppError(404, "DEPARTMENT_NOT_FOUND");
     return dept;
   }
 
-  async create(data: { name: string; parentId?: number; category?: DepartmentCategory | null; clubId?: string | null }) {
+  async create(data: { name: string; parentId?: string; category?: DepartmentCategory | null; clubId?: string | null }) {
     const existing = await this.repo.findByName(data.name, data.clubId);
     if (existing) throw new AppError(409, "DEPARTMENT_NAME_CONFLICT");
     if (data.parentId !== undefined) {
@@ -30,7 +30,7 @@ export class DepartmentService {
     return this.repo.create(data);
   }
 
-  async update(id: number, data: { name?: string; isActive?: boolean; parentId?: number | null; category?: DepartmentCategory | null }, actorId?: string, clubId?: string | null) {
+  async update(id: string, data: { name?: string; isActive?: boolean; parentId?: string | null; category?: DepartmentCategory | null }, actorId?: string, clubId?: string | null) {
     const dept = await this.get(id);
     if (data.name !== undefined) {
       const existing = await this.repo.findByName(data.name, dept.clubId);
@@ -41,7 +41,7 @@ export class DepartmentService {
       const parent = await this.repo.findById(data.parentId);
       if (!parent) throw new AppError(404, "PARENT_DEPARTMENT_NOT_FOUND");
       // Walk ancestor chain to detect cycles (Y3)
-      let cursor: number | null = parent.parentId ?? null;
+      let cursor: string | null = parent.parentId ?? null;
       while (cursor !== null) {
         if (cursor === id) throw new AppError(400, "DEPARTMENT_CIRCULAR_REFERENCE");
         const ancestor = await this.repo.findById(cursor);
@@ -55,13 +55,13 @@ export class DepartmentService {
     return result;
   }
 
-  async getHeadcount(id: number) {
+  async getHeadcount(id: string) {
     const dept = await this.repo.findById(id);
     if (!dept) throw new AppError(404, "DEPARTMENT_NOT_FOUND");
     return this.repo.getHeadcount(id);
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     const dept = await this.get(id);
     if (dept.children && dept.children.length > 0)
       throw new AppError(409, "DEPARTMENT_HAS_CHILDREN");
@@ -70,13 +70,13 @@ export class DepartmentService {
     return this.repo.delete(id);
   }
 
-  isHead(deptId: number, userId: string): Promise<boolean> {
+  isHead(deptId: string, userId: string): Promise<boolean> {
     return this.repo.isHead(deptId, userId);
   }
 
   // ── Member CRUD ────────────────────────────────────────────
 
-  private async assertLeaderOrAdmin(deptId: number, actor: Actor) {
+  private async assertLeaderOrAdmin(deptId: string, actor: Actor) {
     if (isAdminLike(actor.role)) return;
     const dept = await this.repo.findById(deptId);
     if (!dept) throw new AppError(404, "DEPARTMENT_NOT_FOUND");
@@ -104,7 +104,7 @@ export class DepartmentService {
     throw new AppError(403, "FORBIDDEN");
   }
 
-  async listMembers(deptId: number, actor: Actor) {
+  async listMembers(deptId: string, actor: Actor) {
     if (!isAdminLike(actor.role)) {
       // 1) 해당 부서 또는 하위 부서의 직접 멤버
       const descendantIds = await this.repo.findDescendantIds(deptId);
@@ -123,7 +123,7 @@ export class DepartmentService {
     return this.repo.findMembers(deptId);
   }
 
-  async addMember(deptId: number, userId: string, memberRole: DeptRole, actor: Actor, jobTitleId?: number | null) {
+  async addMember(deptId: string, userId: string, memberRole: DeptRole, actor: Actor, jobTitleId?: number | null) {
     const dept = await this.repo.findById(deptId);
     if (!dept) throw new AppError(404, "DEPARTMENT_NOT_FOUND");
 
@@ -145,7 +145,7 @@ export class DepartmentService {
     return { ok: true };
   }
 
-  async updateMemberRole(deptId: number, userId: string, newRole: DeptRole, actor: Actor) {
+  async updateMemberRole(deptId: string, userId: string, newRole: DeptRole, actor: Actor) {
     if (userId === actor.id) throw new AppError(403, "SELF_ROLE_CHANGE_FORBIDDEN");
     const existing = await this.repo.findMember(deptId, userId);
     if (!existing) throw new AppError(404, "NOT_MEMBER");
@@ -170,7 +170,7 @@ export class DepartmentService {
     return { ok: true };
   }
 
-  async removeMember(deptId: number, userId: string, actor: Actor) {
+  async removeMember(deptId: string, userId: string, actor: Actor) {
     const dept = await this.repo.findById(deptId);
     if (!dept) throw new AppError(404, "DEPARTMENT_NOT_FOUND");
 
@@ -192,7 +192,7 @@ export class DepartmentService {
     return { ok: true };
   }
 
-  async transferMember(fromDeptId: number, toDeptId: number, userId: string, toRole: DeptRole, actor: Actor) {
+  async transferMember(fromDeptId: string, toDeptId: string, userId: string, toRole: DeptRole, actor: Actor) {
     await this.assertLeaderOrAdmin(fromDeptId, actor);
     if (userId === actor.id) throw new AppError(403, "SELF_TRANSFER_FORBIDDEN");
     if (fromDeptId === toDeptId) throw new AppError(400, "SAME_DEPARTMENT");
@@ -203,7 +203,7 @@ export class DepartmentService {
     return { ok: true };
   }
 
-  async updateHead(deptId: number, newHeadId: string | null, actor: Actor) {
+  async updateHead(deptId: string, newHeadId: string | null, actor: Actor) {
     const dept = await this.repo.findById(deptId);
     if (!dept) throw new AppError(404, "DEPARTMENT_NOT_FOUND");
 
@@ -234,13 +234,13 @@ export class DepartmentService {
 
   // ── DeptJobTitle ────────────────────────────────────────────
 
-  async listJobTitles(deptId: number) {
+  async listJobTitles(deptId: string) {
     const dept = await this.repo.findById(deptId);
     if (!dept) throw new AppError(404, 'DEPARTMENT_NOT_FOUND');
     return this.repo.findJobTitles(deptId);
   }
 
-  async createJobTitle(deptId: number, label: string, sortOrder: number | undefined, actor: Actor) {
+  async createJobTitle(deptId: string, label: string, sortOrder: number | undefined, actor: Actor) {
     const dept = await this.repo.findById(deptId);
     if (!dept) throw new AppError(404, 'DEPARTMENT_NOT_FOUND');
     if (typeof label !== 'string' || !label.trim()) throw new AppError(400, 'LABEL_REQUIRED');
@@ -248,7 +248,7 @@ export class DepartmentService {
     return this.repo.createJobTitle(deptId, label.trim(), sortOrder);
   }
 
-  async updateJobTitle(deptId: number, titleId: number, data: { label?: string; sortOrder?: number }, actor: Actor) {
+  async updateJobTitle(deptId: string, titleId: number, data: { label?: string; sortOrder?: number }, actor: Actor) {
     const dept = await this.repo.findById(deptId);
     if (!dept) throw new AppError(404, 'DEPARTMENT_NOT_FOUND');
     if (!isAdminLike(actor.role) && dept.headId !== actor.id) throw new AppError(403, 'FORBIDDEN');
@@ -263,7 +263,7 @@ export class DepartmentService {
     });
   }
 
-  async deleteJobTitle(deptId: number, titleId: number, actor: Actor) {
+  async deleteJobTitle(deptId: string, titleId: number, actor: Actor) {
     const dept = await this.repo.findById(deptId);
     if (!dept) throw new AppError(404, 'DEPARTMENT_NOT_FOUND');
     if (!isAdminLike(actor.role) && dept.headId !== actor.id) throw new AppError(403, 'FORBIDDEN');
@@ -273,7 +273,7 @@ export class DepartmentService {
     return { ok: true };
   }
 
-  async updateMemberJobTitle(deptId: number, userId: string, jobTitleId: number | null, actor: Actor) {
+  async updateMemberJobTitle(deptId: string, userId: string, jobTitleId: number | null, actor: Actor) {
     const dept = await this.repo.findById(deptId);
     if (!dept) throw new AppError(404, 'DEPARTMENT_NOT_FOUND');
     if (!isAdminLike(actor.role) && dept.headId !== actor.id) throw new AppError(403, 'FORBIDDEN');
