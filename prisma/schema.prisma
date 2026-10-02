@@ -114,7 +114,7 @@ model User {
   nickname      String      @unique
   role          Role
   status        Status
-  teamId        Int
+  teamId        String
   team          Team        @relation(fields: [teamId], references: [id])
   phoneNumberId Int         @unique
   phoneNumber   PhoneNumber @relation(fields: [phoneNumberId], references: [id])
@@ -124,7 +124,7 @@ model User {
 }
 
 model Team {
-  id         Int      @id @default(autoincrement())
+  id             String   @id @default(cuid())
   teamname   String   @map("team_name")
   founded    DateTime
   short_name String   @unique
@@ -151,8 +151,8 @@ model Match {
   season_id Int
   season    Season @relation(fields: [season_id], references: [id])
 
-  home_team_id Int
-  away_team_id Int
+  home_team_id String
+  away_team_id String
   away_teams   Team @relation("AwayTeam", fields: [away_team_id], references: [id], map: "Match_away_team_fkey")
   home_teams   Team @relation("HomeTeam", fields: [home_team_id], references: [id], map: "Match_home_team_fkey")
 
@@ -194,7 +194,7 @@ model Team_season_stats {
   season_id Int
   season    Season @relation(fields: [season_id], references: [id])
 
-  team_id Int
+  team_id String
   team    Team @relation(fields: [team_id], references: [id])
 
   @@unique([season_id, team_id])
@@ -279,7 +279,7 @@ model Team_match_stats {
   clearances       Int
   blocked_shots    Int
 
-  team_id Int
+  team_id String
   team    Team @relation(fields: [team_id], references: [id])
 
   match_id Int
@@ -299,7 +299,7 @@ model Goal {
   assist_id String
   assist    Player @relation(fields: [assist_id], references: [id], name: "assist")
 
-  team_id Int
+  team_id String
   team    Team @relation(fields: [team_id], references: [id])
 }
 
@@ -320,7 +320,7 @@ model JerseyNumber {
   number    Int
   status    JerseyNumberStatus @default(AVAILABLE)
 
-  team_id   Int
+  team_id   String
   team      Team               @relation(fields: [team_id], references: [id])
 
   player_id String?
@@ -351,7 +351,7 @@ model Team_player {
   season_id Int
   season    Season @relation(fields: [season_id], references: [id])
 
-  team_id Int
+  team_id String
   team    Team @relation(fields: [team_id], references: [id])
 
   player_id String
