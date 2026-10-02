@@ -12,17 +12,17 @@ export class AcademyFeeRepository {
   findAll(query: FeeListQuery) {
     return this.prisma.academyFee.findMany({
       where: {
-        ...(query.status && { status: query.status as any }),
+        ...(query.status && { status: query.status}),
         ...(query.year && { year: query.year }),
         ...(query.month && { month: query.month }),
         ...(query.teamId && { player: { teamId: query.teamId } }),
-      },
+      },//TODO: 상태값 타입 수정
       include: INCLUDE,
       orderBy: { createdAt: 'desc' },
     })
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.academyFee.findUnique({ where: { id }, include: INCLUDE })
   }
 
@@ -56,15 +56,15 @@ export class AcademyFeeRepository {
     return this.prisma.academyFee.createMany({ data: fees, skipDuplicates: true })
   }
 
-  updateStatus(id: number, status: string, extra?: { paidAt?: Date }) {
+  updateStatus(id: string, status:AcademyFee, extra?: { paidAt?: Date }) {
     return this.prisma.academyFee.update({
       where: { id },
-      data: { status: status as any, ...extra },
+      data: { status: status, ...extra },
       include: INCLUDE,
     })
   }
 
-  submitPaymentProof(id: number, url: string) {
+  submitPaymentProof(id: string, url: string) {
     return this.prisma.academyFee.update({
       where: { id },
       data: { status: 'SUBMITTED', paymentProofUrl: url, paymentSubmittedAt: new Date() },
@@ -72,7 +72,7 @@ export class AcademyFeeRepository {
     })
   }
 
-  approvePayment(id: number) {
+  approvePayment(id: string) {
     return this.prisma.academyFee.update({
       where: { id },
       data: { status: 'PAID', paidAt: new Date(), receiptIssuedAt: new Date() },
@@ -80,7 +80,7 @@ export class AcademyFeeRepository {
     })
   }
 
-  confirmTossPayment(id: number, pgTransactionId: string) {
+  confirmTossPayment(id: string, pgTransactionId: string) {
     const now = new Date()
     return this.prisma.academyFee.update({
       where: { id, status: { not: 'PAID'} },
@@ -95,7 +95,7 @@ export class AcademyFeeRepository {
     })
   }
 
-  getReceipt(id: number) {
+  getReceipt(id: string) {
     return this.prisma.academyFee.findUnique({
       where: { id },
       select: {
@@ -113,7 +113,7 @@ export class AcademyFeeRepository {
     });
   }
 
-  adminSubmitProof(id: number, paymentProofUrl?: string) {
+  adminSubmitProof(id: string, paymentProofUrl?: string) {
     return this.prisma.academyFee.update({
       where: { id },
       data: {
