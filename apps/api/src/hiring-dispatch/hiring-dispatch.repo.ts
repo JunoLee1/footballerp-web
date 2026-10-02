@@ -110,7 +110,7 @@ export class HiringDispatchRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.hiringDispatch.findUnique({
       where: { id },
       include: detailInclude,
@@ -125,7 +125,7 @@ export class HiringDispatchRepository {
     });
   }
 
-  findByDepartment(departmentId: number, status?: HiringDispatchStatus) {
+  findByDepartment(departmentId: string, status?: HiringDispatchStatus) {
     return this.prisma.hiringDispatch.findMany({
       where: { departmentId, ...(status !== undefined && { status }) },
       include: listInclude,
@@ -166,7 +166,7 @@ export class HiringDispatchRepository {
   }
 
   updateStatus(
-    id: number,
+    id: string,
     patch: { status: HiringDispatchStatus; createdUserId?: string },
     tx?: Tx,
   ) {
@@ -182,7 +182,7 @@ export class HiringDispatchRepository {
   }
 
   addApproval(
-    id: number,
+    id: string,
     data: {
       stage: HiringDispatchStage;
       action: HiringDispatchAction;
@@ -208,7 +208,7 @@ export class HiringDispatchRepository {
    * Used by the BUDGET_REVERIFIED TO check — if `count + 1 > HiringPlanItem.headcount`
    * we surface a warning that the finance reviewer must explicitly override.
    */
-  countDeptMembers(departmentId: number, tx?: Tx) {
+  countDeptMembers(departmentId: string, tx?: Tx) {
     const client = tx ?? this.prisma;
     return client.userDepartment.count({ where: { departmentId } });
   }
@@ -236,7 +236,7 @@ export class HiringDispatchRepository {
     });
   }
 
-  createUserDepartment(data: { userId: string; departmentId: number }, tx?: Tx) {
+  createUserDepartment(data: { userId: string; departmentId: string }, tx?: Tx) {
     const client = tx ?? this.prisma;
     return client.userDepartment.create({
       data: { userId: data.userId, departmentId: data.departmentId, role: "MEMBER" },
@@ -248,14 +248,14 @@ export class HiringDispatchRepository {
       name: string;
       role: string;
       email: string;
-      departmentId: number;
+      departmentId: string;
       startDate: Date;
       createdById: string;
       // #375: seed probation tracking so the D-7 cron notifier can find the
       // row. Both are required inputs — dispatch() always sets them.
       probationStartedAt: Date;
       probationStatus: "IN_PROGRESS" | "PASSED" | "FAILED";
-    },
+    }, // TODO: DTO로 파일 옮기기
     tx?: Tx,
   ) {
     const client = tx ?? this.prisma;
@@ -277,7 +277,7 @@ export class HiringDispatchRepository {
   }
 
   createOnboarding(
-    data: { hiringDispatchId: number; userId: string; otpCode: string; otpExpiresAt: Date },
+    data: { hiringDispatchId: string; userId: string; otpCode: string; otpExpiresAt: Date },
     tx?: Tx,
   ) {
     const client = tx ?? this.prisma;
