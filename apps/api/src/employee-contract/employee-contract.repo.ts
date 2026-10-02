@@ -16,7 +16,7 @@ const EC_INCLUDE = {
 } as const;
 
 export interface CreateDraftData {
-  hiringDispatchId: number;
+  hiringDispatchId: string;
   createdById: string;
 }
 
@@ -58,7 +58,7 @@ export class EmployeeContractRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.employeeContract.findUnique({
       where: { id },
       include: EC_INCLUDE,
@@ -70,7 +70,7 @@ export class EmployeeContractRepository {
    * (`assertContractSigned`) and the "current status" badge in the FE.
    * Returns null when no such row exists (dispatch has no active contract).
    */
-  findLatestActiveByDispatch(hiringDispatchId: number) {
+  findLatestActiveByDispatch(hiringDispatchId: string) {
     return this.prisma.employeeContract.findFirst({
       where: {
         hiringDispatchId,
@@ -85,7 +85,7 @@ export class EmployeeContractRepository {
    * Full history (all statuses) for a dispatch, newest first. `distinct`
    * isn't needed — every row is a distinct contract; append-only design (Q3).
    */
-  findAllByDispatch(hiringDispatchId: number) {
+  findAllByDispatch(hiringDispatchId: string) {
     return this.prisma.employeeContract.findMany({
       where: { hiringDispatchId },
       orderBy: [{ createdAt: "desc" as const }, { id: "desc" as const }],
@@ -93,7 +93,7 @@ export class EmployeeContractRepository {
     });
   }
 
-  applyIssue(id: number, data: IssueData) {
+  applyIssue(id: string, data: IssueData) {
     return this.prisma.employeeContract.update({
       where: { id },
       data: {
@@ -107,7 +107,7 @@ export class EmployeeContractRepository {
     });
   }
 
-  applySign(id: number, data: SignData) {
+  applySign(id: string, data: SignData) {
     return this.prisma.employeeContract.update({
       where: { id },
       data: {
@@ -122,7 +122,7 @@ export class EmployeeContractRepository {
     });
   }
 
-  applyCancel(id: number, data: CancelData) {
+  applyCancel(id: string, data: CancelData) {
     return this.prisma.employeeContract.update({
       where: { id },
       data: {
