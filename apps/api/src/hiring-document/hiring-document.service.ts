@@ -175,7 +175,7 @@ export class HiringDocumentService {
    *   the missing types via a follow-up GET on listCurrent.
    */
   async assertRequiredDocsApproved(
-    target: { applicationId?: number; hiringDispatchId?: number },
+    target: { applicationId?: string; hiringDispatchId?: string },
     required: string[],
   ): Promise<void> {
     const normRequired = required.map((r) => r.trim()).filter((r) => r.length > 0);
@@ -200,8 +200,8 @@ export class HiringDocumentService {
   // ────────────────────────────────────────────
 
   private assertExactlyOneTarget(target: {
-    applicationId?: number;
-    hiringDispatchId?: number;
+    applicationId?: string;
+    hiringDispatchId?: string;
   }): void {
     const hasApp = target.applicationId != null;
     const hasDisp = target.hiringDispatchId != null;
