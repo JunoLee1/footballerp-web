@@ -19,7 +19,7 @@ function slotsForFormation(formation: string): number {
 export class MatchLineupService {
   constructor(private repo: MatchLineupRepository) {}
 
-  async getLineup(matchId: number) {
+  async getLineup(matchId: string) {
     const [lineup, matchInfo] = await Promise.all([
       this.repo.findByMatch(matchId),
       this.repo.findMatchInfo(matchId),
@@ -30,7 +30,7 @@ export class MatchLineupService {
     return { ...lineup, teamType };
   }
 
-  async saveLineup(matchId: number, dto: SaveLineupDto) {
+  async saveLineup(matchId: string, dto: SaveLineupDto) {
     if (!SUPPORTED_FORMATIONS.includes(dto.formation)) {
       throw new AppError(400, "INVALID_FORMATION");
     }
@@ -66,7 +66,7 @@ export class MatchLineupService {
     return this.repo.saveLineup(matchId, dto);
   }
 
-  async confirmLineup(matchId: number, confirmedById: string) {
+  async confirmLineup(matchId: string, confirmedById: string) {
     const lineup = await this.repo.findByMatch(matchId);
     if (!lineup) throw new AppError(404, "LINEUP_NOT_FOUND");
     const result = await this.repo.confirmLineup(matchId, confirmedById);

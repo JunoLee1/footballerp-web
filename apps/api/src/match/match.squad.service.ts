@@ -5,11 +5,11 @@ import { MatchSquadRepository } from "./match.squad.repo";
 export class MatchSquadService {
   constructor(private repo: MatchSquadRepository, private prisma: PrismaClient) {}
 
-  getSquad(matchId: number) {
+  getSquad(matchId: string) {
     return this.repo.findByMatch(matchId);
   }
 
-  async addPlayer(matchId: number, playerId: string) {
+  async addPlayer(matchId: string, playerId: string) {
     const now = new Date();
     const player = await this.prisma.player.findUnique({
       where: { id: playerId },
@@ -27,11 +27,11 @@ export class MatchSquadService {
     return this.repo.addPlayer(matchId, playerId);
   }
 
-  removePlayer(matchId: number, playerId: string) {
+  removePlayer(matchId: string, playerId: string) {
     return this.repo.removePlayer(matchId, playerId);
   }
 
-  confirmSquad(matchId: number, confirmedById: string) {
+  confirmSquad(matchId: string, confirmedById: string) {
     return this.repo.confirmSquad(matchId, confirmedById);
   }
 }

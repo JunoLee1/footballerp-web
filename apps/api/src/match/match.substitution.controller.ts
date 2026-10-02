@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { MatchSubstitutionService } from "./match.substitution.service";
 import { CreateSubstitutionDto } from "./dto/match.dto";
 
@@ -12,7 +13,7 @@ export class MatchSubstitutionController {
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireUser(req);
-      res.json(await this.service.list(Number(req.params["id"])));
+      res.json(await this.service.list(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -21,7 +22,7 @@ export class MatchSubstitutionController {
       const user = requireUser(req);
       if (!(ALLOWED_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
       const dto = req.body as CreateSubstitutionDto;
-      res.status(201).json(await this.service.create(Number(req.params["id"]), dto));
+      res.status(201).json(await this.service.create(assertCuid(req.params["id"]), dto));
     } catch (err) { next(err); }
   };
 
@@ -29,7 +30,7 @@ export class MatchSubstitutionController {
     try {
       const user = requireUser(req);
       if (!(ALLOWED_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      await this.service.delete(Number(req.params["id"]), Number(req.params["subId"]));
+      await this.service.delete(assertCuid(req.params["id"]), assertCuid(req.params["subId"]));
       res.status(204).send();
     } catch (err) { next(err); }
   };

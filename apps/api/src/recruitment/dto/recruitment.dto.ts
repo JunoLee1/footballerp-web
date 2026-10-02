@@ -9,7 +9,7 @@ import type {
 
 export interface CreateJobPostingDto {
   title: string;
-  departmentId?: number;
+  departmentId?: string;
   headcount?: number;
   description: string;
   planReportId: string;
@@ -21,7 +21,7 @@ export interface CreateJobPostingDto {
 
 export interface UpdateJobPostingDto {
   title?: string;
-  departmentId?: number;
+  departmentId?: string;
   headcount?: number;
   description?: string;
   requiredDocuments?: string[];
