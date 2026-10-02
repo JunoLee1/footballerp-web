@@ -5,6 +5,7 @@ import { getPrisma } from "../lib/prisma";
 import { isAdminLike } from "../lib/permissions";
 import { AppError } from "../lib/appError";
 import { intIdRouter } from "../lib/idParamGuard";
+import { assertCuid } from "../lib/cuidGuard";
 
 const router = intIdRouter();
 const prisma = getPrisma();
@@ -18,7 +19,7 @@ const requireAdmin = (req: Request, _res: Response, next: NextFunction) => {
 // GET /department-review-configs?subjectDepartmentId=
 router.get("/", auth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const subjectDepartmentId = Number(req.query["subjectDepartmentId"]);
+    const subjectDepartmentId = assertCuid(req.query["subjectDepartmentId"]);
     if (!subjectDepartmentId) {
       res.status(400).json({ message: "subjectDepartmentId is required" });
       return;
@@ -31,8 +32,8 @@ router.get("/", auth, requireAdmin, async (req: Request, res: Response, next: Ne
 router.post("/", auth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { subjectDepartmentId, reviewerDepartmentId } = req.body as {
-      subjectDepartmentId: number;
-      reviewerDepartmentId: number;
+      subjectDepartmentId: string;
+      reviewerDepartmentId: string;
     };
     if (!subjectDepartmentId || !reviewerDepartmentId) {
       res.status(400).json({ message: "subjectDepartmentId and reviewerDepartmentId are required" });
@@ -45,7 +46,7 @@ router.post("/", auth, requireAdmin, async (req: Request, res: Response, next: N
 // DELETE /department-review-configs/:id
 router.delete("/:id", auth, requireAdmin, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    await repo.delete(Number(req.params["id"]));
+    await repo.delete(assertCuid(req.params["id"]));
     res.status(204).send();
   } catch (err) { next(err); }
 });

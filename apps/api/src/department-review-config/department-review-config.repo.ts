@@ -3,7 +3,7 @@ import { PrismaClient } from "../generated/client";
 export class DepartmentReviewerConfigRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findBySubject(subjectDepartmentId: number) {
+  findBySubject(subjectDepartmentId: string) {
     return this.prisma.departmentReviewerConfig.findMany({
       where: { subjectDepartmentId },
       include: {
@@ -12,18 +12,18 @@ export class DepartmentReviewerConfigRepository {
     });
   }
 
-  create(subjectDepartmentId: number, reviewerDepartmentId: number) {
+  create(subjectDepartmentId: string, reviewerDepartmentId: string) {
     return this.prisma.departmentReviewerConfig.create({
       data: { subjectDepartmentId, reviewerDepartmentId },
       include: { reviewerDepartment: { select: { id: true, name: true } } },
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prisma.departmentReviewerConfig.delete({ where: { id } });
   }
 
-  findReviewerDeptIds(subjectDepartmentId: number): Promise<number[]> {
+  findReviewerDeptIds(subjectDepartmentId: string): Promise<string[]> {
     return this.prisma.departmentReviewerConfig
       .findMany({
         where: { subjectDepartmentId },
