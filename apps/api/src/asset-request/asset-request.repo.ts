@@ -41,7 +41,7 @@ const listInclude = {
 export class AssetRequestRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(dto: CreateAssetRequestDto, requesterId: string, departmentId: number, actorClubId?: string) {
+  create(dto: CreateAssetRequestDto, requesterId: string, departmentId: string, actorClubId?: string) {
     return this.prisma.assetRequest.create({
       data: {
         requesterId,
