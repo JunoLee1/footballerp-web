@@ -57,11 +57,11 @@ export class AgencyRepository {
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prisma.agency.delete({ where: { id } });
   }
 
-  hasLinkedData(id: number) {
+  hasLinkedData(id: string) {
     return this.prisma.agency.findUnique({
       where: { id },
       select: { _count: { select: { players: true, contracts: true } } },
