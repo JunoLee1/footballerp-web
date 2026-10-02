@@ -13,8 +13,8 @@ interface CreateUserData {
   dateOfBirth: Date;
   nationalityId: number;
   phoneNumber: { encrypted: string; iv: string; phoneHash: string };
-  departmentId?: number;
-}
+  departmentId?: string;
+}//TODO: dto 파일로 이사
 
 export class AuthRepository {
   constructor(private prisma: PrismaClient) {}
@@ -50,7 +50,7 @@ export class AuthRepository {
     return this.prisma.user.findFirst({ where: { email, id: { not: excludeUserId } }, select: { id: true } });
   }
 
-  isPhoneHashTakenByOther(phoneHash: string, excludePhoneNumberId: number) {
+  isPhoneHashTakenByOther(phoneHash: string, excludePhoneNumberId: string) {
     return this.prisma.phoneNumber.findFirst({ where: { phoneHash, id: { not: excludePhoneNumberId } }, select: { id: true } });
   }
 
@@ -181,7 +181,7 @@ export class AuthRepository {
     return this.prisma.userInvite.findUnique({ where: { token } });
   }
 
-  markInviteUsed(id: number) {
+  markInviteUsed(id: string) {
     return this.prisma.userInvite.update({
       where: { id },
       data: { usedAt: new Date() },
