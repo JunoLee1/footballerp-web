@@ -37,7 +37,7 @@ export interface CancelData {
   cancelReason: string;
   cancelledById: string;
 }
-
+//TODO: dto 파일로 분리
 /**
  * Prisma boundary for EmployeeContract. All mutations are `update` by id
  * against the current status (validated in the service). Reads always come
