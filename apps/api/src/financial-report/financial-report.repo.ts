@@ -74,7 +74,7 @@ export class FinancialReportRepository {
         })
       : null;
 
-    const result = await (this.prisma.financialReport as any).upsert({
+    const result = await (this.prisma.financialReport).upsert({
       where: { seasonId },
       create: { seasonId, totalRevenue, note: noteVal, ...breakdownData },
       update: { totalRevenue, note: noteVal, ...breakdownData },
@@ -84,13 +84,13 @@ export class FinancialReportRepository {
     if (changedById && before && breakdown) {
       const TRACKED = ["plannedRevenueBroadcast", "plannedRevenueSubsidy", "plannedRevenueParentCompany"] as const;
       const logs = TRACKED.flatMap((field) => {
-        const oldVal = Number((before as any)[field] ?? 0);
-        const newVal = Number((breakdownData as any)[field] ?? 0);
+        const oldVal = Number((before)[field] ?? 0);
+        const newVal = Number((breakdownData)[field] ?? 0);
         if (oldVal === newVal) return [];
         return [{ financialReportId: before.id, field, oldValue: oldVal, newValue: newVal, changedById }];
       });
       if (logs.length > 0) {
-        await this.prisma.financialReportRevenueLog.createMany({ data: logs as any });
+        await this.prisma.financialReportRevenueLog.createMany({ data: logs});
       }
     }
 
