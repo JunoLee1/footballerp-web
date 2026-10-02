@@ -410,7 +410,7 @@ export class BudgetPlanRequestService {
       where: { categoryPlanId: { in: planIds } },
       select: { id: true, categoryPlanId: true, name: true, cost: true, value: true },
     });
-    const groupsByPlan = new Map<number, { basicCost: number; tiers: { id: string; name: string; cost: number; value: number }[] }>();
+    const groupsByPlan = new Map<string, { basicCost: number; tiers: { id: string; name: string; cost: number; value: number }[] }>();
     for (const t of allTiersAfter) {
       const existing = groupsByPlan.get(t.categoryPlanId) ?? { basicCost: 0, tiers: [] };
       if (t.name === "Basic") existing.basicCost = t.cost;
