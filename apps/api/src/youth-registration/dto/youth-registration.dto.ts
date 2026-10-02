@@ -2,7 +2,7 @@ export interface CreateYouthRegistrationDto {
   playerName: string;
   birthDate: string;
   preferredJerseyNumber?: number;
-  teamId: number;
+  teamId: string;
   guardianEmail: string;
 }
 
@@ -11,6 +11,6 @@ export interface RejectYouthRegistrationDto {
 }
 
 export interface YouthRegistrationListQuery {
-  teamId?: number;
+  teamId?: string;
   status?: "PENDING" | "GUARDIAN_APPROVED" | "CONTRACTED" | "REJECTED";
 }
