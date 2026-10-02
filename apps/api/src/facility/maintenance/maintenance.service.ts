@@ -126,7 +126,7 @@ export class MaintenanceService {
       create: { id: 1 },
       update: {},
       select: { maintenanceCostLimit: true },
-    });
+    }); //TODO:수정
     const limit = settings.maintenanceCostLimit;
 
     const cost = existing.estimatedCost ? Number(existing.estimatedCost) : 0;
