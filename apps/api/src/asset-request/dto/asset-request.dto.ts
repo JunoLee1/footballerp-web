@@ -4,7 +4,7 @@ export interface CreateAssetRequestDto {
   softwareLicenseId?: string;
   customName?: string;
   customDescription?: string;
-  expenseCategoryId: number;
+  expenseCategoryId: string;
   expectedAmount: number;
   neededBy?: string;
   justification: string;
