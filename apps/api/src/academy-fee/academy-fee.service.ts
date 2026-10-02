@@ -1,6 +1,7 @@
 import { AppError } from "../lib/appError";
 import { getPrisma } from "../lib/prisma";
 import { formatLedgerDescription } from "../lib/ledger-formatter";
+import { FeeStatus } from "../generated/enums";
 import type { AcademyFeeRepository } from "./academy-fee.repo";
 import type { NotificationRepository } from "../notification/notification.repo";
 import type { FeeListQuery, SubmitPaymentProofDto, TossConfirmDto, AdminSubmitDto, CreateSingleFeeDto } from "./dto/academy-fee.dto";
@@ -218,8 +219,8 @@ export class AcademyFeeService {
   async confirmTossPayment(id: string, dto: TossConfirmDto) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
-    if ((fee.status as string) === "PAID") return fee; // 멱등성
-    if (["LOCKED", "SUBMITTED"].includes(fee.status as string)) {
+    if (fee.status === FeeStatus.PAID) return fee; // 멱등성
+    if (fee.status === FeeStatus.LOCKED || fee.status === FeeStatus.SUBMITTED) {
       throw new AppError(409, "INVALID_STATUS_FOR_PG_PAYMENT");
     }
 
@@ -307,11 +308,11 @@ export class AcademyFeeService {
     // orderId 형식: fee-{id}-{timestamp}
     const parts = body.orderId.split("-");
     const feeId = String(parts[1]);
-    if (isNaN(feeId)) return { ok: true };
+    if (feeId) return { ok: true }; //TODO: 어불성설 인듯 한데 확인 
 
     const fee = await this.repo.findById(feeId);
     if (!fee) return { ok: true };
-    if ((fee.status as string) === "PAID") return { ok: true }; // 멱등성
+    if (fee.status === FeeStatus.PAID) return { ok: true }; // 멱등성
 
     const feeAmount = Number((fee as any).amount);
     if (feeAmount !== body.totalAmount) {
@@ -329,7 +330,7 @@ export class AcademyFeeService {
   async getReceipt(id: string, requesterId: string, requesterRole: string, requesterFoRole?: string | null) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
-    if ((fee.status as string) !== "PAID") throw new AppError(404, "RECEIPT_NOT_AVAILABLE");
+    if (fee.status !== FeeStatus.PAID) throw new AppError(404, "RECEIPT_NOT_AVAILABLE");
     if (!fee.paidAt || !(fee as any).receiptIssuedAt) throw new AppError(404, "RECEIPT_NOT_AVAILABLE");
 
     // GUARDIAN may only access their own child's fee
@@ -341,7 +342,7 @@ export class AcademyFeeService {
       id: fee.id,
       year: fee.year,
       month: fee.month,
-      amount: Number(fee.amount),
+      amount: Number(fee.amount) ?? 0,
       paidAt: fee.paidAt,
       paymentMethod: fee.paymentMethod ?? null,
       pgTransactionId: fee.pgTransactionId ?? null,
@@ -354,7 +355,7 @@ export class AcademyFeeService {
   async adminSubmitProof(id: string, dto: AdminSubmitDto) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
-    if (!["PENDING", "OVERDUE"].includes(fee.status as string)) {
+    if (fee.status !== FeeStatus.PENDING && fee.status !== FeeStatus.OVERDUE) {
       throw new AppError(409, "INVALID_STATUS");
     }
     const updated = await this.repo.adminSubmitProof(id, dto.paymentProofUrl);

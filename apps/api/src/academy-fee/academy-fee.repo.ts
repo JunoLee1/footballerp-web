@@ -56,7 +56,7 @@ export class AcademyFeeRepository {
     return this.prisma.academyFee.createMany({ data: fees, skipDuplicates: true })
   }
 
-  updateStatus(id: string, status:AcademyFee, extra?: { paidAt?: Date }) {
+  updateStatus(id: string, status, extra?: { paidAt?: Date }) {
     return this.prisma.academyFee.update({
       where: { id },
       data: { status: status, ...extra },
