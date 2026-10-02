@@ -874,7 +874,7 @@ model Club {
 }
 
 model Team {
-  id               Int      @id @default(autoincrement())
+  id              String   @id @default(cuid())
   name             String
   type             TeamType
   ageGroup         String?
@@ -2262,7 +2262,7 @@ model Coach {
   packageLeadId   Int?
   hiringRoundId   Int?
   userId          String?          @unique
-  teamId          Int?
+  teamId          String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
@@ -2543,7 +2543,7 @@ model GuardianInviteCode {
 model IncidentReport {
   id               String               @id @default(cuid())
   playerId         String
-  teamId           Int
+  teamId           String
   type             IncidentType
   matchId          Int?
   sessionId        Int?
@@ -2622,8 +2622,8 @@ model PlayerBadge {
 model PlayerCallup {
   id                  Int                @id @default(autoincrement())
   playerId            String
-  fromTeamId          Int
-  toTeamId            Int
+  fromTeamId          String
+  toTeamId            String
   requestedById       String
   approvedById        String?
   reason              String
@@ -2675,7 +2675,7 @@ model JerseyNumber {
   id       Int                @id @default(autoincrement())
   number   Int
   status   JerseyNumberStatus @default(AVAILABLE)
-  teamId   Int
+  teamId   String
   playerId String?
 
   team   Team    @relation(fields: [teamId], references: [id])
@@ -2818,7 +2818,7 @@ enum ProbationStatus {
 }
 
 model StaffRecord {
-  id           Int         @id @default(autoincrement())
+  id           String         @id @default(cuid())
   name         String
   role         String
   departmentId Int?
@@ -2935,7 +2935,7 @@ enum BudgetPlanStatus {
 }
 
 model Department {
-  id                 Int                        @id @default(autoincrement())
+  id                String   @id @default(cuid())
   name               String
   clubId             String?
   isActive           Boolean                    @default(true)
@@ -2978,7 +2978,7 @@ enum PiiAccessStatus {
 }
 
 model PiiAccessRequest {
-  id           Int             @id @default(autoincrement())
+  id           String             @id @default(cuid())
   targetUserId String
   requesterId  String
   reason       String
@@ -3663,7 +3663,7 @@ model ComplianceDeadline {
 // ─────────────────────────────────────────────
 
 model FacilityInspection {
-  id                Int              @id @default(autoincrement())
+  id                String   @id @default(cuid())
   type              InspectionType
   facilityZone      FacilityZone
   result            InspectionResult
@@ -3682,7 +3682,7 @@ model FacilityInspection {
 }
 
 model MaintenanceRequest {
-  id                 Int                 @id @default(autoincrement())
+  id             String   @id @default(cuid())
   title              String
   description        String              @db.Text
   priority           MaintenancePriority
@@ -3718,7 +3718,7 @@ model MaintenanceRequest {
 // ─────────────────────────────────────────────
 
 model Certification {
-  id              Int               @id @default(autoincrement())
+  id             String   @id @default(cuid())
   certType        CertificationType
   entityType      CertEntityType
   issuingBody     String
@@ -3762,8 +3762,8 @@ model Certification {
 }
 
 model CertificationReminderLog {
-  id              Int      @id @default(autoincrement())
-  certificationId Int
+  id             String   @id @default(cuid())
+  certificationId String
   daysThreshold   Int
   sentAt          DateTime @default(now())
 
@@ -3877,7 +3877,7 @@ model StaffSalary {
 }
 
 model StaffAllowance {
-  id            Int      @id @default(autoincrement())
+  id             String   @id @default(cuid())
   staffSalaryId String
   name          String
   amount        Decimal  @db.Decimal(12, 2)
@@ -3888,7 +3888,7 @@ model StaffAllowance {
 }
 
 model PayrollRun {
-  id                 String           @id @default(cuid())
+  id             String   @id @default(cuid())
   staffSalaryId      String
   month              DateTime
   grossPay           Decimal          @db.Decimal(12, 2)
@@ -3911,7 +3911,7 @@ model PayrollRun {
 }
 
 model UserInvite {
-  id              Int              @id @default(autoincrement())
+  id             String   @id @default(cuid())
   token           String           @unique
   email           String
   role            Role
@@ -3988,7 +3988,7 @@ model LedgerEntry {
 }
 
 model LedgerPeriodLock {
-  id         Int      @id @default(autoincrement())
+  id             String   @id @default(cuid())
   year       Int
   month      Int
   lockedById String
@@ -4000,7 +4000,7 @@ model LedgerPeriodLock {
 }
 
 model WorkPermitAlertLog {
-  id       Int      @id @default(autoincrement())
+  id             String   @id @default(cuid())
   playerId String
   window   String // "30D" | "60D"
   sentAt   DateTime @default(now())
@@ -4011,7 +4011,7 @@ model WorkPermitAlertLog {
 }
 
 model SalesRecord {
-  id                 Int               @id @default(autoincrement())
+  id             String   @id @default(cuid())
   type               SalesType
   quantity           Int
   unitPrice          Decimal           @db.Decimal(12, 2)
@@ -4040,7 +4040,7 @@ model SalesRecord {
 }
 
 model FacilityInventoryItem {
-  id           Int      @id @default(autoincrement())
+  id             String   @id @default(cuid())
   name         String
   unit         String
   quantity     Int      @default(0)
@@ -4050,7 +4050,7 @@ model FacilityInventoryItem {
 }
 
 model FacilityReservation {
-  id           Int          @id @default(autoincrement())
+  id             String   @id @default(cuid())
   facilityZone FacilityZone
   title        String
   startTime    DateTime
@@ -4063,7 +4063,7 @@ model FacilityReservation {
 }
 
 model Fan {
-  id        Int      @id @default(autoincrement())
+  id             String   @id @default(cuid())
   name      String
   email     String?  @unique
   phone     String?
@@ -4082,7 +4082,7 @@ enum MembershipTier {
 }
 
 model FanMembership {
-  id        Int            @id @default(autoincrement())
+  id             String   @id @default(cuid())
   fanId     Int
   tier      MembershipTier
   startDate DateTime
@@ -4094,7 +4094,7 @@ model FanMembership {
 }
 
 model FanPurchase {
-  id          Int       @id @default(autoincrement())
+  id             String   @id @default(cuid())
   fanId       Int
   matchId     Int?
   saleType    SalesType
@@ -4127,7 +4127,7 @@ model RefreshTokenBlacklist {
 }
 
 model Agency {
-  id             Int      @id @default(autoincrement())
+  id             String   @id @default(cuid())
   name           String
   contactName    String?
   phone          String?
@@ -4142,7 +4142,7 @@ model Agency {
 }
 
 model MonthlyBudgetSnapshot {
-  id           Int      @id @default(autoincrement())
+  id             String   @id @default(cuid())
   seasonId     Int
   year         Int
   month        Int
@@ -4157,7 +4157,7 @@ model MonthlyBudgetSnapshot {
 }
 
 model MonthlyOperationsSnapshot {
-  id           Int      @id @default(autoincrement())
+  id             String   @id @default(cuid())
   seasonId     Int
   year         Int
   month        Int
@@ -4484,7 +4484,7 @@ model ReviewRuleSet {
 }
 
 model PreventiveSchedule {
-  id              Int                 @id @default(autoincrement())
+  id             String   @id @default(cuid())
   facilityZone    FacilityZone
   title           String
   description     String?             @db.Text
@@ -4546,7 +4546,7 @@ model SponsorshipClause {
 }
 
 model SponsorshipExposureEvent {
-  id            Int             @id @default(autoincrement())
+  id             String   @id @default(cuid())
   sponsorshipId String
   channel       ExposureChannel
   occurredAt    DateTime
@@ -4783,7 +4783,7 @@ model AssetRequestApproval {
  */
 model DepartmentDefaultAssetKit {
   id                       String   @id @default(cuid())
-  departmentId             Int      @unique
+  departmentId             String       @unique
   assetItems               Json // [{equipmentItemId, quantity, note?}]
   defaultExpenseCategoryId Int
   createdById              String
