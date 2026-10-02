@@ -58,7 +58,7 @@ export class AuthRepository {
     return this.prisma.user.findUnique({ where: { id: userId }, select: { password: true, passwordChangedAt: true, phoneNumberId: true } });
   }
 
-  async updateProfile(userId: string, data: { email?: string; homeAddress?: string | null; phoneNumber?: { encrypted: string; iv: string; phoneHash: string } }) {
+  async updateProfile(userId: string, data: { email?: string | undefined; homeAddress?: string | null | undefined; phoneNumber?: { encrypted: string; iv: string; phoneHash: string } | undefined }) {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { phoneNumberId: true } });
     if (data.phoneNumber) {
       await this.prisma.phoneNumber.update({
