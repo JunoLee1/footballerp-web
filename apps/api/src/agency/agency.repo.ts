@@ -14,7 +14,7 @@ export class AgencyRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.agency.findUnique({
       where: { id },
       select: {
@@ -49,7 +49,7 @@ export class AgencyRepository {
     });
   }
 
-  update(id: number, data: { name?: string; contactName?: string | null; phone?: string | null; email?: string | null; commissionRate?: number | null }) {
+  update(id: string, data: { name?: string; contactName?: string | null; phone?: string | null; email?: string | null; commissionRate?: number | null }) {
     return this.prisma.agency.update({
       where: { id },
       data,
@@ -57,11 +57,11 @@ export class AgencyRepository {
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prisma.agency.delete({ where: { id } });
   }
 
-  hasLinkedData(id: number) {
+  hasLinkedData(id: string) {
     return this.prisma.agency.findUnique({
       where: { id },
       select: { _count: { select: { players: true, contracts: true } } },
