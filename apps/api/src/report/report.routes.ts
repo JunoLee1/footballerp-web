@@ -11,6 +11,7 @@ import { isAdminLike } from "../lib/permissions";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
 import { intIdRouter } from "../lib/idParamGuard";
+import { assertCuid } from "../lib/cuidGuard";
 
 const router = intIdRouter();
 const prisma = getPrisma();
@@ -28,7 +29,7 @@ function requireHeadOfDept(deptIdParam: string) {
     try {
       const user = requireUser(req);
       if (isAdminLike(user.role) || user.role === "GM") return next();
-      const deptId = Number(req.params[deptIdParam]);
+      const deptId = assertCuid(req.params[deptIdParam]);
       const dept = await prisma.department.findUnique({ where: { id: deptId }, select: { headId: true } });
       if (!dept || dept.headId !== user.id) throw new AppError(403, "NOT_DEPT_HEAD");
       next();

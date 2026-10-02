@@ -73,7 +73,7 @@ export class ReportRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.report.findUnique({
       where: { id },
       include: reportInclude,
@@ -87,7 +87,7 @@ export class ReportRepository {
     });
   }
 
-  update(id: number, data: { title?: string; content?: string; fileUrl?: string; fileName?: string }) {
+  update(id: string, data: { title?: string; content?: string; fileUrl?: string; fileName?: string }) {
     return this.prisma.report.update({
       where: { id },
       data,
@@ -95,7 +95,7 @@ export class ReportRepository {
     });
   }
 
-  async submitWithReviews(id: number, reviewerDeptIds: number[]) {
+  async submitWithReviews(id: string, reviewerDeptIds: string[]) {
     return this.prisma.$transaction(async (tx) => {
       const report = await tx.report.update({
         where: { id },
@@ -118,13 +118,13 @@ export class ReportRepository {
     });
   }
 
-  findReview(reportId: number, reviewerDeptId: number) {
+  findReview(reportId: string, reviewerDeptId: string) {
     return this.prisma.reportReview.findUnique({
       where: { reportId_reviewerDeptId: { reportId, reviewerDeptId } },
     });
   }
 
-  async confirmReview(reportId: number, reviewerDeptId: number, userId: string, comment?: string) {
+  async confirmReview(reportId: string, reviewerDeptId: string, userId: string, comment?: string) {
     return this.prisma.$transaction(async (tx) => {
       await tx.reportReview.update({
         where: { reportId_reviewerDeptId: { reportId, reviewerDeptId } },
@@ -145,7 +145,7 @@ export class ReportRepository {
     });
   }
 
-  async rejectReview(reportId: number, reviewerDeptId: number, userId: string, reason: string) {
+  async rejectReview(reportId: string, reviewerDeptId: string, userId: string, reason: string) {
     return this.prisma.$transaction(async (tx) => {
       await tx.reportReview.update({
         where: { reportId_reviewerDeptId: { reportId, reviewerDeptId } },
@@ -160,7 +160,7 @@ export class ReportRepository {
     });
   }
 
-  approve(id: number, reviewerId: string, nextStatus: "FIRST_APPROVED" | "SECOND_APPROVED" | "APPROVED") {
+  approve(id: string, reviewerId: string, nextStatus: "FIRST_APPROVED" | "SECOND_APPROVED" | "APPROVED") {
     const now = new Date();
     const data =
       nextStatus === "FIRST_APPROVED"
@@ -176,7 +176,7 @@ export class ReportRepository {
     });
   }
 
-  rejectDirect(id: number, reviewerId: string, reason: string) {
+  rejectDirect(id: string, reviewerId: string, reason: string) {
     return this.prisma.report.update({
       where: { id },
       data: { status: "REJECTED", rejectionReason: reason, reviewerId, reviewedAt: new Date() },
@@ -186,7 +186,7 @@ export class ReportRepository {
 
   findRulesByType(reportType: string) {
     return this.prisma.reviewRuleSet.findMany({
-      where: { reportType: reportType as any },
+      where: { reportType: reportType as any },//TODO: as any 지우기
     });
   }
 
@@ -198,7 +198,7 @@ export class ReportRepository {
     return this.prisma.reviewRuleSet.create({ data: { reportType: reportType as any, reviewerCategory: reviewerCategory as any } });
   }
 
-  deleteRuleSet(id: number) {
+  deleteRuleSet(id: string) {
     return this.prisma.reviewRuleSet.delete({ where: { id } });
   }
 

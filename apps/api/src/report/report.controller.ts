@@ -3,6 +3,7 @@ import { AppError } from "../lib/appError";
 import { isAdminLike, canReadHR, canReadFinance } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
 import { ReportService } from "./report.service";
+import { assertCuid } from "../lib/cuidGuard";
 
 function isGM(req: Request): boolean {
   return req.user?.role === "GM";
@@ -71,7 +72,7 @@ export class ReportController {
 
   get = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const report = await this.service.get(Number(req.params["id"]));
+      const report = await this.service.get(assertCuid(req.params["id"]));
       const { role, frontOfficeRole: foRole, id: userId, departmentCategories = [] } = requireUser(req);
       const canView =
         isGM(req) ||
@@ -120,7 +121,7 @@ export class ReportController {
       const { title, content } = req.body;
       const file = req.file;
       res.json(
-        await this.service.update(Number(req.params["id"]), requireUser(req).id, {
+        await this.service.update(assertCuid(req.params["id"]), requireUser(req).id, {
           ...(title !== undefined && { title }),
           ...(content !== undefined && { content }),
           ...(file && { fileUrl: (file as any).gcsUrl, fileName: file.originalname }),
@@ -133,7 +134,7 @@ export class ReportController {
 
   submit = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.submit(Number(req.params["id"]), requireUser(req).id));
+      res.json(await this.service.submit(assertCuid(req.params["id"]), requireUser(req).id));
     } catch (err) {
       next(err);
     }
@@ -141,7 +142,7 @@ export class ReportController {
 
   approve = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const report = await this.service.get(Number(req.params["id"]));
+      const report = await this.service.get(assertCuid(req.params["id"]));
 
       const canApprove = (() => {
         switch (report.type) {
@@ -166,7 +167,7 @@ export class ReportController {
       })();
 
       if (!canApprove) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.approve(Number(req.params["id"]), req.user!.id));
+      res.json(await this.service.approve(assertCuid(req.params["id"]), req.user!.id));
     } catch (err) {
       next(err);
     }
@@ -174,7 +175,7 @@ export class ReportController {
 
   reject = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const report = await this.service.get(Number(req.params["id"]));
+      const report = await this.service.get(assertCuid(req.params["id"]));
 
       const canReject = (() => {
         switch (report.type) {
@@ -199,7 +200,7 @@ export class ReportController {
       })();
 
       if (!canReject) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.reject(Number(req.params["id"]), req.user!.id, req.body.reason));
+      res.json(await this.service.reject(assertCuid(req.params["id"]), req.user!.id, req.body.reason));
     } catch (err) {
       next(err);
     }
@@ -208,8 +209,8 @@ export class ReportController {
   confirmReview = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: userId } = requireUser(req);
-      const reportId = Number(req.params["id"]);
-      const reviewerDeptId = Number(req.params["deptId"]);
+      const reportId = assertCuid(req.params["id"]);
+      const reviewerDeptId = assertCuid(req.params["deptId"]);
       const { comment } = req.body;
       res.json(await this.service.confirmReview(reportId, reviewerDeptId, userId, comment));
     } catch (err) {
@@ -220,8 +221,8 @@ export class ReportController {
   rejectReview = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: userId } = requireUser(req);
-      const reportId = Number(req.params["id"]);
-      const reviewerDeptId = Number(req.params["deptId"]);
+      const reportId = assertCuid(req.params["id"]);
+      const reviewerDeptId = assertCuid(req.params["deptId"]);
       const { reason } = req.body;
       res.json(await this.service.rejectReview(reportId, reviewerDeptId, userId, reason));
     } catch (err) {
@@ -248,7 +249,7 @@ export class ReportController {
 
   deleteRuleSet = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.service.deleteRuleSet(Number(req.params["ruleId"]));
+      await this.service.deleteRuleSet(assertCuid(req.params["ruleId"]));
       res.status(204).end();
     } catch (err) {
       next(err);
