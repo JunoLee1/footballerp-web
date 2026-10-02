@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
-import { assertCuid } from "../lib/cuidGuard";
 import type { AcademyFeeService } from "./academy-fee.service";
 
 export class AcademyFeeController {
@@ -23,7 +22,7 @@ export class AcademyFeeController {
       const { status, teamId, year, month } = req.query;
       const query: import("./dto/academy-fee.dto").FeeListQuery = {};
       if (status) query.status = status as string;
-      if (teamId) query.teamId = assertCuid(String(teamId));
+      if (teamId) query.teamId = Number(teamId);
       if (year) query.year = Number(year);
       if (month) query.month = Number(month);
       res.json(await this.service.getAll(query));
