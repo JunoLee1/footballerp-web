@@ -92,7 +92,7 @@ export class TrainingController {
 
   getResultById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const resultId = Number(req.params["resultId"]);
+      const resultId = assertCuid(req.params["resultId"]);
       res.status(200).json(await this.service.getResultById(resultId));
     } catch (err) { next(err); }
   }
@@ -103,7 +103,7 @@ export class TrainingController {
       if (!isAdminLike(user.role)) throw new AppError(403, "FORBIDDEN");
       const { attendance, reason } = req.body;
       res.status(200).json(
-        await this.service.correctAttendance(Number(req.params["resultId"]), user.id, attendance, reason)
+        await this.service.correctAttendance(assertCuid(req.params["resultId"]), user.id, attendance, reason)
       );
     } catch (err) { next(err); }
   };
