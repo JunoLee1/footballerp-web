@@ -32,7 +32,7 @@ export class OperatingExpenseRepository {
     return this.prisma.budgetLine.findUnique({ where: { id: budgetLineId } });
   }
 
-  async findBudgetLinesForSeasonCategory(seasonId: number, categoryId: number) {
+  async findBudgetLinesForSeasonCategory(seasonId: number, categoryId: string) {
     // ADR 0023 (#474): 편성 확정으로 v2 를 발행하면 v1 은 LOCKED 로 전이되지만,
     // budget-automation.apply 를 별도로 approve 하면 여러 APPROVED 헤더가 공존할
     // 수 있다. 자동 매칭 (auto-lookup) 은 반드시 최신 version 하나의 header 만
