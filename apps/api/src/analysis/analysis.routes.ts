@@ -16,7 +16,7 @@ const controller = new AnalysisController(service);
 
 const requireRanking = (req: Request, res: Response, next: NextFunction) => {
   if (!hasPermission(req.user!.role as Role, Permission.VIEW_TEAM_RANKING)) {
-    return next(new AppError(403, 'FORBIDDEN'));
+    return next(new AppError(403, 'FORBIDDEN'));//TODO: 코드 수정 해야 할듯(통일성 부족)
   }
   next();
 };

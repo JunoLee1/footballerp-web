@@ -13,7 +13,7 @@ export interface RankingEntry {
   goalsAgainst: number;
   goalDiff: number;
   points: number;
-}
+} //DTO 타입파일로 이동 해도 될듯
 
 const VALID_COMPETITION_TYPES = Object.values(CompetitionType);
 
