@@ -55,7 +55,7 @@ describe('DepartmentService', () => {
     it('존재하지 않는 parentId면 404', async () => {
       const repo = makeRepo({ findById: jest.fn().mockResolvedValue(null) });
       const svc = new DepartmentService(repo);
-      await expect(svc.create({ name: 'HR', parentId: 999 })).rejects.toMatchObject({ statusCode: 404 });
+      await expect(svc.create({ name: 'HR', parentId: 'dept-999' })).rejects.toMatchObject({ statusCode: 404 });
     });
 
     it('유효한 parentId로 하위 부서 생성', async () => {
@@ -64,9 +64,9 @@ describe('DepartmentService', () => {
         create: jest.fn().mockResolvedValue(fakeChild),
       });
       const svc = new DepartmentService(repo);
-      const result = await svc.create({ name: 'HR', parentId: 1 });
-      expect(repo.create).toHaveBeenCalledWith({ name: 'HR', parentId: 1 });
-      expect(result.parentId).toBe(1);
+      const result = await svc.create({ name: 'HR', parentId: 'dept-1' });
+      expect(repo.create).toHaveBeenCalledWith({ name: 'HR', parentId: 'dept-1' });
+      expect(result.parentId).toBe('dept-1');
     });
   });
 
@@ -76,7 +76,7 @@ describe('DepartmentService', () => {
         findById: jest.fn().mockResolvedValue({ ...fakeDept, children: [fakeChild] }),
       });
       const svc = new DepartmentService(repo);
-      await expect(svc.delete(1)).rejects.toMatchObject({ statusCode: 409 });
+      await expect(svc.delete('dept-1')).rejects.toMatchObject({ statusCode: 409 });
     });
 
     it('하위 부서 없으면 삭제 가능', async () => {
@@ -85,8 +85,8 @@ describe('DepartmentService', () => {
         delete: jest.fn().mockResolvedValue(fakeDept),
       });
       const svc = new DepartmentService(repo);
-      await svc.delete(1);
-      expect(repo.delete).toHaveBeenCalledWith(1);
+      await svc.delete('dept-1');
+      expect(repo.delete).toHaveBeenCalledWith('dept-1');
     });
   });
 });

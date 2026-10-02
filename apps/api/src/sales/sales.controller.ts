@@ -109,7 +109,7 @@ export class SalesController {
       const { type, matchId, fromDate, toDate, minAmount, maxAmount } = req.query as Record<string, string>;
       res.json(await this.service.searchSales({
         ...(type !== undefined ? { type } : {}),
-        ...(matchId ? { matchId: Number(matchId) } : {}),
+        ...(matchId ? { matchId: assertCuid(matchId) } : {}),
         ...(fromDate !== undefined ? { fromDate } : {}),
         ...(toDate !== undefined ? { toDate } : {}),
         ...(minAmount ? { minAmount: Number(minAmount) } : {}),
