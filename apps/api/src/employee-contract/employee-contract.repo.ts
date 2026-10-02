@@ -1,5 +1,11 @@
 import type { PrismaClient } from "../generated/client";
 import type { EmployeeContractStatus } from "../generated/enums";
+import type {
+  CreateDraftData,
+  IssueData,
+  SignData,
+  CancelData,
+} from "./dto/employee-contract.dto";
 
 /**
  * Shared select for actor badges on every read path — same shape as
@@ -14,30 +20,6 @@ const EC_INCLUDE = {
   signedConfirmedBy: { select: ACTOR_SELECT },
   cancelledBy: { select: ACTOR_SELECT },
 } as const;
-
-export interface CreateDraftData {
-  hiringDispatchId: string;
-  createdById: string;
-}
-
-export interface IssueData {
-  fileUrl: string;
-  fileName: string;
-  issuedById: string;
-}
-
-export interface SignData {
-  signedFileUrl: string;
-  signedFileName: string;
-  signedAt: Date;
-  signedConfirmedById: string;
-}
-
-export interface CancelData {
-  cancelReason: string;
-  cancelledById: string;
-}
-//TODO: dto 파일로 분리
 /**
  * Prisma boundary for EmployeeContract. All mutations are `update` by id
  * against the current status (validated in the service). Reads always come

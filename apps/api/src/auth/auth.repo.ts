@@ -1,20 +1,7 @@
 import { PrismaClient } from "../generated/client";
 import { Role, CoachingRole, FrontOfficeRole } from "../generated/enums";
 import crypto from "crypto";
-
-interface CreateUserData {
-  email: string;
-  password: string;
-  username: string;
-  nickname: string;
-  role: Role;
-  coachingRole?: CoachingRole | null;
-  frontOfficeRole?: FrontOfficeRole | null;
-  dateOfBirth: Date;
-  nationalityId: number;
-  phoneNumber: { encrypted: string; iv: string; phoneHash: string };
-  departmentId?: string;
-}//TODO: dto 파일로 이사
+import type { CreateUserData } from "./dto/auth.repo.dto";
 
 export class AuthRepository {
   constructor(private prisma: PrismaClient) {}

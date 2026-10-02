@@ -17,7 +17,7 @@ export class AcademyFeeRepository {
         ...(query.year && { year: query.year }),
         ...(query.month && { month: query.month }),
         ...(query.teamId && { player: { teamId: query.teamId } }),
-      },//TODO: 상태값 타입 수정
+      },
       include: INCLUDE,
       orderBy: { createdAt: 'desc' },
     })

@@ -14,7 +14,7 @@ export class PlayerCallupService {
     return this.repo.findAll(query);
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const callup = await this.repo.findById(id);
     if (!callup) throw new AppError(404, "CALLUP_NOT_FOUND");
     return callup;

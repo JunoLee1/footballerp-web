@@ -1,5 +1,19 @@
-import { Role } from "../../generated/enums";
+import { Role, CoachingRole, FrontOfficeRole } from "../../generated/enums";
 import { EncryptedPhoneNumberType } from "./auth.service.dto";
+
+export interface CreateUserData {
+  email: string;
+  password: string;
+  username: string;
+  nickname: string;
+  role: Role;
+  coachingRole?: CoachingRole | null;
+  frontOfficeRole?: FrontOfficeRole | null;
+  dateOfBirth: Date;
+  nationalityId: number;
+  phoneNumber: { encrypted: string; iv: string; phoneHash: string };
+  departmentId?: string;
+}
 
 export type SignUpInputRepoDto = {
   email: string;

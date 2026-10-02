@@ -1,19 +1,7 @@
 import { AnalysisRepository } from "./analysis.repo";
 import { AppError } from "../lib/appError";
 import { CompetitionType } from "../generated/enums";
-
-export interface RankingEntry {
-  rank: number;
-  teamName: string;
-  played: number;
-  won: number;
-  drawn: number;
-  lost: number;
-  goalsFor: number;
-  goalsAgainst: number;
-  goalDiff: number;
-  points: number;
-} //DTO 타입파일로 이동 해도 될듯
+import type { RankingEntry } from "./dto/analysis.dto";
 
 const VALID_COMPETITION_TYPES = Object.values(CompetitionType);
 

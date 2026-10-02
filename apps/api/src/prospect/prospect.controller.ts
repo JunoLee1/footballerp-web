@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
+import { assertCuid } from "../lib/cuidGuard";
 import { canReadProspect as canRead, canWriteProspect as canWrite, canSignProspect as canSign } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
 import { ProspectService } from "./prospect.service";
@@ -35,7 +36,7 @@ export class ProspectController {
     try {
       const user = requireUser(req);
       if (!canRead(user.role, user.coachingRole, user.departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.getById(Number(req.params["id"]), user.clubId));
+      res.status(200).json(await this.service.getById(assertCuid(req.params["id"]), user.clubId));
     } catch (err) { next(err); }
   };
 
@@ -52,7 +53,7 @@ export class ProspectController {
     try {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.update(Number(req.params["id"]), req.body, user.clubId));
+      res.status(200).json(await this.service.update(assertCuid(req.params["id"]), req.body, user.clubId));
     } catch (err) { next(err); }
   };
 
@@ -61,7 +62,7 @@ export class ProspectController {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       res.status(200).json(
-        await this.service.updateStatus(Number(req.params["id"]), req.body as TransitionProspectStatusDto, user.clubId)
+        await this.service.updateStatus(assertCuid(req.params["id"]), req.body as TransitionProspectStatusDto, user.clubId)
       );
     } catch (err) { next(err); }
   };
@@ -71,7 +72,7 @@ export class ProspectController {
       const user = requireUser(req);
       if (!canSign(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       res.status(200).json(
-        await this.service.sign(Number(req.params["id"]), req.body as SignProspectDto, user.clubId)
+        await this.service.sign(assertCuid(req.params["id"]), req.body as SignProspectDto, user.clubId)
       );
     } catch (err) { next(err); }
   };
@@ -81,7 +82,7 @@ export class ProspectController {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       res.status(200).json(
-        await this.service.recordMedicalResult(Number(req.params["id"]), req.body as ProspectMedicalResultDto, user.clubId)
+        await this.service.recordMedicalResult(assertCuid(req.params["id"]), req.body as ProspectMedicalResultDto, user.clubId)
       );
     } catch (err) { next(err); }
   };
@@ -91,7 +92,7 @@ export class ProspectController {
       const user = requireUser(req);
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       res.status(201).json(
-        await this.service.addNegotiationLog(Number(req.params["id"]), req.body as CreateProspectNegotiationLogDto, user.id, user.clubId)
+        await this.service.addNegotiationLog(assertCuid(req.params["id"]), req.body as CreateProspectNegotiationLogDto, user.id, user.clubId)
       );
     } catch (err) { next(err); }
   };
@@ -100,7 +101,7 @@ export class ProspectController {
     try {
       const { role, coachingRole, departmentCategories } = requireUser(req);
       if (!canRead(role, coachingRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.getNegotiationLogs(Number(req.params["id"])));
+      res.status(200).json(await this.service.getNegotiationLogs(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -110,7 +111,7 @@ export class ProspectController {
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       res.status(201).json(
         await this.service.addVideoEvaluation(
-          Number(req.params["id"]),
+          assertCuid(req.params["id"]),
           req.body as CreateProspectVideoEvaluationDto,
           user.id,
           user.clubId,
@@ -125,7 +126,7 @@ export class ProspectController {
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, 'FORBIDDEN');
       res.status(200).json(
         await this.service.updateVideoEvaluation(
-          Number(req.params['id']),
+          assertCuid(req.params['id']),
           Number(req.params['evalId']),
           req.body as UpdateProspectVideoEvaluationDto,
           user.clubId,
@@ -138,7 +139,7 @@ export class ProspectController {
     try {
       const { role, coachingRole, departmentCategories } = requireUser(req);
       if (!canRead(role, coachingRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.getVideoEvaluations(Number(req.params["id"])));
+      res.status(200).json(await this.service.getVideoEvaluations(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -148,7 +149,7 @@ export class ProspectController {
       if (!canWrite(user.role, user.frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
       res.status(201).json(
         await this.service.addEvaluationLog(
-          Number(req.params["id"]),
+          assertCuid(req.params["id"]),
           req.body as CreateProspectEvaluationLogDto,
           user.id,
           user.clubId,
@@ -161,7 +162,7 @@ export class ProspectController {
     try {
       const { role, coachingRole, departmentCategories } = requireUser(req);
       if (!canRead(role, coachingRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.getEvaluationLogs(Number(req.params["id"])));
+      res.status(200).json(await this.service.getEvaluationLogs(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -169,7 +170,7 @@ export class ProspectController {
     try {
       const { role, coachingRole, departmentCategories } = requireUser(req);
       if (!canRead(role, coachingRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.checkAcquisitionGate(Number(req.params["id"])));
+      res.status(200).json(await this.service.checkAcquisitionGate(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 

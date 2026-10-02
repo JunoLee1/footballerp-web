@@ -9,8 +9,8 @@ export interface CreateCertificationDto {
   reminderDays?: number[];
   notes?: string;
   playerId?: string;
-  coachId?: number;
-  staffId?: number;
+  coachId?: string;
+  staffId?: string;
   facilityZone?: FacilityZone;
 }
 
@@ -32,6 +32,6 @@ export interface CertificationListQuery {
   certType?: CertificationType;
   status?: CertStatus;
   playerId?: string;
-  coachId?: number;
-  staffId?: number;
+  coachId?: string;
+  staffId?: string;
 }

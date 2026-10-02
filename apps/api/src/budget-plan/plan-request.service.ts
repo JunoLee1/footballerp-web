@@ -360,7 +360,7 @@ export class BudgetPlanRequestService {
     // Basic cost map (categoryId → cost)
     const planByCat = new Map(categoryPlans.map((p) => [p.categoryId, p]));
     const basicByPlanId = new Map(basicTiers.map((b) => [b.categoryPlanId, b]));
-    const basicByCat = new Map<number, number>();
+    const basicByCat = new Map<string, number>();
     for (const plan of categoryPlans) {
       const basic = basicByPlanId.get(plan.id);
       if (basic) basicByCat.set(plan.categoryId, basic.cost);

@@ -10,6 +10,7 @@ import {
   ListHiringDispatchQuery,
   RejectDto,
 } from "./dto/hiring-dispatch.dto";
+import { assertCuid } from "../lib/cuidGuard";
 
 /**
  * Serializes BigInt fields (monthlySalary) so JSON.stringify doesn't blow up.
@@ -51,7 +52,7 @@ export class HiringDispatchController {
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       if (!Number.isFinite(id)) throw new AppError(400, "INVALID_ID");
       const row = await this.service.getById(id);
       res.json(serialize(row));
@@ -74,7 +75,7 @@ export class HiringDispatchController {
   budgetReverify = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: userId, role, frontOfficeRole } = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const body = (req.body ?? {}) as BudgetReverifyDto;
       const row = await this.service.budgetReverify(id, userId, role, frontOfficeRole, body);
       res.json(serialize(row));
@@ -86,7 +87,7 @@ export class HiringDispatchController {
   budgetReject = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: userId, role, frontOfficeRole } = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const { reason } = (req.body ?? {}) as RejectDto;
       const row = await this.service.budgetReject(id, userId, role, frontOfficeRole, reason);
       res.json(serialize(row));
@@ -98,7 +99,7 @@ export class HiringDispatchController {
   dispatchApprove = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: userId, role } = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const row = await this.service.dispatchApprove(id, userId, role);
       res.json(serialize(row));
     } catch (err) {
@@ -109,7 +110,7 @@ export class HiringDispatchController {
   dispatchReject = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: userId, role } = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const { reason } = (req.body ?? {}) as RejectDto;
       const row = await this.service.dispatchReject(id, userId, role, reason);
       res.json(serialize(row));
@@ -121,7 +122,7 @@ export class HiringDispatchController {
   dispatch = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: userId, role, frontOfficeRole } = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const row = await this.service.dispatch(id, userId, role, frontOfficeRole);
       res.json(serialize(row));
     } catch (err) {
@@ -132,7 +133,7 @@ export class HiringDispatchController {
   cancel = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: userId, role, frontOfficeRole } = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const { reason } = (req.body ?? {}) as CancelDto;
       const row = await this.service.cancel(id, userId, role, frontOfficeRole, reason);
       res.json(serialize(row));
@@ -144,7 +145,7 @@ export class HiringDispatchController {
   complete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: userId, role, frontOfficeRole } = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const row = await this.service.complete(id, userId, role, frontOfficeRole);
       res.json(serialize(row));
     } catch (err) {
