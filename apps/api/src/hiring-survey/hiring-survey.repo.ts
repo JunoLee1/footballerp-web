@@ -82,7 +82,7 @@ export class HiringSurveyRepository {
 
   upsertResponse(
     surveyId: string,
-    departmentId: number,
+    departmentId: string,
     submittedById: string,
     dto: CreateSurveyResponseDto,
   ) {
@@ -152,7 +152,7 @@ export class HiringSurveyRepository {
    * Whether the given user holds the `LEADER` role in `UserDepartment` for the
    * given department. Membership-based check for the "팀장" gate.
    */
-  async isUserLeaderOfDepartment(userId: string, departmentId: number): Promise<boolean> {
+  async isUserLeaderOfDepartment(userId: string, departmentId: string): Promise<boolean> {
     const membership = await this.prisma.userDepartment.findFirst({
       where: { userId, departmentId, role: 'LEADER' },
       select: { userId: true },
@@ -164,7 +164,7 @@ export class HiringSurveyRepository {
    * Every user ID that has the `LEADER` role in any of the given departments.
    * Used to fan out HIRING_SURVEY_OPEN alongside the dept head.
    */
-  async findLeaderUserIdsForDepartments(departmentIds: number[]): Promise<string[]> {
+  async findLeaderUserIdsForDepartments(departmentIds: string[]): Promise<string[]> {
     if (departmentIds.length === 0) return []
     const rows = await this.prisma.userDepartment.findMany({
       where: { departmentId: { in: departmentIds }, role: 'LEADER' },
@@ -177,7 +177,7 @@ export class HiringSurveyRepository {
     return this.prisma.surveyResponse.findMany({ where: { surveyId } })
   }
 
-  createDraft(data: { title: string; deadlineAt: Date; targetDeptIds: number[]; createdById: string }) {
+  createDraft(data: { title: string; deadlineAt: Date; targetDeptIds: string[]; createdById: string }) {
     return this.prisma.hiringNeedsSurvey.create({
       data: {
         title: data.title,
@@ -192,7 +192,7 @@ export class HiringSurveyRepository {
     })
   }
 
-  updateDraft(id: string, data: { title?: string; deadlineAt?: Date; targetDeptIds?: number[] }) {
+  updateDraft(id: string, data: { title?: string; deadlineAt?: Date; targetDeptIds?: string[] }) {
     return this.prisma.$transaction(async (tx) => {
       if (data.targetDeptIds !== undefined) {
         await tx.surveyTargetDept.deleteMany({ where: { surveyId: id } })

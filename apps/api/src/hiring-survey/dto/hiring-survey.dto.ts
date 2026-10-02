@@ -4,7 +4,7 @@ export type SurveyResponseStatus = 'DRAFT' | 'SUBMITTED' | 'APPROVED' | 'REJECTE
 export interface CreateHiringSurveyDto {
   title: string
   deadlineAt: string
-  targetDeptIds: number[]
+  targetDeptIds: string[]
 }
 
 export interface CreateSurveyResponseDto {
@@ -52,5 +52,5 @@ export interface UpdateHiringPlanItemDto {
 export interface UpdateHiringSurveyDraftDto {
   title?: string
   deadlineAt?: string
-  targetDeptIds?: number[]
+  targetDeptIds?: string[]
 }
