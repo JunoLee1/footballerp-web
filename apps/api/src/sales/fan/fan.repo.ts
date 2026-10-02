@@ -13,7 +13,7 @@ export class FanRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.fan.findUnique({
       where: { id },
       include: {
@@ -27,8 +27,8 @@ export class FanRepository {
     return this.prisma.fan.create({ data });
   }
 
-  createMembership(data: { fanId: number; tier: string; startDate: Date; endDate: Date }) {
-    return this.prisma.fanMembership.create({ data: { ...data, tier: data.tier as any } });
+  createMembership(data: { fanId: string; tier: string; startDate: Date; endDate: Date }) {
+    return this.prisma.fanMembership.create({ data: { ...data, tier: data.tier } });
   }
 
   getMembershipStats() {
@@ -39,13 +39,13 @@ export class FanRepository {
     });
   }
 
-  getSeatZonesByMatch(matchId: number) {
+  getSeatZonesByMatch(matchId: string) {
     return this.prisma.seatZone.findMany({
       where: { matchId },
     });
   }
 
-  createSeatZone(data: { matchId: number; name: string; capacity: number }) {
+  createSeatZone(data: { matchId: string; name: string; capacity: number }) {
     return this.prisma.seatZone.create({ data });
   }
 }
