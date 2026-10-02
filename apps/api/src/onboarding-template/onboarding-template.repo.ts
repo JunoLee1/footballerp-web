@@ -24,7 +24,7 @@ export interface UpsertTemplateData {
 export class OnboardingTemplateRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findByDepartmentId(departmentId: number) {
+  findByDepartmentId(departmentId: string) {
     return this.prisma.onboardingTemplate.findUnique({
       where: { departmentId },
       include: TEMPLATE_INCLUDE,
@@ -36,7 +36,7 @@ export class OnboardingTemplateRepository {
    * we record `updatedById` so an audit can distinguish original author
    * from last editor.
    */
-  upsert(departmentId: number, data: UpsertTemplateData) {
+  upsert(departmentId: string, data: UpsertTemplateData) {
     return this.prisma.onboardingTemplate.upsert({
       where: { departmentId },
       create: {
@@ -52,9 +52,9 @@ export class OnboardingTemplateRepository {
       },
       include: TEMPLATE_INCLUDE,
     });
-  }
+  }//TODO 업설트 댜신에 tx 도입 고려
 
-  remove(departmentId: number) {
+  remove(departmentId: string) {
     return this.prisma.onboardingTemplate.delete({
       where: { departmentId },
     });
