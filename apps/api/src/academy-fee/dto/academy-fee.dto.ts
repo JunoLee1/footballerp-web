@@ -13,7 +13,7 @@ export interface SubmitPaymentProofDto {
 
 export interface FeeListQuery {
   status?: string
-  teamId?: number
+  teamId?: string
   year?: number
   month?: number
 }
