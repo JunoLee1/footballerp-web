@@ -673,7 +673,7 @@ export class HiringDispatchService {
    * (Department has no template) — no notif surface for zero content.
    */
   private async notifyNewEmployeeTasksAssigned(
-    dispatchId: number,
+    dispatchId: string,
     newUserId: string,
   ): Promise<void> {
     const onboarding = await this.prisma.onboarding.findFirst({
@@ -704,7 +704,7 @@ export class HiringDispatchService {
   // ────────────────────────────────────────────
 
   async cancel(
-    id: number,
+    id: string,
     userId: string,
     role: string,
     foRole: string | null | undefined,
@@ -768,7 +768,7 @@ export class HiringDispatchService {
    * dispatch when the candidate finishes onboarding through a legacy path.
    */
   async complete(
-    id: number,
+    id: string,
     userId: string,
     role: string,
     foRole: string | null | undefined,
