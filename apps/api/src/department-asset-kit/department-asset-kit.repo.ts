@@ -23,23 +23,23 @@ const KIT_INCLUDE = {
   department: { select: { id: true, name: true } },
 } as const;
 
-export interface UpsertKitData {
+export interface UpsertKitData {//Dto 파일로 옮긴다?
   assetItems: AssetKitItemDto[];
-  defaultExpenseCategoryId: number;
+  defaultExpenseCategoryId: string;
   actorId: string;
 }
 
 export class DepartmentAssetKitRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findByDepartment(departmentId: number) {
+  findByDepartment(departmentId: string) {
     return this.prisma.departmentDefaultAssetKit.findUnique({
       where: { departmentId },
       include: KIT_INCLUDE,
     });
   }
 
-  upsert(departmentId: number, data: UpsertKitData) {
+  upsert(departmentId: string, data: UpsertKitData) {
     const jsonPayload = data.assetItems as unknown as Prisma.InputJsonValue;
     return this.prisma.departmentDefaultAssetKit.upsert({
       where: { departmentId },
@@ -58,7 +58,7 @@ export class DepartmentAssetKitRepository {
     });
   }
 
-  deleteByDepartment(departmentId: number) {
+  deleteByDepartment(departmentId: string) {
     return this.prisma.departmentDefaultAssetKit.delete({
       where: { departmentId },
     });
