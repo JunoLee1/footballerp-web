@@ -103,7 +103,7 @@ export class RecruitmentRepository {
     });
   }
 
-  findApplicationById(id: number) {
+  findApplicationById(id: string) {
     return this.prisma.jobApplication.findUnique({ where: { id }, include: APPLICATION_INCLUDE });
   }
 
@@ -120,7 +120,7 @@ export class RecruitmentRepository {
     });
   }
 
-  updateApplication(id: number, data: UpdateJobApplicationDto) {
+  updateApplication(id: string, data: UpdateJobApplicationDto) {
     return this.prisma.jobApplication.update({
       where: { id },
       data,
@@ -128,7 +128,7 @@ export class RecruitmentRepository {
     });
   }
 
-  async rejectApplication(id: number, actorId: string) {
+  async rejectApplication(id: string, actorId: string) {
     const current = await this.prisma.jobApplication.findUnique({
       where: { id },
       select: { status: true },
@@ -156,7 +156,7 @@ export class RecruitmentRepository {
     return result;
   }
 
-  async reinstateApplication(id: number, actorId: string) {
+  async reinstateApplication(id: string, actorId: string) {
     const app = await this.prisma.jobApplication.findUnique({
       where: { id },
       select: { previousStatus: true },
@@ -187,7 +187,7 @@ export class RecruitmentRepository {
   }
 
   async screenApplication(
-    id: number,
+    id: string,
     data: {
       screeningResult: "PENDING" | "PASS" | "FAIL";
       screeningNotes: string | null;
@@ -209,7 +209,7 @@ export class RecruitmentRepository {
     return result;
   }
 
-  async offerApplication(id: number, offeredById: string, actorId: string) {
+  async offerApplication(id: string, offeredById: string, actorId: string) {
     const result = await this.prisma.jobApplication.update({
       where: { id },
       data: { status: "OFFERED", offeredAt: new Date(), offeredById },
@@ -224,7 +224,7 @@ export class RecruitmentRepository {
     return result;
   }
 
-  async completeOnboarding(id: number, actorId: string) {
+  async completeOnboarding(id: string, actorId: string) {
     const result = await this.prisma.jobApplication.update({
       where: { id },
       data: { status: "ONBOARDED" },
@@ -239,7 +239,7 @@ export class RecruitmentRepository {
     return result;
   }
 
-  async setApplicationStatus(id: number, status: JobApplicationStatus, actorId?: string) {
+  async setApplicationStatus(id: string, status: JobApplicationStatus, actorId?: string) {
     const result = await this.prisma.jobApplication.update({
       where: { id },
       data: { status },
@@ -258,13 +258,13 @@ export class RecruitmentRepository {
 
   // --- Interview ---
 
-  findInterview(applicationId: number, round: InterviewRound) {
+  findInterview(applicationId: string, round: InterviewRound) {
     return this.prisma.interview.findUnique({
       where: { applicationId_round: { applicationId, round } },
     });
   }
 
-  createInterview(applicationId: number, data: CreateInterviewDto) {
+  createInterview(applicationId: string, data: CreateInterviewDto) {
     return this.prisma.interview.create({
       data: {
         applicationId,
@@ -275,7 +275,7 @@ export class RecruitmentRepository {
     });
   }
 
-  updateInterview(applicationId: number, round: InterviewRound, data: UpdateInterviewDto) {
+  updateInterview(applicationId: string, round: InterviewRound, data: UpdateInterviewDto) {
     return this.prisma.interview.update({
       where: { applicationId_round: { applicationId, round } },
       data: {
@@ -292,11 +292,11 @@ export class RecruitmentRepository {
 
   // --- ReferenceCheck ---
 
-  createReferenceCheck(applicationId: number, data: CreateReferenceCheckDto) {
+  createReferenceCheck(applicationId: string, data: CreateReferenceCheckDto) {
     return this.prisma.referenceCheck.create({ data: { ...data, applicationId } });
   }
 
-  updateReferenceCheck(applicationId: number, data: UpdateReferenceCheckDto) {
+  updateReferenceCheck(applicationId: string, data: UpdateReferenceCheckDto) {
     return this.prisma.referenceCheck.update({
       where: { applicationId },
       data,
@@ -305,27 +305,27 @@ export class RecruitmentRepository {
 
   // --- Onboarding ---
 
-  createOnboarding(applicationId: number, userId: string, otpCode: string, otpExpiresAt: Date) {
+  createOnboarding(applicationId: string, userId: string, otpCode: string, otpExpiresAt: Date) {
     return this.prisma.onboarding.create({
       data: { applicationId, userId, otpCode, otpExpiresAt },
     });
   }
 
-  findOnboardingByApplication(applicationId: number) {
+  findOnboardingByApplication(applicationId: string) {
     return this.prisma.onboarding.findUnique({
       where: { applicationId },
       include: { user: { select: { id: true, email: true } } },
     });
   }
 
-  markEmailVerified(applicationId: number) {
+  markEmailVerified(applicationId: string) {
     return this.prisma.onboarding.update({
       where: { applicationId },
       data: { emailVerifiedAt: new Date() },
     });
   }
 
-  markMfaRegistered(applicationId: number) {
+  markMfaRegistered(applicationId: string) {
     return this.prisma.onboarding.update({
       where: { applicationId },
       data: { mfaRegisteredAt: new Date(), completedAt: new Date() },
@@ -337,7 +337,7 @@ export class RecruitmentRepository {
   // hiring-dispatch 경로는 이미 create 하므로 이 upsert 는 no-op 이지만,
   // application-based (invite → startOnboarding → completeMfa) 경로에서는
   // 최초 배정이 됨.
-  ensureUserDepartment(userId: string, departmentId: number) {
+  ensureUserDepartment(userId: string, departmentId: string) {
     return this.prisma.userDepartment.upsert({
       where: { userId_departmentId: { userId, departmentId } },
       create: { userId, departmentId, role: "MEMBER" },
@@ -452,7 +452,7 @@ export class RecruitmentRepository {
     });
   }
 
-  findWaitlistedInterviewByApplication(applicationId: number) {
+  findWaitlistedInterviewByApplication(applicationId: string) {
     return this.prisma.interview.findFirst({
       where: {
         applicationId,
@@ -510,7 +510,7 @@ export class RecruitmentRepository {
    * Returns the most recently joined leader if multiple exist (defensive —
    * schema doesn't enforce uniqueness). null if no leader is assigned.
    */
-  async findDepartmentLeader(departmentId: number) {
+  async findDepartmentLeader(departmentId: string) {
     const membership = await this.prisma.userDepartment.findFirst({
       where: { departmentId, role: "LEADER" },
       orderBy: { joinedAt: "desc" },
@@ -520,7 +520,7 @@ export class RecruitmentRepository {
   }
 
   addOfferApproval(
-    applicationId: number,
+    applicationId: string,
     data: {
       stage: JobApplicationOfferApprovalStage;
       action: JobApplicationOfferApprovalAction;
@@ -542,7 +542,7 @@ export class RecruitmentRepository {
   }
 
   updateApplicationStatusInTx(
-    id: number,
+    id: string,
     status: JobApplicationStatus,
     tx?: Tx,
   ) {

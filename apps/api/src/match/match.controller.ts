@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { MatchService } from "./match.service";
 import { MatchListQuery, VALID_COMPETITION_TYPES } from "./dto/match.dto";
 import { CompetitionType } from "../generated/enums";
@@ -33,7 +34,7 @@ export class MatchController {
 
   getMatchById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.status(200).json(await this.service.getMatchById(Number(req.params["id"])));
+      res.status(200).json(await this.service.getMatchById(assertCuid(req.params["id"])));
     } catch (err) {
       next(err);
     }
@@ -58,7 +59,7 @@ export class MatchController {
     try {
       const user = requireUser(req);
       if (!WRITE_ROLES.includes(user.role as WriteRole)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.updateMatch(Number(req.params["id"]), req.body));
+      res.status(200).json(await this.service.updateMatch(assertCuid(req.params["id"]), req.body));
     } catch (err) {
       next(err);
     }
@@ -68,7 +69,7 @@ export class MatchController {
     try {
       const user = requireUser(req);
       if (!STATS_ROLES.includes(user.role as StatsRole)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.upsertPlayerStats(Number(req.params["id"]), req.body));
+      res.status(200).json(await this.service.upsertPlayerStats(assertCuid(req.params["id"]), req.body));
     } catch (err) {
       next(err);
     }
@@ -78,7 +79,7 @@ export class MatchController {
     try {
       const user = requireUser(req);
       if (!STATS_ROLES.includes(user.role as StatsRole)) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.upsertTeamStats(Number(req.params["id"]), req.body));
+      res.status(200).json(await this.service.upsertTeamStats(assertCuid(req.params["id"]), req.body));
     } catch (err) {
       next(err);
     }
@@ -86,7 +87,7 @@ export class MatchController {
 
   getShotEvents = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.status(200).json(await this.service.getShotEvents(Number(req.params["id"])));
+      res.status(200).json(await this.service.getShotEvents(assertCuid(req.params["id"])));
     } catch (err) {
       next(err);
     }
@@ -96,7 +97,7 @@ export class MatchController {
     try {
       const user = requireUser(req);
       if (!STATS_ROLES.includes(user.role as StatsRole)) throw new AppError(403, "FORBIDDEN");
-      res.status(201).json(await this.service.createShotEvent(Number(req.params["id"]), req.body));
+      res.status(201).json(await this.service.createShotEvent(assertCuid(req.params["id"]), req.body));
     } catch (err) {
       next(err);
     }
@@ -106,7 +107,7 @@ export class MatchController {
     try {
       const user = requireUser(req);
       if (!STATS_ROLES.includes(user.role as StatsRole)) throw new AppError(403, "FORBIDDEN");
-      await this.service.deleteShotEvent(Number(req.params["id"]), Number(req.params["eventId"]));
+      await this.service.deleteShotEvent(assertCuid(req.params["id"]), Number(req.params["eventId"]));
       res.status(204).send();
     } catch (err) {
       next(err);
@@ -117,7 +118,7 @@ export class MatchController {
     try {
       // auth만 확인 (requireUser 호출) — 전 직원 접근 가능
       requireUser(req);
-      res.status(200).json(await this.service.getRemainingCapacity(Number(req.params["id"])));
+      res.status(200).json(await this.service.getRemainingCapacity(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -130,7 +131,7 @@ export class MatchController {
       const file = req.file;
       if (!file) throw new AppError(400, "IMAGE_REQUIRED");
       const result = await this.service.uploadStatSheet(
-        Number(req.params["id"]),
+        assertCuid(req.params["id"]),
         file.buffer,
         file.originalname,
       );

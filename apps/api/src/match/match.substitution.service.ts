@@ -9,7 +9,7 @@ export class MatchSubstitutionService {
     private matchRepo: MatchRepository,
   ) {}
 
-  async create(matchId: number, dto: CreateSubstitutionDto) {
+  async create(matchId: string, dto: CreateSubstitutionDto) {
     const match = await this.matchRepo.findById(matchId);
     if (!match) throw new AppError(404, "MATCH_NOT_FOUND");
     if (dto.fromPlayerId === dto.toPlayerId) throw new AppError(400, "SUBSTITUTION_SAME_PLAYER");
@@ -17,11 +17,11 @@ export class MatchSubstitutionService {
     return this.repo.create(matchId, dto);
   }
 
-  async delete(_matchId: number, id: number) {
+  async delete(_matchId: string, id: string) {
     return this.repo.delete(id);
   }
 
-  async list(matchId: number) {
+  async list(matchId: string) {
     const match = await this.matchRepo.findById(matchId);
     if (!match) throw new AppError(404, "MATCH_NOT_FOUND");
     return this.repo.findByMatch(matchId);

@@ -4,6 +4,7 @@ import { requireUser } from "../lib/authMiddleware";
 import { isAdminLike } from "../lib/permissions";
 import type { UpsertDepartmentAssetKitDto } from "./dto/department-asset-kit.dto";
 import type { DepartmentAssetKitService } from "./department-asset-kit.service";
+import { assertCuid } from "../lib/cuidGuard";
 
 /**
  * REST layer for DepartmentDefaultAssetKit (#373).
@@ -26,10 +27,7 @@ export class DepartmentAssetKitController {
       const user = requireUser(req);
       this.assertCanRead(user);
 
-      const departmentId = Number(req.params["departmentId"]);
-      if (!Number.isFinite(departmentId) || departmentId <= 0) {
-        throw new AppError(400, "INVALID_DEPARTMENT_ID");
-      }
+      const departmentId = assertCuid(req.params["departmentId"]);
       const kit = await this.service.getByDepartment(departmentId);
       res.json(kit ?? null);
     } catch (err) {
@@ -41,11 +39,7 @@ export class DepartmentAssetKitController {
     try {
       const user = requireUser(req);
       this.assertCanWrite(user);
-
-      const departmentId = Number(req.params["departmentId"]);
-      if (!Number.isFinite(departmentId) || departmentId <= 0) {
-        throw new AppError(400, "INVALID_DEPARTMENT_ID");
-      }
+      const departmentId = assertCuid(req.params["departmentId"]); 
       const body = req.body as UpsertDepartmentAssetKitDto;
       const kit = await this.service.upsert(departmentId, body, user.id);
       res.json(kit);
@@ -59,10 +53,8 @@ export class DepartmentAssetKitController {
       const user = requireUser(req);
       this.assertCanWrite(user);
 
-      const departmentId = Number(req.params["departmentId"]);
-      if (!Number.isFinite(departmentId) || departmentId <= 0) {
-        throw new AppError(400, "INVALID_DEPARTMENT_ID");
-      }
+      const departmentId = assertCuid(req.params["departmentId"]);
+    
       const removed = await this.service.remove(departmentId, user.id);
       res.json(removed);
     } catch (err) {

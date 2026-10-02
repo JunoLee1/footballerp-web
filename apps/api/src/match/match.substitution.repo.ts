@@ -4,7 +4,7 @@ import { CreateSubstitutionDto } from "./dto/match.dto";
 export class MatchSubstitutionRepository {
   constructor(private prisma: PrismaClient) {}
 
-  create(matchId: number, dto: CreateSubstitutionDto) {
+  create(matchId: string, dto: CreateSubstitutionDto) {
     return this.prisma.substitutionEvent.create({
       data: {
         matchId,
@@ -15,11 +15,11 @@ export class MatchSubstitutionRepository {
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prisma.substitutionEvent.delete({ where: { id } });
   }
 
-  findByMatch(matchId: number) {
+  findByMatch(matchId: string) {
     return this.prisma.substitutionEvent.findMany({
       where: { matchId },
       orderBy: { minute: "asc" },

@@ -33,13 +33,13 @@ export class DepartmentAssetKitService {
     private prisma: PrismaClient,
   ) {}
 
-  async getByDepartment(departmentId: number) {
+  async getByDepartment(departmentId: string) {
     this.assertValidId(departmentId, "INVALID_DEPARTMENT_ID");
     return this.repo.findByDepartment(departmentId);
   }
 
   async upsert(
-    departmentId: number,
+    departmentId: string,
     dto: UpsertDepartmentAssetKitDto,
     actorId: string,
   ) {
@@ -96,7 +96,7 @@ export class DepartmentAssetKitService {
     return kit;
   }
 
-  async remove(departmentId: number, actorId: string) {
+  async remove(departmentId: string, actorId: string) {
     this.assertValidId(departmentId, "INVALID_DEPARTMENT_ID");
     const existing = await this.repo.findByDepartment(departmentId);
     if (!existing) throw new AppError(404, "KIT_NOT_FOUND");

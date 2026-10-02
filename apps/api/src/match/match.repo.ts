@@ -59,7 +59,7 @@ export class MatchRepository {
     });
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     const row = await this.prisma.match.findUnique({
       where: { id },
       select: {
@@ -137,7 +137,7 @@ export class MatchRepository {
     });
   }
 
-  update(id: number, data: UpdateMatchDto) {
+  update(id: string, data: UpdateMatchDto) {
     return this.prisma.match.update({
       where: { id },
       data: {
@@ -155,13 +155,13 @@ export class MatchRepository {
     });
   }
 
-  findPlayerStats(matchId: number, playerId: string) {
+  findPlayerStats(matchId: string, playerId: string) {
     return this.prisma.playerMatchStats.findUnique({
       where: { matchId_playerId: { matchId, playerId } },
     });
   }
 
-  async findLineupPlayerIds(matchId: number): Promise<string[]> {
+  async findLineupPlayerIds(matchId: string): Promise<string[]> {
     const lineup = await this.prisma.matchLineup.findUnique({
       where: { matchId },
       select: { slots: { select: { playerId: true } } },
@@ -169,7 +169,7 @@ export class MatchRepository {
     return lineup?.slots.map((s) => s.playerId) ?? [];
   }
 
-  async findSubstitutionForPlayer(matchId: number, playerId: string) {
+  async findSubstitutionForPlayer(matchId: string, playerId: string) {
     const [subOff, subOn] = await Promise.all([
       this.prisma.substitutionEvent.findFirst({
         where: { matchId, fromPlayerId: playerId },
@@ -181,7 +181,7 @@ export class MatchRepository {
     return { subOff, subOn };
   }
 
-  createPlayerStats(matchId: number, dto: UpsertPlayerStatsDto) {
+  createPlayerStats(matchId: string, dto: UpsertPlayerStatsDto) {
     return this.prisma.playerMatchStats.create({
       data: {
         matchId,
@@ -229,7 +229,7 @@ export class MatchRepository {
     });
   }
 
-  updatePlayerStats(id: number, dto: UpsertPlayerStatsDto) {
+  updatePlayerStats(id: string, dto: UpsertPlayerStatsDto) {
     return this.prisma.playerMatchStats.update({
       where: { id },
       data: {
@@ -276,7 +276,7 @@ export class MatchRepository {
     });
   }
 
-  upsertTeamStats(matchId: number, dto: UpsertTeamStatsDto) {
+  upsertTeamStats(matchId: string, dto: UpsertTeamStatsDto) {
     return this.prisma.teamMatchStats.upsert({
       where: { matchId },
       create: {
@@ -326,7 +326,7 @@ export class MatchRepository {
     });
   }
 
-  async recalculateTeamStats(matchId: number): Promise<void> {
+  async recalculateTeamStats(matchId: string): Promise<void> {
     const stats = await this.prisma.playerMatchStats.findMany({
       where: { matchId },
       select: {
@@ -382,7 +382,7 @@ export class MatchRepository {
     });
   }
 
-  findShotEvents(matchId: number) {
+  findShotEvents(matchId: string) {
     return this.prisma.shotEvent.findMany({
       where: { matchId },
       include: {
@@ -393,7 +393,7 @@ export class MatchRepository {
     });
   }
 
-  createShotEvent(matchId: number, dto: CreateShotEventDto) {
+  createShotEvent(matchId: string, dto: CreateShotEventDto) {
     return this.prisma.shotEvent.create({
       data: {
         matchId,
@@ -415,7 +415,7 @@ export class MatchRepository {
     return this.prisma.shotEvent.delete({ where: { id } });
   }
 
-  async recalculateXgXa(matchId: number): Promise<void> {
+  async recalculateXgXa(matchId: string): Promise<void> {
     const shots = await this.prisma.shotEvent.findMany({
       where: { matchId },
       include: {
@@ -456,7 +456,7 @@ export class MatchRepository {
     }
   }
 
-  updateStatSheet(id: number, statSheetRaw: unknown, statSheetImagePath: string) {
+  updateStatSheet(id: string, statSheetRaw: unknown, statSheetImagePath: string) {
     return this.prisma.match.update({
       where: { id },
       data: { statSheetRaw: statSheetRaw as Prisma.InputJsonValue, statSheetImagePath },

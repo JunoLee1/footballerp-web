@@ -120,7 +120,7 @@ export class NotificationService {
     playerUserId: string,
     isStarter: boolean,
     matchInfo: { homeTeamName: string; awayTeamName: string },
-    matchId: number,
+    matchId: string,
   ) {
     const role = isStarter ? "선발" : "후보";
     const title = "라인업 확정";

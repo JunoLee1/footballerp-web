@@ -27,7 +27,7 @@ export class MatchService {
     return this.repo.findAll(query);
   }
 
-  async getMatchById(id: number) {
+  async getMatchById(id: string) {
     const match = await this.repo.findById(id);
     if (!match) throw new AppError(404, "MATCH_NOT_FOUND");
     return match;
@@ -43,7 +43,7 @@ export class MatchService {
     return this.repo.create(dto);
   }
 
-  async updateMatch(id: number, dto: UpdateMatchDto) {
+  async updateMatch(id: string, dto: UpdateMatchDto) {
     const match = await this.repo.findById(id);
     if (!match) throw new AppError(404, "MATCH_NOT_FOUND");
     if (dto.competitionType !== undefined && !VALID_COMPETITION_TYPES.includes(dto.competitionType)) {
@@ -58,7 +58,7 @@ export class MatchService {
     return this.repo.update(id, dto);
   }
 
-  async upsertPlayerStats(matchId: number, dto: UpsertPlayerStatsDto) {
+  async upsertPlayerStats(matchId: string, dto: UpsertPlayerStatsDto) {
     const match = await this.repo.findById(matchId);
     if (!match) throw new AppError(404, "MATCH_NOT_FOUND");
 
@@ -129,7 +129,7 @@ export class MatchService {
     return result;
   }
 
-  async upsertTeamStats(matchId: number, dto: UpsertTeamStatsDto) {
+  async upsertTeamStats(matchId: string, dto: UpsertTeamStatsDto) {
     const match = await this.repo.findById(matchId);
     if (!match) throw new AppError(404, "MATCH_NOT_FOUND");
 
@@ -164,11 +164,11 @@ export class MatchService {
     return this.repo.upsertTeamStats(matchId, dto);
   }
 
-  getShotEvents(matchId: number) {
+  getShotEvents(matchId: string) {
     return this.repo.findShotEvents(matchId);
   }
 
-  async createShotEvent(matchId: number, dto: CreateShotEventDto) {
+  async createShotEvent(matchId: string, dto: CreateShotEventDto) {
     const match = await this.repo.findById(matchId);
     if (!match) throw new AppError(404, "MATCH_NOT_FOUND");
     if (!VALID_SHOT_RESULTS.includes(dto.result)) throw new AppError(400, "INVALID_SHOT_RESULT");
@@ -181,7 +181,7 @@ export class MatchService {
     return event;
   }
 
-  async getRemainingCapacity(matchId: number) {
+  async getRemainingCapacity(matchId: string) {
     const match = await this.repo.findById(matchId);
     if (!match) throw new AppError(404, "MATCH_NOT_FOUND");
     if (!match.capacity) return { capacity: null, sold: 0, remaining: null };
@@ -197,13 +197,13 @@ export class MatchService {
     return { capacity: match.capacity, sold: soldQty, remaining: match.capacity - soldQty };
   }
 
-  async deleteShotEvent(matchId: number, eventId: number) {
+  async deleteShotEvent(matchId: string, eventId: number) {
     await this.repo.deleteShotEvent(eventId);
     await this.repo.recalculateXgXa(matchId);
     await this.repo.recalculateTeamStats(matchId);
   }
 
-  async uploadStatSheet(matchId: number, buffer: Buffer, originalName: string) {
+  async uploadStatSheet(matchId: string, buffer: Buffer, originalName: string) {
     const match = await this.repo.findById(matchId);
     if (!match) throw new AppError(404, "MATCH_NOT_FOUND");
 
