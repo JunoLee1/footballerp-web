@@ -24,15 +24,15 @@ export interface CreateCoachDto {
   nationality?: string;
   coachingRole: CoachingRole;
   notes?: string;
-  hiringRoundId?: number;
-  packageLeadId?: number;
+  hiringRoundId?: string;
+  packageLeadId?: string;
 }
 
 export interface UpdateCoachDto {
   name?: string;
   nationality?: string;
   notes?: string;
-  packageLeadId?: number;
+  packageLeadId?: string;
 }
 
 export interface TransitionCoachStatusDto {

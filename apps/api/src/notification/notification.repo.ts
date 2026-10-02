@@ -6,7 +6,8 @@ type EntityId = number | string | undefined;
 
 function entityIdField(entityId: EntityId): Pick<Prisma.NotificationUncheckedCreateInput, "entityId" | "entityIdStr"> {
   if (entityId == null) return {};
-  return typeof entityId === "string" ? { entityIdStr: entityId } : { entityId };
+  const asStr = typeof entityId === "number" ? String(entityId) : entityId;
+  return { entityId: asStr };
 }
 
 export class NotificationRepository {
@@ -100,7 +101,7 @@ export class NotificationRepository {
     return this.createForWhere({ role: "COACHING_STAFF", coachingRole: "HEAD_COACH" }, type, getMsg, entityId);
   }
 
-  createForYouthHeadCoach(fromTeamId: number, type: string, getMsg: MsgFactory, entityId?: number | string) {
+  createForYouthHeadCoach(fromTeamId: string, type: string, getMsg: MsgFactory, entityId?: number | string) {
     return this.createForWhere({ role: "COACHING_STAFF", coachingRole: "HEAD_COACH", teamId: fromTeamId }, type, getMsg, entityId);
   }
 
@@ -147,7 +148,7 @@ export class NotificationRepository {
    * 부서장이 없으면(headId=null) no-op.
    */
   async createForDepartmentHead(
-    deptId: number,
+    deptId: string,
     type: string,
     getMsg: MsgFactory,
     entityId?: number | string
