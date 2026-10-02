@@ -49,7 +49,7 @@ export class SalesController {
     try {
       const { role, frontOfficeRole, departmentCategories, id: userId } = requireUser(req);
       if (!canWriteFinance(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       if (!id) throw new AppError(400, "ID_REQUIRED");
       res.json(await this.service.update(id, req.body, userId));
     } catch (e) { next(e); }
@@ -59,7 +59,7 @@ export class SalesController {
     try {
       const { role, frontOfficeRole, departmentCategories, id: userId } = requireUser(req);
       if (!canWriteFinance(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       if (!id) throw new AppError(400, "ID_REQUIRED");
       await this.service.delete(id, userId);
       res.status(204).end();
@@ -122,7 +122,7 @@ export class SalesController {
     try {
       const { role, frontOfficeRole, departmentCategories, id: userId } = requireUser(req);
       if (!canWriteFinance(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const record = await this.service.createCancellation(id, req.body, userId);
       res.json(record);
     } catch (err) {

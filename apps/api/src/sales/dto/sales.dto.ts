@@ -5,7 +5,7 @@ export interface CreateSalesRecordDto {
   currency?: "KRW" | "USD" | "EUR" | "GBP";
   saleDate: string;
   description?: string;
-  matchId?: number;
+  matchId?: string;
   seatZoneId?: number;
   status?: "COMPLETED" | "CANCELLED" | "REFUNDED";
   channel?: "ONLINE" | "ONSITE" | "PARTNER" | "SEASON_PASS";
