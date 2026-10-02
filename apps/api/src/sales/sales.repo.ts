@@ -12,7 +12,7 @@ export class SalesRepository {
     });
   }
 
-  findByMatch(matchId: number) {
+  findByMatch(matchId: string) {
     return this.prisma.salesRecord.findMany({
       where: { matchId, type: "TICKET" },
       orderBy: { saleDate: "desc" },

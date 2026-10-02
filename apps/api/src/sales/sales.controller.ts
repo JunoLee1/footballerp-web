@@ -4,6 +4,7 @@ import { requireUser } from "../lib/authMiddleware";
 import { canReadFinance, canWriteFinance } from "../lib/permissions";
 import type { SalesService } from "./sales.service";
 import type { CreateSalesRecordDto } from "./dto/sales.dto";
+import { assertCuid } from "../lib/cuidGuard";
 
 export class SalesController {
   constructor(private service: SalesService) {}
@@ -20,7 +21,7 @@ export class SalesController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canReadFinance(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      const matchId = Number(req.params["matchId"]);
+      const matchId = assertCuid(req.params["matchId"]);
       if (!matchId) throw new AppError(400, "MATCH_ID_REQUIRED");
       res.json(await this.service.findByMatch(matchId));
     } catch (e) { next(e); }
