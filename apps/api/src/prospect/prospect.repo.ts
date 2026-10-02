@@ -69,7 +69,7 @@ export class ProspectRepository {
     });
   }
 
-  findById(id: number, clubId?: string | null) {
+  findById(id: string, clubId?: string | null) {
     return this.prisma.prospect.findFirst({
       where: { id, ...(clubId != null && { clubId }) }, //TODO: 전사 관리자 외 타구단 사람들도 조회 가능 하다면 수정
       select: PROSPECT_SELECT,
@@ -94,7 +94,7 @@ export class ProspectRepository {
         notes: dto.notes ?? null,
         createdById: createdById ?? null,
         status: dto.status ?? "LONGLIST",
-        playStyle: (dto.playStyle as any) ?? null,
+        playStyle: dto.playStyle ?? null,//TODO fix enum type
         clubId: clubId ?? null,
         ...(visaRequired !== undefined && { visaRequired }),
       },
@@ -102,7 +102,7 @@ export class ProspectRepository {
     });
   }
 
-  update(id: number, dto: UpdateProspectDto) {
+  update(id: string, dto: UpdateProspectDto) {
     return this.prisma.prospect.update({
       where: { id },
       data: {
@@ -119,7 +119,7 @@ export class ProspectRepository {
     });
   }
 
-  async updateStatus(id: number, status: ProspectStatus) {
+  async updateStatus(id: string, status: ProspectStatus) {
     const prospect = await this.prisma.prospect.findUnique({ where: { id }, select: { status: true } });
     if (!prospect) throw new AppError(404, "PROSPECT_NOT_FOUND");
     const allowed = VALID_TRANSITIONS[prospect.status];
@@ -127,7 +127,7 @@ export class ProspectRepository {
     return this.prisma.prospect.update({ where: { id }, data: { status }, select: PROSPECT_SELECT });
   }
 
-  async sign(prospectId: number, dto: SignProspectDto) {
+  async sign(prospectId: string, dto: SignProspectDto) {
     const prospect = await this.prisma.prospect.findUnique({
       where: { id: prospectId },
       select: { id: true, status: true, name: true, position: true, playStyle: true, nationalityId: true },
@@ -176,7 +176,7 @@ export class ProspectRepository {
     });
   }
 
-  async recordMedicalResult(id: number, dto: ProspectMedicalResultDto) {
+  async recordMedicalResult(id: string, dto: ProspectMedicalResultDto) {
     const newStatus = dto.result === "pass" ? "CONTRACT_PENDING" : "ARCHIVED";
     return this.prisma.prospect.update({
       where: { id },
@@ -188,8 +188,8 @@ export class ProspectRepository {
     });
   }
 
-  addNegotiationLog(id: number, dto: CreateProspectNegotiationLogDto, createdById: string) {
-    return (this.prisma as any).prospectNegotiationLog.create({
+  addNegotiationLog(id: string, dto: CreateProspectNegotiationLogDto, createdById: string) {
+    return this.prisma.prospectNegotiationLog.create({
       data: {
         prospectId: id,
         type: dto.type,
@@ -200,8 +200,8 @@ export class ProspectRepository {
     });
   }
 
-  getNegotiationLogs(id: number) {
-    return (this.prisma as any).prospectNegotiationLog.findMany({
+  getNegotiationLogs(id: string) {
+    return this.prisma.prospectNegotiationLog.findMany({
       where: { prospectId: id },
       orderBy: { createdAt: "asc" },
       include: { createdBy: { select: { id: true, username: true } } },
@@ -209,7 +209,7 @@ export class ProspectRepository {
   }
 
   addVideoEvaluation(
-    prospectId: number,
+    prospectId: string,
     dto: CreateProspectVideoEvaluationDto,
     evaluatedById: string,
     result: VideoEvalResult,
@@ -232,7 +232,7 @@ export class ProspectRepository {
     });
   }
 
-  getVideoEvaluations(prospectId: number) {
+  getVideoEvaluations(prospectId: string) {
     return this.prisma.prospectVideoEvaluation.findMany({
       where: { prospectId },
       orderBy: { evaluatedAt: 'desc' },
@@ -240,7 +240,7 @@ export class ProspectRepository {
     });
   }
 
-  getLatestVideoEvaluation(prospectId: number) {
+  getLatestVideoEvaluation(prospectId: string) {
     return this.prisma.prospectVideoEvaluation.findFirst({
       where: { prospectId },
       orderBy: { evaluatedAt: 'desc' },
@@ -249,7 +249,7 @@ export class ProspectRepository {
   }
 
   async updateVideoEvaluation(
-    prospectId: number,
+    prospectId: string,
     evalId: number,
     dto: UpdateProspectVideoEvaluationDto,
     result: VideoEvalResult,
@@ -277,7 +277,7 @@ export class ProspectRepository {
   }
 
   addEvaluationLog(
-    prospectId: number,
+    prospectId: string,
     dto: CreateProspectEvaluationLogDto,
     evaluatedById: string,
   ) {
@@ -293,7 +293,7 @@ export class ProspectRepository {
     });
   }
 
-  getEvaluationLogs(prospectId: number) {
+  getEvaluationLogs(prospectId: string) {
     return this.prisma.prospectEvaluationLog.findMany({
       where: { prospectId },
       orderBy: { evaluatedAt: 'desc' },
@@ -305,7 +305,7 @@ export class ProspectRepository {
     return this.prisma.prospect.count({ where: { status } });
   }
 
-  async checkAcquisitionGate(prospectId: number) {
+  async checkAcquisitionGate(prospectId: string) {
     const prospect = await this.prisma.prospect.findUnique({
       where: { id: prospectId },
       select: { position: true, currentMarketValue: true },
