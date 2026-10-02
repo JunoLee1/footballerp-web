@@ -4475,7 +4475,7 @@ model ReportReview {
 }
 
 model ReviewRuleSet {
-  id               Int                @id @default(autoincrement())
+  id               String             @id @default(cuid())
   reportType       ReportType
   reviewerCategory DepartmentCategory
   createdAt        DateTime           @default(now())

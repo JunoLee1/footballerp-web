@@ -27,7 +27,7 @@ export class ReportService {
     );
   }
 
-  async get(id: number) {
+  async get(id: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");
     return report;
@@ -37,7 +37,7 @@ export class ReportService {
     return this.repo.create(data);
   }
 
-  async update(id: number, userId: string, data: { title?: string; content?: string; fileUrl?: string; fileName?: string }) {
+  async update(id:string, userId: string, data: { title?: string; content?: string; fileUrl?: string; fileName?: string }) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");
     if (report.authorId !== userId) throw new AppError(403, "FORBIDDEN");
@@ -45,7 +45,7 @@ export class ReportService {
     return this.repo.update(id, data);
   }
 
-  async submit(id: number, userId: string) {
+  async submit(id: string, userId: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");
     if (report.authorId !== userId) throw new AppError(403, "FORBIDDEN");
@@ -53,7 +53,7 @@ export class ReportService {
 
     // HR/ASSET/FINANCIAL use hardcoded multi-stage approve flow (no ReviewRuleSet)
     const hardcodedTypes = ["HR", "ASSET", "FINANCIAL"];
-    let reviewerDeptIds: number[] = [];
+    let reviewerDeptIds: string[] = [];
     if (!hardcodedTypes.includes(report.type)) {
       const rules = await this.repo.findRulesByType(report.type);
       if (rules.length > 0) {
@@ -80,7 +80,7 @@ export class ReportService {
     return submitted;
   }
 
-  async confirmReview(reportId: number, reviewerDeptId: number, userId: string, comment?: string) {
+  async confirmReview(reportId: string, reviewerDeptId: string, userId: string, comment?: string) {
     const report = await this.repo.findById(reportId);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");
     if (report.status !== "REVIEWING") throw new AppError(409, "INVALID_STATUS");
@@ -96,7 +96,7 @@ export class ReportService {
     return result;
   }
 
-  async rejectReview(reportId: number, reviewerDeptId: number, userId: string, reason: string) {
+  async rejectReview(reportId: string, reviewerDeptId: string, userId: string, reason: string) {
     if (!reason?.trim()) throw new AppError(400, "REJECTION_REASON_REQUIRED");
 
     const report = await this.repo.findById(reportId);
@@ -123,7 +123,7 @@ export class ReportService {
     return result;
   }
 
-  async approve(id: number, reviewerId: string) {
+  async approve(id: string, reviewerId: string) {
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");
     if (report.authorId === reviewerId) throw new AppError(403, "SELF_APPROVAL_FORBIDDEN");
@@ -155,7 +155,7 @@ export class ReportService {
     return approved;
   }
 
-  async reject(id: number, reviewerId: string, reason: string) {
+  async reject(id: string, reviewerId: string, reason: string) {
     if (!reason?.trim()) throw new AppError(400, "REJECTION_REASON_REQUIRED");
     const report = await this.repo.findById(id);
     if (!report) throw new AppError(404, "REPORT_NOT_FOUND");
@@ -196,7 +196,7 @@ export class ReportService {
     return this.repo.createRuleSet(reportType, reviewerCategory);
   }
 
-  async deleteRuleSet(id: number) {
+  async deleteRuleSet(id: string) {
     const rule = await this.repo.listRuleSets().then((r) => r.find((x) => x.id === id));
     if (!rule) throw new AppError(404, "RULE_NOT_FOUND");
     return this.repo.deleteRuleSet(id);
