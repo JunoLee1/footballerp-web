@@ -84,7 +84,7 @@ describe("RecruitmentService.startOnboarding", () => {
   it("otpCode는 bcrypt 해시로 저장된다 (평문 6자리가 아님)", async () => {
     const repo = makeRepo();
     const svc = new RecruitmentService(repo);
-    await svc.startOnboarding(1, "42");
+    await svc.startOnboarding("app-1","42");
 
     const storedHash = (repo.createOnboarding as jest.Mock).mock.calls[0][2] as string;
     expect(storedHash).toMatch(/^\$2b\$/);
@@ -93,14 +93,14 @@ describe("RecruitmentService.startOnboarding", () => {
 
   it("응답의 otpCode는 평문 6자리 숫자다", async () => {
     const svc = makeSvc();
-    const result = await svc.startOnboarding(1, "42");
+    const result = await svc.startOnboarding("app-1","42");
     expect(result.otpCode).toMatch(/^\d{6}$/);
   });
 
   it("두 결과 모두 6자리 형식이다", async () => {
     const svc = makeSvc();
-    const r1 = await svc.startOnboarding(1, "42");
-    const r2 = await svc.startOnboarding(1, "42");
+    const r1 = await svc.startOnboarding("app-1","42");
+    const r2 = await svc.startOnboarding("app-1","42");
     expect(r1.otpCode).toMatch(/^\d{6}$/);
     expect(r2.otpCode).toMatch(/^\d{6}$/);
   });
@@ -128,14 +128,14 @@ describe("RecruitmentService.verifyEmail", () => {
     const svc = makeSvc({
       findOnboardingByApplication: jest.fn().mockResolvedValue(makeOnboarding()),
     });
-    await expect(svc.verifyEmail(1, correctOtp)).resolves.toBeDefined();
+    await expect(svc.verifyEmail("app-1",correctOtp)).resolves.toBeDefined();
   });
 
   it("잘못된 OTP → 400 INVALID_OTP", async () => {
     const svc = makeSvc({
       findOnboardingByApplication: jest.fn().mockResolvedValue(makeOnboarding()),
     });
-    await expect(svc.verifyEmail(1, "999999")).rejects.toMatchObject({
+    await expect(svc.verifyEmail("app-1","999999")).rejects.toMatchObject({
       statusCode: 400, message: "INVALID_OTP",
     });
   });
@@ -146,7 +146,7 @@ describe("RecruitmentService.verifyEmail", () => {
         makeOnboarding({ otpExpiresAt: new Date(Date.now() - 1000) })
       ),
     });
-    await expect(svc.verifyEmail(1, correctOtp)).rejects.toMatchObject({
+    await expect(svc.verifyEmail("app-1",correctOtp)).rejects.toMatchObject({
       statusCode: 400, message: "OTP_EXPIRED",
     });
   });
@@ -157,7 +157,7 @@ describe("RecruitmentService.verifyEmail", () => {
         makeOnboarding({ emailVerifiedAt: new Date() })
       ),
     });
-    await expect(svc.verifyEmail(1, correctOtp)).rejects.toMatchObject({
+    await expect(svc.verifyEmail("app-1",correctOtp)).rejects.toMatchObject({
       statusCode: 409, message: "EMAIL_ALREADY_VERIFIED",
     });
   });
@@ -459,7 +459,7 @@ describe("RecruitmentService.completeMfa (HiringPlanItem status)", () => {
 
   it("Application 온보딩 완료 시 HiringPlanItem.fulfilledCount 증가 (tx 안에서 update)", async () => {
     const { svc } = makeMfaCtx();
-    await svc.completeMfa(1);
+    await svc.completeMfa("app-1");
     expect(mockHiringPlanItem.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: 500 },
@@ -475,7 +475,7 @@ describe("RecruitmentService.completeMfa (HiringPlanItem status)", () => {
       { id: 500, headcount: 3, fulfilledCount: 2, status: "IN_PROGRESS" },
       { fulfilledCount: 3, headcount: 3 },
     );
-    await svc.completeMfa(1);
+    await svc.completeMfa("app-1");
     expect(mockHiringPlanItem.updateMany).toHaveBeenCalledWith({
       where: { id: 500, status: "IN_PROGRESS" },
       data: { status: "FULFILLED", fulfilledAt: expect.any(Date) },
@@ -489,7 +489,7 @@ describe("RecruitmentService.completeMfa (HiringPlanItem status)", () => {
       { id: 500, headcount: 3, fulfilledCount: 0, status: "IN_PROGRESS" },
       { fulfilledCount: 1, headcount: 3 },
     );
-    await svc.completeMfa(1);
+    await svc.completeMfa("app-1");
     expect(mockHiringPlanItem.updateMany).not.toHaveBeenCalled();
   });
 
@@ -500,7 +500,7 @@ describe("RecruitmentService.completeMfa (HiringPlanItem status)", () => {
         posting: { id: 100, title: "Coach", hiringPlanItemId: null },
       }),
     });
-    await svc.completeMfa(1);
+    await svc.completeMfa("app-1");
     expect(mockHiringPlanItem.findUnique).not.toHaveBeenCalled();
     expect(mockHiringPlanItem.update).not.toHaveBeenCalled();
     expect(mockHiringPlanItem.updateMany).not.toHaveBeenCalled();
@@ -512,7 +512,7 @@ describe("RecruitmentService.completeMfa (HiringPlanItem status)", () => {
       {},
       { id: 500, headcount: 3, fulfilledCount: 0, status: "CANCELLED" },
     );
-    await svc.completeMfa(1);
+    await svc.completeMfa("app-1");
     expect(mockHiringPlanItem.update).not.toHaveBeenCalled();
     expect(mockHiringPlanItem.updateMany).not.toHaveBeenCalled();
   });
@@ -551,14 +551,14 @@ describe("RecruitmentService.completeMfa (UserDepartment safety net · #533)", (
   it("posting.departmentId 있으면 UserDepartment upsert 호출", async () => {
     const ensureUserDepartment = jest.fn().mockResolvedValue({});
     const { svc } = makeMfaCtx(10, ensureUserDepartment);
-    await svc.completeMfa(1);
+    await svc.completeMfa("app-1");
     expect(ensureUserDepartment).toHaveBeenCalledWith("user-42", 10);
   });
 
   it("posting.departmentId null 이면 UserDepartment upsert 호출 안 함", async () => {
     const ensureUserDepartment = jest.fn().mockResolvedValue({});
     const { svc } = makeMfaCtx(null, ensureUserDepartment);
-    await svc.completeMfa(1);
+    await svc.completeMfa("app-1");
     expect(ensureUserDepartment).not.toHaveBeenCalled();
   });
 
@@ -566,7 +566,7 @@ describe("RecruitmentService.completeMfa (UserDepartment safety net · #533)", (
     // upsert 는 idempotent — 반복 호출해도 role 변경 없이 pass
     const ensureUserDepartment = jest.fn().mockResolvedValue({ userId: "user-42", departmentId: 10, role: "DEPT_HEAD" });
     const { svc } = makeMfaCtx(10, ensureUserDepartment);
-    await svc.completeMfa(1);
+    await svc.completeMfa("app-1");
     expect(ensureUserDepartment).toHaveBeenCalledTimes(1);
   });
 });
@@ -705,7 +705,7 @@ describe("RecruitmentService.getInterviewerScoreAggregate", () => {
       _avg: { scoreSkill: 7.0, scoreComm: 6.5, scoreCulture: 8.0 },
       _count: 3,
     });
-    const result = await svc.getInterviewerScoreAggregate(1, "ROUND_1");
+    const result = await svc.getInterviewerScoreAggregate("app-1","ROUND_1");
     expect(result).toEqual({
       scoreSkill: 7,
       scoreComm: 7,      // 6.5 → 7 (round)
@@ -720,13 +720,13 @@ describe("RecruitmentService.getInterviewerScoreAggregate", () => {
       _avg: { scoreSkill: null, scoreComm: null, scoreCulture: null },
       _count: 0,
     });
-    await expect(svc.getInterviewerScoreAggregate(1, "ROUND_1"))
+    await expect(svc.getInterviewerScoreAggregate("app-1","ROUND_1"))
       .rejects.toMatchObject({ statusCode: 400, message: "NO_INTERVIEWER_SCORES_YET" });
   });
 
   it("Interview 없으면 404 INTERVIEW_NOT_FOUND", async () => {
     const { svc } = makeSvcWithAggCtx(null, null);
-    await expect(svc.getInterviewerScoreAggregate(1, "ROUND_1"))
+    await expect(svc.getInterviewerScoreAggregate("app-1","ROUND_1"))
       .rejects.toMatchObject({ statusCode: 404, message: "INTERVIEW_NOT_FOUND" });
   });
 
@@ -735,7 +735,7 @@ describe("RecruitmentService.getInterviewerScoreAggregate", () => {
       _avg: { scoreSkill: 7.0, scoreComm: null, scoreCulture: 8.0 },
       _count: 2,
     });
-    const result = await svc.getInterviewerScoreAggregate(1, "ROUND_1");
+    const result = await svc.getInterviewerScoreAggregate("app-1","ROUND_1");
     expect(result).toEqual({
       scoreSkill: 7,
       scoreComm: null,
@@ -771,9 +771,9 @@ describe("RecruitmentService.finalizeInterviewScore", () => {
       _count: 3,
     }, interview, { id: 100, scoreSkill: 7, scoreComm: 7, scoreCulture: 8 });
 
-    const result = await svc.finalizeInterviewScore(1, "ROUND_1");
+    const result = await svc.finalizeInterviewScore("app-1","ROUND_1");
 
-    expect(repo.updateInterview).toHaveBeenCalledWith(1, "ROUND_1", {
+    expect(repo.updateInterview).toHaveBeenCalledWith("app-1", "ROUND_1", {
       scoreSkill: 7,
       scoreComm: 7,
       scoreCulture: 8,
@@ -786,14 +786,14 @@ describe("RecruitmentService.finalizeInterviewScore", () => {
       _avg: { scoreSkill: null, scoreComm: null, scoreCulture: null },
       _count: 0,
     });
-    await expect(svc.finalizeInterviewScore(1, "ROUND_1"))
+    await expect(svc.finalizeInterviewScore("app-1","ROUND_1"))
       .rejects.toMatchObject({ statusCode: 400, message: "NO_INTERVIEWER_SCORES_YET" });
     expect(repo.updateInterview).not.toHaveBeenCalled();
   });
 
   it("Interview 없으면 404 INTERVIEW_NOT_FOUND", async () => {
     const { svc, repo } = makeSvcFinalize(null, null);
-    await expect(svc.finalizeInterviewScore(1, "ROUND_1"))
+    await expect(svc.finalizeInterviewScore("app-1","ROUND_1"))
       .rejects.toMatchObject({ statusCode: 404, message: "INTERVIEW_NOT_FOUND" });
     expect(repo.updateInterview).not.toHaveBeenCalled();
   });
@@ -819,7 +819,7 @@ describe("RecruitmentService.screenApplication", () => {
 
   it("SCREENING 상태에서 PASS 결과 저장 성공", async () => {
     const { svc, repo } = makeSvcWithScreen();
-    const result = await svc.screenApplication(1, { result: "PASS", notes: "우수" }, "42");
+    const result = await svc.screenApplication("app-1",{ result: "PASS", notes: "우수" }, "42");
     expect((repo as any).screenApplication).toHaveBeenCalledWith(1, {
       screeningResult: "PASS",
       screeningNotes: "우수",
@@ -831,19 +831,19 @@ describe("RecruitmentService.screenApplication", () => {
 
   it("SCREENING 상태 아니면 409 INVALID_STATUS_FOR_SCREEN", async () => {
     const { svc } = makeSvcWithScreen({ ...screeningApp, status: "INTERVIEW_1" });
-    await expect(svc.screenApplication(1, { result: "PASS" } as any, "42"))
+    await expect(svc.screenApplication("app-1",{ result: "PASS" } as any, "42"))
       .rejects.toMatchObject({ statusCode: 409, message: "INVALID_STATUS_FOR_SCREEN" });
   });
 
   it("FAIL 결과인데 notes 없으면 400 SCREENING_NOTES_REQUIRED_FOR_FAIL", async () => {
     const { svc } = makeSvcWithScreen();
-    await expect(svc.screenApplication(1, { result: "FAIL" } as any, "42"))
+    await expect(svc.screenApplication("app-1",{ result: "FAIL" } as any, "42"))
       .rejects.toMatchObject({ statusCode: 400, message: "SCREENING_NOTES_REQUIRED_FOR_FAIL" });
   });
 
   it("FAIL 결과 + notes 있으면 저장 성공", async () => {
     const { svc, repo } = makeSvcWithScreen();
-    await svc.screenApplication(1, { result: "FAIL", notes: "학력 요건 미달" }, "42");
+    await svc.screenApplication("app-1",{ result: "FAIL", notes: "학력 요건 미달" }, "42");
     expect((repo as any).screenApplication).toHaveBeenCalledWith(1, expect.objectContaining({
       screeningResult: "FAIL",
       screeningNotes: "학력 요건 미달",
@@ -852,13 +852,13 @@ describe("RecruitmentService.screenApplication", () => {
 
   it("Application 없으면 404 JOB_APPLICATION_NOT_FOUND", async () => {
     const { svc } = makeSvcWithScreen(null);
-    await expect(svc.screenApplication(1, { result: "PASS" } as any, "42"))
+    await expect(svc.screenApplication("app-1",{ result: "PASS" } as any, "42"))
       .rejects.toMatchObject({ statusCode: 404, message: "JOB_APPLICATION_NOT_FOUND" });
   });
 
   it("PENDING 결과는 notes 없어도 저장 성공", async () => {
     const { svc, repo } = makeSvcWithScreen();
-    await svc.screenApplication(1, { result: "PENDING" } as any, "42");
+    await svc.screenApplication("app-1",{ result: "PENDING" } as any, "42");
     expect((repo as any).screenApplication).toHaveBeenCalledWith(1, expect.objectContaining({
       screeningResult: "PENDING",
     }));
@@ -883,7 +883,7 @@ describe("RecruitmentService.reinstateApplication (with screeningResult reset)",
     });
     const svc = new RecruitmentService(repo);
 
-    await svc.reinstateApplication(1, "42");
+    await svc.reinstateApplication("app-1", "42");
 
     expect(repo.reinstateApplication).toHaveBeenCalledWith(1, "42");
   });
@@ -913,7 +913,7 @@ describe("RecruitmentService.updateInterview (threshold policy)", () => {
 
   it("PASS 결정 시 세 점수 모두 threshold >= 3 이면 성공", async () => {
     const { svc, repo } = makeInterviewWithSettings();
-    await svc.updateInterview(1, "ROUND_1" as any, {
+    await svc.updateInterview("app-1", "ROUND_1" as any, {
       result: "PASS", scoreSkill: 3, scoreComm: 4, scoreCulture: 5,
     });
     expect(repo.updateInterview).toHaveBeenCalled();
@@ -922,7 +922,7 @@ describe("RecruitmentService.updateInterview (threshold policy)", () => {
   it("PASS 결정 시 threshold 미달 (score < 3) → 400 INTERVIEW_SCORE_BELOW_THRESHOLD", async () => {
     const { svc } = makeInterviewWithSettings();
     await expect(
-      svc.updateInterview(1, "ROUND_1" as any, {
+      svc.updateInterview("app-1", "ROUND_1" as any, {
         result: "PASS", scoreSkill: 2, scoreComm: 4, scoreCulture: 5,
       }),
     ).rejects.toMatchObject({ statusCode: 400, message: "INTERVIEW_SCORE_BELOW_THRESHOLD" });
@@ -930,7 +930,7 @@ describe("RecruitmentService.updateInterview (threshold policy)", () => {
 
   it("PASS + threshold 미달 + overrideThreshold=true + overrideReason → 성공 + audit log", async () => {
     const { svc, repo } = makeInterviewWithSettings();
-    await svc.updateInterview(1, "ROUND_1" as any, {
+    await svc.updateInterview("app-1", "ROUND_1" as any, {
       result: "PASS", scoreSkill: 2, scoreComm: 4, scoreCulture: 5,
       overrideThreshold: true, overrideReason: "특별 상황",
     } as any);
@@ -940,7 +940,7 @@ describe("RecruitmentService.updateInterview (threshold policy)", () => {
   it("PASS + threshold 미달 + overrideThreshold=true + overrideReason 없음 → 400 OVERRIDE_REASON_REQUIRED", async () => {
     const { svc } = makeInterviewWithSettings();
     await expect(
-      svc.updateInterview(1, "ROUND_1" as any, {
+      svc.updateInterview("app-1", "ROUND_1" as any, {
         result: "PASS", scoreSkill: 2, scoreComm: 4, scoreCulture: 5,
         overrideThreshold: true,
       } as any),
@@ -949,7 +949,7 @@ describe("RecruitmentService.updateInterview (threshold policy)", () => {
 
   it("HOLD 결정은 threshold 검증 skip (자유롭게 세팅)", async () => {
     const { svc, repo } = makeInterviewWithSettings();
-    await svc.updateInterview(1, "ROUND_1" as any, {
+    await svc.updateInterview("app-1", "ROUND_1" as any, {
       result: "HOLD" as any, scoreSkill: 2, scoreComm: 2, scoreCulture: 2,
     });
     expect(repo.updateInterview).toHaveBeenCalled();
@@ -957,7 +957,7 @@ describe("RecruitmentService.updateInterview (threshold policy)", () => {
 
   it("WAITLIST 결정도 threshold 검증 skip", async () => {
     const { svc, repo } = makeInterviewWithSettings();
-    await svc.updateInterview(1, "ROUND_1" as any, {
+    await svc.updateInterview("app-1", "ROUND_1" as any, {
       result: "WAITLIST" as any, scoreSkill: 3, scoreComm: 3, scoreCulture: 3,
     });
     expect(repo.updateInterview).toHaveBeenCalled();
@@ -965,7 +965,7 @@ describe("RecruitmentService.updateInterview (threshold policy)", () => {
 
   it("FAIL 은 항상 threshold 검증 skip", async () => {
     const { svc, repo } = makeInterviewWithSettings();
-    await svc.updateInterview(1, "ROUND_1" as any, {
+    await svc.updateInterview("app-1", "ROUND_1" as any, {
       result: "FAIL", scoreSkill: 1, scoreComm: 1, scoreCulture: 1,
     });
     expect(repo.updateInterview).toHaveBeenCalled();
@@ -1017,7 +1017,7 @@ describe("RecruitmentService.promoteFromWaitlist", () => {
       setApplicationStatus: setStatus,
     } as any);
     const svc = new RecruitmentService(repo);
-    const result = await svc.promoteFromWaitlist(10, "42");
+    const result = await svc.promoteFromWaitlist("app-10","42");
     // No LEADER + no DEPT_HEAD → OFFER_PENDING_HR
     expect(setStatus).toHaveBeenCalledWith(10, "OFFER_PENDING_HR", "42");
     expect(result.status).toBe("OFFER_PENDING_HR");
@@ -1030,7 +1030,7 @@ describe("RecruitmentService.promoteFromWaitlist", () => {
       findWaitlistedInterviewByApplication: jest.fn().mockResolvedValue(null),
     } as any);
     const svc = new RecruitmentService(repo);
-    await expect(svc.promoteFromWaitlist(10, "42"))
+    await expect(svc.promoteFromWaitlist("app-10","42"))
       .rejects.toMatchObject({ statusCode: 400, message: "NOT_WAITLISTED" });
   });
 });
@@ -1070,7 +1070,7 @@ describe("RecruitmentService.rejectApplication (auto-promote hook)", () => {
       setApplicationStatus: setStatus,
     } as any);
     const svc = new RecruitmentService(repo);
-    await svc.rejectApplication(1, "42");
+    await svc.rejectApplication("app-1","42");
     // No LEADER + no DEPT_HEAD → skip straight to OFFER_PENDING_HR
     expect(setStatus).toHaveBeenCalledWith(20, "OFFER_PENDING_HR", "42");
   });
@@ -1088,7 +1088,7 @@ describe("RecruitmentService.rejectApplication (auto-promote hook)", () => {
       setApplicationStatus: setStatus,
     } as any);
     const svc = new RecruitmentService(repo);
-    await svc.rejectApplication(1, "42");
+    await svc.rejectApplication("app-1","42");
     expect(setStatus).not.toHaveBeenCalled();
   });
 });
@@ -1113,7 +1113,7 @@ describe("RecruitmentService.offerApplication (#370 — enters 3-stage flow)", (
     } as any);
     const notifRepo = { createForUser: jest.fn().mockResolvedValue({}), createForHrManager: jest.fn() } as any;
     const svc = new RecruitmentService(repo, notifRepo);
-    const result = await svc.offerApplication(1, "42");
+    const result = await svc.offerApplication("app-1","42");
     expect(setStatus).toHaveBeenCalledWith(1, "OFFER_PENDING_LEADER", "42");
     expect(notifRepo.createForUser).toHaveBeenCalledWith("300", "OFFER_APPROVAL_REQUESTED_LEADER", expect.any(Function), 1);
     expect(result.status).toBe("OFFER_PENDING_LEADER");
@@ -1132,7 +1132,7 @@ describe("RecruitmentService.offerApplication (#370 — enters 3-stage flow)", (
     } as any);
     const notifRepo = { createForUser: jest.fn().mockResolvedValue({}), createForHrManager: jest.fn() } as any;
     const svc = new RecruitmentService(repo, notifRepo);
-    await svc.offerApplication(1, "42");
+    await svc.offerApplication("app-1","42");
     expect(setStatus).toHaveBeenCalledWith(1, "OFFER_PENDING_DEPT_HEAD", "42");
     // 부서장에게 알림
     expect(notifRepo.createForUser).toHaveBeenCalledWith("200", "OFFER_APPROVAL_REQUESTED_DEPT_HEAD", expect.any(Function), 1);
@@ -1151,7 +1151,7 @@ describe("RecruitmentService.offerApplication (#370 — enters 3-stage flow)", (
     } as any);
     const notifRepo = { createForUser: jest.fn(), createForHrManager: jest.fn().mockResolvedValue({}) } as any;
     const svc = new RecruitmentService(repo, notifRepo);
-    await svc.offerApplication(1, "42");
+    await svc.offerApplication("app-1","42");
     expect(setStatus).toHaveBeenCalledWith(1, "OFFER_PENDING_HR", "42");
     expect(notifRepo.createForHrManager).toHaveBeenCalledWith("OFFER_APPROVAL_REQUESTED_HR", expect.any(Function), 1);
   });
@@ -1161,7 +1161,7 @@ describe("RecruitmentService.offerApplication (#370 — enters 3-stage flow)", (
     const svc = new RecruitmentService(makeRepo({
       findApplicationById: jest.fn().mockResolvedValue(app),
     } as any));
-    await expect(svc.offerApplication(1, "42"))
+    await expect(svc.offerApplication("app-1","42"))
       .rejects.toMatchObject({ statusCode: 409, message: "APPLICATION_NOT_IN_REFERENCE_CHECK" });
   });
 });
@@ -1185,7 +1185,7 @@ describe("RecruitmentService.leaderApprove (#370 — LEADER 단계)", () => {
     } as any);
     const notifRepo = { createForUser: jest.fn().mockResolvedValue({}), createForHrManager: jest.fn() } as any;
     const svc = new RecruitmentService(repo, notifRepo);
-    const result = await svc.leaderApprove(1, "300");
+    const result = await svc.leaderApprove("app-1","300");
     expect(addApproval).toHaveBeenCalledWith(1, expect.objectContaining({ stage: "LEADER", action: "APPROVED", reviewerId: "300" }), expect.anything());
     expect(updateInTx).toHaveBeenCalledWith(1, "OFFER_PENDING_DEPT_HEAD", expect.anything());
     expect(notifRepo.createForUser).toHaveBeenCalledWith("200", "OFFER_APPROVAL_REQUESTED_DEPT_HEAD", expect.any(Function), 1);
@@ -1203,7 +1203,7 @@ describe("RecruitmentService.leaderApprove (#370 — LEADER 단계)", () => {
     } as any);
     const notifRepo = { createForUser: jest.fn(), createForHrManager: jest.fn().mockResolvedValue({}) } as any;
     const svc = new RecruitmentService(repo, notifRepo);
-    await svc.leaderApprove(1, "300");
+    await svc.leaderApprove("app-1","300");
     expect(updateInTx).toHaveBeenCalledWith(1, "OFFER_PENDING_HR", expect.anything());
     expect(notifRepo.createForHrManager).toHaveBeenCalledWith("OFFER_APPROVAL_REQUESTED_HR", expect.any(Function), 1);
   });
@@ -1215,7 +1215,7 @@ describe("RecruitmentService.leaderApprove (#370 — LEADER 단계)", () => {
       findDepartmentLeader: jest.fn().mockResolvedValue("300"),
     } as any);
     const svc = new RecruitmentService(repo);
-    await expect(svc.leaderApprove(1, "999"))
+    await expect(svc.leaderApprove("app-1","999"))
       .rejects.toMatchObject({ statusCode: 403, message: "NOT_LEADER" });
   });
 
@@ -1227,7 +1227,7 @@ describe("RecruitmentService.leaderApprove (#370 — LEADER 단계)", () => {
       findDepartmentLeader: jest.fn().mockResolvedValue("300"),
     } as any);
     const svc = new RecruitmentService(repo);
-    await expect(svc.leaderApprove(1, "300"))
+    await expect(svc.leaderApprove("app-1","300"))
       .rejects.toMatchObject({ statusCode: 403, message: "SELF_APPROVAL_FORBIDDEN" });
   });
 
@@ -1237,7 +1237,7 @@ describe("RecruitmentService.leaderApprove (#370 — LEADER 단계)", () => {
       findApplicationById: jest.fn().mockResolvedValue(app),
     } as any);
     const svc = new RecruitmentService(repo);
-    await expect(svc.leaderApprove(1, "300"))
+    await expect(svc.leaderApprove("app-1","300"))
       .rejects.toMatchObject({ statusCode: 409, message: "INVALID_STATUS" });
   });
 });
@@ -1260,7 +1260,7 @@ describe("RecruitmentService.leaderReject (#370 — 팀장 반려)", () => {
       updateApplicationStatusInTx: updateInTx,
     } as any);
     const svc = new RecruitmentService(repo);
-    const result = await svc.leaderReject(1, "300", "예산 부족");
+    const result = await svc.leaderReject("app-1","300", "예산 부족");
     expect(addApproval).toHaveBeenCalledWith(1, expect.objectContaining({ stage: "LEADER", action: "REJECTED", reason: "예산 부족" }), expect.anything());
     expect(updateInTx).toHaveBeenCalledWith(1, "OFFER_LEADER_REJECTED", expect.anything());
     expect(result.status).toBe("OFFER_LEADER_REJECTED");
@@ -1268,9 +1268,9 @@ describe("RecruitmentService.leaderReject (#370 — 팀장 반려)", () => {
 
   it("반려 사유 빠지면 400 REASON_REQUIRED", async () => {
     const svc = new RecruitmentService(makeRepo());
-    await expect(svc.leaderReject(1, "300", ""))
+    await expect(svc.leaderReject("app-1","300", ""))
       .rejects.toMatchObject({ statusCode: 400, message: "REASON_REQUIRED" });
-    await expect(svc.leaderReject(1, "300", "   "))
+    await expect(svc.leaderReject("app-1","300", "   "))
       .rejects.toMatchObject({ statusCode: 400, message: "REASON_REQUIRED" });
   });
 });
@@ -1289,7 +1289,7 @@ describe("RecruitmentService.deptHeadApprove (#370 — 부서장 단계)", () =>
     } as any);
     const notifRepo = { createForUser: jest.fn(), createForHrManager: jest.fn().mockResolvedValue({}) } as any;
     const svc = new RecruitmentService(repo, notifRepo);
-    await svc.deptHeadApprove(1, "200");
+    await svc.deptHeadApprove("app-1","200");
     expect(updateInTx).toHaveBeenCalledWith(1, "OFFER_PENDING_HR", expect.anything());
     expect(notifRepo.createForHrManager).toHaveBeenCalledWith("OFFER_APPROVAL_REQUESTED_HR", expect.any(Function), 1);
   });
@@ -1302,7 +1302,7 @@ describe("RecruitmentService.deptHeadApprove (#370 — 부서장 단계)", () =>
     const svc = new RecruitmentService(makeRepo({
       findApplicationById: jest.fn().mockResolvedValue(app),
     } as any));
-    await expect(svc.deptHeadApprove(1, "999"))
+    await expect(svc.deptHeadApprove("app-1","999"))
       .rejects.toMatchObject({ statusCode: 403, message: "NOT_DEPT_HEAD" });
   });
 });
@@ -1325,7 +1325,7 @@ describe("RecruitmentService.hrApprove (#370 — HR 최종 승인 = OFFERED)", (
       addOfferApproval: addApproval,
     } as any);
     const svc = new RecruitmentService(repo);
-    await svc.hrApprove(1, "500");
+    await svc.hrApprove("app-1","500");
     expect(addApproval).toHaveBeenCalledWith(1, expect.objectContaining({ stage: "HR", action: "APPROVED", reviewerId: "500" }), expect.anything());
     expect(mockJobApplicationUpdate).toHaveBeenCalledWith(expect.objectContaining({
       where: { id: 1 },
@@ -1345,7 +1345,7 @@ describe("RecruitmentService.hrApprove (#370 — HR 최종 승인 = OFFERED)", (
     const svc = new RecruitmentService(makeRepo({
       findApplicationById: jest.fn().mockResolvedValue(app),
     } as any));
-    await expect(svc.hrApprove(1, "500"))
+    await expect(svc.hrApprove("app-1","500"))
       .rejects.toMatchObject({ statusCode: 403, message: "SELF_APPROVAL_FORBIDDEN" });
   });
 
@@ -1357,7 +1357,7 @@ describe("RecruitmentService.hrApprove (#370 — HR 최종 승인 = OFFERED)", (
     const svc = new RecruitmentService(makeRepo({
       findApplicationById: jest.fn().mockResolvedValue(app),
     } as any));
-    await expect(svc.hrApprove(1, "500"))
+    await expect(svc.hrApprove("app-1","500"))
       .rejects.toMatchObject({ statusCode: 409, message: "INVALID_STATUS" });
   });
 });
@@ -1375,7 +1375,7 @@ describe("RecruitmentService.hrReject (#370 — HR 반려)", () => {
       updateApplicationStatusInTx: updateInTx,
     } as any);
     const svc = new RecruitmentService(repo);
-    const result = await svc.hrReject(1, "500", "예산 초과");
+    const result = await svc.hrReject("app-1","500", "예산 초과");
     expect(updateInTx).toHaveBeenCalledWith(1, "OFFER_HR_REJECTED", expect.anything());
     expect(result.status).toBe("OFFER_HR_REJECTED");
   });

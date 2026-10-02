@@ -3,7 +3,7 @@ import { PrismaClient } from "../generated/client";
 export class MatchSquadRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findByMatch(matchId: number) {
+  findByMatch(matchId: string) {
     return this.prisma.matchSquad.findMany({
       where: { matchId },
       include: {
@@ -13,7 +13,7 @@ export class MatchSquadRepository {
     });
   }
 
-  addPlayer(matchId: number, playerId: string) {
+  addPlayer(matchId: string, playerId: string) {
     return this.prisma.matchSquad.upsert({
       where: { matchId_playerId: { matchId, playerId } },
       create: { matchId, playerId },
@@ -21,20 +21,20 @@ export class MatchSquadRepository {
     });
   }
 
-  removePlayer(matchId: number, playerId: string) {
+  removePlayer(matchId: string, playerId: string) {
     return this.prisma.matchSquad.delete({
       where: { matchId_playerId: { matchId, playerId } },
     });
   }
 
-  confirmSquad(matchId: number, confirmedById: string) {
+  confirmSquad(matchId: string, confirmedById: string) {
     return this.prisma.matchSquad.updateMany({
       where: { matchId },
       data: { isConfirmed: true, confirmedAt: new Date(), confirmedById },
     });
   }
 
-  findConfirmedWithPlayers(matchId: number) {
+  findConfirmedWithPlayers(matchId: string) {
     return this.prisma.matchSquad.findMany({
       where: { matchId, isConfirmed: true },
       include: {
@@ -68,7 +68,7 @@ export class MatchSquadRepository {
     });
   }
 
-  markNotified(matchId: number) {
+  markNotified(matchId: string) {
     return this.prisma.matchSquad.updateMany({
       where: { matchId, notifiedAt: null },
       data: { notifiedAt: new Date() },

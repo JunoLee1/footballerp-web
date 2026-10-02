@@ -167,7 +167,7 @@ export class RecruitmentService {
     return apps.map(maskApplication);
   }
 
-  async getApplication(id: number) {
+  async getApplication(id: string) {
     const app = await this.repo.findApplicationById(id);
     if (!app) throw new AppError(404, "JOB_APPLICATION_NOT_FOUND");
     return maskApplication(app);
@@ -181,7 +181,7 @@ export class RecruitmentService {
     return this.repo.createApplication(postingId, dto);
   }
 
-  async updateApplication(id: number, dto: UpdateJobApplicationDto) {
+  async updateApplication(id: string, dto: UpdateJobApplicationDto) {
     await this.getApplication(id);
     if (dto.status !== undefined && dto.status !== "SCREENING") {
       throw new AppError(400, "INVALID_STATUS_TRANSITION");
@@ -189,7 +189,7 @@ export class RecruitmentService {
     return this.repo.updateApplication(id, dto);
   }
 
-  async screenApplication(id: number, dto: ScreenApplicationDto, actorId: string) {
+  async screenApplication(id: string, dto: ScreenApplicationDto, actorId: string) {
     const app = await this.getApplication(id);
     if (app.status !== "SCREENING") throw new AppError(409, "INVALID_STATUS_FOR_SCREEN");
     if (dto.result === "FAIL" && !dto.notes?.trim()) {
@@ -204,7 +204,7 @@ export class RecruitmentService {
     });
   }
 
-  async rejectApplication(id: number, actorId?: string) {
+  async rejectApplication(id: string, actorId?: string) {
     const app = await this.getApplication(id);
     if (app.status === "REJECTED") throw new AppError(409, "APPLICATION_ALREADY_REJECTED");
     const wasOffered = app.status === "OFFERED";
@@ -257,7 +257,7 @@ export class RecruitmentService {
     return result;
   }
 
-  async reinstateApplication(id: number, actorId: string) {
+  async reinstateApplication(id: string, actorId: string) {
     const app = await this.getApplication(id);
     if (app.status !== "REJECTED") throw new AppError(409, "APPLICATION_NOT_REJECTED");
     if (!(app as any).previousStatus) throw new AppError(409, "NO_PREVIOUS_STATUS");
@@ -274,7 +274,7 @@ export class RecruitmentService {
    * The actual OFFERED transition (+ email + HiringPlanItem link) happens
    * only when HR approves (see `hrApprove`).
    */
-  async offerApplication(id: number, initiatedById: string) {
+  async offerApplication(id: string, initiatedById: string) {
     const app = await this.getApplication(id);
     if (app.status !== "REFERENCE_CHECK") throw new AppError(409, "APPLICATION_NOT_IN_REFERENCE_CHECK");
     const refCheck = await getPrisma().referenceCheck.findUnique({
@@ -299,7 +299,7 @@ export class RecruitmentService {
    * Called both by explicit HR-initiated offer and by the waitlist auto-
    * promote path so the two enter the same state machine.
    */
-  private async beginOfferApproval(id: number, initiatedById: string) {
+  private async beginOfferApproval(id: string, initiatedById: string) {
     // Load raw (unmasked) — we need posting.department to route.
     const raw = await this.repo.findApplicationById(id);
     if (!raw) throw new AppError(404, "JOB_APPLICATION_NOT_FOUND");
@@ -371,7 +371,7 @@ export class RecruitmentService {
   // Offer 3-stage approval — LEADER
   // ────────────────────────────────────────────
 
-  async leaderApprove(applicationId: number, reviewerId: string) {
+  async leaderApprove(applicationId: string, reviewerId: string) {
     const raw = await this.repo.findApplicationById(applicationId);
     if (!raw) throw new AppError(404, "JOB_APPLICATION_NOT_FOUND");
     if (raw.status !== "OFFER_PENDING_LEADER") throw new AppError(409, "INVALID_STATUS");
@@ -438,7 +438,7 @@ export class RecruitmentService {
     return updated;
   }
 
-  async leaderReject(applicationId: number, reviewerId: string, reason: string) {
+  async leaderReject(applicationId: string, reviewerId: string, reason: string) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -477,7 +477,7 @@ export class RecruitmentService {
   // Offer 3-stage approval — DEPT_HEAD
   // ────────────────────────────────────────────
 
-  async deptHeadApprove(applicationId: number, reviewerId: string) {
+  async deptHeadApprove(applicationId: string, reviewerId: string) {
     const raw = await this.repo.findApplicationById(applicationId);
     if (!raw) throw new AppError(404, "JOB_APPLICATION_NOT_FOUND");
     if (raw.status !== "OFFER_PENDING_DEPT_HEAD") throw new AppError(409, "INVALID_STATUS");
@@ -518,7 +518,7 @@ export class RecruitmentService {
     return updated;
   }
 
-  async deptHeadReject(applicationId: number, reviewerId: string, reason: string) {
+  async deptHeadReject(applicationId: string, reviewerId: string, reason: string) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -558,7 +558,7 @@ export class RecruitmentService {
    * offeredById / offeredAt on the application). The controller already
    * gates on `canWriteHR` so anyone landing here is HR-eligible.
    */
-  async hrApprove(applicationId: number, reviewerId: string) {
+  async hrApprove(applicationId: string, reviewerId: string) {
     const raw = await this.repo.findApplicationById(applicationId);
     if (!raw) throw new AppError(404, "JOB_APPLICATION_NOT_FOUND");
     if (raw.status !== "OFFER_PENDING_HR") throw new AppError(409, "INVALID_STATUS");
@@ -614,7 +614,7 @@ export class RecruitmentService {
     return updated;
   }
 
-  async hrReject(applicationId: number, reviewerId: string, reason: string) {
+  async hrReject(applicationId: string, reviewerId: string, reason: string) {
     const trimmed = reason?.trim();
     if (!trimmed) throw new AppError(400, "REASON_REQUIRED");
 
@@ -671,7 +671,7 @@ export class RecruitmentService {
 
   // --- Interview ---
 
-  async scheduleInterview(applicationId: number, dto: CreateInterviewDto, actorId?: string) {
+  async scheduleInterview(applicationId: string, dto: CreateInterviewDto, actorId?: string) {
     await this.getApplication(applicationId);
     const existing = await this.repo.findInterview(applicationId, dto.round);
     if (existing) throw new AppError(409, "INTERVIEW_ALREADY_EXISTS");
@@ -699,7 +699,7 @@ export class RecruitmentService {
     return interview;
   }
 
-  async updateInterview(applicationId: number, round: InterviewRound, dto: UpdateInterviewDto) {
+  async updateInterview(applicationId: string, round: InterviewRound, dto: UpdateInterviewDto) {
     const existing = await this.repo.findInterview(applicationId, round);
     if (!existing) throw new AppError(404, "INTERVIEW_NOT_FOUND");
 
@@ -748,7 +748,7 @@ export class RecruitmentService {
 
   // --- ReferenceCheck ---
 
-  async createReferenceCheck(applicationId: number, dto: CreateReferenceCheckDto, actorId?: string) {
+  async createReferenceCheck(applicationId: string, dto: CreateReferenceCheckDto, actorId?: string) {
     const app = await this.getApplication(applicationId);
 
     // CL5: consent must not be explicitly declined
@@ -760,14 +760,14 @@ export class RecruitmentService {
     return this.repo.createReferenceCheck(applicationId, dto);
   }
 
-  async updateReferenceCheck(applicationId: number, dto: UpdateReferenceCheckDto) {
+  async updateReferenceCheck(applicationId: string, dto: UpdateReferenceCheckDto) {
     await this.getApplication(applicationId);
     return this.repo.updateReferenceCheck(applicationId, dto);
   }
 
   // --- Onboarding ---
 
-  async startOnboarding(applicationId: number, userId: string) {
+  async startOnboarding(applicationId: string, userId: string) {
     const app = await this.getApplication(applicationId);
     if (app.status !== "OFFERED") throw new AppError(409, "APPLICATION_NOT_OFFERED");
     const existing = await this.repo.findOnboardingByApplication(applicationId);
@@ -779,7 +779,7 @@ export class RecruitmentService {
     return { ...record, otpCode: rawOtp };
   }
 
-  async verifyEmail(applicationId: number, otp: string) {
+  async verifyEmail(applicationId: string, otp: string) {
     const onboarding = await this.repo.findOnboardingByApplication(applicationId);
     if (!onboarding) throw new AppError(404, "ONBOARDING_NOT_FOUND");
     if (onboarding.emailVerifiedAt) throw new AppError(409, "EMAIL_ALREADY_VERIFIED");
@@ -789,7 +789,7 @@ export class RecruitmentService {
     return this.repo.markEmailVerified(applicationId);
   }
 
-  async completeMfa(applicationId: number) {
+  async completeMfa(applicationId: string) {
     const onboarding = await this.repo.findOnboardingByApplication(applicationId);
     if (!onboarding) throw new AppError(404, "ONBOARDING_NOT_FOUND");
     if (!onboarding.emailVerifiedAt) throw new AppError(409, "EMAIL_NOT_VERIFIED");
@@ -881,7 +881,7 @@ export class RecruitmentService {
     return this.repo.getInterviewerScores(interviewId);
   }
 
-  async getInterviewerScoreAggregate(applicationId: number, round: InterviewRound) {
+  async getInterviewerScoreAggregate(applicationId: string, round: InterviewRound) {
     const interview = await this.repo.findInterview(applicationId, round);
     if (!interview) throw new AppError(404, "INTERVIEW_NOT_FOUND");
 
@@ -900,7 +900,7 @@ export class RecruitmentService {
     };
   }
 
-  async finalizeInterviewScore(applicationId: number, round: InterviewRound) {
+  async finalizeInterviewScore(applicationId: string, round: InterviewRound) {
     const aggregate = await this.getInterviewerScoreAggregate(applicationId, round);
     // Null values pass through but are filtered out by repo.updateInterview (`!= null` guard),
     // so partial-null aggregates only update the categories that have scores.
@@ -927,7 +927,7 @@ export class RecruitmentService {
       .sort((a: any, b: any) => b.scoreSum - a.scoreSum);
   }
 
-  async promoteFromWaitlist(applicationId: number, actorId: string) {
+  async promoteFromWaitlist(applicationId: string, actorId: string) {
     const app = await this.getApplication(applicationId);
 
     // C2 fix: status guard — reject terminal/already-offered states.

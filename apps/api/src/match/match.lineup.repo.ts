@@ -6,7 +6,7 @@ const PLAYER_SELECT = { id: true, playerName: true, position: true } as const;
 export class MatchLineupRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findByMatch(matchId: number) {
+  findByMatch(matchId: string) {
     return this.prisma.matchLineup.findUnique({
       where: { matchId },
       include: {
@@ -17,7 +17,7 @@ export class MatchLineupRepository {
     });
   }
 
-  async saveLineup(matchId: number, dto: SaveLineupDto) {
+  async saveLineup(matchId: string, dto: SaveLineupDto) {
     return this.prisma.$transaction(async (tx) => {
       const lineup = await tx.matchLineup.upsert({
         where: { matchId },
@@ -46,7 +46,7 @@ export class MatchLineupRepository {
     });
   }
 
-  findSlotsWithUsers(matchId: number) {
+  findSlotsWithUsers(matchId: string) {
     return this.prisma.lineupSlot.findMany({
       where: { lineup: { matchId } },
       select: {
@@ -56,7 +56,7 @@ export class MatchLineupRepository {
     });
   }
 
-  findMatchInfo(matchId: number) {
+  findMatchInfo(matchId: string) {
     return this.prisma.match.findUnique({
       where: { id: matchId },
       select: {
@@ -67,7 +67,7 @@ export class MatchLineupRepository {
     });
   }
 
-  findSquadPlayers(matchId: number) {
+  findSquadPlayers(matchId: string) {
     return this.prisma.matchSquad.findMany({
       where: { matchId },
       include: { player: { select: PLAYER_SELECT } },
@@ -98,7 +98,7 @@ export class MatchLineupRepository {
     });
   }
 
-  confirmLineup(matchId: number, confirmedById: string) {
+  confirmLineup(matchId: string, confirmedById: string) {
     return this.prisma.matchLineup.update({
       where: { matchId },
       data: { isConfirmed: true, confirmedAt: new Date(), confirmedById },
