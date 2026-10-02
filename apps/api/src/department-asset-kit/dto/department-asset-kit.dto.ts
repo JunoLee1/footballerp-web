@@ -16,5 +16,5 @@ export interface AssetKitItemDto {
 
 export interface UpsertDepartmentAssetKitDto {
   assetItems: AssetKitItemDto[];
-  defaultExpenseCategoryId: number;
+  defaultExpenseCategoryId: string;
 }
