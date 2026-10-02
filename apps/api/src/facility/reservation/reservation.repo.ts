@@ -11,7 +11,7 @@ export class ReservationRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.facilityReservation.findUnique({
       where: { id },
       include: { reservedBy: { select: { id: true, nickname: true } } },
@@ -25,7 +25,7 @@ export class ReservationRepository {
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prisma.facilityReservation.delete({ where: { id } });
   }
 }

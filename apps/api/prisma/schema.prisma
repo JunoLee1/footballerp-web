@@ -82,6 +82,7 @@ enum PlayerStatus {
   ON_LOAN
   RELEASED
   RETIRED
+  SUSPENDED
 }
 
 enum Position {

@@ -7,6 +7,8 @@ import { AcademyFeeRepository } from "./academy-fee.repo";
 import { NotificationRepository } from "../notification/notification.repo";
 import { getPrisma } from "../lib/prisma";
 import { AppError } from "../lib/appError";
+import { assertCuid } from "../lib/cuidGuard";
+import { FeeStatus } from "../generated/enums";
 import { canReadHR, canReadFinance, isAdminLike } from "../lib/permissions";
 import multer from "multer";
 import { gcsUpload } from "../lib/gcs";
@@ -106,7 +108,7 @@ router.patch("/:id/submit-proof", auth, requireFinance, controller.submitPayment
 // 1차 승인: FINANCE_MANAGER → SUBMITTED → FIRST_APPROVED
 router.patch("/:id/first-approve", auth, requireFinance, async (req, res, next) => {
   try {
-    res.json(await service.firstApprovePayment(Number(req.params.id)));
+    res.json(await service.firstApprovePayment(assertCuid(req.params.id)));
   } catch (e) { next(e); }
 });
 
@@ -124,7 +126,7 @@ router.post("/:id/toss-confirm", auth, async (req, res, next) => {
   try {
     const { role } = req.user!;
     if (role !== "GUARDIAN") return next(new AppError(403, "FORBIDDEN"));
-    const feeId = Number(req.params.id);
+    const feeId = assertCuid(req.params.id);
     const fee = await service.getById(feeId);
     if (fee.guardianId !== req.user!.id) return next(new AppError(403, "FORBIDDEN"));
     next();
@@ -141,7 +143,7 @@ router.post("/:id/staff-upload-proof", auth, (req, _res, next) => {
 }, uploadProof.single("file"), gcsUpload("academy-fee-proofs"), async (req, res, next) => {
   try {
     if (!req.file) return next(new AppError(400, "FILE_REQUIRED"));
-    const feeId = Number(req.params.id);
+    const feeId = assertCuid(req.params.id);
     const url = (req.file as any).gcsUrl;
     const updated = await service.adminSubmitProof(feeId, { paymentProofUrl: url });
     res.json(updated);
@@ -154,10 +156,10 @@ router.post("/:id/upload-proof", auth, uploadProof.single("file"), gcsUpload("ac
     const { role, id: userId } = req.user!;
     if (role !== "GUARDIAN") { return next(new AppError(403, "FORBIDDEN")); }
     if (!req.file) return next(new AppError(400, "FILE_REQUIRED"));
-    const feeId = Number(req.params.id);
+    const feeId = assertCuid(req.params.id);
     const fee = await service.getById(feeId);
     if (fee.guardianId !== userId) { return next(new AppError(403, "FORBIDDEN")); }
-    if (["SUBMITTED", "PAID"].includes(fee.status as string)) { return next(new AppError(409, "ALREADY_SUBMITTED")); }
+    if (fee.status === FeeStatus.SUBMITTED || fee.status === FeeStatus.PAID) { return next(new AppError(409, "ALREADY_SUBMITTED")); }
     const url = (req.file as any).gcsUrl;
     const updated = await service.submitPaymentProof(feeId, { paymentProofUrl: url });
     res.json(updated);

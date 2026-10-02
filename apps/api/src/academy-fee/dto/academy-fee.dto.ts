@@ -1,3 +1,5 @@
+import type { FeeStatus } from "../../generated/enums"
+
 export interface CreateAcademyFeeDto {
   playerId: string
   guardianId: string
@@ -12,7 +14,7 @@ export interface SubmitPaymentProofDto {
 }
 
 export interface FeeListQuery {
-  status?: string
+  status?: FeeStatus
   teamId?: string
   year?: number
   month?: number

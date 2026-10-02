@@ -1,12 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
+import { assertCuid } from "../lib/cuidGuard";
+import { FeeStatus } from "../generated/enums";
 import type { AcademyFeeService } from "./academy-fee.service";
 
 export class AcademyFeeController {
   constructor(private service: AcademyFeeService) {}
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
-    try { res.json(await this.service.getById(Number(req.params.id))); }
+    try { res.json(await this.service.getById(assertCuid(req.params.id))); }
     catch (e) { next(e); }
   };
 
@@ -21,8 +23,8 @@ export class AcademyFeeController {
     try {
       const { status, teamId, year, month } = req.query;
       const query: import("./dto/academy-fee.dto").FeeListQuery = {};
-      if (status) query.status = status as string;
-      if (teamId) query.teamId = Number(teamId);
+      if (status) query.status = status as FeeStatus;
+      if (teamId) query.teamId = assertCuid(String(teamId));
       if (year) query.year = Number(year);
       if (month) query.month = Number(month);
       res.json(await this.service.getAll(query));
@@ -43,18 +45,18 @@ export class AcademyFeeController {
   };
 
   submitPaymentProof = async (req: Request, res: Response, next: NextFunction) => {
-    try { res.json(await this.service.submitPaymentProof(Number(req.params.id), req.body)); }
+    try { res.json(await this.service.submitPaymentProof(assertCuid(req.params.id), req.body)); }
     catch (e) { next(e); }
   };
 
   approvePayment = async (req: Request, res: Response, next: NextFunction) => {
-    try { res.json(await this.service.approvePayment(Number(req.params.id), req.user!.id)); }
+    try { res.json(await this.service.approvePayment(assertCuid(req.params.id), req.user!.id)); }
     catch (e) { next(e); }
   };
 
   tossConfirm = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const id = Number(req.params.id);
+      const id = assertCuid(req.params.id);
       const { paymentKey, orderId, amount } = req.body as import("./dto/academy-fee.dto").TossConfirmDto;
       if (!paymentKey || !orderId || !amount) return next(new AppError(400, "INVALID_PAYMENT_DATA"));
       res.json(await this.service.confirmTossPayment(id, { paymentKey, orderId, amount }));
@@ -75,13 +77,13 @@ export class AcademyFeeController {
   getReceipt = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: requesterId, role, frontOfficeRole } = req.user!;
-      res.json(await this.service.getReceipt(Number(req.params.id), requesterId, role, frontOfficeRole));
+      res.json(await this.service.getReceipt(assertCuid(req.params.id), requesterId, role, frontOfficeRole));
     } catch (e) { next(e); }
   };
 
   adminSubmit = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.adminSubmitProof(Number(req.params.id), req.body));
+      res.json(await this.service.adminSubmitProof(assertCuid(req.params.id), req.body));
     } catch (e) { next(e); }
   };
 

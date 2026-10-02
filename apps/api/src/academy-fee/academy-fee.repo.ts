@@ -1,4 +1,5 @@
 import type { PrismaClient } from '../generated/client'
+import type { FeeStatus } from '../generated/enums'
 import type { CreateAcademyFeeDto, FeeListQuery } from './dto/academy-fee.dto'
 
 const INCLUDE = {
@@ -56,10 +57,10 @@ export class AcademyFeeRepository {
     return this.prisma.academyFee.createMany({ data: fees, skipDuplicates: true })
   }
 
-  updateStatus(id: string, status, extra?: { paidAt?: Date }) {
+  updateStatus(id: string, status: FeeStatus, extra?: { paidAt?: Date }) {
     return this.prisma.academyFee.update({
       where: { id },
-      data: { status: status, ...extra },
+      data: { status, ...extra },
       include: INCLUDE,
     })
   }

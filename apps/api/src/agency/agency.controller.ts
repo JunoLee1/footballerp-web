@@ -4,6 +4,7 @@ import { hasPermission, Permission } from "../lib/permissions";
 import { Role } from "../generated/enums";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 
 const requireAdmin = (req: Request) => {
   const user = requireUser(req);
@@ -23,7 +24,7 @@ export class AgencyController {
 
   get = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.get(Number(req.params["id"])));
+      res.json(await this.service.get(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -37,14 +38,14 @@ export class AgencyController {
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireAdmin(req);
-      res.json(await this.service.update(Number(req.params["id"]), req.body));
+      res.json(await this.service.update(assertCuid(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 
   delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireAdmin(req);
-      await this.service.delete(Number(req.params["id"]));
+      await this.service.delete(assertCuid(req.params["id"]));
       res.status(204).send();
     } catch (err) { next(err); }
   };
