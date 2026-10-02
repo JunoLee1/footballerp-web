@@ -58,8 +58,8 @@ export class OperatingExpenseRepository {
    */
   async findBudgetLineForSeasonCategoryDept(params: {
     seasonId: number;
-    categoryId: number;
-    departmentId: number | null;
+    categoryId: string;
+    departmentId: string | null;
     date?: Date;
   }) {
     const date = params.date ?? new Date();
@@ -84,7 +84,7 @@ export class OperatingExpenseRepository {
   async createWithBudgetCheck(
     data: {
       seasonId: number;
-      categoryId: number;
+      categoryId: string;
       costType?: ExpenseCostType;
       amount: number;
       date: Date;
@@ -92,7 +92,7 @@ export class OperatingExpenseRepository {
       createdById: string;
       budgetLineId: string;
       clubId?: string | null;
-    },
+    },//TODO: 타입파일로 이동
     tx?: Tx,
   ) {
     const run = async (client: Tx) => {
@@ -171,16 +171,16 @@ export class OperatingExpenseRepository {
       cancellationReason: string;
       paidAt: Date;
       paidById: string;
-    }>
+    }>//TODO 타입 DTO 파일로 이동
   ) {
     return this.prisma.operatingExpense.update({ where: { id }, data });
   }
 
-  update(id: string, data: { amount?: number; categoryId?: number; note?: string }) {
+  update(id: string, data: { amount?: number; categoryId?: string; note?: string }) {
     return this.prisma.operatingExpense.update({ where: { id }, data });
   }
 
-  async findBudgetPlan(seasonId: number, categoryId: number) {
+  async findBudgetPlan(seasonId: number, categoryId: string) {
     const report = await this.prisma.financialReport.findUnique({
       where: { seasonId },
       include: {
@@ -191,7 +191,7 @@ export class OperatingExpenseRepository {
     return report.budgetCategoryPlans[0] ?? null;
   }
 
-  async sumSpendBySeasonAndCategory(seasonId: number, categoryId: number) {
+  async sumSpendBySeasonAndCategory(seasonId: number, categoryId: string) {
     const result = await this.prisma.operatingExpense.aggregate({
       where: { seasonId, categoryId },
       _sum: { amount: true },
