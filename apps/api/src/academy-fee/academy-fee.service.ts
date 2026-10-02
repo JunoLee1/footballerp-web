@@ -81,7 +81,7 @@ export class AcademyFeeService {
     });
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
     return fee;
@@ -145,21 +145,21 @@ export class AcademyFeeService {
     }
   }
 
-  async submitPaymentProof(id: number, dto: SubmitPaymentProofDto) {
+  async submitPaymentProof(id: string, dto: SubmitPaymentProofDto) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
     if (fee.status === "PAID") throw new AppError(409, "ALREADY_PAID");
     return this.repo.submitPaymentProof(id, dto.paymentProofUrl);
   }
 
-  async firstApprovePayment(id: number) {
+  async firstApprovePayment(id: string) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
     if (fee.status !== "SUBMITTED") throw new AppError(409, "INVALID_STATUS");
     return this.repo.updateStatus(id, "FIRST_APPROVED");
   }
 
-  async approvePayment(id: number, approverId: string) {
+  async approvePayment(id: string, approverId: string) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
     if (fee.status !== "FIRST_APPROVED" && fee.status !== "SUBMITTED") throw new AppError(409, "INVALID_STATUS");
@@ -182,7 +182,7 @@ export class AcademyFeeService {
     const paid = await this.repo.approvePayment(id);
 
     // LedgerEntry 생성 (fee.amount가 Decimal일 수 있으므로 Number() 변환)
-    const amount = Number((fee as any).amount ?? 0);
+    const amount = Number(fee.amount ?? 0);
     await prisma.ledgerEntry.create({
       data: {
         type: "INCOME",
@@ -193,13 +193,13 @@ export class AcademyFeeService {
         amountKrw: amount,
         isRefund: false,
         description: formatLedgerDescription("academy_fee", "payment_approved", {
-          player: (fee as any).player?.playerName ?? String(fee.playerId),
-          period: `${(fee as any).year ?? year}년 ${(fee as any).month ?? month}월`,
+          player: fee.player?.playerName ?? String(fee.playerId),
+          period: `${fee.year ?? year}년 ${fee.month ?? month}월`,
         }),
         relatedModule: "AcademyFee",
         relatedId: String(id),
         createdById: approverId,
-      } as any,
+      },
     });
 
     // guardian 알림
@@ -215,7 +215,7 @@ export class AcademyFeeService {
     return paid;
   }
 
-  async confirmTossPayment(id: number, dto: TossConfirmDto) {
+  async confirmTossPayment(id: string, dto: TossConfirmDto) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
     if ((fee.status as string) === "PAID") return fee; // 멱등성
@@ -277,13 +277,13 @@ export class AcademyFeeService {
         amountKrw: amount,
         isRefund: false,
         description: formatLedgerDescription("academy_fee", "payment_approved", {
-          player: (fee as any).player?.playerName ?? String(fee.playerId),
-          period: `${(fee as any).year ?? year}년 ${(fee as any).month ?? month}월`,
+          player: fee.player?.playerName ?? String(fee.playerId),
+          period: `${fee.year ?? year}년 ${fee.month ?? month}월`,
         }),
         relatedModule: "AcademyFee",
         relatedId: String(id),
         createdById: fee.guardianId,
-      } as any,
+      },
     });
 
     // guardian 알림
@@ -292,7 +292,7 @@ export class AcademyFeeService {
       "FEE_INVOICE_ISSUED",
       () => ({
         title: "아카데미 회비 납부 완료",
-        body: `${(fee as any).player?.playerName} 선수의 ${(fee as any).month}월 회비 결제가 완료됐습니다.`,
+        body: `${fee.player?.playerName} 선수의 ${fee.month}월 회비 결제가 완료됐습니다.`,
       }),
       id,
     ).catch(console.error);
@@ -306,7 +306,7 @@ export class AcademyFeeService {
 
     // orderId 형식: fee-{id}-{timestamp}
     const parts = body.orderId.split("-");
-    const feeId = Number(parts[1]);
+    const feeId = String(parts[1]);
     if (isNaN(feeId)) return { ok: true };
 
     const fee = await this.repo.findById(feeId);
@@ -326,7 +326,7 @@ export class AcademyFeeService {
     return { ok: true };
   }
 
-  async getReceipt(id: number, requesterId: string, requesterRole: string, requesterFoRole?: string | null) {
+  async getReceipt(id: string, requesterId: string, requesterRole: string, requesterFoRole?: string | null) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
     if ((fee.status as string) !== "PAID") throw new AppError(404, "RECEIPT_NOT_AVAILABLE");
@@ -339,19 +339,19 @@ export class AcademyFeeService {
 
     return {
       id: fee.id,
-      year: (fee as any).year,
-      month: (fee as any).month,
+      year: fee.year,
+      month: fee.month,
       amount: Number(fee.amount),
       paidAt: fee.paidAt,
-      paymentMethod: (fee as any).paymentMethod ?? null,
-      pgTransactionId: (fee as any).pgTransactionId ?? null,
-      receiptIssuedAt: (fee as any).receiptIssuedAt,
-      playerName: (fee as any).player?.playerName ?? "",
-      guardianUsername: (fee as any).guardian?.username ?? "",
+      paymentMethod: fee.paymentMethod ?? null,
+      pgTransactionId: fee.pgTransactionId ?? null,
+      receiptIssuedAt: fee.receiptIssuedAt,
+      playerName: fee.player?.playerName ?? "",
+      guardianUsername: fee.guardian?.username ?? "",
     };
   }
 
-  async adminSubmitProof(id: number, dto: AdminSubmitDto) {
+  async adminSubmitProof(id: string, dto: AdminSubmitDto) {
     const fee = await this.repo.findById(id);
     if (!fee) throw new AppError(404, "FEE_NOT_FOUND");
     if (!["PENDING", "OVERDUE"].includes(fee.status as string)) {
@@ -363,7 +363,7 @@ export class AcademyFeeService {
       "FEE_INVOICE_ISSUED",
       () => ({
         title: "회비 증빙이 접수됐습니다",
-        body: `${(fee as any).player?.playerName} 선수의 ${(fee as any).month}월 회비 증빙이 재무팀에 접수됐습니다.`,
+        body: `${fee.player?.playerName} 선수의 ${fee.month}월 회비 증빙이 재무팀에 접수됐습니다.`,
       }),
       id,
     ).catch(console.error);
