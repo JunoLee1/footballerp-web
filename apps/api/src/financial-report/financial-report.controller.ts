@@ -125,7 +125,7 @@ export class FinancialReportController {
     try {
       const { role, frontOfficeRole, id: userId } = requireUser(req);
       if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      const logId = Number(req.params["logId"]);
+      const logId = String(req.params["logId"]);
       const result = await this.service.approveOverride(logId, userId);
       res.json(result);
     } catch (err) { next(err); }
@@ -135,7 +135,7 @@ export class FinancialReportController {
     try {
       const { role, frontOfficeRole, id: userId } = requireUser(req);
       if (!canWrite(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
-      const logId = Number(req.params["logId"]);
+      const logId = String(req.params["logId"]);
       const { reviewNote } = req.body as { reviewNote: string };
       const result = await this.service.rejectOverride(logId, userId, reviewNote);
       res.json(result);

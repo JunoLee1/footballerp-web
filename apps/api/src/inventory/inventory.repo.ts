@@ -8,7 +8,7 @@ export class InventoryRepository {
     return this.prisma.facilityInventoryItem.findMany({ orderBy: { name: "asc" } });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.facilityInventoryItem.findUnique({ where: { id } });
   }
 
@@ -23,7 +23,7 @@ export class InventoryRepository {
     });
   }
 
-  updateQuantity(id: number, newQuantity: number) {
+  updateQuantity(id: string, newQuantity: number) {
     return this.prisma.facilityInventoryItem.update({
       where: { id },
       data: { quantity: newQuantity },

@@ -141,8 +141,8 @@ export class PlayerController {
       if (!isAdminLike(user.role)) {
         res.status(403).json({ code: "FORBIDDEN" }); return;
       }
-      const { targetTeamId } = req.body as { targetTeamId: number };
-      if (!targetTeamId || typeof targetTeamId !== 'number' || targetTeamId <= 0) {
+      const { targetTeamId } = req.body as { targetTeamId: string };
+      if (!targetTeamId || typeof targetTeamId !== 'string' || targetTeamId.length === 0) {
         res.status(400).json({ code: "TARGET_TEAM_REQUIRED" }); return;
       }
       const result = await this.service.promotePlayer(String(req.params["id"]), targetTeamId, user.id, user.clubId);

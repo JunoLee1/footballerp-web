@@ -107,7 +107,7 @@ export class PlayerService {
     return result;
   }
 
-  async promotePlayer(id: string, targetTeamId: number, actorId: string, actorClubId?: string | null) {
+  async promotePlayer(id: string, targetTeamId: string, actorId: string, actorClubId?: string | null) {
     const player = await this.repo.findById(id, actorClubId);
     if (!player) throw new AppError(404, "PLAYER_NOT_FOUND");
     if (!player.team || player.team.type !== "YOUTH") {

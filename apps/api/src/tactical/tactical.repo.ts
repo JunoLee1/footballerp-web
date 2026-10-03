@@ -44,11 +44,11 @@ const ANALYSIS_SELECT = {
 export class TacticalRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findAll(filters?: { matchId?: number; phase?: string }) {
+  findAll(filters?: { matchId?: string; phase?: string }) {
     return this.prisma.tacticalAnalysis.findMany({
       where: {
-        ...(filters?.matchId && { matchId: filters.matchId }),
-        ...(filters?.phase && { phase: filters.phase as "PRE_MATCH" | "POST_MATCH" }),
+        ...(filters?.matchId !== undefined && { matchId: filters.matchId }),
+        ...(filters?.phase !== undefined && { phase: filters.phase as "PRE_MATCH" | "POST_MATCH" }),
       },
       select: ANALYSIS_SELECT,
       orderBy: { createdAt: "desc" },

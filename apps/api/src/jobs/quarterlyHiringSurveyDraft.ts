@@ -18,13 +18,13 @@ interface RunDeps {
   computePriorityQueue: (
     season: { id: number; leagueLevel: LeagueLevel },
     ibiBeta: number,
-  ) => Promise<{ queue: Array<{ departmentId: number; departmentName: string; highPriority: boolean }> }>
+  ) => Promise<{ queue: Array<{ departmentId: string; departmentName: string; highPriority: boolean }> }>
   createQuarterlyDraft: (args: {
     title: string
     deadlineAt: Date
-    targetDeptIds: number[]
+    targetDeptIds: string[]
     systemUserId: string
-  }) => Promise<{ id: number }>
+  }) => Promise<{ id: string }>
   now: () => Date
   warn?: (msg: string) => void
 }

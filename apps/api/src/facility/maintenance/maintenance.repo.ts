@@ -1,4 +1,5 @@
 import type { PrismaClient } from "../../generated/client";
+import type { MaintenanceStatus } from "../../generated/enums";
 import type { CreateMaintenanceDto, UpdateMaintenanceDto, MaintenanceListQuery } from "./dto/maintenance.dto";
 
 const INCLUDE = {
@@ -60,7 +61,7 @@ export class MaintenanceRepository {
   updateStatus(id: string, status: string) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
-      data: { status: status },
+      data: { status: status as MaintenanceStatus },
       include: INCLUDE,
     });
   }

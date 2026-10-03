@@ -10,7 +10,7 @@ export class TacticalService {
     private notifRepo?: NotificationRepository,
   ) {}
 
-  list(filters?: { matchId?: number; phase?: string }) {
+  list(filters?: { matchId?: string; phase?: string }) {
     return this.repo.findAll(filters);
   }
 

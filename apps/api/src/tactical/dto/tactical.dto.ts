@@ -1,7 +1,7 @@
 import { TacticalPhase, Position } from "../../generated/enums";
 
 export interface CreateAnalysisDto {
-  matchId: number;
+  matchId: string;
   seasonId: number;
   phase: TacticalPhase;
   formation?: string;

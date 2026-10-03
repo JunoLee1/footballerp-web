@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/client";
+import { PrismaClient, Prisma } from "../generated/client";
 import { PlayerStatus } from "../generated/enums";
 import { CreatePlayerDto, UpdatePlayerDto, PlayerListQuery } from "./dto/player.dto";
 import { encrypt } from "../lib/crypto";
@@ -96,35 +96,36 @@ export class PlayerRepository {
     const encPhone = data.emergencyContactPhone ? encrypt(data.emergencyContactPhone) : null;
     const encRelation = data.emergencyContactRelation ? encrypt(data.emergencyContactRelation) : null;
 
+    const createData: Prisma.PlayerUncheckedCreateInput = {
+      playerName: data.playerName,
+      dateOfBirthEncrypted: dobEnc.encrypted,
+      dateOfBirthIv: dobEnc.iv,
+      preferredFoot: data.preferredFoot,
+      height: data.height,
+      weight: data.weight,
+      position: data.position,
+      level: data.level,
+      nationalityId: data.nationalityId,
+      clubId: clubId ?? null,
+    };
+    if (data.externalId) createData.externalId = data.externalId;
+    if (data.userId) createData.userId = data.userId;
+    if (data.agentId) createData.agentId = data.agentId;
+    if (data.agencyId) createData.agencyId = data.agencyId;
+    if (encName) {
+      createData.emergencyContactNameEncrypted = encName.encrypted;
+      createData.emergencyContactNameIv = encName.iv;
+    }
+    if (encPhone) {
+      createData.emergencyContactPhoneEncrypted = encPhone.encrypted;
+      createData.emergencyContactPhoneIv = encPhone.iv;
+    }
+    if (encRelation) {
+      createData.emergencyContactRelationEncrypted = encRelation.encrypted;
+      createData.emergencyContactRelationIv = encRelation.iv;
+    }
     return this.prisma.player.create({
-      data: {
-        playerName: data.playerName,
-        dateOfBirthEncrypted: dobEnc.encrypted,
-        dateOfBirthIv: dobEnc.iv,
-        preferredFoot: data.preferredFoot,
-        height: data.height,
-        weight: data.weight,
-        position: data.position,
-        level: data.level,
-        nationalityId: data.nationalityId,
-        clubId: clubId ?? null,
-        ...(data.externalId && { externalId: data.externalId }),
-        ...(data.userId && { userId: data.userId }),
-        ...(data.agentId && { agentId: data.agentId }),
-        ...(data.agencyId && { agencyId: data.agencyId }),
-        ...(encName && {
-          emergencyContactNameEncrypted: encName.encrypted,
-          emergencyContactNameIv: encName.iv,
-        }),
-        ...(encPhone && {
-          emergencyContactPhoneEncrypted: encPhone.encrypted,
-          emergencyContactPhoneIv: encPhone.iv,
-        }),
-        ...(encRelation && {
-          emergencyContactRelationEncrypted: encRelation.encrypted,
-          emergencyContactRelationIv: encRelation.iv,
-        }),
-      },
+      data: createData,
       select: PLAYER_SELECT,
     });
   }
@@ -135,39 +136,39 @@ export class PlayerRepository {
     const encPhone = data.emergencyContactPhone != null ? encrypt(data.emergencyContactPhone) : null;
     const encRelation = data.emergencyContactRelation != null ? encrypt(data.emergencyContactRelation) : null;
 
+    const updateData: Prisma.PlayerUncheckedUpdateInput = {};
+    if (data.playerName) updateData.playerName = data.playerName;
+    if (encDob) {
+      updateData.dateOfBirthEncrypted = encDob.encrypted;
+      updateData.dateOfBirthIv = encDob.iv;
+    }
+    if (data.preferredFoot) updateData.preferredFoot = data.preferredFoot;
+    if (data.height) updateData.height = data.height;
+    if (data.weight) updateData.weight = data.weight;
+    if (data.position) updateData.position = data.position;
+    if (data.level) updateData.level = data.level;
+    if (data.nationalityId) updateData.nationalityId = data.nationalityId;
+    if (data.externalId !== undefined) updateData.externalId = data.externalId;
+    if (data.agentId !== undefined) updateData.agentId = data.agentId;
+    if (data.agencyId !== undefined) updateData.agencyId = data.agencyId;
+    if (encName) {
+      updateData.emergencyContactNameEncrypted = encName.encrypted;
+      updateData.emergencyContactNameIv = encName.iv;
+    }
+    if (encPhone) {
+      updateData.emergencyContactPhoneEncrypted = encPhone.encrypted;
+      updateData.emergencyContactPhoneIv = encPhone.iv;
+    }
+    if (encRelation) {
+      updateData.emergencyContactRelationEncrypted = encRelation.encrypted;
+      updateData.emergencyContactRelationIv = encRelation.iv;
+    }
+    if (data.allergies !== undefined) updateData.allergies = data.allergies;
+    if (data.foodPreferences !== undefined) updateData.foodPreferences = data.foodPreferences;
+    if (data.playStyle !== undefined) updateData.playStyle = data.playStyle;
     return this.prisma.player.update({
       where: { id },
-      data: {
-        ...(data.playerName && { playerName: data.playerName }),
-        ...(encDob && {
-          dateOfBirthEncrypted: encDob.encrypted,
-          dateOfBirthIv: encDob.iv,
-        }),
-        ...(data.preferredFoot && { preferredFoot: data.preferredFoot }),
-        ...(data.height && { height: data.height }),
-        ...(data.weight && { weight: data.weight }),
-        ...(data.position && { position: data.position }),
-        ...(data.level && { level: data.level }),
-        ...(data.nationalityId && { nationalityId: data.nationalityId }),
-        ...(data.externalId !== undefined && { externalId: data.externalId }),
-        ...(data.agentId !== undefined && { agentId: data.agentId }),
-        ...(data.agencyId !== undefined && { agencyId: data.agencyId }),
-        ...(encName && {
-          emergencyContactNameEncrypted: encName.encrypted,
-          emergencyContactNameIv: encName.iv,
-        }),
-        ...(encPhone && {
-          emergencyContactPhoneEncrypted: encPhone.encrypted,
-          emergencyContactPhoneIv: encPhone.iv,
-        }),
-        ...(encRelation && {
-          emergencyContactRelationEncrypted: encRelation.encrypted,
-          emergencyContactRelationIv: encRelation.iv,
-        }),
-        ...(data.allergies !== undefined && { allergies: data.allergies }),
-        ...(data.foodPreferences !== undefined && { foodPreferences: data.foodPreferences }),
-        ...(data.playStyle !== undefined && { playStyle: data.playStyle as any }),
-      },
+      data: updateData,
       select: PLAYER_SELECT,
     });
   }
@@ -180,7 +181,7 @@ export class PlayerRepository {
     });
   }
 
-  promotePlayer(id: string, targetTeamId: number, youthOriginTeamId: number) {
+  promotePlayer(id: string, targetTeamId: string, youthOriginTeamId: string) {
     return this.prisma.player.update({
       where: { id },
       data: {

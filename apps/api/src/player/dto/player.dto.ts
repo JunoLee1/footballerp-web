@@ -1,4 +1,4 @@
-import { Foot, Position, PlayerLevel, PlayerStatus, TeamType } from "../../generated/enums";
+import { Foot, Position, PlayerLevel, PlayerStatus, TeamType, PlayStyle } from "../../generated/enums";
 
 export interface CreatePlayerDto {
   playerName: string;
@@ -12,7 +12,7 @@ export interface CreatePlayerDto {
   externalId?: string;
   userId?: string;
   agentId?: string;
-  agencyId?: number;
+  agencyId?: string;
   emergencyContactName?: string;
   emergencyContactPhone?: string;
   emergencyContactRelation?: string;
@@ -29,13 +29,13 @@ export interface UpdatePlayerDto {
   nationalityId?: number;
   externalId?: string;
   agentId?: string;
-  agencyId?: number | null;
+  agencyId?: string | null;
   emergencyContactName?: string | null;
   emergencyContactPhone?: string | null;
   emergencyContactRelation?: string | null;
   allergies?: string[];
   foodPreferences?: string | null;
-  playStyle?: string | null;
+  playStyle?: PlayStyle | null;
 }
 
 export interface UpdatePlayerStatusDto {

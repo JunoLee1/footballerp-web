@@ -9,7 +9,7 @@ export class ProbationReviewController {
   submit = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: reviewerId, role, frontOfficeRole } = requireUser(req);
-      const staffRecordId = Number(req.params["id"]);
+      const staffRecordId = String(req.params["id"]);
       const body = req.body as SubmitProbationReviewDto;
       const result = await this.service.submit(
         staffRecordId,
@@ -27,7 +27,7 @@ export class ProbationReviewController {
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: reviewerId, role, frontOfficeRole } = requireUser(req);
-      const staffRecordId = Number(req.params["id"]);
+      const staffRecordId = String(req.params["id"]);
       const rows = await this.service.list(
         staffRecordId,
         reviewerId,

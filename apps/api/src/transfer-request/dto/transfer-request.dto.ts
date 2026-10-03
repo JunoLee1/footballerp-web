@@ -2,7 +2,7 @@ import { TransferType, TransferRequestStatus, NegotiationType } from "../../gene
 
 export interface CreateTransferRequestDto {
   playerId: string;
-  agencyId: number;
+  agencyId: string;
   type: TransferType;
   fromClub?: string;
   toClub?: string;

@@ -29,7 +29,7 @@ export class TeamRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.team.findUnique({
       where: { id },
       include: { club: { select: { id: true, name: true, isLite: true } } },
@@ -54,7 +54,7 @@ export class TeamRepository {
     return this.prisma.club.findUnique({ where: { id }, select: { id: true } });
   }
 
-  findActiveByNameAndClub(name: string, clubId: string, excludeId?: number) {
+  findActiveByNameAndClub(name: string, clubId: string, excludeId?: string) {
     return this.prisma.team.findFirst({
       where: {
         name,
@@ -65,7 +65,7 @@ export class TeamRepository {
     });
   }
 
-  update(id: number, dto: UpdateTeamDto) {
+  update(id: string, dto: UpdateTeamDto) {
     return this.prisma.team.update({
       where: { id },
       data: dto,

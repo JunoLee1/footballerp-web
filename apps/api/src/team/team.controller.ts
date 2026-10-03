@@ -21,7 +21,7 @@ export class TeamController {
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireUser(req);
-      const team = await this.service.getById(Number(req.params["id"]));
+      const team = await this.service.getById(String(req.params["id"]));
       assertClubAccess(req, team.club?.id ?? null);
       res.json(team);
     } catch (err) { next(err); }
@@ -47,7 +47,7 @@ export class TeamController {
   update = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { role, clubId } = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = String(req.params["id"]);
       if (isSuperAdmin(role)) {
         res.json(await this.service.update(id, req.body));
         return;
@@ -66,7 +66,7 @@ export class TeamController {
   deactivate = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { role, clubId } = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = String(req.params["id"]);
       if (isSuperAdmin(role)) {
         res.json(await this.service.deactivate(id));
         return;
