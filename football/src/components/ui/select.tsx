@@ -39,11 +39,28 @@ function useSelectLabelStore(): SelectLabelStore {
   )
 }
 
-function Select(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
+// base-ui 의 onValueChange 시그니처는 `(value, eventDetails) => void` 라서
+// `useState` setter (`Dispatch<SetStateAction<T>>`) 를 그대로 넘기면 타입 불일치가 발생한다.
+// 호출부가 거의 전부 setter 패턴이므로 wrapper 레벨에서 1-arg 콜백으로 노출.
+type BaseSelectProps = Omit<React.ComponentProps<typeof SelectPrimitive.Root>, "onValueChange">
+type SelectProps = BaseSelectProps & {
+  onValueChange?: (value: any) => void
+}
+
+function Select({ onValueChange, ...props }: SelectProps) {
   const store = useSelectLabelStore()
+  const handleValueChange = React.useCallback(
+    (value: unknown) => {
+      onValueChange?.(value)
+    },
+    [onValueChange],
+  )
   return (
     <SelectLabelContext.Provider value={store}>
-      <SelectPrimitive.Root {...(props as any)} />
+      <SelectPrimitive.Root
+        {...(props as any)}
+        onValueChange={onValueChange ? handleValueChange : undefined}
+      />
     </SelectLabelContext.Provider>
   )
 }
