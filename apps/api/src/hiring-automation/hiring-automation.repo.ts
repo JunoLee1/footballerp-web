@@ -30,7 +30,7 @@ export class HiringAutomationRepository {
 
   // --- DepartmentIbiConfig ---
 
-  listIbiConfigs(departmentId?: number) {
+  listIbiConfigs(departmentId?: string) {
     const where = departmentId !== undefined ? { departmentId } : {};
     return this.prisma.departmentIbiConfig.findMany({
       where,
@@ -39,7 +39,7 @@ export class HiringAutomationRepository {
     });
   }
 
-  findIbiConfigById(id: number) {
+  findIbiConfigById(id: string) {
     return this.prisma.departmentIbiConfig.findUnique({
       where: { id },
       include: { department: { select: { id: true, name: true, category: true } } },
@@ -56,7 +56,7 @@ export class HiringAutomationRepository {
     });
   }
 
-  updateIbiConfig(id: number, data: UpdateDepartmentIbiConfigDto) {
+  updateIbiConfig(id: string, data: UpdateDepartmentIbiConfigDto) {
     return this.prisma.departmentIbiConfig.update({
       where: { id },
       data,
@@ -64,7 +64,7 @@ export class HiringAutomationRepository {
     });
   }
 
-  deleteIbiConfig(id: number) {
+  deleteIbiConfig(id: string) {
     return this.prisma.departmentIbiConfig.delete({ where: { id } });
   }
 
@@ -90,7 +90,7 @@ export class HiringAutomationRepository {
     });
   }
 
-  findComplianceDeadlineById(id: number) {
+  findComplianceDeadlineById(id: string) {
     return this.prisma.complianceDeadline.findUnique({ where: { id } });
   }
 
@@ -104,7 +104,7 @@ export class HiringAutomationRepository {
     });
   }
 
-  updateComplianceDeadline(id: number, data: UpdateComplianceDeadlineDto) {
+  updateComplianceDeadline(id: string, data: UpdateComplianceDeadlineDto) {
     return this.prisma.complianceDeadline.update({
       where: { id },
       data: {
@@ -114,7 +114,7 @@ export class HiringAutomationRepository {
     });
   }
 
-  deleteComplianceDeadline(id: number) {
+  deleteComplianceDeadline(id: string) {
     return this.prisma.complianceDeadline.delete({ where: { id } });
   }
 
@@ -151,7 +151,7 @@ export class HiringAutomationRepository {
     return { playerCount, coachingCount, medicalCount, youthTeamCount };
   }
 
-  getActiveJobPostingsForDepartment(departmentId: number) {
+  getActiveJobPostingsForDepartment(departmentId: string) {
     return this.prisma.jobPosting.findMany({
       where: { departmentId, status: { in: ["DRAFT", "OPEN"] } },
       select: { id: true, status: true },
@@ -160,7 +160,7 @@ export class HiringAutomationRepository {
 
   createJobPostingDraft(data: {
     title: string;
-    departmentId: number;
+    departmentId: string;
     headcount: number;
     description: string;
     createdById: string;

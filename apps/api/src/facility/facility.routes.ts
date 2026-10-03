@@ -18,6 +18,7 @@ import { AccessLogRepository } from "./access-log/access-log.repo";
 import { AccessLogService } from "./access-log/access-log.service";
 import { AccessLogController } from "./access-log/access-log.controller";
 import { intIdRouter } from "../lib/idParamGuard";
+import { assertCuid } from "../lib/cuidGuard";
 
 const router = intIdRouter();
 
@@ -59,12 +60,12 @@ router.post("/maintenance/:id/gm-approve", auth, maintenanceController.gmApprove
 router.post("/maintenance/:id/reject", auth, maintenanceController.reject);
 router.post("/maintenance/:id/lock", auth, async (req, res, next) => {
   try {
-    res.json(await maintenanceService.lock(Number(req.params.id)));
+    res.json(await maintenanceService.lock(assertCuid(req.params.id)));
   } catch (e) { next(e); }
 });
 router.post("/maintenance/:id/submit-finance", auth, async (req, res, next) => {
   try {
-    res.json(await maintenanceService.submitToFinance(Number(req.params.id), req.user!.id));
+    res.json(await maintenanceService.submitToFinance(assertCuid(req.params.id), req.user!.id));
   } catch (e) { next(e); }
 });
 

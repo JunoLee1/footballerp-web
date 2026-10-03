@@ -1,19 +1,7 @@
 import { AnalysisRepository } from "./analysis.repo";
 import { AppError } from "../lib/appError";
 import { CompetitionType } from "../generated/enums";
-
-export interface RankingEntry {
-  rank: number;
-  teamName: string;
-  played: number;
-  won: number;
-  drawn: number;
-  lost: number;
-  goalsFor: number;
-  goalsAgainst: number;
-  goalDiff: number;
-  points: number;
-}
+import type { RankingEntry } from "./dto/analysis.dto";
 
 const VALID_COMPETITION_TYPES = Object.values(CompetitionType);
 

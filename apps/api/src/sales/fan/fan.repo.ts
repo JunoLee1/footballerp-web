@@ -1,4 +1,5 @@
 import type { PrismaClient } from "../../generated/client";
+import type { MembershipTier } from "../../generated/enums";
 
 export class FanRepository {
   constructor(private prisma: PrismaClient) {}
@@ -13,7 +14,7 @@ export class FanRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.fan.findUnique({
       where: { id },
       include: {
@@ -24,11 +25,24 @@ export class FanRepository {
   }
 
   create(data: { name: string; email?: string; phone?: string }) {
-    return this.prisma.fan.create({ data });
+    return this.prisma.fan.create({
+      data: {
+        name: data.name,
+        ...(data.email !== undefined && { email: data.email }),
+        ...(data.phone !== undefined && { phone: data.phone }),
+      },
+    });
   }
 
-  createMembership(data: { fanId: number; tier: string; startDate: Date; endDate: Date }) {
-    return this.prisma.fanMembership.create({ data: { ...data, tier: data.tier as any } });
+  createMembership(data: { fanId: string; tier: string; startDate: Date; endDate: Date }) {
+    return this.prisma.fanMembership.create({
+      data: {
+        fanId: data.fanId,
+        tier: data.tier as MembershipTier,
+        startDate: data.startDate,
+        endDate: data.endDate,
+      },
+    });
   }
 
   getMembershipStats() {
@@ -39,13 +53,13 @@ export class FanRepository {
     });
   }
 
-  getSeatZonesByMatch(matchId: number) {
+  getSeatZonesByMatch(matchId: string) {
     return this.prisma.seatZone.findMany({
       where: { matchId },
     });
   }
 
-  createSeatZone(data: { matchId: number; name: string; capacity: number }) {
+  createSeatZone(data: { matchId: string; name: string; capacity: number }) {
     return this.prisma.seatZone.create({ data });
   }
 }

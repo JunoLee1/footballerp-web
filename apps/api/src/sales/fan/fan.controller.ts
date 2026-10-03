@@ -3,6 +3,7 @@ import { FanRepository } from "./fan.repo";
 import { requireUser } from "../../lib/authMiddleware";
 import { AppError } from "../../lib/appError";
 import { getPrisma } from "../../lib/prisma";
+import { assertCuid } from "../../lib/cuidGuard";
 
 export class FanController {
   private repo = new FanRepository(getPrisma());
@@ -17,7 +18,7 @@ export class FanController {
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireUser(req);
-      const fan = await this.repo.findById(Number(req.params["id"]));
+      const fan = await this.repo.findById(assertCuid(req.params["id"]));
       if (!fan) throw new AppError(404, "FAN_NOT_FOUND");
       res.json(fan);
     } catch (err) { next(err); }
@@ -35,7 +36,7 @@ export class FanController {
   createMembership = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireUser(req);
-      const fanId = Number(req.params["id"]);
+      const fanId = assertCuid(req.params["id"]);
       const { tier, startDate, endDate } = req.body as { tier: string; startDate: string; endDate: string };
       if (!tier || !startDate || !endDate) throw new AppError(400, "MISSING_REQUIRED_FIELDS");
       if (new Date(startDate) >= new Date(endDate)) throw new AppError(400, "INVALID_DATE_RANGE");
@@ -53,14 +54,14 @@ export class FanController {
   getSeatZones = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireUser(req);
-      res.json(await this.repo.getSeatZonesByMatch(Number(req.params["matchId"])));
+      res.json(await this.repo.getSeatZonesByMatch(assertCuid(req.params["matchId"])));
     } catch (err) { next(err); }
   };
 
   createSeatZone = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireUser(req);
-      const { matchId, name, capacity } = req.body as { matchId: number; name: string; capacity: number };
+      const { matchId, name, capacity } = req.body as { matchId: string; name: string; capacity: number };
       res.status(201).json(await this.repo.createSeatZone({ matchId, name, capacity }));
     } catch (err) { next(err); }
   };

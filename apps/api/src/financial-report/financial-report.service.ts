@@ -142,7 +142,7 @@ export class FinancialReportService {
     return this.repo.getPayrollByMonth(seasonId);
   }
 
-  async approveOverride(logId: number, reviewerId: string) {
+  async approveOverride(logId: string, reviewerId: string) {
     const log = await this.repo.findOverrideLog(logId);
     if (!log) throw new AppError(404, "OVERRIDE_LOG_NOT_FOUND");
     if (log.status !== "PENDING") throw new AppError(409, "ALREADY_REVIEWED");
@@ -150,7 +150,7 @@ export class FinancialReportService {
     return this.repo.approveOverrideLog(logId, reviewerId);
   }
 
-  async rejectOverride(logId: number, reviewerId: string, reviewNote: string) {
+  async rejectOverride(logId: string, reviewerId: string, reviewNote: string) {
     if (!reviewNote?.trim()) throw new AppError(400, "REVIEW_NOTE_REQUIRED");
     const log = await this.repo.findOverrideLog(logId);
     if (!log) throw new AppError(404, "OVERRIDE_LOG_NOT_FOUND");

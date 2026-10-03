@@ -11,7 +11,7 @@ export class AllowanceRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.staffAllowance.findUnique({ where: { id } });
   }
 
@@ -26,7 +26,7 @@ export class AllowanceRepository {
     });
   }
 
-  update(id: number, data: UpdateAllowanceDto) {
+  update(id: string, data: UpdateAllowanceDto) {
     return this.prisma.staffAllowance.update({
       where: { id },
       data: {
@@ -37,7 +37,7 @@ export class AllowanceRepository {
     });
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.prisma.staffAllowance.delete({ where: { id } });
   }
 }

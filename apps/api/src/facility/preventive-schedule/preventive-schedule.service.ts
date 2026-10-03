@@ -9,7 +9,7 @@ export class PreventiveScheduleService {
     return this.repo.findAll(query);
   }
 
-  async get(id: number) {
+  async get(id: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "PREVENTIVE_SCHEDULE_NOT_FOUND");
     return record;
@@ -19,12 +19,12 @@ export class PreventiveScheduleService {
     return this.repo.create(dto);
   }
 
-  async update(id: number, dto: UpdatePreventiveScheduleDto) {
+  async update(id: string, dto: UpdatePreventiveScheduleDto) {
     await this.get(id);
     return this.repo.update(id, dto);
   }
 
-  async deactivate(id: number) {
+  async deactivate(id: string) {
     const existing = await this.get(id);
     if (!existing.isActive) throw new AppError(400, "SCHEDULE_ALREADY_INACTIVE");
     return this.repo.deactivate(id);

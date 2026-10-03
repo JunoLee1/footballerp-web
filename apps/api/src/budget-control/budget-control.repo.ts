@@ -68,12 +68,15 @@ export class BudgetControlRepository {
     return this.prisma.budgetHeader.update({ where: { id }, data });
   }
 
-  createLine(budgetHeaderId: string, dto: CreateBudgetLineDto & { categoryId: number }) {
-    const { category: _category, ...rest } = dto;
+  createLine(budgetHeaderId: string, dto: CreateBudgetLineDto & { categoryId: string }) {
+    const { category: _category, departmentId, month, note, ...rest } = dto;
     return this.prisma.budgetLine.create({
       data: {
         budgetHeaderId,
         ...rest,
+        ...(departmentId !== undefined && { departmentId }),
+        ...(month !== undefined && { month }),
+        ...(note !== undefined && { note }),
       },
     });
   }

@@ -226,7 +226,7 @@ export class InjuryService {
     return warning ? { ...report, _warning: warning } : report;
   }
 
-  async signReport(injuryId: string, role: 'COACH' | 'TRAINER' | 'MEDICAL', userId: string, signerTeamId?: number | null) {
+  async signReport(injuryId: string, role: 'COACH' | 'TRAINER' | 'MEDICAL', userId: string, signerTeamId?: string | null) {
     const report = await this.repo.findReport(injuryId);
     if (!report) throw new AppError(404, "INJURY_REPORT_NOT_FOUND");
     // SH20: 부상 선수의 팀 == 서명자의 팀 검증 (SUPER_ADMIN은 signerTeamId가 undefined로 전달되어 스킵)
@@ -320,7 +320,7 @@ export class InjuryService {
     return this.repo.getExternalReports(injuryId);
   }
 
-  async updateExternalReportStatus(reportId: number, status: ExternalReportStatus, note?: string) {
+  async updateExternalReportStatus(reportId: string, status: ExternalReportStatus, note?: string) {
     const report = await this.repo.findExternalReportById(reportId);
     if (!report) throw new AppError(404, "EXTERNAL_REPORT_NOT_FOUND");
     return this.repo.updateExternalReportStatus(reportId, status, note);

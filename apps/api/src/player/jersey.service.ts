@@ -15,7 +15,7 @@ export class JerseyService {
     private notifRepo?: NotificationRepository,
   ) {}
 
-  listByTeam(teamId: number) {
+  listByTeam(teamId: string) {
     return this.repo.findByTeam(teamId);
   }
 
@@ -23,7 +23,7 @@ export class JerseyService {
     return this.repo.findByPlayer(playerId);
   }
 
-  async assignToPlayer(teamId: number, dto: AssignJerseyDto) {
+  async assignToPlayer(teamId: string, dto: AssignJerseyDto) {
     const existing = await this.repo.findByNumberAndTeam(dto.number, teamId);
 
     if (existing && CONFLICT_REASON[existing.status]) {
@@ -62,14 +62,14 @@ export class JerseyService {
     return this.repo.create(teamId, { ...dto, status: "OCCUPIED" });
   }
 
-  async release(teamId: number, number: number) {
+  async release(teamId: string, number: number) {
     const jersey = await this.repo.findByNumberAndTeam(number, teamId);
     if (!jersey) throw new AppError(404, "JERSEY_NOT_FOUND");
     if (jersey.status !== "OCCUPIED") throw new AppError(409, "JERSEY_NOT_OCCUPIED");
     return this.repo.updateStatus(jersey.id, { status: "AVAILABLE", playerId: null });
   }
 
-  async retire(teamId: number, number: number) {
+  async retire(teamId: string, number: number) {
     const jersey = await this.repo.findByNumberAndTeam(number, teamId);
     if (!jersey) {
       return this.repo.create(teamId, { number, status: "RETIRED" });
@@ -78,7 +78,7 @@ export class JerseyService {
     return this.repo.updateStatus(jersey.id, { status: "RETIRED", playerId: null });
   }
 
-  async reactivate(teamId: number, number: number) {
+  async reactivate(teamId: string, number: number) {
     const jersey = await this.repo.findByNumberAndTeam(number, teamId);
     if (!jersey || jersey.status !== "RETIRED") throw new AppError(409, "JERSEY_NOT_RETIRED");
     return this.repo.updateStatus(jersey.id, { status: "AVAILABLE" });

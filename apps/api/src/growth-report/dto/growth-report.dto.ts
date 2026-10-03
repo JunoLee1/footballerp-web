@@ -16,7 +16,7 @@ export interface CreateGrowthEvaluationDto {
 
 export interface AwardBadgeDto {
   playerId: string;
-  sessionId?: number;
+  sessionId?: string;
   badgeType: BadgeType;
   note?: string;
 }

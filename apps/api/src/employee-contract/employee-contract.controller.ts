@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
 import { canWriteHR, isAdminLike } from "../lib/permissions";
+import { assertCuid } from "../lib/cuidGuard";
 import type {
   CancelEmployeeContractDto,
   CreateEmployeeContractDto,
@@ -37,10 +38,7 @@ export class EmployeeContractController {
       }
 
       const body = req.body as CreateEmployeeContractDto;
-      const hiringDispatchId = Number(body?.hiringDispatchId);
-      if (!Number.isFinite(hiringDispatchId) || hiringDispatchId <= 0) {
-        throw new AppError(400, "INVALID_DISPATCH_ID");
-      }
+      const hiringDispatchId = assertCuid(body?.hiringDispatchId);
 
       const created = await this.service.createDraft(hiringDispatchId, user.id);
       res.status(201).json(created);
@@ -56,8 +54,7 @@ export class EmployeeContractController {
         throw new AppError(403, "FORBIDDEN");
       }
 
-      const id = Number(req.params["id"]);
-      if (!Number.isFinite(id) || id <= 0) throw new AppError(400, "INVALID_ID");
+      const id = assertCuid(req.params["id"]);
 
       const file = req.file;
       if (!file) throw new AppError(400, "FILE_REQUIRED");
@@ -85,8 +82,7 @@ export class EmployeeContractController {
         throw new AppError(403, "FORBIDDEN");
       }
 
-      const id = Number(req.params["id"]);
-      if (!Number.isFinite(id) || id <= 0) throw new AppError(400, "INVALID_ID");
+      const id = assertCuid(req.params["id"]);
 
       const file = req.file;
       if (!file) throw new AppError(400, "FILE_REQUIRED");
@@ -124,8 +120,7 @@ export class EmployeeContractController {
         throw new AppError(403, "FORBIDDEN");
       }
 
-      const id = Number(req.params["id"]);
-      if (!Number.isFinite(id) || id <= 0) throw new AppError(400, "INVALID_ID");
+      const id = assertCuid(req.params["id"]);
 
       const dto = req.body as CancelEmployeeContractDto;
       const updated = await this.service.cancel(id, dto, user.id);
@@ -147,10 +142,7 @@ export class EmployeeContractController {
         throw new AppError(403, "FORBIDDEN");
       }
 
-      const hiringDispatchId = Number(req.params["hiringDispatchId"]);
-      if (!Number.isFinite(hiringDispatchId) || hiringDispatchId <= 0) {
-        throw new AppError(400, "INVALID_DISPATCH_ID");
-      }
+      const hiringDispatchId = assertCuid(req.params["hiringDispatchId"]);
 
       const rows = await this.service.listByDispatch(hiringDispatchId);
       res.json(rows);

@@ -72,7 +72,7 @@ export interface OptimizeResult {
 }
 
 export interface OperatingExpense {
-  id: number
+  id: string
   seasonId: number
   category: OperatingCategory
   amount: number

@@ -1,4 +1,5 @@
 import type { PrismaClient } from '../generated/client'
+import type { FeeStatus } from '../generated/enums'
 import type { CreateAcademyFeeDto, FeeListQuery } from './dto/academy-fee.dto'
 
 const INCLUDE = {
@@ -16,7 +17,7 @@ export class AcademyFeeRepository {
         ...(query.year && { year: query.year }),
         ...(query.month && { month: query.month }),
         ...(query.teamId && { player: { teamId: query.teamId } }),
-      },//TODO: 상태값 타입 수정
+      },
       include: INCLUDE,
       orderBy: { createdAt: 'desc' },
     })
@@ -56,10 +57,10 @@ export class AcademyFeeRepository {
     return this.prisma.academyFee.createMany({ data: fees, skipDuplicates: true })
   }
 
-  updateStatus(id: string, status:AcademyFee, extra?: { paidAt?: Date }) {
+  updateStatus(id: string, status: FeeStatus, extra?: { paidAt?: Date }) {
     return this.prisma.academyFee.update({
       where: { id },
-      data: { status: status, ...extra },
+      data: { status, ...extra },
       include: INCLUDE,
     })
   }

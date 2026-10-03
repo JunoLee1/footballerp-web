@@ -23,7 +23,7 @@ export class GrowthReportController {
 
   getEvaluationById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.getEvaluationById(Number(req.params["id"])));
+      res.json(await this.service.getEvaluationById(String(req.params["id"])));
     } catch (e) { next(e); }
   };
 
@@ -49,7 +49,7 @@ export class GrowthReportController {
     try {
       const user = requireUser(req);
       if (!(COACH_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.updateEvaluation(Number(req.params["id"]), req.body, user.id));
+      res.json(await this.service.updateEvaluation(String(req.params["id"]), req.body, user.id));
     } catch (e) { next(e); }
   };
 
@@ -57,7 +57,7 @@ export class GrowthReportController {
     try {
       const user = requireUser(req);
       if (!(COACH_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.publishEvaluation(Number(req.params["id"])));
+      res.json(await this.service.publishEvaluation(String(req.params["id"])));
     } catch (e) { next(e); }
   };
 

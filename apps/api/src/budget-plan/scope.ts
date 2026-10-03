@@ -5,7 +5,7 @@ export type CategoryScope = "TEAM" | "DEPARTMENT";
 
 export interface RequesterScope {
   scope: CategoryScope;
-  ownerId: number;
+  ownerId: string;
 }
 
 export async function resolveRequesterScope(

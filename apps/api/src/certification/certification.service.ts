@@ -48,7 +48,7 @@ export class CertificationService {
     return this.repo.findAll(query);
   }
 
-  async get(id: number) {
+  async get(id: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "CERTIFICATION_NOT_FOUND");
     return record;
@@ -58,7 +58,7 @@ export class CertificationService {
     return this.repo.create({ ...dto, ownerId });
   }
 
-  async update(id: number, dto: UpdateCertificationDto) {
+  async update(id: string, dto: UpdateCertificationDto) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "CERTIFICATION_NOT_FOUND");
     if (record.isLocked) throw new AppError(400, "CERTIFICATION_LOCKED");
@@ -68,7 +68,7 @@ export class CertificationService {
     return this.repo.update(id, dto);
   }
 
-  async submit(id: number) {
+  async submit(id: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "CERTIFICATION_NOT_FOUND");
     if (!(MUTABLE_STATUSES as readonly string[]).includes(record.status)) {
@@ -78,21 +78,21 @@ export class CertificationService {
     return this.repo.submit(id);
   }
 
-  async approve(id: number, approverId: string) {
+  async approve(id: string, approverId: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "CERTIFICATION_NOT_FOUND");
     if (record.status !== "PENDING_REVIEW") throw new AppError(409, "CERTIFICATION_NOT_PENDING");
     return this.repo.approve(id, approverId);
   }
 
-  async gmApprove(id: number, approverId: string) {
+  async gmApprove(id: string, approverId: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "CERTIFICATION_NOT_FOUND");
     if (record.status !== "FM_APPROVED") throw new AppError(409, "CERTIFICATION_NOT_FM_APPROVED");
     return this.repo.gmApprove(id, approverId);
   }
 
-  async reject(id: number, dto: RejectCertificationDto) {
+  async reject(id: string, dto: RejectCertificationDto) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "CERTIFICATION_NOT_FOUND");
     if (!["PENDING_REVIEW", "FM_APPROVED"].includes(record.status)) {
@@ -101,7 +101,7 @@ export class CertificationService {
     return this.repo.reject(id, dto.reason);
   }
 
-  async suspend(id: number) {
+  async suspend(id: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "CERTIFICATION_NOT_FOUND");
     if (["CANCELLED", "SUSPENDED"].includes(record.status)) {
@@ -110,7 +110,7 @@ export class CertificationService {
     return this.repo.suspend(id);
   }
 
-  async cancel(id: number) {
+  async cancel(id: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "CERTIFICATION_NOT_FOUND");
     if (record.status === "CANCELLED") throw new AppError(409, "CERTIFICATION_ALREADY_CANCELLED");

@@ -26,11 +26,11 @@ export class BudgetOverrideController {
       const { id: userId } = requireUser(req);
       const seasonId = Number(req.params["seasonId"]);
       const body = req.body as Partial<OverrideRequestDto>;
-      if (!Number.isInteger(body.categoryId)) throw new AppError(400, "INVALID_CATEGORY_ID");
+      if (typeof body.categoryId !== "string" || body.categoryId.length === 0) throw new AppError(400, "INVALID_CATEGORY_ID");
       if (!Number.isInteger(body.amount)) throw new AppError(400, "INVALID_AMOUNT");
       if (typeof body.reason !== "string") throw new AppError(400, "REASON_REQUIRED");
       const result = await this.service.requestOverride(seasonId, userId, {
-        categoryId: body.categoryId!,
+        categoryId: body.categoryId,
         amount: body.amount!,
         reason: body.reason,
       });
@@ -83,9 +83,8 @@ export class BudgetOverrideController {
         query.limit = n;
       }
       if (q.cursor !== undefined) {
-        const n = Number(q.cursor);
-        if (!Number.isInteger(n) || n <= 0) throw new AppError(400, "INVALID_CURSOR");
-        query.cursor = n;
+        if (typeof q.cursor !== "string" || q.cursor.length === 0) throw new AppError(400, "INVALID_CURSOR");
+        query.cursor = q.cursor;
       }
 
       const logs = await this.service.list(seasonId, query);

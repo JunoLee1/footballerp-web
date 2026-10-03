@@ -19,7 +19,7 @@ export class YouthRegistrationRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.youthRegistration.findUnique({
       where: { id },
       include: {
@@ -40,12 +40,12 @@ export class YouthRegistrationRepository {
         ...(data.guardianId != null && { guardianId: data.guardianId }),
         requestedById: data.requestedById,
         status: "PENDING",
-      } as any,
+      },
       include: { team: { select: { id: true, name: true } } },
     });
   }
 
-  updateStatus(id: number, status: "GUARDIAN_APPROVED" | "REJECTED", extra?: { rejectionReason?: string }) {
+  updateStatus(id: string, status: "GUARDIAN_APPROVED" | "REJECTED", extra?: { rejectionReason?: string }) {
     return this.prisma.youthRegistration.update({
       where: { id },
       data: { status, ...extra },
@@ -57,8 +57,8 @@ export class YouthRegistrationRepository {
   }
 
   contractAndCreatePlayer(
-    id: number,
-    registration: { playerName: string; birthDate: Date; teamId: number; guardianId: string | null; preferredJerseyNumber: number | null },
+    id: string,
+    registration: { playerName: string; birthDate: Date; teamId: string; guardianId: string | null; preferredJerseyNumber: number | null },
     nationalityId: number,
   ) {
     return this.prisma.$transaction(async (tx) => {

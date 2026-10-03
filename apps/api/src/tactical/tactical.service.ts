@@ -14,11 +14,11 @@ export class TacticalService {
     return this.repo.findAll(filters);
   }
 
-  getByMatch(matchId: number) {
+  getByMatch(matchId: string) {
     return this.repo.findByMatch(matchId);
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const analysis = await this.repo.findById(id);
     if (!analysis) throw new AppError(404, "ANALYSIS_NOT_FOUND");
     return analysis;
@@ -46,25 +46,25 @@ export class TacticalService {
     return analysis;
   }
 
-  async addLineup(analysisId: number, dto: AddLineupDto) {
+  async addLineup(analysisId: string, dto: AddLineupDto) {
     const analysis = await this.repo.findById(analysisId);
     if (!analysis) throw new AppError(404, "ANALYSIS_NOT_FOUND");
     return this.repo.addLineup(analysisId, dto);
   }
 
-  async addMedia(analysisId: number, dto: AddMediaDto) {
+  async addMedia(analysisId: string, dto: AddMediaDto) {
     const analysis = await this.repo.findById(analysisId);
     if (!analysis) throw new AppError(404, "ANALYSIS_NOT_FOUND");
     return this.repo.addMedia(analysisId, dto);
   }
 
-  async updateAnalysis(id: number, dto: UpdateAnalysisDto) {
+  async updateAnalysis(id: string, dto: UpdateAnalysisDto) {
     const analysis = await this.repo.findById(id);
     if (!analysis) throw new AppError(404, "ANALYSIS_NOT_FOUND");
     return this.repo.update(id, dto);
   }
 
-  async confirmAnalysis(id: number) {
+  async confirmAnalysis(id: string) {
     const analysis = await this.repo.findById(id);
     if (!analysis) throw new AppError(404, "ANALYSIS_NOT_FOUND");
     if (analysis.status === "CONFIRMED") throw new AppError(409, "ALREADY_CONFIRMED");
@@ -85,7 +85,7 @@ export class TacticalService {
     return this.repo.findAllForPlayer(playerId);
   }
 
-  async getByIdForPlayer(id: number, userId: string) {
+  async getByIdForPlayer(id: string, userId: string) {
     const playerId = await this.resolvePlayerId(userId);
     const analysis = await this.repo.findByIdForPlayer(id, playerId);
     if (!analysis) throw new AppError(404, "ANALYSIS_NOT_FOUND");

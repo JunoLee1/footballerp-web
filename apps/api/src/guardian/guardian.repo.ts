@@ -84,7 +84,7 @@ export class GuardianRepository {
     });
   }
 
-  findDashboard(playerId: string, teamId: number | null, now: Date) {
+  findDashboard(playerId: string, teamId: string | null, now: Date) {
     const weekLater = new Date(now);
     weekLater.setDate(weekLater.getDate() + 7);
 

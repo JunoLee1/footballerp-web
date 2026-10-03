@@ -29,10 +29,9 @@ export class HiringDocumentController {
       const file = req.file;
       if (!file) throw new AppError(400, "FILE_REQUIRED");
 
-      // multer multipart form fields land as strings — coerce ids explicitly.
       const body = req.body as {
-        applicationId?: string | number;
-        hiringDispatchId?: string | number;
+        applicationId?: string;
+        hiringDispatchId?: string;
         docType?: string;
       };
       if (typeof body.docType !== "string") throw new AppError(400, "DOC_TYPE_REQUIRED");
@@ -41,14 +40,16 @@ export class HiringDocumentController {
         docType: body.docType,
       };
       if (body.applicationId !== undefined) {
-        const n = Number(body.applicationId);
-        if (!Number.isFinite(n) || n <= 0) throw new AppError(400, "INVALID_APPLICATION_ID");
-        dto.applicationId = n;
+        if (typeof body.applicationId !== "string" || body.applicationId.length === 0) {
+          throw new AppError(400, "INVALID_APPLICATION_ID");
+        }
+        dto.applicationId = body.applicationId;
       }
       if (body.hiringDispatchId !== undefined) {
-        const n = Number(body.hiringDispatchId);
-        if (!Number.isFinite(n) || n <= 0) throw new AppError(400, "INVALID_DISPATCH_ID");
-        dto.hiringDispatchId = n;
+        if (typeof body.hiringDispatchId !== "string" || body.hiringDispatchId.length === 0) {
+          throw new AppError(400, "INVALID_DISPATCH_ID");
+        }
+        dto.hiringDispatchId = body.hiringDispatchId;
       }
 
       const created = await this.service.upload(
@@ -73,8 +74,8 @@ export class HiringDocumentController {
       if (!canWriteHR(user.role, user.frontOfficeRole, user.departmentCategories)) {
         throw new AppError(403, "FORBIDDEN");
       }
-      const id = Number(req.params["id"]);
-      if (!Number.isFinite(id) || id <= 0) throw new AppError(400, "INVALID_ID");
+      const id = req.params["id"];
+      if (typeof id !== "string" || id.length === 0) throw new AppError(400, "INVALID_ID");
       const dto = req.body as ReviewHiringDocumentDto;
       const updated = await this.service.review(id, dto, user.id);
       res.json(updated);
@@ -113,21 +114,19 @@ export class HiringDocumentController {
   };
 
   private parseTargetQuery(req: Request): {
-    applicationId?: number;
-    hiringDispatchId?: number;
+    applicationId?: string;
+    hiringDispatchId?: string;
   } {
-    const target: { applicationId?: number; hiringDispatchId?: number } = {};
+    const target: { applicationId?: string; hiringDispatchId?: string } = {};
     const appQ = req.query["applicationId"];
     const dispQ = req.query["hiringDispatchId"];
     if (appQ !== undefined) {
-      const n = Number(appQ);
-      if (!Number.isFinite(n) || n <= 0) throw new AppError(400, "INVALID_APPLICATION_ID");
-      target.applicationId = n;
+      if (typeof appQ !== "string" || appQ.length === 0) throw new AppError(400, "INVALID_APPLICATION_ID");
+      target.applicationId = appQ;
     }
     if (dispQ !== undefined) {
-      const n = Number(dispQ);
-      if (!Number.isFinite(n) || n <= 0) throw new AppError(400, "INVALID_DISPATCH_ID");
-      target.hiringDispatchId = n;
+      if (typeof dispQ !== "string" || dispQ.length === 0) throw new AppError(400, "INVALID_DISPATCH_ID");
+      target.hiringDispatchId = dispQ;
     }
     return target;
   }

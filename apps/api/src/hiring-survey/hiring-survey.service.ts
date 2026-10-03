@@ -45,7 +45,7 @@ export class HiringSurveyService {
    * head and a LEADER row doesn't get two notifications.
    */
   private async notifyTargetHeadsAndLeaders(
-    survey: { id: string; title: string; targetDepartments: Array<{ departmentId?: number; department: { id?: string; headId: string | null } }> },
+    survey: { id: string; title: string; targetDepartments: Array<{ departmentId?: string; department: { id?: string; headId: string | null } }> },
     deadlineAt: Date,
   ) {
     const headIds = survey.targetDepartments
@@ -54,7 +54,7 @@ export class HiringSurveyService {
 
     const deptIds = survey.targetDepartments
       .map((t) => (t.departmentId ?? t.department.id))
-      .filter((id): id is number => typeof id === 'number')
+      .filter((id): id is string => typeof id === 'string')
     const leaderIds = await this.repo.findLeaderUserIdsForDepartments(deptIds)
 
     // Union — a LEADER who also happens to be the head shouldn't be notified twice
@@ -82,7 +82,7 @@ export class HiringSurveyService {
    */
   async createResponse(
     surveyId: string,
-    departmentId: number,
+    departmentId: string,
     userId: string,
     dto: CreateSurveyResponseDto,
   ) {
@@ -310,7 +310,7 @@ export class HiringSurveyService {
     const responsesByDept = new Map(
       survey.responses.map((r) => [r.departmentId, r]),
     )
-    type Blocker = { departmentId: number; departmentName: string; status: string }
+    type Blocker = { departmentId: string; departmentName: string; status: string }
     const blocking: Blocker[] = survey.targetDepartments
       .map((t): Blocker | null => {
         const r = responsesByDept.get(t.departmentId)
@@ -381,7 +381,7 @@ export class HiringSurveyService {
     const survey = await this.getById(id)
     if (survey.status !== 'DRAFT') throw new AppError(409, 'SURVEY_NOT_DRAFT')
 
-    const data: { title?: string; deadlineAt?: Date; targetDeptIds?: number[] } = {}
+    const data: { title?: string; deadlineAt?: Date; targetDeptIds?: string[] } = {}
     if (dto.title !== undefined) {
       if (!dto.title.trim()) throw new AppError(400, 'TITLE_REQUIRED')
       data.title = dto.title
@@ -420,7 +420,7 @@ export class HiringSurveyService {
   async createQuarterlyDraft(args: {
     title: string
     deadlineAt: Date
-    targetDeptIds: number[]
+    targetDeptIds: string[]
     systemUserId: string
   }) {
     if (!args.title?.trim()) throw new AppError(400, 'TITLE_REQUIRED')

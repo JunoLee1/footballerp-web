@@ -5,7 +5,7 @@ export interface CreateSessionDto {
   goal: string;
   sessionType: SessionType;
   seasonId: number;
-  teamId?: number;
+  teamId?: string;
   contents?: { phase: ContentPhase; description: string }[];
 }
 

@@ -32,7 +32,7 @@ export class SalaryRepository {
     });
   }
 
-  closeActive(userId: string | null | undefined, staffRecordId: number | null | undefined, effectiveTo: Date) {
+  closeActive(userId: string | null | undefined, staffRecordId: string | null | undefined, effectiveTo: Date) {
     return this.prisma.staffSalary.updateMany({
       where: {
         ...(userId != null ? { userId } : {}),

@@ -18,7 +18,7 @@ export function startMatchDayNotificationJob() {
     const entries = await squadRepo.findUnnotifiedForDate(tomorrow);
     if (entries.length === 0) return;
 
-    const matchGroups = new Map<number, typeof entries>();
+    const matchGroups = new Map<string, typeof entries>();
     for (const entry of entries) {
       const list = matchGroups.get(entry.matchId) ?? [];
       list.push(entry);

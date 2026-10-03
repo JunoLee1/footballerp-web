@@ -24,7 +24,7 @@ export class ProbationReviewRepository {
    * both permission checks (`department.headId`) and validation
    * (`probationStartedAt`, `probationStatus`).
    */
-  findStaffWithDept(staffRecordId: number) {
+  findStaffWithDept(staffRecordId: string) {
     return this.prisma.staffRecord.findUnique({
       where: { id: staffRecordId },
       select: {
@@ -43,7 +43,7 @@ export class ProbationReviewRepository {
     });
   }
 
-  findReviewByStaffAndType(staffRecordId: number, reviewType: ProbationReviewType) {
+  findReviewByStaffAndType(staffRecordId: string, reviewType: ProbationReviewType) {
     return this.prisma.probationReview.findUnique({
       where: {
         staffRecordId_reviewType: { staffRecordId, reviewType },
@@ -51,7 +51,7 @@ export class ProbationReviewRepository {
     });
   }
 
-  findReviewsForStaff(staffRecordId: number) {
+  findReviewsForStaff(staffRecordId: string) {
     return this.prisma.probationReview.findMany({
       where: { staffRecordId },
       include: {
@@ -67,12 +67,12 @@ export class ProbationReviewRepository {
    */
   upsertReview(
     args: {
-      staffRecordId: number;
+      staffRecordId: string;
       reviewType: ProbationReviewType;
       status: ProbationReviewStatus;
       leaderAssessment: string;
       reviewedById: string;
-      reviewedAt: Date;
+      reviewedAt: Date;//TODO: DTO 파일로 이동 
     },
     tx?: Tx,
   ) {
@@ -99,14 +99,14 @@ export class ProbationReviewRepository {
         reviewedAt: args.reviewedAt,
       },
     });
-  }
+  }// upsert 대신에 트랜젝션고려
 
   /**
    * Sets probation status + optional end date on the StaffRecord (used when
    * SIX_MO PASSED or any FAILED is submitted).
    */
   setStaffProbation(
-    staffRecordId: number,
+    staffRecordId: string,
     patch: { probationStatus: ProbationStatus; probationEndedAt?: Date },
     tx?: Tx,
   ) {

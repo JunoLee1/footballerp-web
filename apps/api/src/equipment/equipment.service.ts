@@ -32,10 +32,13 @@ export class EquipmentService {
     if (!item) throw new AppError(404, "EQUIPMENT_ITEM_NOT_FOUND");
     return {
       ...item,
-      units: (item as any).units?.map(({ assignments, ...unit }: any) => ({
-        ...unit,
-        assignedTo: assignments[0]?.player ? { playerName: assignments[0].player.playerName } : null,
-      })),
+      units: item.units?.map(({ assignments, ...unit }) => {
+        const first = assignments?.[0] as { player?: { playerName: string } } | undefined;
+        return {
+          ...unit,
+          assignedTo: first?.player ? { playerName: first.player.playerName } : null,
+        };
+      }),
     };
   }
 

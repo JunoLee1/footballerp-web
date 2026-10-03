@@ -43,14 +43,14 @@ export interface UpdateTaskStatusData {
 export class OnboardingTaskRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.onboardingTask.findUnique({
       where: { id },
       include: { ...TASK_INCLUDE, ...ONBOARDING_AUTH_INCLUDE },
     });
   }
 
-  findByOnboardingId(onboardingId: number) {
+  findByOnboardingId(onboardingId: string) {
     return this.prisma.onboardingTask.findMany({
       where: { onboardingId },
       include: TASK_INCLUDE,
@@ -62,10 +62,10 @@ export class OnboardingTaskRepository {
    * SELF_REPORTED tasks awaiting verify — HR/dept.head verify queue.
    * Optional dispatch/department filter so a dept.head only sees their team.
    */
-  findVerifyQueue(filter?: { departmentId?: number }) {
+  findVerifyQueue(filter?: { departmentId?: string }) {
     const where: {
       status: OnboardingTaskStatus;
-      onboarding?: { hiringDispatch?: { departmentId: number } };
+      onboarding?: { hiringDispatch?: { departmentId: string } };
     } = { status: "SELF_REPORTED" };
     if (filter?.departmentId != null) {
       where.onboarding = { hiringDispatch: { departmentId: filter.departmentId } };
@@ -89,7 +89,7 @@ export class OnboardingTaskRepository {
     });
   }
 
-  updateStatus(id: number, data: UpdateTaskStatusData) {
+  updateStatus(id: string, data: UpdateTaskStatusData) {
     return this.prisma.onboardingTask.update({
       where: { id },
       data: {
@@ -111,7 +111,7 @@ export class OnboardingTaskRepository {
    * given onboarding. Zero = every required task settled (DONE or SKIPPED)
    * = time to set `Onboarding.contentCompletedAt`.
    */
-  countIncompleteRequired(onboardingId: number) {
+  countIncompleteRequired(onboardingId: string) {
     return this.prisma.onboardingTask.count({
       where: {
         onboardingId,
@@ -126,7 +126,7 @@ export class OnboardingTaskRepository {
    * still null. Returns the updated row, or null if it was already set (a
    * race between two verify calls landing simultaneously).
    */
-  async setContentCompletedIfNull(onboardingId: number) {
+  async setContentCompletedIfNull(onboardingId: string) {
     // updateMany with the null guard is idempotent — no throw on race.
     const result = await this.prisma.onboarding.updateMany({
       where: { id: onboardingId, contentCompletedAt: null },

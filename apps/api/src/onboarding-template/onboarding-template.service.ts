@@ -36,7 +36,7 @@ export class OnboardingTemplateService {
   // Read
   // ────────────────────────────────────────────
 
-  get(departmentId: number) {
+  get(departmentId: string) {
     return this.repo.findByDepartmentId(departmentId);
   }
 
@@ -45,7 +45,7 @@ export class OnboardingTemplateService {
   // ────────────────────────────────────────────
 
   async upsert(
-    departmentId: number,
+    departmentId: string,
     dto: UpsertOnboardingTemplateDto,
     actorId: string,
   ) {
@@ -81,7 +81,7 @@ export class OnboardingTemplateService {
     return created;
   }
 
-  async remove(departmentId: number, actorId: string) {
+  async remove(departmentId: string, actorId: string) {
     const existing = await this.repo.findByDepartmentId(departmentId);
     if (!existing) throw new AppError(404, "TEMPLATE_NOT_FOUND");
     const deleted = await this.repo.remove(departmentId);

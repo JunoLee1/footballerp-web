@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { VideoAnalysisService } from './video-analysis.service'
 import { AppError } from '../lib/appError'
+import { assertCuid } from '../lib/cuidGuard'
 
 const WEBHOOK_SECRET = process.env['WEBHOOK_SECRET'] ?? ''
 
@@ -9,7 +10,7 @@ export class VideoAnalysisController {
 
   createJob = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const prospectId = Number(req.params['prospectId'])
+      const prospectId = assertCuid(req.params['prospectId'])
       const { videoUrl } = req.body as { videoUrl: string }
       if (!videoUrl) throw new AppError(400, 'VIDEO_URL_REQUIRED')
       const job = await this.service.createJob(prospectId, videoUrl)
@@ -19,8 +20,8 @@ export class VideoAnalysisController {
 
   getJob = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const prospectId = Number(req.params['prospectId'])
-      const jobId = Number(req.params['jobId'])
+      const prospectId = assertCuid(req.params['prospectId'])
+      const jobId = assertCuid(req.params['jobId'])
       const job = await this.service.getJob(prospectId, jobId)
       if (!job) throw new AppError(404, 'JOB_NOT_FOUND')
       res.json(job)

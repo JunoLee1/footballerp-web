@@ -1,5 +1,11 @@
 import type { PrismaClient } from "../generated/client";
 import type { EmployeeContractStatus } from "../generated/enums";
+import type {
+  CreateDraftData,
+  IssueData,
+  SignData,
+  CancelData,
+} from "./dto/employee-contract.dto";
 
 /**
  * Shared select for actor badges on every read path — same shape as
@@ -14,30 +20,6 @@ const EC_INCLUDE = {
   signedConfirmedBy: { select: ACTOR_SELECT },
   cancelledBy: { select: ACTOR_SELECT },
 } as const;
-
-export interface CreateDraftData {
-  hiringDispatchId: number;
-  createdById: string;
-}
-
-export interface IssueData {
-  fileUrl: string;
-  fileName: string;
-  issuedById: string;
-}
-
-export interface SignData {
-  signedFileUrl: string;
-  signedFileName: string;
-  signedAt: Date;
-  signedConfirmedById: string;
-}
-
-export interface CancelData {
-  cancelReason: string;
-  cancelledById: string;
-}
-
 /**
  * Prisma boundary for EmployeeContract. All mutations are `update` by id
  * against the current status (validated in the service). Reads always come
@@ -58,7 +40,7 @@ export class EmployeeContractRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.employeeContract.findUnique({
       where: { id },
       include: EC_INCLUDE,
@@ -70,7 +52,7 @@ export class EmployeeContractRepository {
    * (`assertContractSigned`) and the "current status" badge in the FE.
    * Returns null when no such row exists (dispatch has no active contract).
    */
-  findLatestActiveByDispatch(hiringDispatchId: number) {
+  findLatestActiveByDispatch(hiringDispatchId: string) {
     return this.prisma.employeeContract.findFirst({
       where: {
         hiringDispatchId,
@@ -85,7 +67,7 @@ export class EmployeeContractRepository {
    * Full history (all statuses) for a dispatch, newest first. `distinct`
    * isn't needed — every row is a distinct contract; append-only design (Q3).
    */
-  findAllByDispatch(hiringDispatchId: number) {
+  findAllByDispatch(hiringDispatchId: string) {
     return this.prisma.employeeContract.findMany({
       where: { hiringDispatchId },
       orderBy: [{ createdAt: "desc" as const }, { id: "desc" as const }],
@@ -93,7 +75,7 @@ export class EmployeeContractRepository {
     });
   }
 
-  applyIssue(id: number, data: IssueData) {
+  applyIssue(id: string, data: IssueData) {
     return this.prisma.employeeContract.update({
       where: { id },
       data: {
@@ -107,7 +89,7 @@ export class EmployeeContractRepository {
     });
   }
 
-  applySign(id: number, data: SignData) {
+  applySign(id: string, data: SignData) {
     return this.prisma.employeeContract.update({
       where: { id },
       data: {
@@ -122,7 +104,7 @@ export class EmployeeContractRepository {
     });
   }
 
-  applyCancel(id: number, data: CancelData) {
+  applyCancel(id: string, data: CancelData) {
     return this.prisma.employeeContract.update({
       where: { id },
       data: {

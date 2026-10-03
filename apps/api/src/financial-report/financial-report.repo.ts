@@ -15,7 +15,7 @@ export interface RevenueBreakdownDto {
 // Category descriptor shared with services — code from wire, id from cache lookup.
 export interface CategoryRef {
   code: string;
-  id: number;
+  id: string;
 }
 
 export function sumBreakdown(b: RevenueBreakdownDto): number {
@@ -36,7 +36,7 @@ export interface UpsertBudgetPlanDto {
   contingencyReserve: number;
   playerSalaryBudget?: number;
   categories: {
-    categoryId: number;
+    categoryId: string;
     mandatoryMinimum: number;
     sortOrder: number;
     tiers: { name: string; cost: number; value: number; sortOrder: number }[];
@@ -74,7 +74,7 @@ export class FinancialReportRepository {
         })
       : null;
 
-    const result = await (this.prisma.financialReport as any).upsert({
+    const result = await (this.prisma.financialReport).upsert({
       where: { seasonId },
       create: { seasonId, totalRevenue, note: noteVal, ...breakdownData },
       update: { totalRevenue, note: noteVal, ...breakdownData },
@@ -84,13 +84,13 @@ export class FinancialReportRepository {
     if (changedById && before && breakdown) {
       const TRACKED = ["plannedRevenueBroadcast", "plannedRevenueSubsidy", "plannedRevenueParentCompany"] as const;
       const logs = TRACKED.flatMap((field) => {
-        const oldVal = Number((before as any)[field] ?? 0);
-        const newVal = Number((breakdownData as any)[field] ?? 0);
+        const oldVal = Number((before)[field] ?? 0);
+        const newVal = Number((breakdownData)[field] ?? 0);
         if (oldVal === newVal) return [];
         return [{ financialReportId: before.id, field, oldValue: oldVal, newValue: newVal, changedById }];
       });
       if (logs.length > 0) {
-        await this.prisma.financialReportRevenueLog.createMany({ data: logs as any });
+        await this.prisma.financialReportRevenueLog.createMany({ data: logs});
       }
     }
 
@@ -194,7 +194,7 @@ export class FinancialReportRepository {
 
   async saveOptimizeResult(
     reportId: string,
-    selections: { tierId: number; categoryPlanId: string; allocated: number }[]
+    selections: { tierId: string; categoryPlanId: string; allocated: number }[]
   ) {
     await this.prisma.budgetTier.updateMany({
       where: { categoryPlan: { financialReportId: reportId } },
@@ -214,10 +214,10 @@ export class FinancialReportRepository {
 
   async addOverrideLog(
     reportId: string,
-    categoryId: number,
+    categoryId: string,
     amount: number,
     reason: string,
-    createdById: string
+    createdById: string //TODO: DTO파일에 추가
   ) {
     return this.prisma.budgetOverrideLog.create({
       data: { financialReportId: reportId, categoryId, amount, reason, createdById },
@@ -260,18 +260,18 @@ export class FinancialReportRepository {
     }));
   }
 
-  async findOverrideLog(id: number) {
+  async findOverrideLog(id: string) {
     return this.prisma.budgetOverrideLog.findUnique({ where: { id } });
   }
 
-  async approveOverrideLog(id: number, reviewerId: string) {
+  async approveOverrideLog(id: string, reviewerId: string) {
     return this.prisma.budgetOverrideLog.update({
       where: { id },
       data: { status: "APPROVED", reviewedById: reviewerId, reviewedAt: new Date() },
     });
   }
 
-  async rejectOverrideLog(id: number, reviewerId: string, reviewNote: string) {
+  async rejectOverrideLog(id: string, reviewerId: string, reviewNote: string) {
     return this.prisma.budgetOverrideLog.update({
       where: { id },
       data: { status: "REJECTED", reviewedById: reviewerId, reviewedAt: new Date(), reviewNote },

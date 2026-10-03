@@ -14,7 +14,7 @@ export class TrainingReferenceService {
     return this.repo.create(dto, addedById);
   }
 
-  async delete(id: number, requesterId: string, isAdmin: boolean) {
+  async delete(id: string, requesterId: string, isAdmin: boolean) {
     const ref = await this.repo.findById(id);
     if (!ref) throw new AppError(404, "TRAINING_REFERENCE_NOT_FOUND");
     if (!isAdmin && ref.addedById !== requesterId) throw new AppError(403, "FORBIDDEN");

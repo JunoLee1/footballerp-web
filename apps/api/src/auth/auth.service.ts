@@ -113,7 +113,7 @@ export class AuthService {
     return user;
   }
 
-  async updateProfile(userId: string, dto: { email?: string; homeAddress?: string | null; phoneNumber?: string }) {
+  async updateProfile(userId: string, dto: { email?: string | undefined; homeAddress?: string | null | undefined; phoneNumber?: string | undefined }) {
     if (dto.email !== undefined) {
       if (await this.repo.isEmailTakenByOther(dto.email, userId)) throw new AppError(409, "EMAIL_TAKEN");
     }

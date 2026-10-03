@@ -13,7 +13,7 @@ export class DevelopmentPlanService {
     return this.repo.findAll(query);
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const plan = await this.repo.findById(id);
     if (!plan) throw new AppError(404, "PLAN_NOT_FOUND");
     return plan;
@@ -23,7 +23,7 @@ export class DevelopmentPlanService {
     return this.repo.create({ ...dto, coachId });
   }
 
-  async update(id: number, dto: UpdatePlanDto, requesterId: string, requesterRole: string, coachingRole?: string | null) {
+  async update(id: string, dto: UpdatePlanDto, requesterId: string, requesterRole: string, coachingRole?: string | null) {
     const plan = await this.repo.findById(id);
     if (!plan) throw new AppError(404, "PLAN_NOT_FOUND");
     if (plan.status !== "DRAFT") throw new AppError(409, "PLAN_NOT_EDITABLE");
@@ -33,7 +33,7 @@ export class DevelopmentPlanService {
     return this.repo.update(id, dto);
   }
 
-  async activate(id: number, requesterId: string, requesterRole: string, coachingRole?: string | null) {
+  async activate(id: string, requesterId: string, requesterRole: string, coachingRole?: string | null) {
     const plan = await this.repo.findById(id);
     if (!plan) throw new AppError(404, "PLAN_NOT_FOUND");
     if (plan.status !== "DRAFT") throw new AppError(409, "ALREADY_ACTIVATED");
@@ -58,7 +58,7 @@ export class DevelopmentPlanService {
     return updated;
   }
 
-  async review(id: number, requesterId: string, requesterRole: string, coachingRole?: string | null) {
+  async review(id: string, requesterId: string, requesterRole: string, coachingRole?: string | null) {
     const plan = await this.repo.findById(id);
     if (!plan) throw new AppError(404, "PLAN_NOT_FOUND");
     if (plan.status !== "ACTIVE") throw new AppError(409, "PLAN_NOT_ACTIVE");

@@ -41,7 +41,7 @@ function defaultMedicalLoanDueDate(): Date {
 
 async function getMedicalDeptId(
   tx: Prisma.TransactionClient | typeof prisma = prisma
-): Promise<number> {
+): Promise<string> {
   const dept = await tx.department.findFirst({
     where: { name: { contains: "의무" } },
     select: { id: true },

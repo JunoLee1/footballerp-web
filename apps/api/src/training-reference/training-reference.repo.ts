@@ -48,14 +48,14 @@ export class TrainingReferenceRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.trainingReference.findUnique({
       where: { id },
       select: { id: true, addedById: true },
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prisma.trainingReference.delete({ where: { id } });
   }
 

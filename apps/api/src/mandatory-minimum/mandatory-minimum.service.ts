@@ -134,7 +134,7 @@ export class MandatoryMinimumService {
    * APPROVED 시 categoryPlan.mandatoryMinimum = log.newAmount 즉시 반영 (grill Q9).
    */
   async review(
-    logId: number,
+    logId: string,
     decision: ReviewDecision,
     note: string | undefined,
     actorId: string,

@@ -3,9 +3,9 @@ import { PlanReviewRepository } from "./plan-review.repo";
 import { PlanReviewService } from "./plan-review.service";
 import { auth } from "../lib/authMiddleware";
 import { getPrisma } from "../lib/prisma";
-import { intIdRouter } from "../lib/idParamGuard";
+import { assertCuid } from "../lib/cuidGuard";
 
-const router = intIdRouter();
+const router = Router();
 const prisma = getPrisma();
 const repo = new PlanReviewRepository(prisma);
 const service = new PlanReviewService(repo, prisma);
@@ -13,7 +13,7 @@ const service = new PlanReviewService(repo, prisma);
 // GET /plan-reviews/:planId — 계획서의 모든 검토 레코드 반환
 router.get("/:planId", auth, async (req: Request, res: Response, next: NextFunction) => {
   try {
-    res.status(200).json(await service.list(Number(req.params["planId"])));
+    res.status(200).json(await service.list(assertCuid(req.params["planId"])));
   } catch (err) { next(err); }
 });
 
@@ -22,7 +22,7 @@ router.post("/:planId/confirm", auth, async (req: Request, res: Response, next: 
   try {
     const { comment } = req.body as { comment?: string };
     res.status(200).json(
-      await service.confirm(Number(req.params["planId"]), req.user!.id, comment)
+      await service.confirm(assertCuid(req.params["planId"]), req.user!.id, comment)
     );
   } catch (err) { next(err); }
 });
@@ -34,8 +34,8 @@ router.patch("/:planId/reviewer/:reviewerDeptId/reject", auth, async (req: Reque
     if (!reason?.trim()) return res.status(400).json({ code: "REASON_REQUIRED" });
     res.json(
       await service.reject(
-        Number(req.params["planId"]),
-        Number(req.params["reviewerDeptId"]),
+        assertCuid(req.params["planId"]),
+        assertCuid(req.params["reviewerDeptId"]),
         req.user!.id,
         reason,
       )

@@ -18,8 +18,8 @@ export class OnboardingTaskController {
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
       requireUser(req);
-      const onboardingId = Number(req.params["onboardingId"]);
-      if (!Number.isFinite(onboardingId) || onboardingId <= 0) {
+      const onboardingId = req.params["onboardingId"];
+      if (typeof onboardingId !== "string" || onboardingId.length === 0) {
         throw new AppError(400, "INVALID_ONBOARDING_ID");
       }
       const rows = await this.service.list(onboardingId);
@@ -40,11 +40,10 @@ export class OnboardingTaskController {
     try {
       requireUser(req);
       const raw = req.query["departmentId"];
-      const filter: { departmentId?: number } = {};
+      const filter: { departmentId?: string } = {};
       if (raw !== undefined) {
-        const n = Number(raw);
-        if (!Number.isFinite(n) || n <= 0) throw new AppError(400, "INVALID_DEPARTMENT_ID");
-        filter.departmentId = n;
+        if (typeof raw !== "string" || raw.length === 0) throw new AppError(400, "INVALID_DEPARTMENT_ID");
+        filter.departmentId = raw;
       }
       const rows = await this.service.verifyQueue(filter);
       res.json(rows);
@@ -88,10 +87,9 @@ export class OnboardingTaskController {
     }
   };
 
-  private parseTaskId(req: Request): number {
+  private parseTaskId(req: Request): string {
     const raw = req.params["taskId"];
-    const n = Number(raw);
-    if (!Number.isFinite(n) || n <= 0) throw new AppError(400, "INVALID_TASK_ID");
-    return n;
+    if (typeof raw !== "string" || raw.length === 0) throw new AppError(400, "INVALID_TASK_ID");
+    return raw;
   }
 }

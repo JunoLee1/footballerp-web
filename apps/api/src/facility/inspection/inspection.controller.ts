@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../../lib/appError";
 import { canWriteFacility } from "../../lib/permissions";
 import { requireUser } from "../../lib/authMiddleware";
+import { assertCuid } from "../../lib/cuidGuard";
 import type { InspectionService } from "./inspection.service";
 import type { CreateInspectionDto, UpdateInspectionDto, InspectionListQuery } from "./dto/inspection.dto";
 
@@ -18,7 +19,7 @@ export class InspectionController {
 
   get = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.get(Number(req.params.id)));
+      res.json(await this.service.get(assertCuid(req.params.id)));
     } catch (err) {
       next(err);
     }
@@ -47,7 +48,7 @@ export class InspectionController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canWriteFacility(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.update(Number(req.params.id), req.body as UpdateInspectionDto));
+      res.json(await this.service.update(assertCuid(req.params.id), req.body as UpdateInspectionDto));
     } catch (err) {
       next(err);
     }

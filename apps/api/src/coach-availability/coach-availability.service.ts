@@ -16,7 +16,7 @@ export class CoachAvailabilityService {
     return this.repo.create(dto, createdById);
   }
 
-  async delete(id: number, requesterId: string, isAdmin: boolean) {
+  async delete(id: string, requesterId: string, isAdmin: boolean) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "NOT_FOUND");
     if (!isAdmin && record.createdById !== requesterId) {

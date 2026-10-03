@@ -1,4 +1,5 @@
 import { PrismaClient } from "../generated/client";
+import type { AttendanceStatus, SessionType } from "../generated/enums";
 import { CreateSessionDto, AddContentDto, AddParticipantsDto, UpsertResultDto, SessionListQuery } from "./dto/training.dto";
 
 const n = <T>(v: T | undefined): T | null => v ?? null;
@@ -25,7 +26,7 @@ export class TrainingRepository {
     });
   }
 
-  findById(id: number, clubId?: string | null) {
+  findById(id: string, clubId?: string | null) {
     return this.prisma.trainingSession.findFirst({
       where: { id, ...(clubId != null && { clubId }) },
       select: {
@@ -62,7 +63,7 @@ export class TrainingRepository {
     });
   }
 
-  approve(id: number, approvedById: string) {
+  approve(id: string, approvedById: string) {
     return this.prisma.trainingSession.update({
       where: { id },
       data: { isApproved: true, approvedById },
@@ -70,20 +71,20 @@ export class TrainingRepository {
     });
   }
 
-  addContent(sessionId: number, dto: AddContentDto) {
+  addContent(sessionId: string, dto: AddContentDto) {
     return this.prisma.trainingContent.create({
       data: { sessionId, phase: dto.phase, description: dto.description },
     });
   }
 
-  addParticipants(sessionId: number, dto: AddParticipantsDto) {
+  addParticipants(sessionId: string, dto: AddParticipantsDto) {
     return this.prisma.trainingParticipant.createMany({
       data: dto.playerIds.map((playerId) => ({ sessionId, playerId })),
       skipDuplicates: true,
     });
   }
 
-  async addAllActivePlayers(sessionId: number, teamId?: number | null) {
+  async addAllActivePlayers(sessionId: string, teamId?: string | null) {
     const players = await this.prisma.player.findMany({
       where: {
         status: "ACTIVE",
@@ -118,7 +119,7 @@ export class TrainingRepository {
     }
   }
 
-  upsertResult(sessionId: number, dto: UpsertResultDto) {
+  upsertResult(sessionId: string, dto: UpsertResultDto) {
     return this.prisma.trainingResult.upsert({
       where: { sessionId_playerId: { sessionId, playerId: dto.playerId } },
       create: {
@@ -178,7 +179,7 @@ export class TrainingRepository {
     if (filters.sessionType) {
       where.session = {
         ...(where.session as object),
-        sessionType: filters.sessionType,
+        sessionType: filters.sessionType as SessionType,
       }
     }
 
@@ -191,7 +192,7 @@ export class TrainingRepository {
     }
 
     const results = await this.prisma.trainingResult.findMany({
-      where: where as any,
+      where: where,
       include: {
         session: { select: { id: true, date: true, sessionType: true, goal: true } },
         player: { select: { id: true, playerName: true, position: true } },
@@ -227,7 +228,7 @@ export class TrainingRepository {
   updateAttendance(id: string, attendance: string) {
     return this.prisma.trainingResult.update({
       where: { id },
-      data: { attendance: attendance as any },
+      data: { attendance: attendance as AttendanceStatus },
     });
   }
 
@@ -238,14 +239,14 @@ export class TrainingRepository {
     });
   }
 
-  findByIdWithTeam(id: number, clubId?: string | null) {
+  findByIdWithTeam(id: string, clubId?: string | null) {
     return this.prisma.trainingSession.findFirst({
       where: { id, ...(clubId != null && { clubId }) },
       select: { id: true, teamId: true, date: true, team: { select: { id: true, type: true, name: true } } },
     });
   }
 
-  updateSession(id: number, data: { date?: string; goal?: string }) {
+  updateSession(id: string, data: { date?: string; goal?: string }) {
     return this.prisma.trainingSession.update({
       where: { id },
       data: { ...(data.date && { date: new Date(data.date) }), ...(data.goal && { goal: data.goal }) },
@@ -253,14 +254,14 @@ export class TrainingRepository {
     });
   }
 
-  cancelSession(id: number) {
+  cancelSession(id: string) {
     return this.prisma.trainingSession.update({
       where: { id },
       data: { cancelledAt: new Date() },
     });
   }
 
-  findGuardiansByTeam(teamId: number): Promise<string[]> {
+  findGuardiansByTeam(teamId: string): Promise<string[]> {
     return this.prisma.player
       .findMany({
         where: { teamId, guardianId: { not: null } },

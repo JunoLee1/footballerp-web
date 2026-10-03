@@ -71,7 +71,7 @@ export class GuardianService {
     return this.feeRepo.findByPlayer(playerId);
   }
 
-  async submitFeeProof(feeId: number, url: string, playerId: string) {
+  async submitFeeProof(feeId: string, url: string, playerId: string) {
     const fee = await this.feeRepo.findById(feeId);
     if (!fee) throw new AppError(404, "ACADEMY_FEE_NOT_FOUND");
     if (fee.playerId !== playerId) throw new AppError(403, "FORBIDDEN");
@@ -88,13 +88,13 @@ export class GuardianService {
     ] = await this.repo.findDashboard(child.id, child.teamId ?? null, new Date());
 
     const attendanceMap = Object.fromEntries(
-      (attendanceGroups as any[]).map((g: any) => [g.attendance, g._count.attendance])
+      (attendanceGroups).map((g) => [g.attendance, g._count.attendance])
     );
 
-    const activeInjuries = (injuries as any[]).filter((i: any) =>
+    const activeInjuries = injuries.filter((i) =>
       !["RECOVERED", "RETURNED"].includes(i.status)
     );
-    const historyInjuries = (injuries as any[]).filter((i: any) =>
+    const historyInjuries = injuries.filter((i) =>
       ["RECOVERED", "RETURNED"].includes(i.status)
     );
 
@@ -107,7 +107,7 @@ export class GuardianService {
       suspension: { reason: suspensionReason },
       upcoming: { matches, sessions },
       attendance: {
-        total: (attendanceGroups as any[]).reduce((s: number, g: any) => s + g._count.attendance, 0),
+        total: attendanceGroups.reduce((s: number, g) => s + g._count.attendance, 0),
         attended: attendanceMap["ATTENDED"] ?? 0,
         absent: attendanceMap["ABSENT"] ?? 0,
         late: attendanceMap["LATE"] ?? 0,
@@ -116,8 +116,8 @@ export class GuardianService {
       injuries: { active: activeInjuries, history: historyInjuries },
       stats: { lastMatch: lastMatchStats ?? null },
       fees: {
-        pending: (fees as any[]).filter((f: any) => f.status === "PENDING"),
-        overdue: (fees as any[]).filter((f: any) => f.status === "OVERDUE"),
+        pending: fees.filter((f) => f.status === "PENDING"),
+        overdue: fees.filter((f) => f.status === "OVERDUE"),
       },
     };
   }

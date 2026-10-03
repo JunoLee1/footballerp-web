@@ -55,14 +55,14 @@ export class TacticalRepository {
     });
   }
 
-  findByMatch(matchId: number) {
+  findByMatch(matchId: string) {
     return this.prisma.tacticalAnalysis.findMany({
       where: { matchId },
       select: { id: true, phase: true, formation: true, createdAt: true, createdById: true },
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.tacticalAnalysis.findUnique({
       where: { id },
       include: {
@@ -98,7 +98,7 @@ export class TacticalRepository {
     });
   }
 
-  update(id: number, dto: UpdateAnalysisDto) {
+  update(id: string, dto: UpdateAnalysisDto) {
     const data: Prisma.TacticalAnalysisUncheckedUpdateInput = {};
     if (dto.formation !== undefined) data.formation = snv(dto.formation);
     if (dto.opponentAnalysis !== undefined) data.opponentAnalysis = snv(dto.opponentAnalysis);
@@ -122,13 +122,13 @@ export class TacticalRepository {
     });
   }
 
-  addLineup(tacticalAnalysisId: number, dto: AddLineupDto) {
+  addLineup(tacticalAnalysisId: string, dto: AddLineupDto) {
     return this.prisma.tacticalLineup.create({
       data: { tacticalAnalysisId, playerId: dto.playerId, position: dto.position },
     });
   }
 
-  addMedia(tacticalAnalysisId: number, dto: AddMediaDto) {
+  addMedia(tacticalAnalysisId: string, dto: AddMediaDto) {
     return this.prisma.tacticalMedia.create({
       data: { tacticalAnalysisId, url: dto.url, type: dto.type },
     });
@@ -152,7 +152,7 @@ export class TacticalRepository {
     });
   }
 
-  findByIdForPlayer(id: number, playerId: string) {
+  findByIdForPlayer(id: string, playerId: string) {
     return this.prisma.tacticalAnalysis.findFirst({
       where: {
         id,
@@ -175,7 +175,7 @@ export class TacticalRepository {
     });
   }
 
-  confirm(id: number) {
+  confirm(id: string) {
     return this.prisma.tacticalAnalysis.update({
       where: { id },
       data: { status: "CONFIRMED" },

@@ -1,7 +1,7 @@
 export interface CreateCallupDto {
   playerId: string;
-  fromTeamId: number;
-  toTeamId: number;
+  fromTeamId: string;
+  toTeamId: string;
   reason: string;
   startDate: string;
   endDate?: string;

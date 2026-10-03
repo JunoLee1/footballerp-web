@@ -34,7 +34,7 @@ export class AllowanceController {
       res.json(
         await this.service.update(
           assertCuid(req.params["id"]),
-          Number(req.params["aid"]),
+          assertCuid(req.params["aid"]),
           req.body as UpdateAllowanceDto,
         ),
       );
@@ -45,7 +45,7 @@ export class AllowanceController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canWritePayroll(role, frontOfficeRole, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      await this.service.remove(assertCuid(req.params["id"]), Number(req.params["aid"]));
+      await this.service.remove(assertCuid(req.params["id"]), assertCuid(req.params["aid"]));
       res.status(204).send();
     } catch (err) { next(err); }
   };

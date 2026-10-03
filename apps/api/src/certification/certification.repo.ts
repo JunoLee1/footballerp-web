@@ -33,7 +33,7 @@ export class CertificationRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.certification.findUnique({ where: { id }, include: INCLUDE });
   }
 
@@ -57,7 +57,7 @@ export class CertificationRepository {
     });
   }
 
-  update(id: number, dto: UpdateCertificationDto) {
+  update(id: string, dto: UpdateCertificationDto) {
     return this.prisma.certification.update({
       where: { id },
       data: {
@@ -72,7 +72,7 @@ export class CertificationRepository {
     });
   }
 
-  submit(id: number) {
+  submit(id: string) {
     return this.prisma.certification.update({
       where: { id },
       data: { status: "PENDING_REVIEW" },
@@ -80,7 +80,7 @@ export class CertificationRepository {
     });
   }
 
-  async resubmit(id: number) {
+  async resubmit(id: string) {
     await this.prisma.certificationReminderLog.deleteMany({ where: { certificationId: id } });
     return this.prisma.certification.update({
       where: { id },
@@ -89,7 +89,7 @@ export class CertificationRepository {
     });
   }
 
-  approve(id: number, approverId: string) {
+  approve(id: string, approverId: string) {
     return this.prisma.certification.update({
       where: { id },
       data: { status: "FM_APPROVED", approvedById: approverId, approvedAt: new Date() },
@@ -97,7 +97,7 @@ export class CertificationRepository {
     });
   }
 
-  gmApprove(id: number, approverId: string) {
+  gmApprove(id: string, approverId: string) {
     return this.prisma.certification.update({
       where: { id },
       data: {
@@ -110,7 +110,7 @@ export class CertificationRepository {
     });
   }
 
-  reject(id: number, reason: string) {
+  reject(id: string, reason: string) {
     return this.prisma.certification.update({
       where: { id },
       data: { status: "REJECTED", rejectionReason: reason },
@@ -118,7 +118,7 @@ export class CertificationRepository {
     });
   }
 
-  suspend(id: number) {
+  suspend(id: string) {
     return this.prisma.certification.update({
       where: { id },
       data: { status: "SUSPENDED" },
@@ -126,7 +126,7 @@ export class CertificationRepository {
     });
   }
 
-  cancel(id: number) {
+  cancel(id: string) {
     return this.prisma.certification.update({
       where: { id },
       data: { status: "CANCELLED" },

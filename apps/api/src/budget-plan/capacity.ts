@@ -16,7 +16,7 @@ export function calculateCapacity(
 }
 
 export interface CategoryInvariantInput {
-  categoryId: number;
+  categoryId: string;
   mandatoryMinimum: number;
   basicCost: number;
 }
@@ -26,7 +26,7 @@ export function validateInvariants(items: CategoryInvariantInput[]): void {
   if (violations.length === 0) return;
   const ids = violations.map((v) => v.categoryId);
   const err = new AppError(400, "BASIC_BELOW_MANDATORY_MIN");
-  (err as AppError & { violations: number[] }).violations = ids;
+  (err as AppError & { violations: string[] }).violations = ids;
   err.message = `BASIC_BELOW_MANDATORY_MIN: categoryIds=[${ids.join(",")}]`;
   throw err;
 }

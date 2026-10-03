@@ -309,11 +309,11 @@ export class InjuryRepository {
     return this.prisma.externalReport.findMany({ where: { injuryId }, orderBy: { createdAt: "asc" } });
   }
 
-  findExternalReportById(id: number) {
+  findExternalReportById(id: string) {
     return this.prisma.externalReport.findUnique({ where: { id } });
   }
 
-  updateExternalReportStatus(reportId: number, status: ExternalReportStatus, note?: string) {
+  updateExternalReportStatus(reportId: string, status: ExternalReportStatus, note?: string) {
     const data: { status: ExternalReportStatus; submittedAt?: Date; submittedNote?: string } = { status };
     if (status === "SUBMITTED") {
       data.submittedAt = new Date();

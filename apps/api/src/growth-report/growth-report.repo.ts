@@ -32,7 +32,7 @@ export class GrowthReportRepository {
     });
   }
 
-  findEvaluationById(id: number) {
+  findEvaluationById(id: string) {
     return this.prisma.growthEvaluation.findUnique({ where: { id }, include: EVAL_INCLUDE });
   }
 
@@ -50,7 +50,7 @@ export class GrowthReportRepository {
     });
   }
 
-  updateEvaluation(id: number, dto: Partial<CreateGrowthEvaluationDto>) {
+  updateEvaluation(id: string, dto: Partial<CreateGrowthEvaluationDto>) {
     return this.prisma.growthEvaluation.update({
       where: { id },
       data: dto,
@@ -58,7 +58,7 @@ export class GrowthReportRepository {
     });
   }
 
-  publishEvaluation(id: number) {
+  publishEvaluation(id: string) {
     return this.prisma.growthEvaluation.update({
       where: { id },
       data: { isPublished: true, publishedAt: new Date() },

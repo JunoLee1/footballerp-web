@@ -8,7 +8,7 @@ declare global {
       coachingRole: CoachingRole | null | undefined;
       frontOfficeRole: FrontOfficeRole | null | undefined;
       departmentCategories?: string[];
-      teamId?: number | null;
+      teamId?: string | null;
       clubId?: string | null;
       isDemo?: boolean;
     }

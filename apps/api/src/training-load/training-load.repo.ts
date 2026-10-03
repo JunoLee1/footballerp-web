@@ -22,7 +22,7 @@ export class TrainingLoadRepository {
     // KN10: fetch existing record to preserve previous values for audit trail
     const existing = await this.prisma.trainingLoad.findFirst({
       where: { playerId: dto.playerId, sessionId: dto.sessionId },
-      select: { rpe: true, load: true, loadUnit: true },
+      select: { rpe: true, load: true, loadUnit: true, version: true },
     });
 
     return this.prisma.trainingLoad.upsert({
@@ -34,7 +34,7 @@ export class TrainingLoadRepository {
         ...(dto.rpe !== undefined && { rpe: dto.rpe }),
         load: dto.load ?? null,
         ...(dto.loadUnit !== undefined && { loadUnit: dto.loadUnit }),
-      } as any,
+      },
       update: {
         ...(dto.rpe !== undefined && { rpe: dto.rpe }),
         ...(dto.load !== undefined && { load: dto.load }),
@@ -43,9 +43,9 @@ export class TrainingLoadRepository {
         ...(existing && {
           previousRpe: existing.rpe,
           previousLoad: existing.load,
-          version: ((existing as any).version ?? 0) + 1,
+          version: (existing.version ?? 0) + 1,
         }),
-      } as any,
+      },
     });
   }
 
@@ -149,7 +149,7 @@ export class TrainingLoadRepository {
     return this.prisma.injury.findFirst({
       where: {
         playerId,
-        status: { in: ["OCCURRED", "DIAGNOSED", "REHABILITATING"] as any },
+        status: { in: ["OCCURRED", "DIAGNOSED", "REHABILITATING"] },
       },
       select: {
         id: true,

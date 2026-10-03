@@ -1,20 +1,7 @@
 import { PrismaClient } from "../generated/client";
 import { Role, CoachingRole, FrontOfficeRole } from "../generated/enums";
 import crypto from "crypto";
-
-interface CreateUserData {
-  email: string;
-  password: string;
-  username: string;
-  nickname: string;
-  role: Role;
-  coachingRole?: CoachingRole | null;
-  frontOfficeRole?: FrontOfficeRole | null;
-  dateOfBirth: Date;
-  nationalityId: number;
-  phoneNumber: { encrypted: string; iv: string; phoneHash: string };
-  departmentId?: number;
-}
+import type { CreateUserData } from "./dto/auth.repo.dto";
 
 export class AuthRepository {
   constructor(private prisma: PrismaClient) {}
@@ -50,7 +37,7 @@ export class AuthRepository {
     return this.prisma.user.findFirst({ where: { email, id: { not: excludeUserId } }, select: { id: true } });
   }
 
-  isPhoneHashTakenByOther(phoneHash: string, excludePhoneNumberId: number) {
+  isPhoneHashTakenByOther(phoneHash: string, excludePhoneNumberId: string) {
     return this.prisma.phoneNumber.findFirst({ where: { phoneHash, id: { not: excludePhoneNumberId } }, select: { id: true } });
   }
 
@@ -58,7 +45,7 @@ export class AuthRepository {
     return this.prisma.user.findUnique({ where: { id: userId }, select: { password: true, passwordChangedAt: true, phoneNumberId: true } });
   }
 
-  async updateProfile(userId: string, data: { email?: string; homeAddress?: string | null; phoneNumber?: { encrypted: string; iv: string; phoneHash: string } }) {
+  async updateProfile(userId: string, data: { email?: string | undefined; homeAddress?: string | null | undefined; phoneNumber?: { encrypted: string; iv: string; phoneHash: string } | undefined }) {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId }, select: { phoneNumberId: true } });
     if (data.phoneNumber) {
       await this.prisma.phoneNumber.update({
@@ -181,7 +168,7 @@ export class AuthRepository {
     return this.prisma.userInvite.findUnique({ where: { token } });
   }
 
-  markInviteUsed(id: number) {
+  markInviteUsed(id: string) {
     return this.prisma.userInvite.update({
       where: { id },
       data: { usedAt: new Date() },

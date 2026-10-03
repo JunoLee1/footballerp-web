@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { TrainingReferenceService } from "./training-reference.service";
 import { SessionType } from "../generated/enums";
 
@@ -39,7 +40,7 @@ export class TrainingReferenceController {
       if (!(WRITE_ROLES as readonly string[]).includes(user.role))
         throw new AppError(403, "FORBIDDEN");
       await this.service.delete(
-        Number(req.params["id"]),
+        assertCuid(req.params["id"]),
         user.id,
         isAdminLike(user.role),
       );

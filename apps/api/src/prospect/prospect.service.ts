@@ -52,19 +52,19 @@ export class ProspectService {
     return this.repo.findAll(status, clubId);
   }
 
-  async getById(id: number, clubId?: string | null) {
+  async getById(id: string, clubId?: string | null) {
     const prospect = await this.repo.findById(id, clubId);
     if (!prospect) throw new AppError(404, "PROSPECT_NOT_FOUND");
     return prospect;
   }
 
-  async update(id: number, dto: UpdateProspectDto, actorClubId?: string | null) {
+  async update(id: string, dto: UpdateProspectDto, actorClubId?: string | null) {
     const prospect = await this.repo.findById(id, actorClubId);
     if (!prospect) throw new AppError(404, "PROSPECT_NOT_FOUND");
     return this.repo.update(id, dto);
   }
 
-  async updateStatus(id: number, dto: TransitionProspectStatusDto, actorClubId?: string | null) {
+  async updateStatus(id: string, dto: TransitionProspectStatusDto, actorClubId?: string | null) {
     if (dto.status === "SIGNED") throw new AppError(400, "USE_SIGN_ENDPOINT");
     // 모든 경로에서 club 스코핑 보장
     const prospect = await this.getById(id, actorClubId);
@@ -88,7 +88,7 @@ export class ProspectService {
     return { capacity: SHORTLIST_CAPACITY, current };
   }
 
-  async sign(id: number, dto: SignProspectDto, actorClubId?: string | null) {
+  async sign(id: string, dto: SignProspectDto, actorClubId?: string | null) {
     const prospect = await this.repo.findById(id, actorClubId);
     if (!prospect) throw new AppError(404, 'PROSPECT_NOT_FOUND');
     if (dto.workPermitStatus && dto.workPermitStatus !== 'NOT_REQUIRED') {
@@ -101,7 +101,7 @@ export class ProspectService {
     return result;
   }
 
-  async recordMedicalResult(id: number, dto: ProspectMedicalResultDto, actorClubId?: string | null) {
+  async recordMedicalResult(id: string, dto: ProspectMedicalResultDto, actorClubId?: string | null) {
     const prospect = await this.getById(id, actorClubId);
     if (prospect.status !== "MEDICAL_TEST") throw new AppError(409, "CANNOT_RECORD_MEDICAL_NON_PENDING");
     if (dto.result === 'pass' && prospect.visaRequired && prospect.visaEligibility === 'UNCERTAIN') {
@@ -110,7 +110,7 @@ export class ProspectService {
     return this.repo.recordMedicalResult(id, dto);
   }
 
-  async addNegotiationLog(id: number, dto: CreateProspectNegotiationLogDto, createdById: string, actorClubId?: string | null) {
+  async addNegotiationLog(id: string, dto: CreateProspectNegotiationLogDto, createdById: string, actorClubId?: string | null) {
     const prospect = await this.getById(id, actorClubId);
     if (NON_ACTIVE_STATUSES.includes(prospect.status as ProspectStatus)) {
       throw new AppError(409, "CANNOT_LOG_NEGOTIATION_ON_NON_ACTIVE");
@@ -118,21 +118,21 @@ export class ProspectService {
     return this.repo.addNegotiationLog(id, dto, createdById);
   }
 
-  getNegotiationLogs(id: number) {
+  getNegotiationLogs(id: string) {
     return this.repo.getNegotiationLogs(id);
   }
 
-  async addVideoEvaluation(id: number, dto: CreateProspectVideoEvaluationDto, evaluatedById: string, actorClubId?: string | null) {
+  async addVideoEvaluation(id: string, dto: CreateProspectVideoEvaluationDto, evaluatedById: string, actorClubId?: string | null) {
     await this.getById(id, actorClubId); // 존재 + club 스코핑 확인
     const result = computeVideoEvalResult(dto.qualityPassed, dto.identifiable, dto.continuity, dto.totalScore);
     return this.repo.addVideoEvaluation(id, dto, evaluatedById, result);
   }
 
-  getVideoEvaluations(id: number) {
+  getVideoEvaluations(id: string) {
     return this.repo.getVideoEvaluations(id);
   }
 
-  async updateVideoEvaluation(prospectId: number, evalId: number, dto: UpdateProspectVideoEvaluationDto, actorClubId?: string | null) {
+  async updateVideoEvaluation(prospectId: string, evalId: number, dto: UpdateProspectVideoEvaluationDto, actorClubId?: string | null) {
     await this.getById(prospectId, actorClubId);
     const evaluations = await this.repo.getVideoEvaluations(prospectId);
     const current = evaluations.find((e) => e.id === evalId);
@@ -145,16 +145,16 @@ export class ProspectService {
     return this.repo.updateVideoEvaluation(prospectId, evalId, dto, result);
   }
 
-  async addEvaluationLog(id: number, dto: CreateProspectEvaluationLogDto, evaluatedById: string, actorClubId?: string | null) {
+  async addEvaluationLog(id: string, dto: CreateProspectEvaluationLogDto, evaluatedById: string, actorClubId?: string | null) {
     await this.getById(id, actorClubId); // 존재 + club 스코핑 확인
     return this.repo.addEvaluationLog(id, dto, evaluatedById);
   }
 
-  getEvaluationLogs(id: number) {
+  getEvaluationLogs(id: string) {
     return this.repo.getEvaluationLogs(id);
   }
 
-  checkAcquisitionGate(id: number) {
+  checkAcquisitionGate(id: string) {
     return this.repo.checkAcquisitionGate(id);
   }
 }

@@ -49,7 +49,7 @@ export class BudgetAutomationRepository {
       note?: string;
       createdById: string;
     },
-    lines: Array<{ categoryId: number; originalAmount: number; year: number }>
+    lines: Array<{ categoryId: string; originalAmount: number; year: number }>
   ) {
     return this.prisma.$transaction(async (tx) => {
       // BudgetHeader @@unique([seasonId, version]) — 같은 시즌 재실행 시 version 자동 증가

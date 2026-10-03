@@ -2,10 +2,10 @@ import { IncidentType, IncidentReportStatus } from "../../generated/enums";
 
 export interface CreateIncidentReportDto {
   playerId: string;
-  teamId: number;
+  teamId: string;
   type: IncidentType;
-  matchId?: number;
-  sessionId?: number;
+  matchId?: string;
+  sessionId?: string;
   description: string;
 }
 
@@ -14,7 +14,7 @@ export interface SignIncidentReportDto {
 }
 
 export interface IncidentReportListQuery {
-  teamId?: number;
+  teamId?: string;
   status?: IncidentReportStatus;
   playerId?: string;
 }

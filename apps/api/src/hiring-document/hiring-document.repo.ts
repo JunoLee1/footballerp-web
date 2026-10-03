@@ -12,8 +12,8 @@ const DOC_INCLUDE = {
 } as const;
 
 export interface CreateHiringDocumentData {
-  applicationId?: number;
-  hiringDispatchId?: number;
+  applicationId?: string;
+  hiringDispatchId?: string;
   docType: string;
   fileUrl: string;
   fileName?: string;
@@ -26,6 +26,7 @@ export interface UpdateReviewData {
   reviewerId: string;
   reviewNotes: string | null;
 }
+//TODO: dto 옮기자
 
 /**
  * Prisma boundary for HiringDocument. The dispatch EXECUTION gate reads
@@ -51,14 +52,14 @@ export class HiringDocumentRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.hiringDocument.findUnique({
       where: { id },
       include: DOC_INCLUDE,
     });
   }
 
-  updateReview(id: number, data: UpdateReviewData) {
+  updateReview(id: string, data: UpdateReviewData) {
     return this.prisma.hiringDocument.update({
       where: { id },
       data: {
@@ -77,7 +78,7 @@ export class HiringDocumentRepository {
    * raw history use listHistory(). Sorted by createdAt DESC — the covering
    * index on `(target, docType, createdAt DESC)` matches this shape 1-1.
    */
-  findAllByTarget(target: { applicationId?: number; hiringDispatchId?: number }) {
+  findAllByTarget(target: { applicationId?: string; hiringDispatchId?: string }) {
     const where = target.applicationId != null
       ? { applicationId: target.applicationId }
       : { hiringDispatchId: target.hiringDispatchId! };
@@ -89,7 +90,7 @@ export class HiringDocumentRepository {
   }
 
   findHistoryByDocType(
-    target: { applicationId?: number; hiringDispatchId?: number },
+    target: { applicationId?: string; hiringDispatchId?: string },
     docType: string,
   ) {
     const where = target.applicationId != null
@@ -107,7 +108,7 @@ export class HiringDocumentRepository {
    * EXECUTION gate — `assertRequiredDocsApproved` filters this set to APPROVED
    * and compares against `requiredDocuments` (Q7 append-only, Q10 subset check).
    */
-  findLatestPerDocType(target: { applicationId?: number; hiringDispatchId?: number }) {
+  findLatestPerDocType(target: { applicationId?: string; hiringDispatchId?: string }) {
     const where = target.applicationId != null
       ? { applicationId: target.applicationId }
       : { hiringDispatchId: target.hiringDispatchId! };

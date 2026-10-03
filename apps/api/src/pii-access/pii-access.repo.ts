@@ -38,11 +38,11 @@ export class PiiAccessRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.piiAccessRequest.findUnique({ where: { id }, select: REQUEST_SELECT });
   }
 
-  review(id: number, status: PiiAccessStatus, reviewedById: string, grantedUntil?: Date) {
+  review(id: string, status: PiiAccessStatus, reviewedById: string, grantedUntil?: Date) {
     return this.prisma.piiAccessRequest.update({
       where: { id },
       data: { status, reviewedById, reviewedAt: new Date(), grantedUntil: grantedUntil ?? null },

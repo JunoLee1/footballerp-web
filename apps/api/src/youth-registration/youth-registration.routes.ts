@@ -31,7 +31,7 @@ const inviteAdapter = {
       confirmedPassword: tempPw,
       username: baseNickname ?? "guardian",
       nickname,
-      role: data.role as any,
+      role: data.role,
       coachingRole: null,
       frontOfficeRole: null,
       dateOfBirth: "2000-01-01T00:00:00.000Z",

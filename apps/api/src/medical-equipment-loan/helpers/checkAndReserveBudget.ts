@@ -18,8 +18,8 @@ export async function checkAndReserveBudget(
     budgetLineId: string;
     amount: number;
     seasonId: number;
-    categoryId: number;
-    departmentId: number;
+    categoryId: string;
+    departmentId: string;
     createdById: string;
     note?: string;
   }

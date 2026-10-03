@@ -21,7 +21,7 @@ export class MaintenanceService {
     return this.repo.findAll(query);
   }
 
-  async get(id: number) {
+  async get(id: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "MAINTENANCE_REQUEST_NOT_FOUND");
     return record;
@@ -35,7 +35,7 @@ export class MaintenanceService {
     return record;
   }
 
-  async update(id: number, dto: UpdateMaintenanceDto, updatedById: string) {
+  async update(id: string, dto: UpdateMaintenanceDto, updatedById: string) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new AppError(404, "MAINTENANCE_NOT_FOUND");
     if (existing.isLocked) throw new AppError(400, "MAINTENANCE_LOCKED");
@@ -54,7 +54,7 @@ export class MaintenanceService {
     return result;
   }
 
-  async updateStatus(id: number, status: string) {
+  async updateStatus(id: string, status: string) {
     const existing = await this.get(id);
     if ((TERMINAL_STATUSES as readonly string[]).includes(existing.status)) {
       throw new AppError(409, "ALREADY_RESOLVED");
@@ -64,7 +64,7 @@ export class MaintenanceService {
     return this.repo.updateStatus(id, status);
   }
 
-  async approve(id: number, approverId: string) {
+  async approve(id:string, approverId: string) {
     const existing = await this.get(id);
     if (existing.status !== "PENDING_APPROVAL") throw new AppError(400, "INVALID_STATUS_TRANSITION");
     const record = await this.repo.approve(id, approverId);
@@ -72,7 +72,7 @@ export class MaintenanceService {
     return record;
   }
 
-  async gmApprove(id: number, gmId: string) {
+  async gmApprove(id: string, gmId: string) {
     const existing = await this.get(id);
     if (existing.status !== "APPROVED") throw new AppError(400, "INVALID_STATUS_TRANSITION");
     const record = await this.repo.gmApprove(id, gmId);
@@ -93,7 +93,7 @@ export class MaintenanceService {
     return record;
   }
 
-  async reject(id: number, reason: string | undefined, actorId?: string) {
+  async reject(id: string, reason: string | undefined, actorId?: string) {
     if (!reason) throw new AppError(400, "REJECTION_REASON_REQUIRED");
     const existing = await this.get(id);
     const REJECTABLE = ["PENDING_APPROVAL", "APPROVED"];
@@ -109,7 +109,7 @@ export class MaintenanceService {
     return result;
   }
 
-  async lock(id: number) {
+  async lock(id: string) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new AppError(404, "MAINTENANCE_NOT_FOUND");
     if (existing.status !== "RESOLVED") throw new AppError(400, "CANNOT_LOCK_UNRESOLVED");
@@ -117,7 +117,7 @@ export class MaintenanceService {
     return this.repo.lock(id);
   }
 
-  async submitToFinance(id: number, userId: string) {
+  async submitToFinance(id: string, userId: string) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new AppError(404, "MAINTENANCE_NOT_FOUND");
 
@@ -126,7 +126,7 @@ export class MaintenanceService {
       create: { id: 1 },
       update: {},
       select: { maintenanceCostLimit: true },
-    });
+    }); //TODO:수정
     const limit = settings.maintenanceCostLimit;
 
     const cost = existing.estimatedCost ? Number(existing.estimatedCost) : 0;

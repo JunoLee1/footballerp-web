@@ -22,7 +22,7 @@ export class CoachAvailabilityRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.coachAvailability.findUnique({ where: { id } });
   }
 
@@ -38,7 +38,7 @@ export class CoachAvailabilityRepository {
     });
   }
 
-  delete(id: number) {
+  delete(id: string) {
     return this.prisma.coachAvailability.delete({ where: { id } });
   }
 

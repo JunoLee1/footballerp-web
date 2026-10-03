@@ -22,14 +22,14 @@ export class StaffRecordService {
     return records.map(maskStaff);
   }
 
-  async get(id: number) {
+  async get(id: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "STAFF_RECORD_NOT_FOUND");
     return maskStaff(record);
   }
 
   async create(
-    data: { name: string; role: string; departmentId?: number; phone?: string; notes?: string; email?: string; employeeId?: string },
+    data: { name: string; role: string; departmentId?: string; phone?: string; notes?: string; email?: string; employeeId?: string },
     createdById: string
   ) {
     if (data.email) {
@@ -41,12 +41,12 @@ export class StaffRecordService {
       if (existing) throw new AppError(409, "STAFF_ALREADY_EXISTS");
     }
     // S5: record employment start date on creation
-    return this.repo.create({ ...data, createdById, employmentStartDate: new Date() } as any);
+    return this.repo.create({ ...data, createdById, employmentStartDate: new Date() });
   }
 
   async update(
-    id: number,
-    data: { name?: string; role?: string; departmentId?: number | null; phone?: string; isActive?: boolean; notes?: string },
+    id: string,
+    data: { name?: string; role?: string; departmentId?: string | null; phone?: string; isActive?: boolean; notes?: string },
     actorId: string,
   ) {
     await this.get(id);
@@ -54,12 +54,12 @@ export class StaffRecordService {
     if (data.isActive === false) {
       updateData.employmentEndDate = new Date();
     }
-    const result = await this.repo.update(id, updateData as any);
+    const result = await this.repo.update(id, updateData);
     await writeAuditLog({ actorId, action: "STAFF_RECORD_UPDATED", targetId: id });
     return result;
   }
 
-  async delete(id: number, actorId: string) {
+  async delete(id: string, actorId: string) {
     await this.get(id);
     const linkedSalaryCount = await this.repo.countLinkedSalaries(id);
     if (linkedSalaryCount > 0) throw new AppError(409, "STAFF_RECORD_HAS_SALARY_HISTORY");
@@ -67,7 +67,7 @@ export class StaffRecordService {
     return this.repo.delete(id);
   }
 
-  async terminate(id: number, actorId: string) {
+  async terminate(id: string, actorId: string) {
     const existing = await this.repo.findById(id);
     if (!existing) throw new AppError(404, "STAFF_RECORD_NOT_FOUND");
     const result = await this.repo.terminate(id, new Date());

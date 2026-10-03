@@ -9,6 +9,7 @@ import { CertificationRepository } from "./certification.repo";
 import { CertificationService } from "./certification.service";
 import { CertificationController } from "./certification.controller";
 import { intIdRouter } from "../lib/idParamGuard";
+import { assertCuid } from "../lib/cuidGuard";
 
 const router = intIdRouter();
 const upload = multer({ dest: path.join(process.cwd(), "uploads", "certifications") });
@@ -33,7 +34,7 @@ router.post("/:id/upload", auth, upload.single("file"), async (req, res, next) =
   try {
     if (!req.file) { res.status(400).json({ message: "NO_FILE" }); return; }
     const documentUrl = `/uploads/certifications/${req.file.filename}`;
-    res.json(await certService.update(Number(req.params["id"]), { documentUrl }));
+    res.json(await certService.update(assertCuid(req.params["id"]), { documentUrl }));
   } catch (e) { next(e); }
 });
 

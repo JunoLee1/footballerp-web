@@ -30,8 +30,14 @@ export class IncidentReportRepository {
   }
 
   create(data: CreateIncidentReportDto & { reportedById: string }) {
+    const { matchId, sessionId, ...rest } = data;
     return this.prisma.incidentReport.create({
-      data: { ...data, status: "DRAFT" },
+      data: {
+        ...rest,
+        status: "DRAFT",
+        ...(matchId !== undefined && { matchId }),
+        ...(sessionId !== undefined && { sessionId }),
+      },
       include: INCLUDE,
     });
   }

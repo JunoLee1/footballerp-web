@@ -26,7 +26,7 @@ export class TrainingService {
     return this.repo.findAll(query, actorClubId);
   }
 
-  async getSessionById(id: number, actorClubId?: string | null) {
+  async getSessionById(id: string, actorClubId?: string | null) {
     const session = await this.repo.findById(id, actorClubId);
     if (!session) throw new AppError(404, "SESSION_NOT_FOUND");
     return session;
@@ -54,7 +54,7 @@ export class TrainingService {
     return session;
   }
 
-  async approveSession(id: number, approvedById: string, actorClubId?: string | null) {
+  async approveSession(id: string, approvedById: string, actorClubId?: string | null) {
     const session = await this.repo.findById(id, actorClubId);
     if (!session) throw new AppError(404, "SESSION_NOT_FOUND");
     if (session.isApproved) throw new AppError(409, "ALREADY_APPROVED");
@@ -109,19 +109,19 @@ export class TrainingService {
     return { ...approved, evalWarning: { missing: missingCount, total: presentResults.length } };
   }
 
-  async addContent(sessionId: number, dto: AddContentDto, actorClubId?: string | null) {
+  async addContent(sessionId: string, dto: AddContentDto, actorClubId?: string | null) {
     const session = await this.repo.findById(sessionId, actorClubId);
     if (!session) throw new AppError(404, "SESSION_NOT_FOUND");
     return this.repo.addContent(sessionId, dto);
   }
 
-  async addParticipants(sessionId: number, dto: AddParticipantsDto, actorClubId?: string | null) {
+  async addParticipants(sessionId: string, dto: AddParticipantsDto, actorClubId?: string | null) {
     const session = await this.repo.findById(sessionId, actorClubId);
     if (!session) throw new AppError(404, "SESSION_NOT_FOUND");
     return this.repo.addParticipants(sessionId, dto);
   }
 
-  async upsertResult(sessionId: number, dto: UpsertResultDto, actorClubId?: string | null) {
+  async upsertResult(sessionId: string, dto: UpsertResultDto, actorClubId?: string | null) {
     const session = await this.repo.findById(sessionId, actorClubId);
     if (!session) throw new AppError(404, "SESSION_NOT_FOUND");
     if (dto.performanceScore !== undefined && (dto.performanceScore < 0 || dto.performanceScore > 10)) {
@@ -157,7 +157,7 @@ export class TrainingService {
     return result;
   }
 
-  async updateSession(id: number, data: { date?: string; goal?: string }, _updatedById: string, actorClubId?: string | null) {
+  async updateSession(id: string, data: { date?: string; goal?: string }, _updatedById: string, actorClubId?: string | null) {
     const session = await this.repo.findByIdWithTeam(id, actorClubId);
     if (!session) throw new AppError(404, "SESSION_NOT_FOUND");
     const updated = await this.repo.updateSession(id, data);
@@ -181,7 +181,7 @@ export class TrainingService {
     return updated;
   }
 
-  async cancelSession(id: number, actorClubId?: string | null) {
+  async cancelSession(id: string, actorClubId?: string | null) {
     const session = await this.repo.findByIdWithTeam(id, actorClubId);
     if (!session) throw new AppError(404, "SESSION_NOT_FOUND");
     const result = await this.repo.cancelSession(id);
@@ -209,13 +209,13 @@ export class TrainingService {
     return this.repo.findResults(filters)
   }
 
-  async getResultById(resultId: number) {
+  async getResultById(resultId: string) {
     const result = await this.repo.findResultById(resultId);
     if (!result) throw new AppError(404, "RESULT_NOT_FOUND");
     return result;
   }
 
-  async correctAttendance(resultId: number, adminId: string, attendance: string, reason: string) {
+  async correctAttendance(resultId: string, adminId: string, attendance: string, reason: string) {
     if (!reason?.trim()) throw new AppError(400, "REASON_REQUIRED");
     const result = await this.repo.findResultById(resultId);
     if (!result) throw new AppError(404, "RESULT_NOT_FOUND");

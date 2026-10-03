@@ -12,7 +12,7 @@ type Prisma = Pick<PrismaClient, "season" | "financialReport" | "budgetCategoryP
 
 export interface DraftCreationResult {
   nextSeasonId: number;
-  draftReportId: number;
+  draftReportId: string;
   planStatus: "DRAFT" | "CAPACITY_FAILED";
 }
 
@@ -24,11 +24,11 @@ interface RunPreviewArgs {
   reportId: string;
   goal: GoalWeight;
   // #448: 이전 시즌 categoryId → mandatoryMinimum 매핑. 신규 카테고리는 여기 없어서 0 fallback.
-  previousMinimums: Map<number, number>;
+  previousMinimums: Map<string, number>;
 }
 
 interface BasicTierProbe {
-  categoryId: number;
+  categoryId: string;
   cost: number;
   mandatoryMinimum: number;
 }
@@ -248,7 +248,7 @@ async function failWithReason(prisma: Prisma, reportId: string, reason: string):
 async function loadPreviousMinimums(
   prisma: Prisma,
   prevSeasonId: number,
-): Promise<Map<number, number>> {
+): Promise<Map<string, number>> {
   const prevReport = await prisma.financialReport.findUnique({
     where: { seasonId: prevSeasonId },
     select: { id: true },

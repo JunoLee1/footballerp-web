@@ -9,7 +9,7 @@ export class TrainingLoadController {
     try {
       const { sessionId, playerId } = req.query;
       const query: Parameters<TrainingLoadService["getAll"]>[0] = {};
-      if (sessionId) query.sessionId = Number(sessionId);
+      if (sessionId) query.sessionId = sessionId as string;
       if (playerId) query.playerId = playerId as string;
       res.json(await this.service.getAll(query));
     } catch (err) { next(err); }

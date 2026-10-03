@@ -128,7 +128,7 @@ export class NotificationService {
     await this.repo.createForUser(playerUserId, "LINEUP_CONFIRMED", () => ({ title, body }), matchId);
   }
 
-  async notifyFacilityEmergency(requestTitle: string, requestId: number) {
+  async notifyFacilityEmergency(requestTitle: string, requestId: string) {
     const title = "시설 긴급 유지보수 요청";
     const body = `'${requestTitle}' — 긴급 유지보수 요청이 등록됐습니다. 즉시 확인 바랍니다.`;
     await this.repo.createForAllStaff("FACILITY_EMERGENCY", () => ({ title, body }), requestId);
@@ -141,7 +141,7 @@ export class NotificationService {
     });
   }
 
-  async notifyFacilityFinanceSubmit(requestTitle: string, requestId: number, estimatedCost: number) {
+  async notifyFacilityFinanceSubmit(requestTitle: string, requestId: string, estimatedCost: number) {
     const title = "시설 유지보수 재무 상신";
     const body = `'${requestTitle}' 유지보수 요청(예상비용 ${estimatedCost.toLocaleString()}원)이 재무 검토를 위해 상신됐습니다.`;
     await this.repo.createForFinanceManager("FACILITY_FINANCE_SUBMIT", () => ({ title, body }), requestId);
@@ -154,7 +154,7 @@ export class NotificationService {
     });
   }
 
-  async notifyFacilityResolved(requestTitle: string, requestId: number) {
+  async notifyFacilityResolved(requestTitle: string, requestId: string) {
     const title = "시설 유지보수 완료";
     const body = `'${requestTitle}' 유지보수 요청이 해결됐습니다.`;
     await this.repo.createForAllStaff("FACILITY_MAINTENANCE_RESOLVED", () => ({ title, body }), requestId);
@@ -167,14 +167,14 @@ export class NotificationService {
     });
   }
 
-  async notifyMaintenanceApproved(requestTitle: string, requestId: number, requesterUserId: string) {
+  async notifyMaintenanceApproved(requestTitle: string, requestId: string, requesterUserId: string) {
     await this.repo.createForUser(requesterUserId, "MAINTENANCE_APPROVED", () => ({
       title: "유지보수 요청 승인",
       body: `'${requestTitle}' 유지보수 요청이 승인됐습니다.`,
     }), requestId);
   }
 
-  async notifyMaintenanceRejected(requestTitle: string, requestId: number, requesterUserId: string, reason?: string) {
+  async notifyMaintenanceRejected(requestTitle: string, requestId: string, requesterUserId: string, reason?: string) {
     await this.repo.createForUser(requesterUserId, "MAINTENANCE_REJECTED", () => ({
       title: "유지보수 요청 거절",
       body: `'${requestTitle}' 유지보수 요청이 거절됐습니다.${reason ? ` 사유: ${reason}` : ''}`,

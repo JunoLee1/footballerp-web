@@ -1,5 +1,5 @@
 export interface CreateFormationSnapshotDto {
-  matchId: number;
+  matchId: string;
   minute?: number;
   formation: string;
   changeReason?: string;

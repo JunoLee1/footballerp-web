@@ -168,8 +168,8 @@ function resolveApproverLevel(
 function resolveReviewerDeptIds(
   plan: { templateType: string; hasNewStaff: boolean; hasContract: boolean; hasExternalLease: boolean; hasPersonalInfo: boolean },
   deptMap: ReviewerDeptMap
-): number[] {
-  const ids = new Set<number>()
+): string[] {
+  const ids = new Set<string>()
   if (plan.hasNewStaff && deptMap.hr) ids.add(deptMap.hr)
   if (plan.hasContract) {
     if (deptMap.procurement) ids.add(deptMap.procurement)

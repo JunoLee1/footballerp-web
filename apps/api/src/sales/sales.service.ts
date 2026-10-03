@@ -13,7 +13,7 @@ export class SalesService {
     private prisma: PrismaClient,
   ) {}
 
-  findAll() { return this.repo.findAll({ deletedAt: null } as any); }
+  findAll() { return this.repo.findAll({ deletedAt: null }); }
 
   findTicketsBySeason(seasonId: number) { return this.repo.findTicketsBySeason(seasonId); }
 
@@ -56,7 +56,7 @@ export class SalesService {
 
         if (match.capacity) {
           const sold = await tx.salesRecord.aggregate({
-            where: { matchId: dto.matchId, type: { in: ["TICKET", "VIP_TICKET", "COMPLIMENTARY"] as any[] }, deletedAt: null } as any,
+            where: { matchId: dto.matchId, type: { in: ["TICKET", "VIP_TICKET", "COMPLIMENTARY"] }, deletedAt: null } as any,
             _sum: { quantity: true },
           });
           const soldQty = Number((sold._sum).quantity ?? 0);
@@ -75,10 +75,10 @@ export class SalesService {
         const limit = settings?.complimentaryTicketLimit ?? 10;
 
         const compsSold = await tx.salesRecord.aggregate({
-          where: { matchId: dto.matchId, type: "COMPLIMENTARY" as any, deletedAt: null } as any,
+          where: { matchId: dto.matchId, type: "COMPLIMENTARY", deletedAt: null },
           _sum: { quantity: true },
         });
-        const totalComps = Number((compsSold._sum as any).quantity ?? 0);
+        const totalComps = Number((compsSold._sum).quantity ?? 0);
 
         if (totalComps + dto.quantity > limit) {
           throw new AppError(400, "COMPLIMENTARY_LIMIT_EXCEEDED");
@@ -99,7 +99,7 @@ export class SalesService {
           ...(dto.status && { status: dto.status }),
           ...(dto.channel && { channel: dto.channel }),
           createdById,
-        } as any,
+        },
       });
 
       if (dto.type === "TICKET" || (dto.type as string) === "VIP_TICKET") {
@@ -124,7 +124,7 @@ export class SalesService {
         await tx.ledgerEntry.create({
           data: {
             type: "INCOME",
-            category: "TICKET_SALES" as any,
+            category: "TICKET_SALES",
             amount: 0,
             currency: dto.currency ?? "KRW",
             exchangeRate: 1,
@@ -134,14 +134,14 @@ export class SalesService {
             relatedModule: "SalesRecord",
             relatedId: String(record.id),
             createdById,
-          } as any,
+          },
         });
       } else if ((dto.type as string) === "UNIFORM" || (dto.type as string) === "OTHER") {
         // JO7: Auto LedgerEntry for non-ticket merchandise sales
         await tx.ledgerEntry.create({
           data: {
             type: "INCOME",
-            category: ((dto.type as string) === "UNIFORM" ? "UNIFORM_SALES" : "OTHER") as any,
+            category: ((dto.type as string) === "UNIFORM" ? "UNIFORM_SALES" : "OTHER"),
             amount: totalAmount,
             currency: dto.currency ?? "KRW",
             exchangeRate: 1,
@@ -198,10 +198,10 @@ export class SalesService {
         if (match.homeTeamName !== FC_SEOUL) throw new AppError(400, "AWAY_MATCH_TICKET_NOT_ALLOWED");
         if (match.capacity) {
           const existing = await tx.salesRecord.aggregate({
-            where: { matchId, type: { in: ["TICKET", "VIP_TICKET"] }, deletedAt: null } as any,
+            where: { matchId, type: { in: ["TICKET", "VIP_TICKET"] }, deletedAt: null },
             _sum: { quantity: true },
           });
-          const existingQty = Number((existing._sum as any).quantity ?? 0);
+          const existingQty = Number((existing._sum).quantity ?? 0);
           if (existingQty + batchQty > match.capacity) {
             throw new AppError(400, "MATCH_CAPACITY_EXCEEDED");
           }
@@ -398,7 +398,7 @@ export class SalesService {
         totalAmount,
         currency: original.currency,
         saleDate: new Date(dto.saleDate),
-        status: "CANCELLED" as any,
+        status: "CANCELLED",
         matchId: original.matchId,
         ...(dto.description && { description: dto.description }),
         createdById,

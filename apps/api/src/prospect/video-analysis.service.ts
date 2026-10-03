@@ -10,7 +10,7 @@ const ERP_BASE_URL = process.env['ERP_BASE_URL'] ?? 'http://localhost:3000'
 export class VideoAnalysisService {
   constructor(private prisma: PrismaClient) {}
 
-  async createJob(prospectId: number, videoUrl: string) {
+  async createJob(prospectId: string, videoUrl: string) {
     validateVideoUrl(videoUrl)
     const job = await this.prisma.videoAnalysisJob.create({
       data: { prospectId, videoUrl },
@@ -20,13 +20,13 @@ export class VideoAnalysisService {
     return job
   }
 
-  async getJob(prospectId: number, jobId: number) {
+  async getJob(prospectId: string, jobId: string) {
     return this.prisma.videoAnalysisJob.findFirst({
       where: { id: jobId, prospectId },
     })
   }
 
-  async handleWebhook(jobId: number, status: 'DONE' | 'FAILED', data?: PipelineData , errorMessage?: string) {
+  async handleWebhook(jobId: string, status: 'DONE' | 'FAILED', data?: PipelineData , errorMessage?: string) {
     await this.prisma.videoAnalysisJob.update({
       where: { id: jobId },
       data: {
@@ -38,7 +38,7 @@ export class VideoAnalysisService {
     })
   }
 
-  private async dispatchToMlService(jobId: number, videoUrl: string, prospectId: number) {
+  private async dispatchToMlService(jobId: string, videoUrl: string, prospectId: string) {
     if (!ML_SERVICE_URL) return // ML 서비스 미설정 시 skip (개발 환경)
     try {
       await this.prisma.videoAnalysisJob.update({

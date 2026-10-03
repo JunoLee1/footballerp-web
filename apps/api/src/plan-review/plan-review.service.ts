@@ -29,7 +29,7 @@ export class PlanReviewService {
     return this.repo.confirm(planId, review.reviewerDeptId, userId, comment);
   }
 
-  async reject(planId: string, reviewerDeptId: number, rejectedById: string, reason: string) {
+  async reject(planId: string, reviewerDeptId: string, rejectedById: string, reason: string) {
     const reviews = await this.repo.findByPlan(planId);
     const review = reviews.find((r) => r.reviewerDeptId === reviewerDeptId);
     if (!review) throw new AppError(404, "REVIEW_NOT_FOUND");

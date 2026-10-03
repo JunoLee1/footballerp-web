@@ -27,7 +27,7 @@ export class FormationSnapshotRepository {
     });
   }
 
-  findByMatch(matchId: number) {
+  findByMatch(matchId: string) {
     return this.prisma.formationSnapshot.findMany({
       where: { matchId },
       select: SNAPSHOT_SELECT,
@@ -35,7 +35,7 @@ export class FormationSnapshotRepository {
     });
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.prisma.formationSnapshot.delete({ where: { id } });
   }
 }

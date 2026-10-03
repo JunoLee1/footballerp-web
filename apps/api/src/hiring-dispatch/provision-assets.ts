@@ -40,7 +40,7 @@ interface ShortageReport {
 export async function provisionNewEmployeeAssets(
   prisma: PrismaClient,
   notifRepo: NotificationRepository,
-  dispatchId: number,
+  dispatchId: string,
 ): Promise<void> {
   // 1. Dispatch 컨텍스트 로드 — 신입 유저 id + 부서 id + 후보자 이름
   //    (알림 본문에 candidate name 을 담아 ASSET_MANAGER 가 어떤 dispatch 인지

@@ -3,6 +3,7 @@ import { AppError } from "../lib/appError";
 import { isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
 import { CoachAvailabilityService } from "./coach-availability.service";
+import { assertCuid } from "../lib/cuidGuard";
 
 export class CoachAvailabilityController {
   constructor(private service: CoachAvailabilityService) {}
@@ -34,7 +35,7 @@ export class CoachAvailabilityController {
   delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id: requesterId, role } = requireUser(req);
-      await this.service.delete(Number(req.params["id"]), requesterId, isAdminLike(role));
+      await this.service.delete(assertCuid(req.params["id"]), requesterId, isAdminLike(role));
       res.status(204).send();
     } catch (err) { next(err); }
   };

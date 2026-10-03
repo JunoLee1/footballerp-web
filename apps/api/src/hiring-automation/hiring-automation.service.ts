@@ -31,11 +31,11 @@ export class HiringAutomationService {
 
   // --- DepartmentIbiConfig ---
 
-  listIbiConfigs(departmentId?: number) {
+  listIbiConfigs(departmentId?: string) {
     return this.repo.listIbiConfigs(departmentId);
   }
 
-  async getIbiConfig(id: number) {
+  async getIbiConfig(id: string) {
     const config = await this.repo.findIbiConfigById(id);
     if (!config) throw new AppError(404, "IBI_CONFIG_NOT_FOUND");
     return config;
@@ -47,14 +47,14 @@ export class HiringAutomationService {
     return this.repo.createIbiConfig(dto);
   }
 
-  async updateIbiConfig(id: number, dto: UpdateDepartmentIbiConfigDto) {
+  async updateIbiConfig(id: string, dto: UpdateDepartmentIbiConfigDto) {
     await this.getIbiConfig(id);
     if (dto.coreTaskRatio !== undefined && (dto.coreTaskRatio < 0 || dto.coreTaskRatio > 1))
       throw new AppError(400, "INVALID_CORE_TASK_RATIO");
     return this.repo.updateIbiConfig(id, dto);
   }
 
-  async deleteIbiConfig(id: number) {
+  async deleteIbiConfig(id: string) {
     await this.getIbiConfig(id);
     return this.repo.deleteIbiConfig(id);
   }
@@ -75,7 +75,7 @@ export class HiringAutomationService {
     return this.repo.listComplianceDeadlines();
   }
 
-  async getComplianceDeadline(id: number) {
+  async getComplianceDeadline(id: string) {
     const d = await this.repo.findComplianceDeadlineById(id);
     if (!d) throw new AppError(404, "COMPLIANCE_DEADLINE_NOT_FOUND");
     return d;
@@ -86,14 +86,14 @@ export class HiringAutomationService {
     return this.repo.createComplianceDeadline(dto);
   }
 
-  async updateComplianceDeadline(id: number, dto: UpdateComplianceDeadlineDto) {
+  async updateComplianceDeadline(id: string, dto: UpdateComplianceDeadlineDto) {
     await this.getComplianceDeadline(id);
     if (dto.betaMultiplier !== undefined && dto.betaMultiplier <= 0)
       throw new AppError(400, "INVALID_BETA_MULTIPLIER");
     return this.repo.updateComplianceDeadline(id, dto);
   }
 
-  async deleteComplianceDeadline(id: number) {
+  async deleteComplianceDeadline(id: string) {
     await this.getComplianceDeadline(id);
     return this.repo.deleteComplianceDeadline(id);
   }
@@ -131,8 +131,8 @@ export class HiringAutomationService {
       manualCompliance?.officeStaffCountMet === false;
 
     const deptIbiMap = new Map<
-      number,
-      { ibi: number; dept: { id: number; name: string; category: DepartmentCategory | null } }
+      string,
+      { ibi: number; dept: { id: string; name: string; category: DepartmentCategory | null } }
     >();
     for (const cfg of ibiConfigs) {
       if (!cfg.department || cfg.coreTaskRatio == null || cfg.replacementDays == null || cfg.backupHeadcount == null)

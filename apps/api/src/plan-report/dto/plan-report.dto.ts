@@ -4,7 +4,7 @@ export type ApproverLevel = 'HEAD' | 'GM' | 'ADMIN'
 export interface CreatePlanReportDto {
   title: string
   purpose: string
-  departmentId: number
+  departmentId: string
   startDate: string
   endDate: string
   budget: number
@@ -24,7 +24,7 @@ export interface CreatePlanReportDto {
 export interface UpdatePlanReportDto {
   title?: string
   purpose?: string
-  departmentId?: number
+  departmentId?: string
   startDate?: string
   endDate?: string
   budget?: number

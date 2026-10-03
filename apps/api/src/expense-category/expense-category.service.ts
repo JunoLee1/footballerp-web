@@ -2,7 +2,7 @@ import { ExpenseCategoryRepository } from "./expense-category.repo";
 import { AppError } from "../lib/appError";
 
 interface CachedCategory {
-  id: number;
+  id: string;
   code: string;
   label: string;
   sortOrder: number;
@@ -12,7 +12,7 @@ interface CachedCategory {
 export class ExpenseCategoryService {
   private cache: CachedCategory[] | null = null;
   private byCode = new Map<string, CachedCategory>();
-  private byId = new Map<number, CachedCategory>();
+  private byId = new Map<string, CachedCategory>();
 
   constructor(private repo: ExpenseCategoryRepository) {}
 
@@ -34,14 +34,14 @@ export class ExpenseCategoryService {
     return this.cache!;
   }
 
-  async resolveCategoryId(code: string): Promise<number> {
+  async resolveCategoryId(code: string): Promise<string> {
     await this.load();
     const found = this.byCode.get(code);
     if (!found) throw new AppError(400, "UNKNOWN_CATEGORY_CODE");
     return found.id;
   }
 
-  async resolveCategoryCode(id: number): Promise<string> {
+  async resolveCategoryCode(id: string): Promise<string> {
     await this.load();
     const found = this.byId.get(id);
     if (!found) throw new AppError(400, "UNKNOWN_CATEGORY_ID");

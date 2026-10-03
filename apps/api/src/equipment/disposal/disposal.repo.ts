@@ -39,7 +39,7 @@ export class DisposalRepository {
       data: {
         verifiedById,
         verifiedAt: new Date(),
-        status: "FM_VERIFIED" as any,
+        status: "FM_VERIFIED",
         ...(dto.checklistOk !== undefined && { checklistOk: dto.checklistOk }),
         ...(dto.photoUrl && { photoUrl: dto.photoUrl }),
         ...(dto.notes && { notes: dto.notes }),
@@ -52,7 +52,7 @@ export class DisposalRepository {
     return this.prisma.equipmentDisposalVerification.update({
       where: { id },
       data: {
-        status: "GM_APPROVED" as any,
+        status: "GM_APPROVED",
         ...(dto.notes && { notes: dto.notes }),
       },
       include: VERIFICATION_INCLUDE,
@@ -62,7 +62,7 @@ export class DisposalRepository {
   rejectVerification(id: string, reason: string) {
     return this.prisma.equipmentDisposalVerification.update({
       where: { id },
-      data: { status: "REJECTED" as any, notes: reason },
+      data: { status: "REJECTED", notes: reason },
       include: VERIFICATION_INCLUDE,
     });
   }
@@ -71,7 +71,7 @@ export class DisposalRepository {
     return this.prisma.equipmentUnit.update({
       where: { id: equipmentId },
       data: {
-        status: "RETIRED" as any,
+        status: "RETIRED",
         disposedById: actorId,
         disposedAt: new Date(),
       },

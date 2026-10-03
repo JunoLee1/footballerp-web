@@ -22,7 +22,7 @@ export class YouthRegistrationService {
     return regs.map(maskGuardianEmail);
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const reg = await this.repo.findById(id);
     if (!reg) throw new AppError(404, "YOUTH_REGISTRATION_NOT_FOUND");
     return maskGuardianEmail(reg);
@@ -42,7 +42,7 @@ export class YouthRegistrationService {
     return this.repo.create({ ...dto, requestedById, ...(guardianId !== undefined && { guardianId }) });
   }
 
-  async guardianApprove(id: number, guardianUserId: string) {
+  async guardianApprove(id: string, guardianUserId: string) {
     const reg = await this.repo.findById(id);
     if (!reg) throw new AppError(404, "YOUTH_REGISTRATION_NOT_FOUND");
     if (reg.guardianId !== guardianUserId) throw new AppError(403, "FORBIDDEN");
@@ -60,7 +60,7 @@ export class YouthRegistrationService {
     return result;
   }
 
-  async reject(id: number, dto: RejectYouthRegistrationDto) {
+  async reject(id: string, dto: RejectYouthRegistrationDto) {
     const reg = await this.repo.findById(id);
     if (!reg) throw new AppError(404, "YOUTH_REGISTRATION_NOT_FOUND");
     if (!["PENDING", "GUARDIAN_APPROVED"].includes(reg.status)) throw new AppError(409, "INVALID_STATUS");
@@ -75,7 +75,7 @@ export class YouthRegistrationService {
     return updated;
   }
 
-  async contract(id: number, requestedById: string, nationalityId: number) {
+  async contract(id: string, requestedById: string, nationalityId: number) {
     const reg = await this.repo.findById(id);
     if (!reg) throw new AppError(404, "YOUTH_REGISTRATION_NOT_FOUND");
     if (reg.status !== "GUARDIAN_APPROVED") throw new AppError(409, "INVALID_STATUS");

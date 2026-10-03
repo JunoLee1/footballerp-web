@@ -14,7 +14,7 @@ export class AllowanceService {
     if (!salary) throw new AppError(404, "SALARY_NOT_FOUND");
   }
 
-  private async getOwnedAllowance(salaryId: string, allowanceId: number) {
+  private async getOwnedAllowance(salaryId: string, allowanceId: string) {
     const allowance = await this.repo.findById(allowanceId);
     if (!allowance || allowance.staffSalaryId !== salaryId) {
       throw new AppError(404, "ALLOWANCE_NOT_FOUND");
@@ -32,13 +32,13 @@ export class AllowanceService {
     return this.repo.create(salaryId, dto);
   }
 
-  async update(salaryId: string, allowanceId: number, dto: UpdateAllowanceDto) {
+  async update(salaryId: string, allowanceId: string, dto: UpdateAllowanceDto) {
     await this.assertSalaryExists(salaryId);
     await this.getOwnedAllowance(salaryId, allowanceId);
     return this.repo.update(allowanceId, dto);
   }
 
-  async remove(salaryId: string, allowanceId: number) {
+  async remove(salaryId: string, allowanceId: string) {
     await this.assertSalaryExists(salaryId);
     await this.getOwnedAllowance(salaryId, allowanceId);
     return this.repo.remove(allowanceId);

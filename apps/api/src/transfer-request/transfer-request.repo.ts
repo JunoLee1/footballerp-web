@@ -188,7 +188,7 @@ export class TransferRequestRepository {
   }
 
   addNegotiationLog(id: number, dto: CreateNegotiationLogDto, createdById: string) {
-    return (this.prisma as any).transferNegotiationLog.create({
+    return (this.prisma).transferNegotiationLog.create({
       data: {
         transferRequestId: id,
         type: dto.type,
@@ -200,7 +200,7 @@ export class TransferRequestRepository {
   }
 
   getNegotiationLogs(id: number) {
-    return (this.prisma as any).transferNegotiationLog.findMany({
+    return (this.prisma).transferNegotiationLog.findMany({
       where: { transferRequestId: id },
       orderBy: { createdAt: "asc" },
       include: { createdBy: { select: { id: true, username: true } } },

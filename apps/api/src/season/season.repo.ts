@@ -1,4 +1,5 @@
 import { PrismaClient, SeasonStatus } from "../generated/client";
+import type { WageCapType } from "../generated/enums";
 import { getSeasonRevenueActuals } from "../lib/season-actuals";
 import { getSeasonPlayerSalary, getSeasonStaffSalary } from "../lib/season-salary";
 import { computeSigningBonusForSeason } from "../lib/signing-bonus";
@@ -41,7 +42,7 @@ export class SeasonRepository {
   async updateWageCap(id: number, wageCapType: string | null, wageCapValue: number | null) {
     return await this.prisma.season.update({
       where: { id },
-      data: { wageCapType: wageCapType as any, wageCapValue },
+      data: { wageCapType: wageCapType as WageCapType | null, wageCapValue },
     });
   }
 

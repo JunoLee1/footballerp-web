@@ -262,7 +262,7 @@ export class OperatingExpenseService {
       if (currentSpend + additional > ceiling) throw new AppError(400, "BUDGET_EXCEEDED");
     }
 
-    const payload: { amount?: number; categoryId?: number; note?: string } = {};
+    const payload: { amount?: number; categoryId?: string; note?: string } = {};
     if (data.amount !== undefined) payload.amount = data.amount;
     if (data.category !== undefined) {
       payload.categoryId = newCategoryId;

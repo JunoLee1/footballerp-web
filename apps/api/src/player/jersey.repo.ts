@@ -4,7 +4,7 @@ import { AssignJerseyDto, UpdateJerseyStatusDto } from "./dto/jersey.dto";
 export class JerseyRepository {
   constructor(private prisma: PrismaClient) {}
 
-  findByTeam(teamId: number) {
+  findByTeam(teamId: string) {
     return this.prisma.jerseyNumber.findMany({
       where: { teamId },
       include: { player: { select: { id: true, playerName: true, position: true } } },
@@ -19,14 +19,14 @@ export class JerseyRepository {
     });
   }
 
-  findByNumberAndTeam(number: number, teamId: number) {
+  findByNumberAndTeam(number: number, teamId: string) {
     return this.prisma.jerseyNumber.findUnique({
       where: { number_teamId: { number, teamId } },
       include: { player: { select: { id: true, playerName: true } } },
     });
   }
 
-  create(teamId: number, dto: AssignJerseyDto) {
+  create(teamId: string, dto: AssignJerseyDto) {
     return this.prisma.jerseyNumber.create({
       data: {
         number: dto.number,
@@ -37,7 +37,7 @@ export class JerseyRepository {
     });
   }
 
-  updateStatus(id: number, dto: UpdateJerseyStatusDto) {
+  updateStatus(id: string, dto: UpdateJerseyStatusDto) {
     return this.prisma.jerseyNumber.update({
       where: { id },
       data: {

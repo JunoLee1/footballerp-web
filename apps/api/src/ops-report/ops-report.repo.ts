@@ -39,9 +39,9 @@ export class OpsReportRepository {
 
   async upsertBudgetSnapshot(
     seasonId: number, year: number, month: number,
-    snapshotData: object, totalBudget: number, totalActual: number,
+    snapshotData: object, totalBudget: number, totalActual: number//TODO: DTO 파일로 이동
   ) {
-    return this.prisma.monthlyBudgetSnapshot.upsert({
+    return this.prisma.monthlyBudgetSnapshot.upsert({ //TODO: upsert 보단 tx rhals
       where: { seasonId_year_month: { seasonId, year, month } },
       update: { snapshotData, totalBudget, totalActual, updatedAt: new Date() },
       create: { seasonId, year, month, snapshotData, totalBudget, totalActual },
