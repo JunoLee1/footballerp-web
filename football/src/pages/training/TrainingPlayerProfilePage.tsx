@@ -166,7 +166,7 @@ export function TrainingPlayerProfilePage() {
                       background: 'hsl(var(--popover))',
                       color: 'hsl(var(--popover-foreground))',
                     }}
-                    formatter={(value: number) => [value, '점수']}
+                    formatter={(value) => [typeof value === 'number' ? value : Number(value), '점수']}
                     labelFormatter={(label, payload) => {
                       const type = payload?.[0]?.payload?.type
                       return `${label}${type ? ` · ${type}` : ''}`

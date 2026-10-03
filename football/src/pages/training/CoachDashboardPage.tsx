@@ -314,7 +314,7 @@ export function CoachDashboardPage() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="label" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" />
                     <YAxis domain={[0, 10]} tick={{ fontSize: 10 }} />
-                    <Tooltip formatter={(v: number) => v.toFixed(1)} />
+                    <Tooltip formatter={(v) => (typeof v === 'number' ? v.toFixed(1) : String(v))} />
                     <Bar dataKey="avgScore" fill="#3b82f6" name={t('dashboard.chartAvgScore')} radius={[2, 2, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -328,7 +328,7 @@ export function CoachDashboardPage() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" tick={{ fontSize: 10 }} angle={-30} textAnchor="end" />
                     <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} unit="%" />
-                    <Tooltip formatter={(v: number) => `${v}%`} />
+                    <Tooltip formatter={(v) => `${v}%`} />
                     <Line type="monotone" dataKey="attendanceRate" stroke="#10b981" strokeWidth={2} dot={{ r: 3 }} name={t('dashboard.chartAttendanceRate')} />
                   </LineChart>
                 </ResponsiveContainer>

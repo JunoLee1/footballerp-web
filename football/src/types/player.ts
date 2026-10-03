@@ -104,6 +104,7 @@ export interface Player {
   externalId: string | null
   currentMarketValue: number | null
   nationality: PlayerNationality
+  teamId: number | null
 }
 
 export type TransferType = 'PERMANENT_IN' | 'PERMANENT_OUT' | 'LOAN_OUT' | 'LOAN_IN' | 'FREE' | 'RELEASE'

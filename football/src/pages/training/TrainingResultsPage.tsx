@@ -29,7 +29,6 @@ import { Pagination } from '@/components/ui/pagination'
 const PAGE_SIZE = 10
 
 const ATTENDANCE_STATUS_KEYS = ['PRESENT', 'ABSENT_AUTHORIZED', 'ABSENT_UNAUTHORIZED', 'LATE_AUTHORIZED', 'LATE_UNAUTHORIZED'] as const
-type AttendanceKey = typeof ATTENDANCE_STATUS_KEYS[number]
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit', day: '2-digit' })
@@ -173,7 +172,7 @@ export function TrainingResultsPage() {
             </SelectContent>
           </Select>
         </div>
-        <Button size="sm" onClick={fetchData} disabled={loading} className="h-8">
+        <Button size="sm" onClick={() => void fetchData()} disabled={loading} className="h-8">
           {loading ? t('resultsPage.searching') : t('resultsPage.search')}
         </Button>
         {isAdmin && (

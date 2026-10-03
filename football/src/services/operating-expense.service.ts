@@ -25,6 +25,6 @@ export const operatingExpenseApi = {
     budgetLineId?: number
   }) => api.post<OperatingExpense>('/operating-expenses', payload),
 
-  delete: (id: number) =>
+  delete: (id: string) =>
     api.delete(`/operating-expenses/${id}`),
 }

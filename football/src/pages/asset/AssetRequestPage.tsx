@@ -203,7 +203,7 @@ export function AssetRequestPage() {
           toast.error('소프트웨어 라이선스를 선택해주세요')
           return
         }
-        payload.softwareLicenseId = parseInt(form.softwareLicenseId, 10)
+        payload.softwareLicenseId = form.softwareLicenseId
       }
     } else {
       if (!form.customName.trim()) {
@@ -275,7 +275,7 @@ export function AssetRequestPage() {
 
   const titleOf = (r: {
     equipmentItemId: number | null
-    softwareLicenseId: number | null
+    softwareLicenseId: string | null
     customName: string | null
     type: AssetRequestType
   }) => {

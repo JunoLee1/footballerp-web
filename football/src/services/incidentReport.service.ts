@@ -19,6 +19,6 @@ export const incidentReportApi = {
   submit: (id: string) =>
     api.patch<IncidentReport>(`/incident-reports/${id}/submit`, {}),
 
-  sign: (id: number, role: 'SUPERVISOR' | 'MEDICAL') =>
+  sign: (id: string, role: 'SUPERVISOR' | 'MEDICAL') =>
     api.patch<IncidentReport>(`/incident-reports/${id}/sign`, { role }),
 }

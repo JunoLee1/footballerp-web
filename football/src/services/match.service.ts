@@ -52,6 +52,8 @@ export const matchApi = {
       interceptions?: number
       clearances?: number
       saves?: number
+      shotsAllowed?: number
+      shotBlocked?: number
       cleanSheet?: boolean
       minutesPlayed?: number
       ballRecoveries?: number

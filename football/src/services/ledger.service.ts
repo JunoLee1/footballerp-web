@@ -17,8 +17,15 @@ export interface LedgerEntry {
 }
 
 export const ledgerApi = {
-  list: (params?: { type?: string; category?: string; from?: string; to?: string }) =>
-    api.get<LedgerEntry[]>('/ledger', { params }),
+  list: (params?: { type?: string; category?: string; from?: string; to?: string }) => {
+    const qs = new URLSearchParams()
+    if (params?.type) qs.set('type', params.type)
+    if (params?.category) qs.set('category', params.category)
+    if (params?.from) qs.set('from', params.from)
+    if (params?.to) qs.set('to', params.to)
+    const q = qs.toString()
+    return api.get<LedgerEntry[]>(`/ledger${q ? `?${q}` : ''}`)
+  },
 
   get: (id: number) =>
     api.get<LedgerEntry>(`/ledger/${id}`),

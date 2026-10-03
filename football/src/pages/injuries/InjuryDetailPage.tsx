@@ -118,7 +118,7 @@ function ExternalReportRow({
   onUpdated,
 }: {
   report: ExternalReport
-  injuryId: number
+  injuryId: string
   isMedical: boolean
   onUpdated: (updated: ExternalReport) => void
 }) {
@@ -246,10 +246,10 @@ export function InjuryDetailPage() {
   useEffect(() => {
     if (!id) return
     Promise.all([
-      injuryApi.get(Number(id)),
-      injuryApi.getReport(Number(id)),
-      injuryApi.getAssessment(Number(id)),
-      injuryApi.getExternalReports(Number(id)),
+      injuryApi.get(id),
+      injuryApi.getReport(id),
+      injuryApi.getAssessment(id),
+      injuryApi.getExternalReports(id),
     ])
       .then(([inj, r, assess, reports]) => {
         setInjury(inj)
@@ -265,7 +265,7 @@ export function InjuryDetailPage() {
     if (!id) return
     setSaving(true)
     try {
-      const updated = await injuryApi.saveReport(Number(id), {
+      const updated = await injuryApi.saveReport(id, {
         diagnosisName: diagnosisName || undefined,
         treatmentContent: treatmentContent || undefined,
         rehabStage: rehabStage || undefined,
@@ -302,8 +302,8 @@ export function InjuryDetailPage() {
         mySignRole === 'TRAINER' ? !!report?.trainerSignedAt :
         !!report?.medicalSignedAt
       const updated = isSigned
-        ? await injuryApi.unsignReport(Number(id))
-        : await injuryApi.signReport(Number(id))
+        ? await injuryApi.unsignReport(id)
+        : await injuryApi.signReport(id)
       setReport(updated)
       toast.success(isSigned ? t('detail.unsignSuccess') : t('detail.signSuccess'))
     } catch (err: unknown) {

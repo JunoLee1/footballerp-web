@@ -196,7 +196,7 @@ function groupByOwner(rows: BudgetPlanRequestDto[]): OwnerGroup[] {
   // TEAM 이 먼저, 그 안에서 ownerId 오름차순. DEPARTMENT 는 그 다음.
   return Array.from(groups.values()).sort((a, b) => {
     if (a.scope !== b.scope) return a.scope === 'TEAM' ? -1 : 1
-    return a.ownerId - b.ownerId
+    return a.ownerId.localeCompare(b.ownerId)
   })
 }
 
@@ -230,7 +230,7 @@ function canRePlan(status: FinanceManagerReviewPlanStatus): boolean {
 // ---------------------------------------------------------------------------
 function hasSelfSubmittedRequest(
   rows: BudgetPlanRequestDto[] | undefined,
-  currentUserId: number | undefined,
+  currentUserId: string | undefined,
 ): boolean {
   if (!rows || currentUserId == null) return false
   return rows.some((r) => r.requestedById === currentUserId)
@@ -906,8 +906,9 @@ export function FinanceManagerReview({ seasonId, planStatus }: Props) {
                   const label = cat?.label ?? labelOf(cp.category)
                   const scope: CategoryScope | undefined = cat?.scope
                   // PENDING 제안 lookup — 같은 categoryPlanId 로 매칭.
+                  const cpIdNum = Number(cp.id)
                   const pending = (pendingMinimumsQuery.data ?? []).find(
-                    (p) => p.categoryPlanId === cp.id,
+                    (p) => p.categoryPlanId === cpIdNum,
                   )
                   return (
                     <TableRow key={cp.id} data-mm-category-plan-id={cp.id}>
@@ -952,7 +953,7 @@ export function FinanceManagerReview({ seasonId, planStatus }: Props) {
                         <div className="flex justify-end gap-1">
                           <MandatoryMinimumProposalDialog
                             categoryPlan={{
-                              id: cp.id,
+                              id: cpIdNum,
                               mandatoryMinimum: cp.mandatoryMinimum,
                               expenseCategory: {
                                 code: cp.category,
@@ -971,7 +972,7 @@ export function FinanceManagerReview({ seasonId, planStatus }: Props) {
                             }
                           />
                           <MandatoryMinimumHistoryDialog
-                            categoryPlanId={cp.id}
+                            categoryPlanId={cpIdNum}
                             categoryLabel={label}
                             trigger={
                               <Button

@@ -29,7 +29,7 @@ interface Props {
   canReactivate: boolean
 }
 
-export function JerseyTab({ playerId, teamId, canAssign, canRetire, canReactivate }: Props) {
+export function JerseyTab({ playerId, teamId, canAssign, canRetire: _canRetire, canReactivate: _canReactivate }: Props) {
   const { t } = useTranslation('player')
   const [jerseys, setJerseys] = useState<JerseyNumber[]>([])
   const [teamJerseys, setTeamJerseys] = useState<TeamJerseyEntry[]>([])

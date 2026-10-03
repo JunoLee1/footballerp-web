@@ -30,5 +30,5 @@ export const growthReportApi = {
     api.post<PlayerBadge>('/growth-reports/badges', payload),
 
   getPositionAverage: (playerId: string): Promise<PositionAverage> =>
-    api.get('/growth-reports/position-average', { params: { playerId } }).then(r => r.data),
+    api.get<PositionAverage>(`/growth-reports/position-average?playerId=${encodeURIComponent(playerId)}`),
 }

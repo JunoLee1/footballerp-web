@@ -76,7 +76,16 @@ const acquisitionSurveyApi = {
     api.post<Survey>('/acquisition-surveys', data),
   close: (id: number) => api.patch<Survey>(`/acquisition-surveys/${id}/close`, {}),
   getResponses: (id: number) => api.get<SurveyResponse[]>(`/acquisition-surveys/${id}/responses`),
-  submitResponse: (id: number, items: Omit<ResponseItem, 'id'>[]) =>
+  submitResponse: (
+    id: number,
+    items: Array<{
+      position: string
+      priority: Priority
+      budgetMin?: number
+      budgetMax?: number
+      notes?: string
+    }>,
+  ) =>
     api.post(`/acquisition-surveys/${id}/responses`, { items }),
 }
 

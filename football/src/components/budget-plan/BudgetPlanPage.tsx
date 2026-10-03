@@ -76,7 +76,7 @@ function resolvePersona(user: UserDto): Persona {
 // ============================================================================
 
 interface Violation {
-  categoryPlanId: number
+  categoryPlanId: string
   categoryCode: string
   basicCost: number
   mandatoryMinimum: number

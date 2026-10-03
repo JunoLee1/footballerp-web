@@ -37,7 +37,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
-type PlayerStat = MatchDetail['playerMatchStats'][number]
 
 const ZONE_STYLE: Record<string, string> = {
   GK: 'bg-amber-100 text-amber-800 border-amber-200',

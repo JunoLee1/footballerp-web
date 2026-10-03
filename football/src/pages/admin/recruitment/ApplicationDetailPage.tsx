@@ -347,7 +347,7 @@ export function ApplicationDetailPage() {
       </div>
 
       {/* Actions */}
-      {canWrite && app.status !== 'REJECTED' && app.status !== 'HIRED' && (
+      {canWrite && app.status !== 'REJECTED' && app.status !== 'ONBOARDED' && (
         <div className="flex gap-2 flex-wrap">
           {canApprove && app.status === 'REFERENCE_CHECK' && (
             <Button onClick={() => void handleOffer()} disabled={saving}>
@@ -467,7 +467,7 @@ export function ApplicationDetailPage() {
       </section>
 
       {/* Onboarding */}
-      {(app.status === 'OFFERED' || app.status === 'HIRED') && (
+      {(app.status === 'OFFERED' || app.status === 'ONBOARDED') && (
         <section className="space-y-3">
           <h2 className="font-semibold">{t('recruitment.onboarding')}</h2>
           {app.onboarding ? (

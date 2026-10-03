@@ -44,7 +44,7 @@ export interface AssetRequest {
 
   // Hybrid payload — exactly one of the three per backend validation.
   equipmentItemId: number | null
-  softwareLicenseId: number | null
+  softwareLicenseId: string | null
   customName: string | null
   customDescription: string | null
 
@@ -95,7 +95,7 @@ export interface AssetRequestListItem {
   status: AssetRequestStatus
 
   equipmentItemId: number | null
-  softwareLicenseId: number | null
+  softwareLicenseId: string | null
   customName: string | null
   customDescription: string | null
 
@@ -121,7 +121,7 @@ export interface AssetRequestListItem {
 export interface CreateAssetRequestPayload {
   type: AssetRequestType
   equipmentItemId?: number
-  softwareLicenseId?: number
+  softwareLicenseId?: string
   customName?: string
   customDescription?: string
   expenseCategoryId: number

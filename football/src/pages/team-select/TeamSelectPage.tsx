@@ -23,7 +23,7 @@ export function TeamSelectPage() {
   const [step, setStep] = useState<Step>('league')
   const [leagues, setLeagues] = useState<League[]>([])
   const [selectedLeague, setSelectedLeague] = useState<League | null>(null)
-  const [selectedClubId, setSelectedClubId] = useState<number | null>(null)
+  const [, setSelectedClubId] = useState<number | null>(null)
   const [selectedClubName, setSelectedClubName] = useState<string>('')
   const [clubs, setClubs] = useState<ClubSummary[]>([])
   const [clubDetail, setClubDetail] = useState<Club | null>(null)

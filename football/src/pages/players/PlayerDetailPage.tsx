@@ -563,7 +563,7 @@ export function PlayerDetailPage() {
                           width={40}
                         />
                         <Tooltip
-                          formatter={(v: number) => [fmtMv(v), t('detailPage.mvChartLabel')]}
+                          formatter={(v) => [fmtMv(typeof v === 'number' ? v : Number(v)), t('detailPage.mvChartLabel')]}
                           contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e2e8f0' }}
                         />
                         <Area
