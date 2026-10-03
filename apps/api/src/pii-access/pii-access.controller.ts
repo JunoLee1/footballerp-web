@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { isAdminLike } from "../lib/permissions";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import { PiiAccessService } from "./pii-access.service";
 
 export class PiiAccessController {
@@ -41,7 +42,7 @@ export class PiiAccessController {
     try {
       const { id: reviewerId, role } = requireUser(req);
       if (!isAdminLike(role)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.approve(Number(req.params["id"]), reviewerId));
+      res.json(await this.service.approve(assertCuid(req.params["id"]), reviewerId));
     } catch (err) { next(err); }
   };
 
@@ -50,7 +51,7 @@ export class PiiAccessController {
     try {
       const { id: reviewerId, role } = requireUser(req);
       if (!isAdminLike(role)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.deny(Number(req.params["id"]), reviewerId));
+      res.json(await this.service.deny(assertCuid(req.params["id"]), reviewerId));
     } catch (err) { next(err); }
   };
 }

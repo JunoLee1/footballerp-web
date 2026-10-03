@@ -63,11 +63,10 @@ export class OnboardingTemplateController {
     }
   };
 
-  private parseDeptId(req: Request): number {
+  private parseDeptId(req: Request): string {
     const raw = req.params["departmentId"];
-    const n = Number(raw);
-    if (!Number.isFinite(n) || n <= 0) throw new AppError(400, "INVALID_DEPARTMENT_ID");
-    return n;
+    if (typeof raw !== "string" || raw.length === 0) throw new AppError(400, "INVALID_DEPARTMENT_ID");
+    return raw;
   }
 
   /**
@@ -82,7 +81,7 @@ export class OnboardingTemplateController {
     userId: string,
     role: string,
     foRole: string | null | undefined,
-    departmentId: number,
+    departmentId: string,
   ): Promise<void> {
     if (canWriteHR(role, foRole)) return;
     const dept = await getPrisma().department.findUnique({

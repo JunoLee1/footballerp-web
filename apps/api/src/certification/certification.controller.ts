@@ -24,10 +24,10 @@ const isCertFirstApprover = (req: Request, certType: CertificationType): boolean
   const required = CERT_APPROVER_MAP[certType];
   if (required.role === "ADMIN") return isAdminLike(u.role);
   if (required.role === "MEDICAL_DIRECTOR") {
-    return u.role === "COACHING_STAFF" && (u as any).coachingRole === "MEDICAL_DIRECTOR";
+    return u.role === "COACHING_STAFF" && u.coachingRole === "MEDICAL_DIRECTOR";
   }
   if (required.role === "FRONT_OFFICE" && "foRole" in required) {
-    return u.role === "FRONT_OFFICE" && (u as any).frontOfficeRole === required.foRole;
+    return u.role === "FRONT_OFFICE" && u.frontOfficeRole === required.foRole;
   }
   return false;
 };

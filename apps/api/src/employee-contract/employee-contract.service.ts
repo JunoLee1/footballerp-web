@@ -42,10 +42,11 @@ export class EmployeeContractService {
   // create — new DRAFT row for a dispatch
   // ────────────────────────────────────────────
 
-  async createDraft(hiringDispatchId: number, actorId: string) {
-    if (!Number.isInteger(hiringDispatchId) || hiringDispatchId <= 0) {
+  async createDraft(hiringDispatchId: string, actorId: string) {
+    /*if (!Number.isInteger(hiringDispatchId) || hiringDispatchId <= 0) {
       throw new AppError(400, "INVALID_DISPATCH_ID");
     }
+      */
     // Existence check — orphaned contracts are hard to reason about.
     const dispatch = await this.prisma.hiringDispatch.findUnique({
       where: { id: hiringDispatchId },
@@ -72,7 +73,7 @@ export class EmployeeContractService {
   // issue — DRAFT → ISSUED with contract file
   // ────────────────────────────────────────────
 
-  async issue(id: number, file: UploadedFileInfo, actorId: string) {
+  async issue(id: string, file: UploadedFileInfo, actorId: string) {
     const ec = await this.repo.findById(id);
     if (!ec) throw new AppError(404, "CONTRACT_NOT_FOUND");
     if (ec.status !== "DRAFT") {
@@ -106,7 +107,7 @@ export class EmployeeContractService {
   // ────────────────────────────────────────────
 
   async sign(
-    id: number,
+    id: string,
     file: UploadedFileInfo,
     dto: SignEmployeeContractDto,
     actorId: string,
@@ -147,7 +148,7 @@ export class EmployeeContractService {
   // cancel — any non-CANCELLED → CANCELLED with reason
   // ────────────────────────────────────────────
 
-  async cancel(id: number, dto: CancelEmployeeContractDto, actorId: string) {
+  async cancel(id: string, dto: CancelEmployeeContractDto, actorId: string) {
     const reason = dto?.cancelReason?.trim();
     if (!reason) throw new AppError(400, "CANCEL_REASON_REQUIRED");
     if (reason.length > 2000) throw new AppError(400, "CANCEL_REASON_TOO_LONG");

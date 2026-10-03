@@ -161,7 +161,7 @@ export class InjuryController {
       if (!(MEDICAL_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
       const { status, note } = req.body;
       const result = await this.service.updateExternalReportStatus(
-        Number(req.params["reportId"]),
+        assertCuid(req.params["reportId"]),
         status,
         note,
       );

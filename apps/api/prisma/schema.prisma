@@ -1831,7 +1831,7 @@ model TrainingResult {
 }
 
 model TacticalAnalysis {
-  id               Int            @id @default(autoincrement())
+  id               String         @id @default(cuid())
   phase            TacticalPhase
   formation        String?
   opponentAnalysis String?
@@ -1869,7 +1869,7 @@ model TacticalAnalysis {
 model TacticalLineup {
   id                 Int      @id @default(autoincrement())
   position           Position
-  tacticalAnalysisId Int
+  tacticalAnalysisId String
   playerId           String
 
   tacticalAnalysis TacticalAnalysis @relation(fields: [tacticalAnalysisId], references: [id])
@@ -1880,7 +1880,7 @@ model TacticalMedia {
   id                 Int    @id @default(autoincrement())
   url                String
   type               String
-  tacticalAnalysisId Int
+  tacticalAnalysisId String
 
   tacticalAnalysis TacticalAnalysis @relation(fields: [tacticalAnalysisId], references: [id])
 }
@@ -2037,7 +2037,7 @@ model ProspectVideoEvaluation {
 }
 
 model VideoAnalysisJob {
-  id           Int                 @id @default(autoincrement())
+  id           String              @id @default(cuid())
   prospectId   String
   videoUrl     String
   status       VideoAnalysisStatus @default(PENDING)
@@ -2509,7 +2509,7 @@ enum CallupType {
 }
 
 model YouthRegistration {
-  id                    Int                     @id @default(autoincrement())
+  id                    String                  @id @default(cuid())
   playerName            String
   birthDate             DateTime
   preferredJerseyNumber Int?
@@ -2621,7 +2621,7 @@ model PlayerBadge {
 }
 
 model PlayerCallup {
-  id                  Int                @id @default(autoincrement())
+  id                  String             @id @default(cuid())
   playerId            String
   fromTeamId          String
   toTeamId            String
@@ -2673,7 +2673,7 @@ model PasswordHistory {
 }
 
 model JerseyNumber {
-  id       Int                @id @default(autoincrement())
+  id       String             @id @default(cuid())
   number   Int
   status   JerseyNumberStatus @default(AVAILABLE)
   teamId   String
@@ -3526,7 +3526,7 @@ model ReferenceCheck {
 }
 
 model Onboarding {
-  id                 Int       @id @default(autoincrement())
+  id                 String    @id @default(cuid())
   applicationId      String?      @unique
   hiringDispatchId   String?      @unique
   userId             String?   @unique
@@ -3562,7 +3562,7 @@ enum OnboardingTaskStatus {
 /// `tasks` = OnboardingTemplateTask[] JSON 배열. dispatch() 성공 시 스냅샷으로
 /// OnboardingTask 로 populate 됨 (populate-onboarding-tasks.ts).
 model OnboardingTemplate {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(cuid())
   departmentId String      @unique
   name         String
   tasks        Json
@@ -3579,8 +3579,8 @@ model OnboardingTemplate {
 /// 신입 개인별 온보딩 태스크. dispatch() 안 template.tasks 스냅샷으로 자동 생성.
 /// 상태전환: 본인 self-report → (verify 필요) HR/dept.head 검증 → DONE / PENDING 복귀.
 model OnboardingTask {
-  id                   Int                  @id @default(autoincrement())
-  onboardingId         Int
+  id                   String               @id @default(cuid())
+  onboardingId         String
   title                String
   description          String?
   dueDate              DateTime?
@@ -3621,7 +3621,7 @@ model LeagueLevelWeightConfig {
 }
 
 model DepartmentIbiConfig {
-  id              Int      @id @default(autoincrement())
+  id              String   @id @default(cuid())
   departmentId    String
   jobTitle        String
   coreTaskRatio   Decimal  @db.Decimal(4, 3)
@@ -3649,7 +3649,7 @@ model SeasonComplianceCheck {
 }
 
 model ComplianceDeadline {
-  id                Int      @id @default(autoincrement())
+  id                String   @id @default(cuid())
   name              String
   deadlineDate      DateTime
   triggerDaysBefore Int

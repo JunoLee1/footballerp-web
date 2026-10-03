@@ -34,7 +34,7 @@ export class ProbationReviewService {
   // ────────────────────────────────────────────
 
   async submit(
-    staffRecordId: number,
+    staffRecordId: string,
     reviewerId: string,
     role: string,
     foRole: string | null | undefined,
@@ -148,7 +148,7 @@ export class ProbationReviewService {
   // ────────────────────────────────────────────
 
   async list(
-    staffRecordId: number,
+    staffRecordId: string,
     reviewerId: string,
     role: string,
     foRole: string | null | undefined,

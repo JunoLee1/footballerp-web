@@ -20,7 +20,7 @@ const REVIEW_WINDOW_DAYS = 14;
 const REVIEW_WINDOW_MS = REVIEW_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 
 export interface SubmitLineDto {
-  categoryId: number;
+  categoryId: string;
   triggers: TriggerType[];
   standardDelta: number;
   premiumDelta: number;
@@ -149,8 +149,8 @@ export class BudgetPlanRequestService {
 
     // Batch lookup: ownerType 별로 id 를 모아 각각 1 회씩 findMany. 요청이 N 건
     // 이더라도 team/department 조회는 각각 최대 1 회 (총 2 회) 로 억제된다.
-    const teamIds: number[] = [];
-    const deptIds: number[] = [];
+    const teamIds: string[] = [];
+    const deptIds: string[] = [];
     for (const r of requests) {
       if (r.ownerType === "TEAM") teamIds.push(r.ownerId);
       else if (r.ownerType === "DEPARTMENT") deptIds.push(r.ownerId);

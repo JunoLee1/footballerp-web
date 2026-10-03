@@ -1,4 +1,5 @@
 import type { PrismaClient } from "../generated/client";
+import type { SalesType } from "../generated/enums";
 import type { CreateSalesRecordDto } from "./dto/sales.dto";
 
 export class SalesRepository {
@@ -6,7 +7,7 @@ export class SalesRepository {
 
   findAll(extraWhere?: Record<string, unknown>) {
     return this.prisma.salesRecord.findMany({
-      where: { deletedAt: null, ...extraWhere } as any,
+      where: { deletedAt: null, ...extraWhere },
       orderBy: { saleDate: "desc" },
       include: { match: { select: { id: true, homeTeamName: true, awayTeamName: true, date: true } } },
     });
@@ -36,7 +37,17 @@ export class SalesRepository {
   }
 
   update(id: string, data: { quantity?: number; unitPrice?: number; totalAmount?: number; saleDate?: Date; description?: string | null; updatedById: string }) {
-    return this.prisma.salesRecord.update({ where: { id }, data: data as any });
+    return this.prisma.salesRecord.update({
+      where: { id },
+      data: {
+        updatedById: data.updatedById,
+        ...(data.quantity !== undefined && { quantity: data.quantity }),
+        ...(data.unitPrice !== undefined && { unitPrice: data.unitPrice }),
+        ...(data.totalAmount !== undefined && { totalAmount: data.totalAmount }),
+        ...(data.saleDate !== undefined && { saleDate: data.saleDate }),
+        ...(data.description !== undefined && { description: data.description }),
+      },
+    });
   }
 
   delete(id: string) {
@@ -62,26 +73,26 @@ export class SalesRepository {
         capacity: true,
         salesRecords: {
           where: {
-            type: { in: ["TICKET", "VIP_TICKET", "COMPLIMENTARY"] as any[] },
+            type: { in: ["TICKET", "VIP_TICKET", "COMPLIMENTARY"] },
             deletedAt: null,
-          } as any,
+          },
           select: { quantity: true, totalAmount: true, status: true, type: true },
         },
       },
     });
 
     return matches.map((m) => {
-      const completed = m.salesRecords.filter((r: any) => r.status === "COMPLETED" || !r.status);
-      const cancelled = m.salesRecords.filter((r: any) => r.status === "CANCELLED");
-      const refunded = m.salesRecords.filter((r: any) => r.status === "REFUNDED");
-      const complimentary = m.salesRecords.filter((r: any) => (r as any).type === "COMPLIMENTARY");
+      const completed = m.salesRecords.filter((r) => r.status === "COMPLETED" || !r.status);
+      const cancelled = m.salesRecords.filter((r) => r.status === "CANCELLED");
+      const refunded = m.salesRecords.filter((r) => r.status === "REFUNDED");
+      const complimentary = m.salesRecords.filter((r) => r.type === "COMPLIMENTARY");
 
-      const totalSold = completed.reduce((s: number, r: any) => s + r.quantity, 0);
-      const cancelledQty = cancelled.reduce((s: number, r: any) => s + r.quantity, 0);
-      const refundedQty = refunded.reduce((s: number, r: any) => s + r.quantity, 0);
-      const complimentaryQty = complimentary.reduce((s: number, r: any) => s + r.quantity, 0);
+      const totalSold = completed.reduce((s: number, r) => s + r.quantity, 0);
+      const cancelledQty = cancelled.reduce((s: number, r) => s + r.quantity, 0);
+      const refundedQty = refunded.reduce((s: number, r) => s + r.quantity, 0);
+      const complimentaryQty = complimentary.reduce((s: number, r) => s + r.quantity, 0);
       const netSold = totalSold - cancelledQty - refundedQty;
-      const totalAmount = completed.reduce((s: number, r: any) => s + Number(r.totalAmount), 0);
+      const totalAmount = completed.reduce((s: number, r) => s + Number(r.totalAmount), 0);
       const capacity = m.capacity ?? null;
       const sellRate = capacity && capacity > 0 ? Math.round((netSold / capacity) * 1000) / 10 : null;
 
@@ -106,16 +117,16 @@ export class SalesRepository {
 
   async seasonTicketTotal(seasonId: number): Promise<number> {
     const result = await this.prisma.salesRecord.aggregate({
-      where: { type: { in: ["TICKET", "VIP_TICKET", "COMPLIMENTARY"] as any[] }, match: { seasonId }, deletedAt: null } as any,
+      where: { type: { in: ["TICKET", "VIP_TICKET", "COMPLIMENTARY"] }, match: { seasonId }, deletedAt: null },
       _sum: { totalAmount: true },
     });
-    return Number((result._sum as any).totalAmount ?? 0);
+    return Number((result._sum).totalAmount ?? 0);
   }
 
   findTicketsBySeason(seasonId: number) {
     return this.prisma.salesRecord.findMany({
       where: {
-        type: { in: ["TICKET", "VIP_TICKET", "COMPLIMENTARY"] as any[] },
+        type: { in: ["TICKET", "VIP_TICKET", "COMPLIMENTARY"] },
         match: { seasonId },
         deletedAt: null,
       },
@@ -134,7 +145,7 @@ export class SalesRepository {
   }) {
     return this.prisma.salesRecord.findMany({
       where: {
-        ...(filters.type && { type: filters.type as any }),
+        ...(filters.type && { type: filters.type as SalesType }),
         ...(filters.matchId && { matchId: filters.matchId }),
         ...(filters.fromDate && { saleDate: { gte: new Date(filters.fromDate) } }),
         ...(filters.toDate && { saleDate: { lte: new Date(filters.toDate) } }),

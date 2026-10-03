@@ -19,7 +19,7 @@ export class DepartmentReviewerConfigRepository {
     });
   }
 
-  delete(id: string) {
+  delete(id: number) {
     return this.prisma.departmentReviewerConfig.delete({ where: { id } });
   }
 

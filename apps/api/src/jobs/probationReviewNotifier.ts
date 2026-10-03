@@ -24,15 +24,15 @@ const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 export type ProbationReviewType = "THREE_MO" | "SIX_MO";
 
 export interface ProbationCandidateStaff {
-  id: number;
+  id: string;
   name?: string | null;
   probationStartedAt: Date | null;
-  departmentId: number | null;
-  department: { id: number; name: string; headId: string | null } | null;
+  departmentId: string | null;
+  department: { id: string; name: string; headId: string | null } | null;
 }
 
 export interface NotifyDeptHeadArgs {
-  staffId: number;
+  staffId: string;
   staffName: string | null;
   reviewType: ProbationReviewType;
   deptHeadId: string;
@@ -41,7 +41,7 @@ export interface NotifyDeptHeadArgs {
 
 export interface RunDeps {
   findStaffInProbation: () => Promise<ProbationCandidateStaff[]>;
-  hasSentReminder: (staffId: number, reviewType: ProbationReviewType) => Promise<boolean>;
+  hasSentReminder: (staffId: string, reviewType: ProbationReviewType) => Promise<boolean>;
   notifyDeptHead: (args: NotifyDeptHeadArgs) => Promise<void>;
   probationMonths: number;
   now: () => Date;

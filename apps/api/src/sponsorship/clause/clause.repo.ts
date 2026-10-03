@@ -9,7 +9,7 @@ export class ClauseRepository {
     return this.prisma.sponsorshipClause.create({
       data: {
         sponsorshipId,
-        type: dto.type as any,
+        type: dto.type,
         condition: dto.condition,
         ...(dto.rate !== undefined && { rate: dto.rate }),
         ...(dto.fixedAmount !== undefined && { fixedAmount: dto.fixedAmount }),
@@ -31,7 +31,7 @@ export class ClauseRepository {
   updateStatus(id: string, status: ClauseStatus) {
     return this.prisma.sponsorshipClause.update({
       where: { id },
-      data: { status: status as any },
+      data: { status: status },
     });
   }
 

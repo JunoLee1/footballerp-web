@@ -1,4 +1,5 @@
 import { PrismaClient } from "../generated/client";
+import type { PlayerCallupStatus } from "../generated/enums";
 import { CreateCallupDto, CallupListQuery } from "./dto/player-callup.dto";
 
 const SELECT = {
@@ -24,7 +25,7 @@ export class PlayerCallupRepository {
   constructor(private prisma: PrismaClient) {}
 
   findAll(query: CallupListQuery) {
-    const where = query.status ? { status: query.status as any } : {};
+    const where = query.status ? { status: query.status as PlayerCallupStatus } : {};
     return this.prisma.playerCallup.findMany({
       where,
       select: SELECT,
@@ -32,7 +33,7 @@ export class PlayerCallupRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.playerCallup.findUnique({ where: { id }, select: SELECT });
   }
 
@@ -72,7 +73,7 @@ export class PlayerCallupRepository {
     });
   }
 
-  approve(id: number, approvedById: string) {
+  approve(id: string, approvedById: string) {
     return this.prisma.playerCallup.update({
       where: { id },
       data: { status: "APPROVED", approvedById },
@@ -80,7 +81,7 @@ export class PlayerCallupRepository {
     });
   }
 
-  reject(id: number, approvedById: string, rejectionReason: string) {
+  reject(id: string, approvedById: string, rejectionReason: string) {
     return this.prisma.playerCallup.update({
       where: { id },
       data: { status: "REJECTED", approvedById, rejectionReason },
@@ -88,7 +89,7 @@ export class PlayerCallupRepository {
     });
   }
 
-  complete(id: number) {
+  complete(id: string) {
     return this.prisma.playerCallup.update({
       where: { id },
       data: { status: "COMPLETED" },
@@ -96,15 +97,14 @@ export class PlayerCallupRepository {
     });
   }
 
-  confirmYouth(id: number) {
+  confirmYouth(id: string) {
     return this.prisma.playerCallup.update({
       where: { id },
       data: { youthCoachConfirmed: true },
       select: SELECT,
     });
   }
-
-  confirmMedical(id: number) {
+  confirmMedical(id: string) {
     return this.prisma.playerCallup.update({
       where: { id },
       data: { medicalConfirmed: true },
@@ -112,7 +112,7 @@ export class PlayerCallupRepository {
     });
   }
 
-  submitDocs(id: number) {
+  submitDocs(id: string) {
     return this.prisma.playerCallup.update({
       where: { id },
       data: { status: "DOCS_SUBMITTED" },
@@ -120,7 +120,7 @@ export class PlayerCallupRepository {
     });
   }
 
-  updatePlayerTeam(playerId: string, teamId: number) {
+  updatePlayerTeam(playerId: string, teamId: string) {
     return this.prisma.player.update({
       where: { id: playerId },
       data: { teamId },

@@ -1,6 +1,6 @@
 import type { PrismaClient } from '../generated/client'
 import { Prisma } from '../generated/client'
-import type { HiringPlanItemStatus } from '../generated/enums'
+import type { ApproverLevel, HiringPlanItemStatus } from '../generated/enums'
 import type {
   CreatePlanReportDto,
   UpdatePlanReportDto,
@@ -8,12 +8,12 @@ import type {
 } from './dto/plan-report.dto'
 
 export interface ReviewerDeptMap {
-  hr?: number
-  procurement?: number
-  legal?: number
-  facility?: number
-  privacy?: number
-  finance?: number
+  hr?: string
+  procurement?: string
+  legal?: string
+  facility?: string
+  privacy?: string
+  finance?: string
 }
 
 const PLAN_INCLUDE = {
@@ -34,9 +34,9 @@ export class PlanReportRepository {
   findAll(filters: ListPlanReportQuery) {
     return this.prisma.planReport.findMany({
       where: {
-        ...(filters.templateType && { templateType: filters.templateType as any }),
-        ...(filters.departmentId && { departmentId: Number(filters.departmentId) }),
-        ...(filters.status && { status: filters.status as any }),
+        ...(filters.templateType && { templateType: filters.templateType }),
+        ...(filters.departmentId && { departmentId: filters.departmentId }),
+        ...(filters.status && { status: filters.status  }),
       },
       include: PLAN_INCLUDE,
       orderBy: { createdAt: 'desc' },
@@ -99,7 +99,7 @@ export class PlanReportRepository {
     })
   }
 
-  async submit(id: string, reviewerDeptIds: number[], requiredApproverLevel: string | null) {
+  async submit(id: string, reviewerDeptIds: string[], requiredApproverLevel: string | null) {
     return this.prisma.$transaction(async (tx) => {
       if (reviewerDeptIds.length > 0) {
         await tx.planReview.createMany({
@@ -112,7 +112,7 @@ export class PlanReportRepository {
         data: {
           status: 'REVIEWING',
           submittedAt: new Date(),
-          requiredApproverLevel: requiredApproverLevel as any ?? null,
+          requiredApproverLevel: (requiredApproverLevel as ApproverLevel | null) ?? null,
         },
         include: PLAN_INCLUDE,
       })
@@ -221,11 +221,13 @@ export class PlanReportRepository {
     createdById: string
     title: string
   }) {
-    // Find HR department — look for a dept with name containing 'HR' or use the first dept as fallback
+    // Find HR department — look for a dept with name containing 'HR' or fall back to the first dept.
     const hrDept = await this.prisma.department.findFirst({
       where: { OR: [{ name: { contains: 'HR' } }, { name: { contains: '인사' } }] },
     })
-    const departmentId = hrDept?.id ?? 1
+    const fallback = await this.prisma.department.findFirst({ select: { id: true } })
+    const departmentId = hrDept?.id ?? fallback?.id
+    if (!departmentId) throw new Error('NO_DEPARTMENT_AVAILABLE')
 
     return this.prisma.planReport.create({
       data: {

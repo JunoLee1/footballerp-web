@@ -72,10 +72,7 @@ export class LedgerService {
 
     // BS2: mark the source SalesRecord as refunded
     if (original.relatedModule === "SalesRecord" && original.relatedId) {
-      const salesRecordId = Number(original.relatedId);
-      if (Number.isInteger(salesRecordId) && salesRecordId > 0) {
-        await this.repo.markSalesRecordRefunded(salesRecordId);
-      }
+      await this.repo.markSalesRecordRefunded(original.relatedId);
     }
 
     await writeAuditLog({ actorId: createdById, action: "LEDGER_REFUND_CREATED", targetId: refund.id, detail: { originalId } });

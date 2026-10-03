@@ -6,7 +6,7 @@ export interface CreateContractDto {
   endDate: string;
   salary: number;
   managedById?: string;
-  agencyId?: number;
+  agencyId?: string;
   agencyCommission?: number;
   signingBonus?: number;          // ≥ 0
   signingBonusScheduledAt?: string; // ISO date; signingBonus > 0 일 때만 유효

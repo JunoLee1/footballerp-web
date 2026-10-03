@@ -23,7 +23,7 @@ export class GrowthReportService {
     return this.repo.findPublishedEvaluationsByPlayer(playerId);
   }
 
-  async getEvaluationById(id: number) {
+  async getEvaluationById(id: string) {
     const ev = await this.repo.findEvaluationById(id);
     if (!ev) throw new AppError(404, "GROWTH_EVALUATION_NOT_FOUND");
     return ev;
@@ -36,7 +36,7 @@ export class GrowthReportService {
     return this.repo.createEvaluation(dto, coachId, activePlan?.id);
   }
 
-  async updateEvaluation(id: number, dto: Partial<CreateGrowthEvaluationDto>, coachId: string) {
+  async updateEvaluation(id: string, dto: Partial<CreateGrowthEvaluationDto>, coachId: string) {
     const ev = await this.repo.findEvaluationById(id);
     if (!ev) throw new AppError(404, "GROWTH_EVALUATION_NOT_FOUND");
     if (ev.coachId !== coachId) throw new AppError(403, "FORBIDDEN");
@@ -44,7 +44,7 @@ export class GrowthReportService {
     return this.repo.updateEvaluation(id, dto);
   }
 
-  async publishEvaluation(id: number) {
+  async publishEvaluation(id: string) {
     const ev = await this.repo.findEvaluationById(id);
     if (!ev) throw new AppError(404, "GROWTH_EVALUATION_NOT_FOUND");
     if (ev.isPublished) throw new AppError(409, "ALREADY_PUBLISHED");

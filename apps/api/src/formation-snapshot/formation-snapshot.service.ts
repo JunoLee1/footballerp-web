@@ -8,11 +8,11 @@ export class FormationSnapshotService {
     return this.repo.create(dto, createdById);
   }
 
-  findByMatch(matchId: number) {
+  findByMatch(matchId: string) {
     return this.repo.findByMatch(matchId);
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return this.repo.remove(id);
   }
 }

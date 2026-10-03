@@ -7,9 +7,8 @@
  */
 
 export interface CreateEmployeeContractDto {
-  // The dispatch this contract is attached to. Wire format keeps it a number
-  // so multer form fields need coercion at the controller boundary.
-  hiringDispatchId: number;
+  // The dispatch this contract is attached to.
+  hiringDispatchId: string;
 }
 
 /**

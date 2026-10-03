@@ -60,7 +60,7 @@ router.post("/register-with-proof", auth, requireFinance, uploadProof.single("fi
     if (!req.file) return next(new AppError(400, "FILE_REQUIRED"));
     const { playerId, year, month, amount } = req.body;
     if (!playerId || !year || !month || !amount) { return next(new AppError(400, "MISSING_FIELDS")); }
-    const url = (req.file as any).gcsUrl;
+    const url = req.file.gcsUrl;
     res.json(await service.registerWithProof(
       { playerId, year: Number(year), month: Number(month), amount: Number(amount) },
       url,

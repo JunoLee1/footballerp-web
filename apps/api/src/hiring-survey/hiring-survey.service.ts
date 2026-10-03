@@ -381,7 +381,7 @@ export class HiringSurveyService {
     const survey = await this.getById(id)
     if (survey.status !== 'DRAFT') throw new AppError(409, 'SURVEY_NOT_DRAFT')
 
-    const data: { title?: string; deadlineAt?: Date; targetDeptIds?: number[] } = {}
+    const data: { title?: string; deadlineAt?: Date; targetDeptIds?: string[] } = {}
     if (dto.title !== undefined) {
       if (!dto.title.trim()) throw new AppError(400, 'TITLE_REQUIRED')
       data.title = dto.title

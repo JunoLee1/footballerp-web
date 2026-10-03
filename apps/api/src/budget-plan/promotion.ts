@@ -30,14 +30,14 @@ export function calculateTierValue(deltaCost: number, triggers: TriggerType[]): 
 }
 
 export interface PromoteLineInput {
-  categoryId: number;
+  categoryId: string;
   triggers: TriggerType[];
   standardDelta: number;
   premiumDelta: number;
 }
 
 export interface PromotedTier {
-  categoryId: number;
+  categoryId: string;
   name: "Basic" | "Standard" | "Premium";
   cost: number;
   value: number;
@@ -51,7 +51,7 @@ export interface PromotedTier {
 // - 가산 사유 ≥1 → Premium 후보
 export function promoteTiers(
   lines: PromoteLineInput[],
-  basicCosts: Map<number, number>,
+  basicCosts: Map<string, number>,
 ): PromotedTier[] {
   const output: PromotedTier[] = [];
 

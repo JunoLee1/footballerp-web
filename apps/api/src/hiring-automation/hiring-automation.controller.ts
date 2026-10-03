@@ -26,7 +26,7 @@ export class HiringAutomationController {
 
   listIbiConfigs = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const departmentId = req.query.departmentId ? Number(req.query.departmentId) : undefined;
+      const departmentId = req.query.departmentId ? String(req.query.departmentId) : undefined;
       res.json(await this.service.listIbiConfigs(departmentId));
     } catch (e) { next(e); }
   };
@@ -39,13 +39,13 @@ export class HiringAutomationController {
 
   updateIbiConfig = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.updateIbiConfig(Number(req.params["id"]), req.body as UpdateDepartmentIbiConfigDto));
+      res.json(await this.service.updateIbiConfig(String(req.params["id"]), req.body as UpdateDepartmentIbiConfigDto));
     } catch (e) { next(e); }
   };
 
   deleteIbiConfig = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.service.deleteIbiConfig(Number(req.params["id"]));
+      await this.service.deleteIbiConfig(String(req.params["id"]));
       res.status(204).send();
     } catch (e) { next(e); }
   };
@@ -72,13 +72,13 @@ export class HiringAutomationController {
 
   updateComplianceDeadline = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.updateComplianceDeadline(Number(req.params["id"]), req.body as UpdateComplianceDeadlineDto));
+      res.json(await this.service.updateComplianceDeadline(String(req.params["id"]), req.body as UpdateComplianceDeadlineDto));
     } catch (e) { next(e); }
   };
 
   deleteComplianceDeadline = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.service.deleteComplianceDeadline(Number(req.params["id"]));
+      await this.service.deleteComplianceDeadline(String(req.params["id"]));
       res.status(204).send();
     } catch (e) { next(e); }
   };

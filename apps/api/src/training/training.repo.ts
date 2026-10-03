@@ -1,4 +1,5 @@
 import { PrismaClient } from "../generated/client";
+import type { AttendanceStatus, SessionType } from "../generated/enums";
 import { CreateSessionDto, AddContentDto, AddParticipantsDto, UpsertResultDto, SessionListQuery } from "./dto/training.dto";
 
 const n = <T>(v: T | undefined): T | null => v ?? null;
@@ -178,7 +179,7 @@ export class TrainingRepository {
     if (filters.sessionType) {
       where.session = {
         ...(where.session as object),
-        sessionType: filters.sessionType,
+        sessionType: filters.sessionType as SessionType,
       }
     }
 
@@ -227,7 +228,7 @@ export class TrainingRepository {
   updateAttendance(id: string, attendance: string) {
     return this.prisma.trainingResult.update({
       where: { id },
-      data: { attendance: attendance as any },
+      data: { attendance: attendance as AttendanceStatus },
     });
   }
 

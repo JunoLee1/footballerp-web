@@ -22,7 +22,7 @@ export class IncidentReportController {
       if (!canAccess(req)) throw new AppError(403, "FORBIDDEN");
       const q = req.query;
       const query: IncidentReportListQuery = {};
-      if (q["teamId"]) query.teamId = Number(q["teamId"]);
+      if (q["teamId"]) query.teamId = String(q["teamId"]);
       if (q["status"]) query.status = q["status"] as IncidentReportStatus;
       if (q["playerId"]) query.playerId = String(q["playerId"]);
       res.json(await this.service.getAll(query));

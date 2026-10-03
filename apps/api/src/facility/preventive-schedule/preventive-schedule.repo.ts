@@ -11,7 +11,7 @@ export class PreventiveScheduleRepository {
   findAll(query: PreventiveScheduleListQuery) {
     return this.prisma.preventiveSchedule.findMany({
       where: {
-        ...(query.facilityZone && { facilityZone: query.facilityZone as any }),
+        ...(query.facilityZone && { facilityZone: query.facilityZone  }),
         ...(query.isActive !== undefined && { isActive: query.isActive === "true" }),
       },
       include: INCLUDE,
@@ -19,17 +19,17 @@ export class PreventiveScheduleRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.preventiveSchedule.findUnique({ where: { id }, include: INCLUDE });
   }
 
   create(dto: CreatePreventiveScheduleDto) {
     return this.prisma.preventiveSchedule.create({
       data: {
-        facilityZone: dto.facilityZone as any,
+        facilityZone: dto.facilityZone,
         title: dto.title,
         intervalDays: dto.intervalDays,
-        priority: dto.priority as any,
+        priority: dto.priority,
         ...(dto.description && { description: dto.description }),
         ...(dto.partnerId && { partnerId: dto.partnerId }),
       },
@@ -37,21 +37,21 @@ export class PreventiveScheduleRepository {
     });
   }
 
-  update(id: number, dto: UpdatePreventiveScheduleDto) {
+  update(id: string, dto: UpdatePreventiveScheduleDto) {
     return this.prisma.preventiveSchedule.update({
       where: { id },
       data: {
         ...(dto.title !== undefined && { title: dto.title }),
         ...(dto.description !== undefined && { description: dto.description }),
         ...(dto.intervalDays !== undefined && { intervalDays: dto.intervalDays }),
-        ...(dto.priority !== undefined && { priority: dto.priority as any }),
+        ...(dto.priority !== undefined && { priority: dto.priority }),
         ...(dto.partnerId !== undefined && { partnerId: dto.partnerId }),
       },
       include: INCLUDE,
     });
   }
 
-  deactivate(id: number) {
+  deactivate(id: string) {
     return this.prisma.preventiveSchedule.update({
       where: { id },
       data: { isActive: false },
@@ -66,7 +66,7 @@ export class PreventiveScheduleRepository {
     });
   }
 
-  updateLastGeneratedAt(id: number, date: Date) {
+  updateLastGeneratedAt(id: string, date: Date) {
     return this.prisma.preventiveSchedule.update({
       where: { id },
       data: { lastGeneratedAt: date },

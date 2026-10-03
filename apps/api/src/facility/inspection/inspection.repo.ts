@@ -20,7 +20,7 @@ export class InspectionRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.facilityInspection.findUnique({ where: { id }, include: INCLUDE });
   }
 
@@ -41,13 +41,14 @@ export class InspectionRepository {
     });
   }
 
-  update(id: number, data: UpdateInspectionDto) {
+  update(id: string, data: UpdateInspectionDto) {
+    const { inspectedAt, statutoryDeadline, ...rest } = data;
     return this.prisma.facilityInspection.update({
       where: { id },
       data: {
-        ...data,
-        ...(data.inspectedAt && { inspectedAt: new Date(data.inspectedAt) }),
-        ...(data.statutoryDeadline && { statutoryDeadline: new Date(data.statutoryDeadline) }),
+        ...rest,
+        ...(inspectedAt && { inspectedAt: new Date(inspectedAt) }),
+        ...(statutoryDeadline && { statutoryDeadline: new Date(statutoryDeadline) }),
       },
       include: INCLUDE,
     });

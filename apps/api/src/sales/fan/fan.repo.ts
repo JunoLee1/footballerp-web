@@ -1,4 +1,5 @@
 import type { PrismaClient } from "../../generated/client";
+import type { MembershipTier } from "../../generated/enums";
 
 export class FanRepository {
   constructor(private prisma: PrismaClient) {}
@@ -24,11 +25,24 @@ export class FanRepository {
   }
 
   create(data: { name: string; email?: string; phone?: string }) {
-    return this.prisma.fan.create({ data });
+    return this.prisma.fan.create({
+      data: {
+        name: data.name,
+        ...(data.email !== undefined && { email: data.email }),
+        ...(data.phone !== undefined && { phone: data.phone }),
+      },
+    });
   }
 
   createMembership(data: { fanId: string; tier: string; startDate: Date; endDate: Date }) {
-    return this.prisma.fanMembership.create({ data: { ...data, tier: data.tier } });
+    return this.prisma.fanMembership.create({
+      data: {
+        fanId: data.fanId,
+        tier: data.tier as MembershipTier,
+        startDate: data.startDate,
+        endDate: data.endDate,
+      },
+    });
   }
 
   getMembershipStats() {

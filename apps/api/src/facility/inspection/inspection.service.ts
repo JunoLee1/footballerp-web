@@ -13,7 +13,7 @@ export class InspectionService {
     return this.repo.findAll(query);
   }
 
-  async get(id: number) {
+  async get(id: string) {
     const record = await this.repo.findById(id);
     if (!record) throw new AppError(404, "INSPECTION_NOT_FOUND");
     return record;
@@ -44,7 +44,7 @@ export class InspectionService {
     return record;
   }
 
-  async update(id: number, dto: UpdateInspectionDto) {
+  async update(id: string, dto: UpdateInspectionDto) {
     // TR9: Auto-update EquipmentUnit.nextInspectionDue on inspection completion
     // is deferred until FacilityInspection gains an equipmentUnitId FK in the schema.
     await this.get(id);

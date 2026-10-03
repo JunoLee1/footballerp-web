@@ -30,8 +30,8 @@ export class HiringSurveyController {
   createResponse = async (req: Request, res: Response) => {
     const user = requireUser(req)
     const surveyId = assertCuid(req.params.id)
-    const departmentId = Number(req.body.departmentId)
-    if (!Number.isFinite(departmentId) || departmentId <= 0) {
+    const departmentId = String(req.body.departmentId ?? '')
+    if (!departmentId) {
       res.status(400).json({ code: 'DEPARTMENT_ID_REQUIRED' })
       return
     }

@@ -11,7 +11,7 @@ export class StaffRecordRepository {
     });
   }
 
-  async findById(id: number) {
+  async findById(id: string) {
     return this.prisma.staffRecord.findUnique({
       where: { id },
       include: { department: { include: { parent: { select: { id: true, name: true } } } } },
@@ -21,7 +21,7 @@ export class StaffRecordRepository {
   async create(data: {
     name: string;
     role: string;
-    departmentId?: number;
+    departmentId?: string;
     phone?: string;
     notes?: string;
     createdById: string;
@@ -33,11 +33,11 @@ export class StaffRecordRepository {
   }
 
   async update(
-    id: number,
+    id: string,
     data: {
       name?: string;
       role?: string;
-      departmentId?: number | null;
+      departmentId?: string | null;
       phone?: string;
       isActive?: boolean;
       notes?: string;
@@ -50,26 +50,26 @@ export class StaffRecordRepository {
     });
   }
 
-  countLinkedSalaries(staffRecordId: number) {
+  countLinkedSalaries(staffRecordId: string) {
     return this.prisma.staffSalary.count({ where: { staffRecordId } });
   }
 
-  async delete(id: number) {
+  async delete(id: string) {
     return this.prisma.staffRecord.delete({ where: { id } });
   }
 
   findByEmail(email: string) {
-    return this.prisma.staffRecord.findFirst({ where: { email } });
+    return this.prisma.staffRecord.findFirst({ where: { email } }); //TODO:first 보다 unique가 더 맞지 않는지?
   }
 
   findByEmployeeId(employeeId: string) {
-    return this.prisma.staffRecord.findFirst({ where: { employeeId } });
+    return this.prisma.staffRecord.findFirst({ where: { employeeId } }); //TODO:first 보다 unique가 더 맞지 않는지?
   }
 
-  terminate(id: number, terminatedAt: Date) {
+  terminate(id: string, terminatedAt: Date) {
     return this.prisma.staffRecord.update({
       where: { id },
-      data: { terminatedAt, isActive: false, employmentEndDate: terminatedAt } as any,
+      data: { terminatedAt, isActive: false, employmentEndDate: terminatedAt },
       include: { department: { include: { parent: { select: { id: true, name: true } } } } },
     });
   }

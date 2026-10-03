@@ -18,13 +18,13 @@ export class PlanReportController {
 
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const filter = (req.query as any)?.filter as string | undefined
+      const filter = req.query?.filter as string | undefined
       const role = req.user?.role ?? ''
       // pending-* 큐 는 GM/ADMIN 계층 전용
       if (filter && String(filter).startsWith('pending-') && !isAdminLike(role)) {
         throw new AppError(403, 'FORBIDDEN')
       }
-      res.json(await this.service.list(req.query as any))
+      res.json(await this.service.list(req.query))
     } catch (e) { next(e) }
   }
 
@@ -78,7 +78,7 @@ export class PlanReportController {
 
   uploadAttachment = (req: Request, res: Response) => {
     if (!req.file) return res.status(400).json({ error: 'NO_FILE_UPLOADED' })
-    const relativePath = (req.file as any).gcsUrl
+    const relativePath = (req.file as any).gcsUrl//TODO: as any 지우자
     res.json({ url: relativePath })
   }
 

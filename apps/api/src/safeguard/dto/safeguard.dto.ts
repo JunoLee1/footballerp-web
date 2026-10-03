@@ -22,8 +22,8 @@ export function validateCreateSafeguardReport(body: unknown): CreateSafeguardRep
 
 export function validateUpdateSafeguardStatus(body: unknown): UpdateSafeguardStatusDto {
   const b = body as Record<string, unknown>
-  const VALID = ['UNDER_REVIEW', 'RESOLVED'] as const
-  if (!VALID.includes(b.status as any)) {
+  const VALID: ReadonlyArray<string> = ['UNDER_REVIEW', 'RESOLVED']
+  if (typeof b.status !== 'string' || !VALID.includes(b.status)) {
     throw { statusCode: 400, code: 'INVALID_STATUS' }
   }
   const dto: UpdateSafeguardStatusDto = { status: b.status as 'UNDER_REVIEW' | 'RESOLVED' }

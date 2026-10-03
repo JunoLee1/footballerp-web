@@ -8,7 +8,7 @@ export class TransferRequestController {
 
   list = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.status(200).json(await this.service.list(req.query as any));
+      res.status(200).json(await this.service.list(req.query));
     } catch (err) { next(err); }
   };
 

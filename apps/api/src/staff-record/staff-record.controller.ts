@@ -33,7 +33,7 @@ export class StaffRecordController {
     try {
       const { role, frontOfficeRole, departmentCategories } = requireUser(req);
       if (!canReadHR(role, frontOfficeRole ?? null, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.json(withMaskedPhone(await this.service.get(Number(req.params["id"])), role, frontOfficeRole, departmentCategories));
+      res.json(withMaskedPhone(await this.service.get(String(req.params["id"])), role, frontOfficeRole, departmentCategories));
     } catch (err) {
       next(err);
     }
@@ -53,7 +53,7 @@ export class StaffRecordController {
     try {
       const { role, frontOfficeRole, departmentCategories, id: actorId } = requireUser(req);
       if (!canWriteHR(role, frontOfficeRole ?? null, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.update(Number(req.params["id"]), req.body, actorId));
+      res.json(await this.service.update(String(req.params["id"]), req.body, actorId));
     } catch (err) {
       next(err);
     }
@@ -63,7 +63,7 @@ export class StaffRecordController {
     try {
       const { role, frontOfficeRole, departmentCategories, id: actorId } = requireUser(req);
       if (!canWriteHR(role, frontOfficeRole ?? null, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      await this.service.delete(Number(req.params["id"]), actorId);
+      await this.service.delete(String(req.params["id"]), actorId);
       res.status(204).send();
     } catch (err) {
       next(err);
@@ -74,7 +74,7 @@ export class StaffRecordController {
     try {
       const { role, frontOfficeRole, departmentCategories, id } = requireUser(req);
       if (!canWriteHR(role, frontOfficeRole ?? null, departmentCategories)) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.terminate(Number(req.params["id"]), id));
+      res.json(await this.service.terminate(String(req.params["id"]), id));
     } catch (err) {
       next(err);
     }

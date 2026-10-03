@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
 import { PlayerCallupService } from "./player-callup.service";
+import { assertCuid } from "../lib/cuidGuard";
 
 export class PlayerCallupController {
   constructor(private service: PlayerCallupService) {}
@@ -15,7 +16,7 @@ export class PlayerCallupController {
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.json(await this.service.getById(Number(req.params["id"])));
+      res.json(await this.service.getById(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 
@@ -36,7 +37,7 @@ export class PlayerCallupController {
       const isTD = role === "FRONT_OFFICE" && frontOfficeRole === "TD";
       const isHeadCoach = role === "COACHING_STAFF" && coachingRole === "HEAD_COACH";
       if (!isGM && !isTD && !isHeadCoach) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.approve(Number(req.params["id"]), userId, isGM));
+      res.json(await this.service.approve(assertCuid(req.params["id"]), userId, isGM));
     } catch (err) { next(err); }
   };
 
@@ -46,7 +47,7 @@ export class PlayerCallupController {
       if (role !== "GM") {
         throw new AppError(403, "FORBIDDEN");
       }
-      res.json(await this.service.reject(Number(req.params["id"]), userId, req.body));
+      res.json(await this.service.reject(assertCuid(req.params["id"]), userId, req.body));
     } catch (err) { next(err); }
   };
 
@@ -56,7 +57,7 @@ export class PlayerCallupController {
       const isHeadCoach = role === "COACHING_STAFF" && coachingRole === "HEAD_COACH";
       const isGM = role === "GM";
       if (!isHeadCoach && !isGM) throw new AppError(403, "FORBIDDEN");
-      res.json(await this.service.complete(Number(req.params["id"]), userId));
+      res.json(await this.service.complete(assertCuid(req.params["id"]), userId));
     } catch (err) { next(err); }
   };
 
@@ -66,7 +67,7 @@ export class PlayerCallupController {
       if (role !== "COACHING_STAFF" || coachingRole !== "HEAD_COACH") {
         throw new AppError(403, "FORBIDDEN");
       }
-      res.json(await this.service.confirmYouth(Number(req.params["id"]), teamId ?? null));
+      res.json(await this.service.confirmYouth(assertCuid(req.params["id"]), teamId ?? null));
     } catch (err) { next(err); }
   };
 
@@ -79,7 +80,7 @@ export class PlayerCallupController {
       if (!canConfirm) {
         throw new AppError(403, "FORBIDDEN");
       }
-      res.json(await this.service.confirmMedical(Number(req.params["id"])));
+      res.json(await this.service.confirmMedical(assertCuid(req.params["id"])));
     } catch (err) { next(err); }
   };
 }

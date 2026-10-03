@@ -3,7 +3,7 @@ import { AppError } from "../lib/appError";
 import { resolveRequesterScope, assertCategoryScopeMatch, type CategoryScope } from "./scope";
 
 export interface OverrideRequestDto {
-  categoryId: number;
+  categoryId: string;
   amount: number;
   reason: string;
 }
@@ -16,7 +16,7 @@ export interface OverrideRequestDto {
 export interface ListOverrideLogsQuery {
   status?: "PENDING" | "APPROVED" | "REJECTED";
   limit?: number;
-  cursor?: number;
+  cursor?: string;
 }
 
 const OVERRIDE_LOG_LIST_INCLUDE = {
@@ -179,7 +179,7 @@ export class BudgetOverrideService {
     }
 
     if (query.cursor !== undefined) {
-      if (!Number.isInteger(query.cursor) || query.cursor <= 0) {
+      if (typeof query.cursor !== "string" || query.cursor.length === 0) {
         throw new AppError(400, "INVALID_CURSOR");
       }
     }

@@ -12,7 +12,7 @@ export interface UpdateBudgetHeaderDto {
 }
 
 export interface CreateBudgetLineDto {
-  departmentId?: number;
+  departmentId?: string;
   category: string;
   year: number;
   month?: number;

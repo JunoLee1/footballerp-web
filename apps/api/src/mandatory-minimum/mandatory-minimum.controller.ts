@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { AppError } from "../lib/appError";
 import { requireUser } from "../lib/authMiddleware";
+import { assertCuid } from "../lib/cuidGuard";
 import type {
   MandatoryMinimumService,
   ProposeDto,
@@ -40,7 +41,7 @@ export class MandatoryMinimumController {
       const { id: userId, role, frontOfficeRole } = requireUser(req);
       if (!isFinanceManager(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
 
-      const categoryPlanId = parseIntParam(req, "id", "INVALID_CATEGORY_PLAN_ID");
+      const categoryPlanId = assertCuid(req.params["id"]);
       const body = req.body as Partial<{
         newAmount: number;
         evidenceType: string;
@@ -80,7 +81,7 @@ export class MandatoryMinimumController {
       const { id: userId, role } = requireUser(req);
       if (!isGM(role)) throw new AppError(403, "FORBIDDEN");
 
-      const logId = parseIntParam(req, "id", "INVALID_LOG_ID");
+      const logId = assertCuid(req.params["id"]);
       const body = req.body as Partial<{ decision: ReviewDecision; note: string }>;
       if (body.decision !== "APPROVED" && body.decision !== "REJECTED") {
         throw new AppError(400, "DECISION_MUST_BE_APPROVED_OR_REJECTED");
@@ -98,7 +99,7 @@ export class MandatoryMinimumController {
       const { role, frontOfficeRole } = requireUser(req);
       if (!canReadHistory(role, frontOfficeRole)) throw new AppError(403, "FORBIDDEN");
 
-      const categoryPlanId = parseIntParam(req, "id", "INVALID_CATEGORY_PLAN_ID");
+      const categoryPlanId = assertCuid(req.params["id"]);
       const history = await this.service.listHistory(categoryPlanId, role, frontOfficeRole);
       res.status(200).json(history);
     } catch (err) {

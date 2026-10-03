@@ -60,7 +60,7 @@ export class MaintenanceRepository {
   updateStatus(id: string, status: string) {
     return this.prisma.maintenanceRequest.update({
       where: { id },
-      data: { status: status as any },
+      data: { status: status },
       include: INCLUDE,
     });
   }

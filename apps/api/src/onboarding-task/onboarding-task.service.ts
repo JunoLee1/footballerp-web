@@ -36,11 +36,11 @@ export class OnboardingTaskService {
   // Reads
   // ────────────────────────────────────────────
 
-  list(onboardingId: number) {
+  list(onboardingId: string) {
     return this.repo.findByOnboardingId(onboardingId);
   }
 
-  verifyQueue(filter?: { departmentId?: number }) {
+  verifyQueue(filter?: { departmentId?: string }) {
     return this.repo.findVerifyQueue(filter);
   }
 
@@ -48,7 +48,7 @@ export class OnboardingTaskService {
   // selfReport — trainee marks task done
   // ────────────────────────────────────────────
 
-  async selfReport(taskId: number, actorId: string) {
+  async selfReport(taskId: string, actorId: string) {
     const task = await this.repo.findById(taskId);
     if (!task) throw new AppError(404, "TASK_NOT_FOUND");
 
@@ -91,7 +91,7 @@ export class OnboardingTaskService {
   // ────────────────────────────────────────────
 
   async verify(
-    taskId: number,
+    taskId: string,
     dto: VerifyOnboardingTaskDto,
     actorId: string,
     actorRole: string,
@@ -159,7 +159,7 @@ export class OnboardingTaskService {
   // ────────────────────────────────────────────
 
   async skip(
-    taskId: number,
+    taskId: string,
     dto: SkipOnboardingTaskDto,
     actorId: string,
     actorRole: string,
@@ -214,7 +214,7 @@ export class OnboardingTaskService {
    * Kept public so it can be re-invoked from admin repair paths (e.g. a
    * task manually re-opened and re-DONE) without duplicating the guard.
    */
-  async checkContentCompletion(onboardingId: number): Promise<void> {
+  async checkContentCompletion(onboardingId: string): Promise<void> {
     const incompleteRequired = await this.repo.countIncompleteRequired(onboardingId);
     if (incompleteRequired > 0) return;
 
@@ -227,7 +227,7 @@ export class OnboardingTaskService {
   // Notification helpers (Q7-B — 4 notif types)
   // ────────────────────────────────────────────
 
-  private async notifyVerifyRequested(task: { id: number; title: string; onboardingId: number; onboarding: { hiringDispatch: { id: number; departmentId: number; department: { headId: string | null } } | null } }): Promise<void> {
+  private async notifyVerifyRequested(task: { id: string; title: string; onboardingId: string; onboarding: { hiringDispatch: { id: string; departmentId: string; department: { headId: string | null } } | null } }): Promise<void> {
     const dispatchId = task.onboarding.hiringDispatch?.id ?? task.onboardingId;
     const deptHeadId = task.onboarding.hiringDispatch?.department?.headId ?? null;
     const msg = (lang?: string) => ({
@@ -258,7 +258,7 @@ export class OnboardingTaskService {
   }
 
   private async notifyVerifyResult(
-    task: { id: number; title: string; onboardingId: number; onboarding: { userId: string | null; hiringDispatch: { id: number } | null } },
+    task: { id: string; title: string; onboardingId: string; onboarding: { userId: string | null; hiringDispatch: { id: string } | null } },
     action: "APPROVE" | "REJECT",
     notes: string | null,
   ): Promise<void> {
@@ -292,9 +292,9 @@ export class OnboardingTaskService {
   }
 
   private async notifyContentCompleted(onboarding: {
-    id: number;
+    id: string;
     userId: string | null;
-    hiringDispatch: { id: number; department: { headId: string | null } | null } | null;
+    hiringDispatch: { id: string; department: { headId: string | null } | null } | null;
   }): Promise<void> {
     const dispatchId = onboarding.hiringDispatch?.id ?? onboarding.id;
     const msg = (lang?: string) => ({

@@ -24,7 +24,7 @@ export class PiiAccessService {
     return this.repo.findByRequester(requesterId);
   }
 
-  async approve(id: number, reviewerId: string) {
+  async approve(id: string, reviewerId: string) {
     const req = await this.repo.findById(id);
     if (!req) throw new AppError(404, "REQUEST_NOT_FOUND");
     if (req.status !== "PENDING") throw new AppError(409, "ALREADY_REVIEWED");
@@ -35,7 +35,7 @@ export class PiiAccessService {
     return this.repo.review(id, "APPROVED", reviewerId, grantedUntil);
   }
 
-  async deny(id: number, reviewerId: string) {
+  async deny(id: string, reviewerId: string) {
     const req = await this.repo.findById(id);
     if (!req) throw new AppError(404, "REQUEST_NOT_FOUND");
     if (req.status !== "PENDING") throw new AppError(409, "ALREADY_REVIEWED");

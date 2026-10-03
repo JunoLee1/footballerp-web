@@ -7,8 +7,8 @@ import type { HiringDocReviewStatus } from "../../generated/enums";
  * default; Dispatch-path is for 임원 스카웃 (application-free) cases (Q6).
  */
 export interface UploadHiringDocumentDto {
-  applicationId?: number;
-  hiringDispatchId?: number;
+  applicationId?: string;
+  hiringDispatchId?: string;
   docType: string; // free-form; trimmed at service boundary (Q10)
 }
 
@@ -23,12 +23,12 @@ export interface ReviewHiringDocumentDto {
 }
 
 export interface ListHiringDocumentsQuery {
-  applicationId?: number;
-  hiringDispatchId?: number;
+  applicationId?: string;
+  hiringDispatchId?: string;
 }
 
 export interface ListHiringDocumentHistoryQuery {
-  applicationId?: number;
-  hiringDispatchId?: number;
+  applicationId?: string;
+  hiringDispatchId?: string;
   docType: string;
 }

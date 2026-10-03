@@ -98,7 +98,7 @@ export class HiringDocumentService {
   // review — HR approves or rejects a PENDING row
   // ────────────────────────────────────────────
 
-  async review(id: number, dto: ReviewHiringDocumentDto, reviewerId: string) {
+  async review(id: string, dto: ReviewHiringDocumentDto, reviewerId: string) {
     if (dto.status !== "APPROVED" && dto.status !== "REJECTED") {
       throw new AppError(400, "INVALID_REVIEW_STATUS");
     }
@@ -140,13 +140,13 @@ export class HiringDocumentService {
   // list — current (latest per docType) + full history
   // ────────────────────────────────────────────
 
-  async listCurrent(target: { applicationId?: number; hiringDispatchId?: number }) {
+  async listCurrent(target: { applicationId?: string; hiringDispatchId?: string }) {
     this.assertExactlyOneTarget(target);
     return this.repo.findLatestPerDocType(target);
   }
 
   async listHistory(
-    target: { applicationId?: number; hiringDispatchId?: number },
+    target: { applicationId?: string; hiringDispatchId?: string },
     docType: string,
   ) {
     this.assertExactlyOneTarget(target);

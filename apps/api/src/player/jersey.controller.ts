@@ -19,7 +19,7 @@ export class JerseyController {
 
   listByTeam = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const teamId = Number(req.params["teamId"]);
+      const teamId = String(req.params["teamId"]);
       if (!teamId) throw new AppError(400, "TEAM_ID_REQUIRED");
       const result = await this.service.listByTeam(teamId);
       res.json(result);
@@ -30,7 +30,7 @@ export class JerseyController {
     try {
       const user = requireUser(req);
       if (!(ASSIGN_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      const teamId = Number(req.body.teamId);
+      const teamId = String(req.body.teamId);
       if (!teamId) throw new AppError(400, "TEAM_ID_REQUIRED");
       const result = await this.service.assignToPlayer(teamId, req.body);
       res.status(201).json(result);
@@ -42,7 +42,7 @@ export class JerseyController {
       const user = requireUser(req);
       if (!(ASSIGN_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
       const { teamId, number } = req.body;
-      const result = await this.service.release(Number(teamId), Number(number));
+      const result = await this.service.release(String(teamId), Number(number));
       res.json(result);
     } catch (err) { next(err); }
   };
@@ -52,7 +52,7 @@ export class JerseyController {
       const user = requireUser(req);
       if (!(GM_ROLES as readonly string[]).includes(user.role)) throw new AppError(403, "FORBIDDEN");
       const { teamId, number } = req.body;
-      const result = await this.service.retire(Number(teamId), Number(number));
+      const result = await this.service.retire(String(teamId), Number(number));
       res.json(result);
     } catch (err) { next(err); }
   };
@@ -62,7 +62,7 @@ export class JerseyController {
       const user = requireUser(req);
       if (!isAdminLike(user.role)) throw new AppError(403, "FORBIDDEN");
       const { teamId, number } = req.body;
-      const result = await this.service.reactivate(Number(teamId), Number(number));
+      const result = await this.service.reactivate(String(teamId), Number(number));
       res.json(result);
     } catch (err) { next(err); }
   };

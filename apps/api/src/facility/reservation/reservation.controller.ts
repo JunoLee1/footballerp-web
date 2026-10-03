@@ -5,6 +5,8 @@ import { AppError } from "../../lib/appError";
 import { isAdminLike } from "../../lib/permissions";
 import { getPrisma } from "../../lib/prisma";
 import { writeAuditLog } from "../../lib/auditLog";
+import { assertCuid } from "../../lib/cuidGuard";
+import type { FacilityZone } from "../../generated/enums";
 
 export class ReservationController {
   private repo = new ReservationRepository(getPrisma());
@@ -13,7 +15,7 @@ export class ReservationController {
     try {
       requireUser(req);
       const { facilityZone } = req.query as { facilityZone?: string };
-      res.json(await this.repo.findAll(facilityZone));
+      res.json(await this.repo.findAll(facilityZone as FacilityZone | undefined));
     } catch (err) { next(err); }
   };
 
@@ -26,7 +28,7 @@ export class ReservationController {
       if (!facilityZone || !title || !startTime || !endTime) throw new AppError(400, "MISSING_REQUIRED_FIELDS");
       if (new Date(startTime) >= new Date(endTime)) throw new AppError(400, "INVALID_TIME_RANGE");
       const reservation = await this.repo.create({
-        facilityZone,
+        facilityZone: facilityZone as FacilityZone,
         title,
         startTime: new Date(startTime),
         endTime: new Date(endTime),
@@ -46,7 +48,7 @@ export class ReservationController {
   remove = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = assertCuid(req.params["id"]);
       const existing = await this.repo.findById(id);
       if (!existing) throw new AppError(404, "RESERVATION_NOT_FOUND");
       if (existing.reservedBy.id !== user.id && !isAdminLike(user.role)) {

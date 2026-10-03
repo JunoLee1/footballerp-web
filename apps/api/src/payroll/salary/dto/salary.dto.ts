@@ -2,7 +2,7 @@ import type { PayrollCountry } from "../../../generated/enums";
 
 export interface CreateSalaryDto {
   userId?: string;
-  staffRecordId?: number;
+  staffRecordId?: string;
   baseSalary: number;
   country: PayrollCountry;
   effectiveFrom: string;

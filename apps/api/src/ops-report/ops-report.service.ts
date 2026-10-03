@@ -13,7 +13,7 @@ export interface AttendanceDrillRow {
   playerId: string;
   playerName: string;
   position: string | null;
-  teamId: number | null;
+  teamId: string | null;
   present: number;
   lateUnauth: number;
   absentUnauth: number;
@@ -33,7 +33,7 @@ export class OpsReportService {
     private repo: OpsReportRepository,
     private prisma: PrismaClient,
   ) {}
-
+//TODO: DTO 파일로 분리
   async computeOpsKpi(seasonId: number, year: number, month: number): Promise<OpsSnapshotData> {
     const start = new Date(year, month - 1, 1);
     const end = new Date(year, month, 1);
@@ -260,7 +260,7 @@ export class OpsReportService {
 
     const aggregates = new Map<
       string,
-      { playerName: string; position: string | null; teamId: number | null; present: number; lateUnauth: number; absentUnauth: number; authorizedAbsence: number }
+      { playerName: string; position: string | null; teamId: string | null; present: number; lateUnauth: number; absentUnauth: number; authorizedAbsence: number }
     >();
 
     for (const r of results) {
@@ -410,7 +410,7 @@ export class OpsReportService {
     }));
   }
 
-  async getPenaltyStatus(teamId: number): Promise<PenaltyStatusRow[]> {
+  async getPenaltyStatus(teamId: string): Promise<PenaltyStatusRow[]> {
     const sessions = await this.prisma.trainingSession.findMany({
       where: { isApproved: true },
       select: { id: true },
@@ -465,7 +465,7 @@ export class OpsReportService {
     if (!season) throw new AppError(404, "SEASON_NOT_FOUND");
 
     const [report, sponsorshipTotal] = await Promise.all([
-      (this.prisma.financialReport as any).findFirst({
+      this.prisma.financialReport.findFirst({
         where: { seasonId },
         select: {
           totalRevenue: true,
@@ -502,7 +502,7 @@ export class OpsReportService {
             merchandise: report.plannedRevenueMerchandise ?? 0,
             subsidy: report.plannedRevenueSubsidy ?? 0,
             parentCompany: report.plannedRevenueParentCompany ?? 0,
-            academyFee: (report as any).plannedRevenueAcademyFee ?? 0,
+            academyFee: report.plannedRevenueAcademyFee ?? 0,
             other: report.plannedRevenueOther ?? 0,
           }
         : null,

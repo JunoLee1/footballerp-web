@@ -5,7 +5,7 @@ export interface UpsertLeagueWeightDto {
 }
 
 export interface CreateDepartmentIbiConfigDto {
-  departmentId: number;
+  departmentId: string;
   jobTitle: string;
   coreTaskRatio: number;
   replacementDays: number;

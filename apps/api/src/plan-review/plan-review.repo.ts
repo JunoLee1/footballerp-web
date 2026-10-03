@@ -15,7 +15,7 @@ export class PlanReviewRepository {
   }
 
   // submit 시 자동 생성
-  createMany(planId: string, reviewerDeptIds: number[]) {
+  createMany(planId: string, reviewerDeptIds: string[]) {
     return this.prisma.planReview.createMany({
       data: reviewerDeptIds.map((reviewerDeptId) => ({ planId, reviewerDeptId })),
       skipDuplicates: true,
@@ -23,7 +23,7 @@ export class PlanReviewRepository {
   }
 
   // 확인 완료
-  confirm(planId: string, reviewerDeptId: number, confirmedById: string, comment?: string) {
+  confirm(planId: string, reviewerDeptId: string, confirmedById: string, comment?: string) {
     return this.prisma.planReview.update({
       where: { planId_reviewerDeptId: { planId, reviewerDeptId } },
       data: {
@@ -45,7 +45,7 @@ export class PlanReviewRepository {
     return total === confirmed;
   }
 
-  reject(planId: string, reviewerDeptId: number, rejectedById: string, reason: string) {
+  reject(planId: string, reviewerDeptId: string, rejectedById: string, reason: string) {
     return this.prisma.planReview.update({
       where: { planId_reviewerDeptId: { planId, reviewerDeptId } },
       data: {

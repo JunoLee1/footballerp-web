@@ -3,6 +3,7 @@ import { requireUser } from "../lib/authMiddleware";
 import { isAdminLike } from "../lib/permissions";
 import { AppError } from "../lib/appError";
 import { FormationSnapshotService } from "./formation-snapshot.service";
+import { assertCuid } from "../lib/cuidGuard";
 
 export class FormationSnapshotController {
   constructor(private service: FormationSnapshotService) {}
@@ -17,7 +18,7 @@ export class FormationSnapshotController {
 
   findByMatch = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.status(200).json(await this.service.findByMatch(Number(req.params["matchId"])));
+      res.status(200).json(await this.service.findByMatch(assertCuid(req.params["matchId"])));
     } catch (err) { next(err); }
   };
 
@@ -25,7 +26,7 @@ export class FormationSnapshotController {
     try {
       const { role } = requireUser(req);
       if (!isAdminLike(role) && role !== "COACHING_STAFF") throw new AppError(403, "FORBIDDEN");
-      await this.service.remove(Number(req.params["id"]));
+      await this.service.remove(assertCuid(req.params["id"]));
       res.status(204).send();
     } catch (err) { next(err); }
   };

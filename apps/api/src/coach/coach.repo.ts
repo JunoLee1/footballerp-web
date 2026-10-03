@@ -177,36 +177,36 @@ export class CoachRepository {
     if (role === "HEAD_COACH") {
       return this.prisma.headCoachEvaluation.upsert({
         where: { coachId },
-        create: base as any,
-        update: base as any,
+        create: base ,
+        update: base,
       });
     }
     if (role === "DEFENSIVE_COACH") {
       return this.prisma.defensiveCoachEvaluation.upsert({
         where: { coachId },
-        create: base as any,
-        update: base as any,
+        create: base,
+        update: base ,
       });
     }
     if (role === "ATTACKING_COACH") {
       return this.prisma.attackingCoachEvaluation.upsert({
         where: { coachId },
-        create: base as any,
-        update: base as any,
+        create: base,
+        update: base,
       });
     }
     if (role === "GOALKEEPER_COACH") {
       return this.prisma.goalkeeperCoachEvaluation.upsert({
         where: { coachId },
-        create: base as any,
-        update: base as any,
+        create: base,
+        update: base,
       });
     }
     // Tier 2
     return this.prisma.coachTier2Evaluation.upsert({
       where: { coachId },
-      create: base as any,
-      update: base as any,
+      create: base,
+      update: base,
     });
   }
 

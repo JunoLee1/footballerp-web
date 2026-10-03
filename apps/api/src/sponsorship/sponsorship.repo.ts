@@ -9,7 +9,7 @@ export class SponsorshipRepository {
   constructor(private prisma: PrismaClient) {}
 
   async findAll(query: SponsorshipListQuery, page = 1, pageSize = 10) {
-    const where = { deletedAt: null, ...(query.type ? { type: query.type } : {}) } as any;
+    const where = { deletedAt: null, ...(query.type ? { type: query.type } : {}) };
     const [data, total] = await this.prisma.$transaction([
       this.prisma.sponsorship.findMany({
         where,
@@ -43,7 +43,7 @@ export class SponsorshipRepository {
 
   findById(id: string) {
     return this.prisma.sponsorship.findFirst({
-      where: { id, deletedAt: null } as any,
+      where: { id, deletedAt: null },
       include: {
         ...INCLUDE,
         payments: { orderBy: { dueDate: "asc" } },
@@ -60,7 +60,7 @@ export class SponsorshipRepository {
         contractStart: new Date(data.contractStart),
         contractEnd: new Date(data.contractEnd),
         paymentSchedule: data.paymentSchedule,
-        currency: (data.currency ?? "KRW") as any,
+        currency: (data.currency ?? "KRW"),
         createdById: data.createdById,
         ...(data.targetExposureCount !== undefined && { targetExposureCount: data.targetExposureCount }),
         ...(data.targetFanReach !== undefined && { targetFanReach: data.targetFanReach }),
@@ -132,7 +132,7 @@ export class SponsorshipRepository {
 
   findExpiring(from: Date, to: Date) {
     return this.prisma.sponsorship.findMany({
-      where: { contractEnd: { gte: from, lte: to }, deletedAt: null } as any,
+      where: { contractEnd: { gte: from, lte: to }, deletedAt: null },
       select: { id: true, sponsorName: true, contractEnd: true },
     });
   }
@@ -140,7 +140,7 @@ export class SponsorshipRepository {
   // PA1: delete all pending payments so they can be regenerated
   deletePayments(sponsorshipId: string) {
     return this.prisma.sponsorshipPayment.deleteMany({
-      where: { sponsorshipId, status: "PENDING" } as any,
+      where: { sponsorshipId, status: "PENDING" },
     });
   }
 
@@ -214,7 +214,7 @@ export class SponsorshipRepository {
   softDelete(id: string) {
     return this.prisma.sponsorship.update({
       where: { id },
-      data: { deletedAt: new Date() } as any,
+      data: { deletedAt: new Date() },
     });
   }
 }

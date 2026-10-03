@@ -50,8 +50,8 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
       if (user.role === "SUPER_ADMIN") {
         const hdr = req.headers["x-team-id"];
         if (hdr) {
-          const newTeamId = Number(hdr);
-          if (isNaN(newTeamId) || newTeamId <= 0) {
+          const newTeamId = Array.isArray(hdr) ? hdr[0] : hdr;
+          if (!newTeamId || typeof newTeamId !== "string") {
             return res.status(400).json({ code: "INVALID_TEAM_ID" });
           }
           const team = await getPrisma().team.findUnique({ where: { id: newTeamId }, select: { id: true } });

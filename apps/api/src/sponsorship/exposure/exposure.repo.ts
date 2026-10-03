@@ -12,7 +12,7 @@ export class ExposureRepository {
     return this.prisma.sponsorshipExposureEvent.create({
       data: {
         sponsorshipId,
-        channel: data.channel as any,
+        channel: data.channel,
         occurredAt: new Date(data.occurredAt),
         createdById: data.createdById,
         ...(data.exposureCount !== undefined && { exposureCount: data.exposureCount }),

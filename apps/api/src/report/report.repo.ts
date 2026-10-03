@@ -1,4 +1,5 @@
 import { PrismaClient } from "../generated/client";
+import type { ReportType, DepartmentCategory } from "../generated/enums";
 
 const authorSelect = {
   id: true,
@@ -62,8 +63,8 @@ export class ReportRepository {
                 : { authorId: userId };
 
     const filterWhere = {
-      ...(filters.type && { type: filters.type as any }),
-      ...(filters.status && { status: filters.status as any }),
+      ...(filters.type && { type: filters.type as ReportType }),
+      ...(filters.status && { status: filters.status as "DRAFT" | "SUBMITTED" | "APPROVED" | "REJECTED" }),
     };
 
     return this.prisma.report.findMany({
@@ -80,9 +81,17 @@ export class ReportRepository {
     });
   }
 
-  create(data: { authorId: string; type: string; title: string; content: string; fileUrl?: string; fileName?: string; departmentId?: number }) {
+  create(data: { authorId: string; type: string; title: string; content: string; fileUrl?: string; fileName?: string; departmentId?: string }) {
     return this.prisma.report.create({
-      data: data as any,
+      data: {
+        authorId: data.authorId,
+        type: data.type as ReportType,
+        title: data.title,
+        content: data.content,
+        ...(data.fileUrl !== undefined && { fileUrl: data.fileUrl }),
+        ...(data.fileName !== undefined && { fileName: data.fileName }),
+        ...(data.departmentId !== undefined && { departmentId: data.departmentId }),
+      },
       include: reportInclude,
     });
   }
@@ -186,7 +195,7 @@ export class ReportRepository {
 
   findRulesByType(reportType: string) {
     return this.prisma.reviewRuleSet.findMany({
-      where: { reportType: reportType as any },//TODO: as any 지우기
+      where: { reportType: reportType as ReportType },
     });
   }
 
@@ -195,7 +204,7 @@ export class ReportRepository {
   }
 
   createRuleSet(reportType: string, reviewerCategory: string) {
-    return this.prisma.reviewRuleSet.create({ data: { reportType: reportType as any, reviewerCategory: reviewerCategory as any } });
+    return this.prisma.reviewRuleSet.create({ data: { reportType: reportType as ReportType, reviewerCategory: reviewerCategory as DepartmentCategory } });
   }
 
   deleteRuleSet(id: string) {
@@ -204,7 +213,7 @@ export class ReportRepository {
 
   findDeptsByCategory(categories: string[]) {
     return this.prisma.department.findMany({
-      where: { category: { in: categories as any }, isActive: true, headId: { not: null } },
+      where: { category: { in: categories as DepartmentCategory[] }, isActive: true, headId: { not: null } },
       select: { id: true, name: true, category: true, headId: true },
     });
   }

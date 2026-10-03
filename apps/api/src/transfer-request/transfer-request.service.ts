@@ -50,8 +50,8 @@ export class TransferRequestService {
       id,
     );
     const isIn = IN_TYPES.includes(req.type as typeof IN_TYPES[number]);
-    if (isIn && (req as any).expectedSalary) {
-      const capResult = await this.wageCapService.check((req as any).expectedSalary);
+    if (isIn && (req).expectedSalary) {
+      const capResult = await this.wageCapService.check((req).expectedSalary);
       if (capResult.status !== "OK") return { ...result, wageCapWarning: capResult };
     }
     return result;

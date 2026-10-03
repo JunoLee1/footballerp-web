@@ -17,7 +17,7 @@ export class TacticalController {
         return res.status(200).json(await this.service.listForPlayer(user.id));
       }
       const filters = {
-        ...(req.query["matchId"] && { matchId: Number(req.query["matchId"]) }),
+        ...(req.query["matchId"] && { matchId: String(req.query["matchId"]) }),
         ...(req.query["phase"] && { phase: req.query["phase"] as string }),
       };
       res.status(200).json(await this.service.list(filters));
@@ -26,14 +26,14 @@ export class TacticalController {
 
   getByMatch = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.status(200).json(await this.service.getByMatch(Number(req.params["matchId"])));
+      res.status(200).json(await this.service.getByMatch(String(req.params["matchId"])));
     } catch (err) { next(err); }
   };
 
   getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user = requireUser(req);
-      const id = Number(req.params["id"]);
+      const id = String(req.params["id"]);
       if (user.role === "PLAYER") {
         return res.status(200).json(await this.service.getByIdForPlayer(id, user.id));
       }
@@ -59,7 +59,7 @@ export class TacticalController {
       const user = requireUser(req);
       if (!STAFF_ROLES.includes(user.role as StaffRole) && !(user.departmentCategories?.includes('PERFORMANCE') ?? false))
         throw new AppError(403, "FORBIDDEN");
-      res.status(201).json(await this.service.addLineup(Number(req.params["id"]), req.body));
+      res.status(201).json(await this.service.addLineup(String(req.params["id"]), req.body));
     } catch (err) { next(err); }
   };
 
@@ -68,13 +68,13 @@ export class TacticalController {
       const user = requireUser(req);
       if (!STAFF_ROLES.includes(user.role as StaffRole) && !(user.departmentCategories?.includes('PERFORMANCE') ?? false))
         throw new AppError(403, "FORBIDDEN");
-      const analysisId = Number(req.params["id"]);
+      const analysisId = String(req.params["id"]);
       const files = req.files as Express.Multer.File[];
       if (!files || files.length === 0) throw new AppError(400, "NO_FILES");
       const results = await Promise.all(
         files.map((file) =>
           this.service.addMedia(analysisId, {
-            url: (file as any).gcsUrl,
+            url: file.gcsUrl,
             type: file.mimetype.startsWith("video/") ? "video" : "image",
           })
         )
@@ -93,7 +93,7 @@ export class TacticalController {
         (departmentCategories?.includes('PERFORMANCE') ?? false);
       if (!canUpdate) throw new AppError(403, "FORBIDDEN");
       res.status(200).json(
-        await this.service.updateAnalysis(Number(req.params["id"]), req.body)
+        await this.service.updateAnalysis(String(req.params["id"]), req.body)
       );
     } catch (err) { next(err); }
   };
@@ -104,7 +104,7 @@ export class TacticalController {
       const canConfirm =
         isAdminLike(role) || (role === "COACHING_STAFF" && coachingRole === "HEAD_COACH");
       if (!canConfirm) throw new AppError(403, "FORBIDDEN");
-      res.status(200).json(await this.service.confirmAnalysis(Number(req.params["id"])));
+      res.status(200).json(await this.service.confirmAnalysis(String(req.params["id"])));
     } catch (err) { next(err); }
   };
 

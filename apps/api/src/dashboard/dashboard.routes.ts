@@ -21,7 +21,8 @@ router.get("/stats", auth, controller.getStats);
 
 router.get("/youth-development", auth, async (req, res, next) => {
   try {
-    const user = req.user as any;
+    const user = req.user;
+    if (!user) throw new AppError(403, "Forbidden");
     if (!isAdminLike(user.role) && !(user.role === "FRONT_OFFICE" && user.frontOfficeRole === "TD")) {
       return res.status(403).json({ message: "Forbidden" });
     }
@@ -31,10 +32,11 @@ router.get("/youth-development", auth, async (req, res, next) => {
 
 router.get("/academy-finance", auth, async (req, res, next) => {
   try {
-    const user = req.user as any;
+    const user = req.user;
+    if (!user) throw new AppError(403, "Forbidden");
     const foRole = user.frontOfficeRole;
     const allowedFoRoles = ["FINANCE_MANAGER", "TD"];
-    if (!isAdminLike(user.role) && !(user.role === "FRONT_OFFICE" && allowedFoRoles.includes(foRole))) {
+    if (!isAdminLike(user.role) && !(user.role === "FRONT_OFFICE" && foRole != null && allowedFoRoles.includes(foRole))) {
       return res.status(403).json({ message: "Forbidden" });
     }
     const now = new Date();
@@ -46,7 +48,8 @@ router.get("/academy-finance", auth, async (req, res, next) => {
 
 router.get("/coach", auth, async (req, res, next) => {
   try {
-    const user = req.user as any;
+    const user = req.user;
+    if (!user) throw new AppError(403, "Forbidden");
     const isCoach = user.role === "COACHING_STAFF";
     const isAdmin = user.role === "ADMIN" || user.role === "SUPER_ADMIN";
     if (!isCoach && !isAdmin) {

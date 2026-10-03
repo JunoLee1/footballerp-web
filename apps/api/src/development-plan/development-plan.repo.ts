@@ -32,7 +32,7 @@ export class DevelopmentPlanRepository {
     });
   }
 
-  findById(id: number) {
+  findById(id: string) {
     return this.prisma.playerDevelopmentPlan.findUnique({
       where: { id },
       select: SELECT,
@@ -52,7 +52,7 @@ export class DevelopmentPlanRepository {
     });
   }
 
-  update(id: number, dto: UpdatePlanDto) {
+  update(id: string, dto: UpdatePlanDto) {
     return this.prisma.playerDevelopmentPlan.update({
       where: { id },
       data: {
@@ -63,7 +63,7 @@ export class DevelopmentPlanRepository {
     });
   }
 
-  updateStatus(id: number, status: PlayerDevelopmentPlanStatus, reviewedAt?: Date) {
+  updateStatus(id: string, status: PlayerDevelopmentPlanStatus, reviewedAt?: Date) {
     return this.prisma.playerDevelopmentPlan.update({
       where: { id },
       data: {

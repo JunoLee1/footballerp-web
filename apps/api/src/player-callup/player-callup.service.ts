@@ -67,7 +67,7 @@ export class PlayerCallupService {
     return callup;
   }
 
-  async approve(id: number, approvedById: string, isGM: boolean) {
+  async approve(id: string, approvedById: string, isGM: boolean) {
     const callup = await this.repo.findById(id);
     if (!callup) throw new AppError(404, "CALLUP_NOT_FOUND");
 
@@ -142,7 +142,7 @@ export class PlayerCallupService {
     return updated;
   }
 
-  async reject(id: number, approvedById: string, dto: RejectCallupDto) {
+  async reject(id: string, approvedById: string, dto: RejectCallupDto) {
     const callup = await this.repo.findById(id);
     if (!callup) throw new AppError(404, "CALLUP_NOT_FOUND");
     if (callup.status !== "DOCS_SUBMITTED") throw new AppError(409, "INVALID_STATUS");
@@ -166,7 +166,7 @@ export class PlayerCallupService {
     return updated;
   }
 
-  async confirmYouth(id: number, actorTeamId: number | null) {
+  async confirmYouth(id: string, actorTeamId: string | null) {
     const callup = await this.repo.findById(id);
     if (!callup) throw new AppError(404, "CALLUP_NOT_FOUND");
     if (callup.callupType === "TRAINING") throw new AppError(409, "INVALID_CALLUP_TYPE");
@@ -185,7 +185,7 @@ export class PlayerCallupService {
     return updated;
   }
 
-  async confirmMedical(id: number) {
+  async confirmMedical(id: string) {
     const callup = await this.repo.findById(id);
     if (!callup) throw new AppError(404, "CALLUP_NOT_FOUND");
     if (callup.callupType === "TRAINING") throw new AppError(409, "INVALID_CALLUP_TYPE");
@@ -203,7 +203,7 @@ export class PlayerCallupService {
     return updated;
   }
 
-  async complete(id: number, actorId: string) {
+  async complete(id: string, actorId: string) {
     const callup = await this.repo.findById(id);
     if (!callup) throw new AppError(404, "CALLUP_NOT_FOUND");
     if (callup.status !== "APPROVED") throw new AppError(409, "INVALID_STATUS");
