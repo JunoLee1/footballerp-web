@@ -41,7 +41,7 @@ export class VideoService {
     return this.repo.findAssignmentsByPlayer(player.id);
   }
 
-  async createAssignment(dto: CreateAssignmentDto & { assignerTeamId?: number | null }) {
+  async createAssignment(dto: CreateAssignmentDto & { assignerTeamId?: string | null }) {
     // SH18: 선수의 팀 == 요청자의 팀 검증 (SUPER_ADMIN 제외)
     const player = await getPrisma().player.findUnique({
       where: { id: dto.playerId },

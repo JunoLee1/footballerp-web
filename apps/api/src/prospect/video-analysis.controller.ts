@@ -34,7 +34,7 @@ export class VideoAnalysisController {
       const secret = req.headers['x-webhook-secret']
       if (WEBHOOK_SECRET && secret !== WEBHOOK_SECRET) throw new AppError(401, 'INVALID_WEBHOOK_SECRET')
       const { jobId, status, data, errorMessage } = req.body as {
-        jobId: number
+        jobId: string
         status: 'DONE' | 'FAILED'
         data?: any
         errorMessage?: string

@@ -11,7 +11,7 @@ export class InventoryController {
     try { res.status(201).json(await this.service.create(req.body)); } catch (e) { next(e); }
   };
   adjust = async (req: Request, res: Response, next: NextFunction) => {
-    try { res.json(await this.service.adjustQuantity(Number(req.params.id), Number(req.body.delta))); } catch (e) { next(e); }
+    try { res.json(await this.service.adjustQuantity(String(req.params.id), Number(req.body.delta))); } catch (e) { next(e); }
   };
   alerts = async (_req: Request, res: Response, next: NextFunction) => {
     try { res.json(await this.service.getAlerts()); } catch (e) { next(e); }

@@ -21,8 +21,8 @@ export async function collectWeeklyScheduleByGuardian(
   });
 
   const youthTeamIds = [...new Set([
-    ...sessions.map(s => s.team?.id ?? s.teamId).filter((id): id is number => id != null),
-    ...matches.map(m => m.team?.id).filter((id): id is number => id != null),
+    ...sessions.map(s => s.team?.id ?? s.teamId).filter((id): id is string => id != null),
+    ...matches.map(m => m.team?.id).filter((id): id is string => id != null),
   ])];
 
   if (youthTeamIds.length === 0) return [];

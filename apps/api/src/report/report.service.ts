@@ -33,7 +33,7 @@ export class ReportService {
     return report;
   }
 
-  create(data: { authorId: string; type: string; title: string; content: string; fileUrl?: string; fileName?: string; departmentId?: number }) {
+  create(data: { authorId: string; type: string; title: string; content: string; fileUrl?: string; fileName?: string; departmentId?: string }) {
     return this.repo.create(data);
   }
 

@@ -1188,7 +1188,7 @@ model Player {
   teamId                            String?
   prospectId                        String?
   promotedFromYouthAt               DateTime?
-  youthOriginTeamId                 Int?
+  youthOriginTeamId                 String?
   clubId                            String?
 
   nationality            Country                   @relation(fields: [nationalityId], references: [id])

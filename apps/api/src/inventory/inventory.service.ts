@@ -11,7 +11,7 @@ export class InventoryService {
     return this.repo.create(dto);
   }
 
-  async adjustQuantity(id: number, delta: number) {
+  async adjustQuantity(id: string, delta: number) {
     const item = await this.repo.findById(id);
     if (!item) throw new AppError(404, "INVENTORY_ITEM_NOT_FOUND");
     const newQty = item.quantity + delta;

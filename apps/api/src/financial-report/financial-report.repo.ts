@@ -84,8 +84,8 @@ export class FinancialReportRepository {
     if (changedById && before && breakdown) {
       const TRACKED = ["plannedRevenueBroadcast", "plannedRevenueSubsidy", "plannedRevenueParentCompany"] as const;
       const logs = TRACKED.flatMap((field) => {
-        const oldVal = Number((before)[field] ?? 0);
-        const newVal = Number((breakdownData)[field] ?? 0);
+        const oldVal = Number(before[field] ?? 0);
+        const newVal = Number(breakdown[field] ?? 0);
         if (oldVal === newVal) return [];
         return [{ financialReportId: before.id, field, oldValue: oldVal, newValue: newVal, changedById }];
       });

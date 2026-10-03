@@ -8,7 +8,7 @@ export class TeamService {
     return this.repo.findAll(clubId);
   }
 
-  async getById(id: number) {
+  async getById(id: string) {
     const team = await this.repo.findById(id);
     if (!team) throw new AppError(404, "TEAM_NOT_FOUND");
     return team;
@@ -24,7 +24,7 @@ export class TeamService {
     return this.repo.create(dto);
   }
 
-  async update(id: number, dto: UpdateTeamDto) {
+  async update(id: string, dto: UpdateTeamDto) {
     const team = await this.getById(id);
     const effectiveClubId = dto.clubId !== undefined ? dto.clubId : team.clubId;
     if (dto.clubId !== undefined && dto.clubId !== null) {
@@ -38,7 +38,7 @@ export class TeamService {
     return this.repo.update(id, dto);
   }
 
-  async deactivate(id: number) {
+  async deactivate(id: string) {
     await this.getById(id);
     return this.repo.update(id, { isActive: false });
   }

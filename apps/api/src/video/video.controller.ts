@@ -57,7 +57,7 @@ export class VideoController {
     try {
       const user = requireUser(req);
       if (!CAN_WRITE.includes(user.role)) throw new AppError(403, "FORBIDDEN");
-      const dto: import("./dto/video.dto").CreateAssignmentDto & { assignerTeamId?: number | null } = {
+      const dto: import("./dto/video.dto").CreateAssignmentDto & { assignerTeamId?: string | null } = {
         videoId: Number(req.params["id"]),
         playerId: req.body.playerId,
         assignedById: user.id,

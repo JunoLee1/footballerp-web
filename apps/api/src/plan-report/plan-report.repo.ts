@@ -1,6 +1,6 @@
 import type { PrismaClient } from '../generated/client'
 import { Prisma } from '../generated/client'
-import type { ApproverLevel, HiringPlanItemStatus } from '../generated/enums'
+import type { ApproverLevel, HiringPlanItemStatus, PlanTemplateType, PlanStatus } from '../generated/enums'
 import type {
   CreatePlanReportDto,
   UpdatePlanReportDto,
@@ -32,12 +32,13 @@ export class PlanReportRepository {
   constructor(private prisma: PrismaClient) {}
 
   findAll(filters: ListPlanReportQuery) {
+    const where: Prisma.PlanReportWhereInput = {
+      ...(filters.templateType && { templateType: filters.templateType as PlanTemplateType }),
+      ...(filters.departmentId && { departmentId: filters.departmentId }),
+      ...(filters.status && { status: filters.status as PlanStatus }),
+    }
     return this.prisma.planReport.findMany({
-      where: {
-        ...(filters.templateType && { templateType: filters.templateType }),
-        ...(filters.departmentId && { departmentId: filters.departmentId }),
-        ...(filters.status && { status: filters.status  }),
-      },
+      where,
       include: PLAN_INCLUDE,
       orderBy: { createdAt: 'desc' },
     })

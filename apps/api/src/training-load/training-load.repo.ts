@@ -1,5 +1,6 @@
 import { PrismaClient } from "../generated/client";
 import { UpsertTrainingLoadDto, TrainingLoadQuery } from "./dto/training-load.dto";
+import { AppError } from "../lib/appError";
 
 export class TrainingLoadRepository {
   constructor(private prisma: PrismaClient) {}
@@ -25,13 +26,18 @@ export class TrainingLoadRepository {
       select: { rpe: true, load: true, loadUnit: true, version: true },
     });
 
+    // BH1: rpe 는 schema 상 required — 신규 생성 시 반드시 제공돼야 함.
+    // 기존 레코드가 있으면 update 경로로 가므로 rpe 미제공 허용.
+    if (!existing && dto.rpe === undefined) {
+      throw new AppError(400, "RPE_REQUIRED_FOR_NEW_LOAD");
+    }
+
     return this.prisma.trainingLoad.upsert({
       where: { playerId_sessionId: { playerId: dto.playerId, sessionId: dto.sessionId } },
       create: {
         playerId: dto.playerId,
         sessionId: dto.sessionId,
-        // BH1: no default value for rpe — only set when explicitly provided
-        ...(dto.rpe !== undefined && { rpe: dto.rpe }),
+        rpe: dto.rpe!,
         load: dto.load ?? null,
         ...(dto.loadUnit !== undefined && { loadUnit: dto.loadUnit }),
       },

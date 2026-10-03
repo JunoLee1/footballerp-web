@@ -11,6 +11,7 @@ import { AuthRepository } from "../auth/auth.repo";
 import { AuthService } from "../auth/auth.service";
 import { getPrisma } from "../lib/prisma";
 import { intIdRouter } from "../lib/idParamGuard";
+import type { Role } from "../generated/enums";
 
 const router = intIdRouter();
 const prisma = getPrisma();
@@ -31,7 +32,7 @@ const inviteAdapter = {
       confirmedPassword: tempPw,
       username: baseNickname ?? "guardian",
       nickname,
-      role: data.role,
+      role: data.role as Role,
       coachingRole: null,
       frontOfficeRole: null,
       dateOfBirth: "2000-01-01T00:00:00.000Z",

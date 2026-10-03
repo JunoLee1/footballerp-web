@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma } from "../generated/client";
-import { ProspectStatus, VideoEvalResult, EvaluationLogType } from "../generated/enums";
+import { ProspectStatus, VideoEvalResult, EvaluationLogType, PlayStyle } from "../generated/enums";
 import { AppError } from "../lib/appError";
 import { encrypt } from "../lib/crypto";
 import { CreateProspectDto, UpdateProspectDto, SignProspectDto, ProspectMedicalResultDto, CreateProspectNegotiationLogDto } from "./dto/prospect.dto";
@@ -94,7 +94,7 @@ export class ProspectRepository {
         notes: dto.notes ?? null,
         createdById: createdById ?? null,
         status: dto.status ?? "LONGLIST",
-        playStyle: dto.playStyle ?? null,//TODO fix enum type
+        playStyle: (dto.playStyle ?? null) as PlayStyle | null,
         clubId: clubId ?? null,
         ...(visaRequired !== undefined && { visaRequired }),
       },
