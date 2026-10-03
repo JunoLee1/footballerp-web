@@ -131,7 +131,7 @@ export function TrainingReferencePage() {
   }
 
   const canDelete = (ref: TrainingReference) =>
-    user?.role === 'ADMIN' || ref.addedBy.id === user?.id
+    user?.role === 'ADMIN' || String(ref.addedBy.id) === String(user?.id)
 
   return (
     <div className="flex flex-col h-full">

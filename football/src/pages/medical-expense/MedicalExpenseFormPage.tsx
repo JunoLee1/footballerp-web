@@ -50,7 +50,7 @@ export function MedicalExpenseFormPage() {
   useEffect(() => {
     if (!id) return
     medicalExpenseApi
-      .get(Number(id))
+      .get(id)
       .then((e: MedicalExpense) => {
         setReceiptDate(e.receiptDate.slice(0, 10))
         setCostCategory(e.costCategory)
@@ -78,7 +78,7 @@ export function MedicalExpenseFormPage() {
       }
       let saved: MedicalExpense
       if (isEdit && id) {
-        saved = await medicalExpenseApi.update(Number(id), dto)
+        saved = await medicalExpenseApi.update(id, dto)
       } else {
         saved = await medicalExpenseApi.create(dto)
       }

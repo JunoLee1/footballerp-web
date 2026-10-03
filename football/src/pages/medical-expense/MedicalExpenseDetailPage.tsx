@@ -90,7 +90,7 @@ export function MedicalExpenseDetailPage() {
   useEffect(() => {
     if (!id) return
     medicalExpenseApi
-      .get(Number(id))
+      .get(id)
       .then(setExpense)
       .catch(() => { toast.error(t('expenseDetail.loadFailed')); navigate('/medical-expenses') })
       .finally(() => setLoading(false))

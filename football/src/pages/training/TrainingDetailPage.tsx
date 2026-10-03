@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import { trainingApi } from '@/services/training.service'
 import type { TrainingSessionDetail, AttendanceStatus } from '@/types/training'
 import {
-  SESSION_TYPE_LABEL,
   SESSION_TYPE_STYLE,
   PHASE_LABEL,
   ATTENDANCE_LABEL,
@@ -582,7 +581,7 @@ export function TrainingDetailPage() {
                       {r.tags.map(tg => (
                         <span key={tg} className="text-xs border rounded px-1">{tg}</span>
                       ))}
-                      {canAddRef && (user?.id === r.addedBy.id || user?.role === 'ADMIN') && (
+                      {canAddRef && (String(user?.id) === String(r.addedBy.id) || user?.role === 'ADMIN') && (
                         <Button size="icon" variant="ghost" className="h-5 w-5" onClick={async () => {
                           await trainingReferenceApi.delete(r.id)
                           fetchRefs(session)

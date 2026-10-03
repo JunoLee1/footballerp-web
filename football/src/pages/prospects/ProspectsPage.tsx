@@ -9,7 +9,7 @@ import type {
   VisaEligibility, WorkPermitStatus,
 } from '@/types/prospect'
 import {
-  STATUS_STYLE,
+  STATUS_STYLE, VISA_ELIGIBILITY_LABEL,
 } from '@/types/prospect'
 import type { Position, PlayStyle } from '@/types/player'
 import { POSITION_LABEL, PLAY_STYLE_LABEL, POSITION_PLAY_STYLES } from '@/types/player'

@@ -36,7 +36,7 @@ function formatDate(d: string) {
 interface AddExtensionDialogProps {
   open: boolean
   onOpenChange: (v: boolean) => void
-  contractId: number
+  contractId: string
   onSaved: () => void
 }
 
@@ -104,7 +104,7 @@ function AddExtensionDialog({ open, onOpenChange, contractId, onSaved }: AddExte
 interface AddBonusDialogProps {
   open: boolean
   onOpenChange: (v: boolean) => void
-  contractId: number
+  contractId: string
   onSaved: () => void
 }
 
@@ -254,7 +254,7 @@ export function ContractDetailPage() {
       return
     }
     try {
-      const data = await contractApi.get(Number(id))
+      const data = await contractApi.get(id)
       setContract(data)
     } catch {
       toast.error(t('contractDetail.loadFailed'))

@@ -19,14 +19,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -82,6 +74,8 @@ const SESSION_CONTENT_TEMPLATE: Record<SessionType, ContentRow[]> = {
     { phase: 'DRILL', description: '개인기 훈련' },
     { phase: 'DRILL', description: '포지션별 집중 훈련' },
   ],
+  PSYCHOLOGICAL_SOCIAL: [],
+  SET_PIECE: [],
 }
 
 interface CreateSessionDialogProps {

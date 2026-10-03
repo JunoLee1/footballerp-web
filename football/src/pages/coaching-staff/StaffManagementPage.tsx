@@ -66,7 +66,7 @@ function isAbsentToday(absences: CoachingStaffMember['coachAvailabilities']) {
 interface AbsenceDialogProps {
   open: boolean
   onClose: () => void
-  staffId: number
+  staffId: string
   onCreated: () => void
 }
 
@@ -137,7 +137,7 @@ interface StaffCardProps {
   member: CoachingStaffMember
   canEdit: boolean
   canEval: boolean
-  currentUserId: number
+  currentUserId: string
   language: string
   onRefresh: () => void
 }
@@ -305,7 +305,7 @@ export function StaffManagementPage() {
                   member={member}
                   canEdit={canEdit}
                   canEval={canEval}
-                  currentUserId={user?.id ?? 0}
+                  currentUserId={user?.id ?? ''}
                   language={i18n.language}
                   onRefresh={fetchStaff}
                 />

@@ -179,7 +179,7 @@ export function OperatingExpensePage() {
     } finally { setSaving(false) }
   }
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     if (!seasonId) return
     try {
       await operatingExpenseApi.delete(id)

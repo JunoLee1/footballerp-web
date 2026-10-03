@@ -92,7 +92,7 @@ function ApprovalList({ filter, stage, equipmentItems, softwareLicenses }: Appro
 
   const titleOf = (r: {
     equipmentItemId: number | null
-    softwareLicenseId: number | null
+    softwareLicenseId: string | null
     customName: string | null
     type: AssetRequestType
   }) => {

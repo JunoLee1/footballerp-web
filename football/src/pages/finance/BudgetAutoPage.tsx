@@ -60,7 +60,7 @@ export default function BudgetAutoPage() {
   const { user } = useCurrentUser()
   const canApply = user?.frontOfficeRole === 'FINANCE_MANAGER' || user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN'
 
-  const { rows: expenseCats, labelOf } = useExpenseCategories()
+  const { rows: expenseCats } = useExpenseCategories()
 
   const [seasons, setSeasons] = useState<Season[]>([])
   const [targetSeasonId, setTargetSeasonId] = useState('')
@@ -68,7 +68,7 @@ export default function BudgetAutoPage() {
   const [inflation, setInflation] = useState('3')
   const [revenueGoal, setRevenueGoal] = useState<GoalWeight>('MAINTAIN')
   const [expenseGoal, setExpenseGoal] = useState<GoalWeight>('MAINTAIN')
-  const [categoryOverrides, setCategoryOverrides] = useState<Partial<Record<OperatingCategory, GoalWeight>>>({})
+  const [categoryOverrides, setCategoryOverrides] = useState<Record<OperatingCategory, GoalWeight>>({})
   const [preview, setPreview] = useState<BudgetPreviewResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [applyName, setApplyName] = useState('')

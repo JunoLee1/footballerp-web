@@ -217,7 +217,7 @@ export function ContractsPage() {
     fetchContracts(pid)
   }
 
-  const handleStatusChange = async (contractId: number, status: ContractStatus) => {
+  const handleStatusChange = async (contractId: string, status: ContractStatus) => {
     try {
       await contractApi.updateStatus(contractId, status)
       toast.success(t('contracts.statusChanged'))
@@ -288,7 +288,7 @@ export function ContractsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(isAllSelected ? allContracts : contracts).map((c) => (
+              {(isAllSelected ? allContracts : contracts).map((c: ContractSummary | ContractSummaryWithPlayer) => (
                 <TableRow key={c.id} className="cursor-pointer" onClick={() => navigate(`/contracts/${c.id}`)}>
                   {isAllSelected && (
                     <TableCell className="font-medium">

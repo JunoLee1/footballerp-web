@@ -24,11 +24,6 @@ import {
 } from '@/components/ui/select'
 import { ArrowLeft, Plus } from 'lucide-react'
 
-function formatDate(d: string | null) {
-  if (!d) return '—'
-  return new Date(d).toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' })
-}
-
 function NumericField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
     <div className="space-y-1.5">
@@ -146,7 +141,7 @@ function EvaluationSection({ coach, canWrite, onSaved }: EvalSectionProps) {
   const handleSave = async () => {
     setSaving(true)
     try {
-      await coachApi.upsertEvaluation(coach.id, buildDto())
+      await coachApi.upsertEvaluation(String(coach.id), buildDto())
       toast.success(t('coachDetail.eval.saved'))
       onSaved()
     } catch (err: unknown) {
@@ -489,7 +484,7 @@ export function CoachDetailPage() {
 
         {/* 튜터 배정 */}
         <TutorSection
-          coachId={coach.id}
+          coachId={String(coach.id)}
           tutors={coach.tutorAssignments}
           canWrite={canWrite}
           onSaved={fetchCoach}

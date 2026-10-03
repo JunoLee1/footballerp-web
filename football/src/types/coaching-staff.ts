@@ -16,7 +16,7 @@ export interface StaffAbsence {
 }
 
 export interface CoachingStaffMember {
-  id: number
+  id: string
   nickname: string | null
   coachingRole: CoachingRole | null
   teamId: number | null

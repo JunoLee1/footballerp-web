@@ -43,7 +43,7 @@ export function UserProfilePage() {
     if (!id) return
     setLoading(true)
     try {
-      setProfile(await piiAccessApi.getUserProfile(Number(id)))
+      setProfile(await piiAccessApi.getUserProfile(id))
     } catch {
       toast.error(t('userProfile.loadFailed'))
     } finally {

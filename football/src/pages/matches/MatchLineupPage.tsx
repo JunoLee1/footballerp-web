@@ -142,8 +142,8 @@ export function MatchLineupPage() {
   const canEdit =
     user?.role === 'ADMIN' ||
     user?.role === 'COACHING_STAFF' ||
-    user?.role === 'HEAD_COACH'
-  const canConfirm = user?.role === 'ADMIN' || user?.role === 'HEAD_COACH'
+    user?.coachingRole === 'HEAD_COACH'
+  const canConfirm = user?.role === 'ADMIN' || user?.coachingRole === 'HEAD_COACH'
 
   useEffect(() => {
     Promise.all([

@@ -43,7 +43,7 @@ export function PlayerRadarChart({ data }: Props) {
             fill="#3b82f6"
             fillOpacity={0.25}
           />
-          <Tooltip formatter={(v: number) => [`${v.toFixed(0)}점`, '점수']} />
+          <Tooltip formatter={(v) => [`${(typeof v === 'number' ? v : Number(v)).toFixed(0)}점`, '점수']} />
         </RechartsRadar>
       </ResponsiveContainer>
 

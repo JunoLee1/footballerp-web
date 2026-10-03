@@ -19,7 +19,7 @@ export default function PayrollPage() {
 
   const [configs, setConfigs] = useState<PayrollConfig[]>([])
   const [salaries, setSalaries] = useState<StaffSalary[]>([])
-  const [selectedSalaryId, setSelectedSalaryId] = useState<number | null>(null)
+  const [selectedSalaryId, setSelectedSalaryId] = useState<string | null>(null)
   const [runs, setRuns] = useState<PayrollRun[]>([])
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function PayrollPage() {
     void payrollApi.listRuns(selectedSalaryId).then(setRuns).catch(() => {})
   }, [selectedSalaryId])
 
-  const handleConfirm = async (salaryId: number, runId: number) => {
+  const handleConfirm = async (salaryId: string, runId: string) => {
     try {
       const updated = await payrollApi.confirmRun(salaryId, runId)
       setRuns(prev => prev.map(r => r.id === runId ? updated : r))
@@ -46,7 +46,7 @@ export default function PayrollPage() {
     }
   }
 
-  const handleSecondApprove = async (salaryId: number, runId: number) => {
+  const handleSecondApprove = async (salaryId: string, runId: string) => {
     try {
       const updated = await payrollApi.secondApproveRun(salaryId, runId)
       setRuns(prev => prev.map(r => r.id === runId ? updated : r))

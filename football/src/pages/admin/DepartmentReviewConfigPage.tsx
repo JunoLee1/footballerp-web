@@ -4,7 +4,7 @@ import { Trash2 } from 'lucide-react'
 import { departmentApi } from '@/services/department.service'
 import type { Department } from '@/services/department.service'
 import { reviewerConfigApi } from '@/services/plan-review.service'
-import type { DepartmentReviewerConfig } from '@/types/department-plan'
+import type { DepartmentReviewerConfig } from '@/services/plan-review.service'
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'

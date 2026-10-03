@@ -135,7 +135,7 @@ export default function YouthRegistrationPage() {
                       className="text-xs text-blue-500 underline"
                       onClick={() => void (async () => {
                         try {
-                          const result = await guardianApi.issueInviteCode(r.id)
+                          const result = await guardianApi.issueInviteCode(String(r.id))
                           toast.success(`초대코드: ${result.code} (유효기간: ${new Date(result.expiresAt).toLocaleDateString('ko-KR')})`)
                         } catch {
                           toast.error('초대코드 발급에 실패했습니다.')

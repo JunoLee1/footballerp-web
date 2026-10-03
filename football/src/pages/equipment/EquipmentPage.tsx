@@ -178,7 +178,7 @@ function AssignDialog({ open, onOpenChange, item, onSaved }: AssignDialogProps) 
     try {
       await equipmentApi.assign(
         playerId,
-        item.id,
+        String(item.id),
         item.trackedIndividually ? Number(unitId) : undefined,
       )
       toast.success(t('equipmentPage.assignDialog.saved'))
@@ -263,7 +263,7 @@ function LoanRequestDialog({ open, onOpenChange, onSaved }: {
     setSaving(true)
     try {
       await loanApi.request({
-        equipmentItemId: Number(itemId),
+        equipmentItemId: itemId,
         dueDate: parsed.toISOString(),
         ...(notes && { notes }),
       })

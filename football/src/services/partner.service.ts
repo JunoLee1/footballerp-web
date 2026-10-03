@@ -13,9 +13,9 @@ export const partnerApi = {
   update: (id: string, dto: Partial<CreatePartnerDto>) =>
     api.patch<Partner>(`/partners/${id}`, dto),
 
-  createContract: (partnerId: number, dto: CreatePartnerContractDto) =>
+  createContract: (partnerId: string, dto: CreatePartnerContractDto) =>
     api.post<PartnerContract>(`/partners/${partnerId}/contracts`, dto),
 
-  updateContract: (partnerId: number, contractId: number, dto: { status?: PartnerContractStatus; endDate?: string }) =>
+  updateContract: (partnerId: string, contractId: number, dto: { status?: PartnerContractStatus; endDate?: string }) =>
     api.patch<PartnerContract>(`/partners/${partnerId}/contracts/${contractId}`, dto),
 }

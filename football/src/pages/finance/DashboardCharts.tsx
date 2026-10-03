@@ -275,7 +275,7 @@ export default function DashboardCharts() {
                       <Cell key={idx} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value: number) => value.toLocaleString()} />
+                  <Tooltip formatter={(value) => (typeof value === 'number' ? value.toLocaleString() : String(value))} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -345,7 +345,7 @@ export default function DashboardCharts() {
                   tickFormatter={(v: number) => (v >= 1_000_000 ? `${(v / 1_000_000).toFixed(1)}M` : v.toLocaleString())}
                   tick={{ fontSize: 11 }}
                 />
-                <Tooltip formatter={(value: number) => value.toLocaleString()} />
+                <Tooltip formatter={(value) => (typeof value === 'number' ? value.toLocaleString() : String(value))} />
                 <Legend />
                 <Bar yAxisId="left" dataKey="수익" fill="#3b82f6" />
                 <Bar yAxisId="left" dataKey="지출" fill="#ef4444" />

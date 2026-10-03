@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 
 interface Props {
-  injuryId: number
+  injuryId: string
   initial: InjuryAssessment | null
   onSaved: (result: { assessment: InjuryAssessment; triggeredReports: boolean }) => void
 }

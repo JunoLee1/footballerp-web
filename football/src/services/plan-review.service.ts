@@ -2,7 +2,7 @@ import { api } from './api'
 import type { PlanReview } from '@/types/plan-report'
 
 // DepartmentReviewerConfig — inline type to avoid referencing missing '@/types/department-plan' module
-interface DepartmentReviewerConfig {
+export interface DepartmentReviewerConfig {
   id: number
   subjectDepartmentId: number
   reviewerDepartmentId: number

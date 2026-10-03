@@ -214,7 +214,7 @@ export function InjuriesPage() {
     setInjuries([])
   }
 
-  const handleStatusChange = async (injuryId: number, status: InjuryStatus) => {
+  const handleStatusChange = async (injuryId: string, status: InjuryStatus) => {
     try {
       await injuryApi.updateStatus(injuryId, status)
       toast.success(t('injuries.statusChanged'))

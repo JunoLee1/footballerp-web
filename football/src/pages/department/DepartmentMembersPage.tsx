@@ -86,7 +86,7 @@ export function DepartmentMembersPage() {
 
   // Transfer dialog
   const [transferOpen, setTransferOpen] = useState(false)
-  const [transferUserId, setTransferUserId] = useState<number | null>(null)
+  const [transferUserId, setTransferUserId] = useState<string | null>(null)
   const [transferDeptId, setTransferDeptId] = useState<string>('')
   const [transferRole, setTransferRole] = useState<DeptRole>('MEMBER')
   const [transferSaving, setTransferSaving] = useState(false)
@@ -138,14 +138,14 @@ export function DepartmentMembersPage() {
 
   // ---- add member ----
   const handleAdd = async () => {
-    const uid = parseInt(addUserId, 10)
-    if (!addUserId.trim() || isNaN(uid)) {
+    const trimmed = addUserId.trim()
+    if (!trimmed) {
       toast.error(t('deptMember.error.userIdRequired'))
       return
     }
     setAddSaving(true)
     try {
-      await departmentMemberApi.add(deptId, uid, addRole, addJobTitleId)
+      await departmentMemberApi.add(deptId, trimmed, addRole, addJobTitleId)
       toast.success(t('deptMember.addSuccess'))
       setAddOpen(false)
       setAddUserId('')
@@ -537,7 +537,7 @@ export function DepartmentMembersPage() {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle>
-              {t('deptMember.transferTitle', { name: transferMember?.user.name ?? '' })}
+              {t('deptMember.transferTitle', { name: transferMember?.user.nickname ?? '' })}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
